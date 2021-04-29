@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 
 import { getUrl, getSourceUrl, getBoolean } from '@inrupt/solid-client'
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 
 import NotePicker from '../components/NotePicker'
 import { CreateButton }from '../components/Create'
-import { useApp, useWorkspacePreferencesFileUris, useAppSettings } from '../hooks/app'
+import { useApp, useWorkspacePreferencesFileUris, useWorkspace, useAppSettings } from '../hooks/app'
 import { deleteResource } from '../utils/fetch'
 import { appPrefix } from '../utils/uris'
 import { US } from '../vocab'
@@ -35,6 +35,20 @@ function DevTools() {
         </button>
       </li>
     </ul>
+  )
+}
+
+function LoginVerifier(){
+  const { logout } = useAuthentication()
+  const webId = useWebId()
+  const { error } = useWorkspace(webId, "default", "private")
+  useEffect(function(){
+    if (error && (error.statusCode == 401)){
+      logout()
+    }
+  }, [error && error.statusCode])
+  return (
+    <></>
   )
 }
 
@@ -74,6 +88,9 @@ export default function Nav() {
         </li>
         <li>
           <ul className="flex justify-between items-center space-x-4">
+            {loggedIn && (
+              <LoginVerifier/>
+            )}
             {loggedIn && (
               <div>
                 {profileImage ? (
