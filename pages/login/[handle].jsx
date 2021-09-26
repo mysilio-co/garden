@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 export default function Login(){
   const router = useRouter()
   const { handle } = router.query
+  console.log("HANDLE", handle)
   const { session, loginHandle } = useAuthentication()
   const [loggingIn, setLoggingIn] = useState(false)
   useEffect(function logUserIn(){
