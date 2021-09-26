@@ -14,11 +14,8 @@ import { createOrUpdateSlateJSON, saveNote } from "../model/note";
 import { createOrUpdateConceptIndex } from "../model/concept";
 import { useWorkspace, useCurrentWorkspace } from "../hooks/app";
 import { useConcept } from "../hooks/concepts";
-
-const TabId = {
-  Concept: "Concept",
-  Bookmark: "Bookmark",
-};
+import Bookmark from "./Bookmark";
+import Upload from "./Upload";
 
 export function Tab({ title, selected, onClick }) {
   const selectedClasses = "border-lagoon text-lagoon ";
@@ -59,8 +56,12 @@ export function Tabs({ tabs, selectedTab, setSelectedTab }) {
 }
 
 export function CreateModal({ isOpen, closeModal }) {
-  const tabs = [TabId.Concept, TabId.Bookmark];
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const TABS = {
+    Concept: "Concept",
+    Bookmark: "Bookmark",
+    Upload: "Upload",
+  };
+  const [selectedTab, setSelectedTab] = useState(TABS[0]);
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
   const editorId = "create-modal";
@@ -125,12 +126,12 @@ export function CreateModal({ isOpen, closeModal }) {
     <ReactModal isOpen={isOpen}>
       <form className="w-full max-w-sm">
         <Tabs
-          tabs={tabs}
+          tabs={Object.keys(TABS)}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         />
 
-        {selectedTab === TabId.Concept ? (
+        {selectedTab === TABS.Concept ? (
           <>
             <div
               className={`flex items-center border-b-2 py-2 ${
@@ -160,8 +161,10 @@ export function CreateModal({ isOpen, closeModal }) {
               <PlateEditor editorId={editorId} initialValue={value} />
             </div>
           </>
+        ) : selectedTab === TABS.Bookmark ? (
+          <Bookmark />
         ) : (
-          <span> upload image or link </span>
+          <Upload />
         )}
 
         <div className="flex justify-end border-t-2 border-echeveria py-2">
