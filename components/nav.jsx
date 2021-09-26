@@ -6,10 +6,9 @@ import { FOAF, LDP } from '@inrupt/vocab-common-rdf'
 import { Transition } from '@headlessui/react'
 import { useAuthentication, useLoggedIn, useMyProfile, useContainer, useWebId } from 'swrlit'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 
-import { MailIcon } from '../components/icons'
-import NewNoteForm from '../components/NewNoteForm'
+import NotePicker from '../components/NotePicker'
+import { CreateButton }from '../components/Create'
 import { useApp, useWorkspacePreferencesFileUris, useAppSettings } from '../hooks/app'
 import { deleteResource } from '../utils/fetch'
 import { appPrefix } from '../utils/uris'
@@ -51,41 +50,30 @@ export default function Nav() {
   const profileImage = profile && getUrl(profile, FOAF.img)
   const inboxUri = profile && getUrl(profile, LDP.inbox)
   const { resources } = useContainer(inboxUri)
-  const hasMessages = resources && (resources.length > 0)
   const [menuOpen, setMenuOpen] = useState(false)
+
   return (
-    <nav className="pt-3 flex flex-col">
-      <ul className="flex justify-between items-center">
+    <nav className="p-3 pl-6 pr-6 flex flex-col bg-passionflower-dark w-full">
+      <ul className="flex justify-between items-center ">
         <li className="flex flex-row">
           <Link href="/">
-            <a className="mr-6">
-              <Image src="/logo.png"
-                alt="a logo consisting of a multi-colored mushroom with roots digging deep into the understory"
-                width={60}
-                height={60}
-              />
+            <a className="flex items-center mr-6 rounded hover:bg-lagoon-dark hover:no-underline">
+              <img src='/logo.png'
+                className="p-1 rounded-full h-12 w-12 object-cover" />
+              <span className="flex mr-3 font-logo text-amethyst items-center">Mysilio Garden</span>
             </a>
           </Link>
           {loggedIn && (
-            <NewNoteForm />
+            <NotePicker/>
+          )}
+        </li>
+        <li>
+          {loggedIn && (
+            <CreateButton />
           )}
         </li>
         <li>
           <ul className="flex justify-between items-center space-x-4">
-            {loggedIn && (
-              <Link href="/messages">
-                <a className="text-white">
-                  <div className="relative">
-                    <MailIcon className="w-12" />
-                    {hasMessages && (
-                      <div className="absolute top-0 right-0 block h-5 w-5 rounded-full ring-2 ring-white bg-red-400 pl-2 leading-3 pt-0.5">
-                        { resources.length}
-                      </div>
-                    )}
-                  </div>
-                </a>
-              </Link>
-            )}
             {loggedIn && (
               <div>
                 {profileImage ? (
@@ -111,30 +99,30 @@ export default function Nav() {
                   {
                     (ref) => (
                       <div ref={ref} className="z-30 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        <div className="p-1 text-lg" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                        <div className="p-2 text-lg" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                           <Link href="/profile">
-                            <a className="block hover:bg-gray-100 hover:text-gray-900">
+                            <a className="block">
                               edit profile
-                          </a>
+                            </a>
                           </Link>
                           <Link href="/settings">
-                            <a className="block hover:bg-gray-100 hover:text-gray-900">
+                            <a className="block">
                               settings
-                          </a>
+                            </a>
                           </Link>
-                          <a href="/privacy" className="block hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                          <a href="/privacy" className="block" role="menuitem">
                             privacy
-                        </a>
-                          <a href="/tos" className="block hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                          </a>
+                          <a href="/tos" className="block" role="menuitem">
                             terms of service
-                        </a>
+                          </a>
                           {loggedIn && (
-                            <button type="submit" className="block w-full text-left text-purple-500 font-semibold hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem"
+                            <button type="submit" className="mx-0 w-full text-left block destructive btn rounded-md" role="menuitem"
                               onClick={logout}>
                               log out
                             </button>
                           )}
-                        </div>
+                          </div>
                       </div>
                     )
                   }

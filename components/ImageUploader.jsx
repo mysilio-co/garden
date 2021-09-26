@@ -24,6 +24,8 @@ const ImageEditingModule = ({ src, onSave, onClose, ...props }) => {
       <Cropper
         ref={cropperRef}
         src={src}
+        autoCropArea={1}
+        viewMode={1}
         crossOrigin="use-credentials"
         className="h-48"
       />
@@ -333,7 +335,7 @@ export function ImageUploadAndEditor({onSave, onClose, imageUploadContainerUri})
                </button>
              </>
             }
-            <button onClick={() => onClose && onClose()}>
+            <button className="btn cancel mr-3"onClick={() => onClose && onClose()}>
               cancel
             </button>
           </div>

@@ -181,6 +181,7 @@ export const insertImage = (editor, attributes, at=editor.selection) => {
   Transforms.insertNodes(editor, image, {at})
 }
 
+
 export const activeLink = (editor, at=editor.selection) => {
   const [linkPath] = Editor.nodes(editor, {at,  match: n => n.type === 'link' })
   if (linkPath){
@@ -284,7 +285,7 @@ export const setLinkUrl = (editor, link, url) => {
   Transforms.setNodes(editor, {url}, {at: path})
 }
 
-export const setConceptProps = (editor, concept, name) => {
+export const setlonceptProps = (editor, concept, name) => {
   const path = ReactEditor.findPath(editor, concept)
   Transforms.setNodes(editor, {name}, {at: path})
 }
@@ -333,7 +334,7 @@ export const insertConcept = (editor, name) => {
   Transforms.insertNodes(editor, concept)
 }
 
-const conceptRegex = /\[\[(.*)\]\]/
+const conceptRegex = /\[\[(.+)\]\]/
 
 function hasConceptParent(editor, path){
   const parent = Node.get(editor, path.slice(0, -1))
@@ -379,7 +380,7 @@ export const withConcepts = editor => {
   return editor
 }
 
-const tagRegex = /\B\#([a-zA-Z]+\b)./
+const tagRegex = /\B\#([\w-]+)\b/
 
 function hasTagParent(editor, path){
   const parent = Node.get(editor, path.slice(0, -1))

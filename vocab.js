@@ -1,34 +1,8 @@
-const fbRoot = "https://face.baby/vocab#"
-export const FB = {
-  noteBody : `${fbRoot}noteBody`,
-  refs : `${fbRoot}refs`,
-  hasFeedItem : `${fbRoot}hasFeedItem`,
-  Credit : `${fbRoot}Credit`,
-  Debit : `${fbRoot}Debit`,
-  amount : `${fbRoot}amount`,
-  accountOf : `${fbRoot}accountOf`
-}
-
-const itmeRoot = "https://itme.online/vocab#"
-export const ITME = {
-  noteBody: `${itmeRoot}noteBody`,
-  refs: `${itmeRoot}refs`,
-  paymentPointer: `${itmeRoot}paymentPointer`,
-  storedAt: `${itmeRoot}storedAt`,
-  noteStorage: `${itmeRoot}noteStorage`,
-  publicPrefs: `${itmeRoot}publicPrefs`,
-  privatePrefs: `${itmeRoot}privatePrefs`,
-  backupsStorage: `${itmeRoot}backupsStorage`,
-  hasWorkspace: `${itmeRoot}hasWorkspace`,
-  conceptIndex: `${itmeRoot}conceptIndex`,
-  conceptPrefix: `${itmeRoot}conceptPrefix`
-}
-
 export const PP = {
-  paymentPointer: "http://paymentpointers.org/ns#PaymentPointer"
-}
+  paymentPointer: "http://paymentpointers.org/ns#PaymentPointer",
+};
 
-const understoryRoot = "https://understory.coop/vocab/garden#"
+const understoryRoot = "https://understory.coop/vocab/garden#";
 export const US = {
   noteBody: `${understoryRoot}noteBody`,
   refersTo: `${understoryRoot}refersTo`,
@@ -52,5 +26,23 @@ export const US = {
   deployedAt: `${understoryRoot}deployedAt`,
   hasGnomeStatus: `${understoryRoot}hasGnomeStatus`,
   monetizedFor: `${understoryRoot}monetizedFor`,
-  usesCSS: `${understoryRoot}usesCSS`
-}
+  usesCSS: `${understoryRoot}usesCSS`,
+  slateJSON: `${understoryRoot}slateJSON`, // https://docs.slatejs.org/concepts/02-nodes
+};
+
+const MY_PREFIX = "https://vocab.mysilio.com/my/";
+const MY_SKOS = `${MY_PREFIX}skos#`;
+const MY_FOAF = `${MY_PREFIX}foaf#`;
+export const MY = {
+  SKOS: {
+    Bookmark: `${MY_SKOS}Bookmark`, // disjoint with SKOS:Concept. Concepts and Bookmarks can both point to the same notes / resources, but a Bookmark is explicitly defined as a "Concept Fragmet" rather than a full Concept.
+  },
+  FOAF: {
+    File: `${MY_FOAF}File`, // subclass of Document, disjoint with Link. For resources that are intended to be downloaded as Files.
+    Link: `${MY_FOAF}Link`, // subclass of Document, disjoint with File. For resources that are intended to be treated as Links / viewed in a WebBrowser
+  },
+};
+
+export const MIME = {
+  html: "text/html",
+};

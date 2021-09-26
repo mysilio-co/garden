@@ -17,7 +17,7 @@ import { useConcept } from '../hooks/concepts'
 import { conceptUriToName, understoryGardenConceptPrefix } from '../utils/uris'
 import { useGnomesResource } from '../hooks/gnomes'
 import { newSinglePageGateThing, updateSinglePageGateThing, setupGnome, updateDeploymentStatus } from '../model/gnomes'
-import NewNoteForm from '../components/NewNoteForm'
+import NotePicker from '../components/NotePicker'
 import { Loader, InlineLoader } from '../components/elements'
 import { deleteResource } from '../utils/fetch';
 
@@ -65,7 +65,7 @@ function SectionHeader({ title, description }) {
       <h2 className="text-3xl font-large text-gray-900 mb-3">
         {title}
       </h2>
-      <p className="text-sm text-gray-500">
+      <p className="">
         {description}
       </p>
     </div>
@@ -120,8 +120,10 @@ function GnomeThingEditor({ webId, thing, updateThing, cancelAdd }) {
       if (isNewThing) {
         const newThing = newSinglePageGateThing(webId, conceptPrefix, index, concept, css)
         await updateThing(newThing)
+        trackGoal(FG.gateCreated)
       } else {
         await updateThing(updateSinglePageGateThing(thing, webId, conceptPrefix, index, concept, css))
+        trackGoal(FG.gateEdited)
       }
     } finally {
       setEditingGate(false)
@@ -157,14 +159,14 @@ function GnomeThingEditor({ webId, thing, updateThing, cancelAdd }) {
                     <h3 className="mb-3">What note would you like to use for your Gate?</h3>
 
                     {editingNoteName ? (
-                      <NewNoteForm onSubmit={(newConceptName) => {
+                      <NotePicker onSubmit={(newConceptName) => {
                         setFieldValue('conceptName', newConceptName)
                         // we need to set this here so that the concept loader above will
                         // load the concept
                         setChosenConceptName(newConceptName)
                         setEditingNoteName(false)
                       }}
-                        initialSelectedName={conceptName} submitTitle="choose" />
+                        initialSelectedName={conceptName}/>
                     ) : (
                       <div className="flex justify-between">
                         <h5 className="font-bold">{conceptName}</h5>
@@ -203,7 +205,6 @@ function GnomesResourceEditor({ webId }) {
   const [addingNewGnome, setAddingNewGnome] = useState(false)
   const gnomeThings = resource && getThingAll(resource)
   async function updateThing(newThing) {
-    const goal = isThingLocal(newThing) ? FG.gateCreated : FG.gateEdited
     setAddingNewGnome(false)
     const newResource = setThing(resource, newThing)
     const updatedResource = await save(newResource)
@@ -221,7 +222,6 @@ function GnomesResourceEditor({ webId }) {
     console.log(`Saving deployment info to gnome at url: ${thingUrl}`)
     await save(deployedResource)
     console.log(`Finished setting up gnome at url: ${thingUrl}`)
-    trackGoal(goal)
   }
   function cancel() {
     setAddingNewGnome(false)
