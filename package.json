@@ -26,6 +26,7 @@
     "greg": "^0.0.2",
     "image-blob-reduce": "^2.2.2",
     "image-extensions": "^1.1.0",
+    "immutable": "^4.0.0-rc.15",
     "is-hotkey": "^0.2.0",
     "is-url": "^1.2.4",
     "make-empty-github-commit": "^1.2.1",
