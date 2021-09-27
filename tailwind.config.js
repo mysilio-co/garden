@@ -46,6 +46,20 @@ module.exports = {
       'full': '100%',
     },
     extend: {
+      height: {
+        '18': '4.5rem'
+      },
+      width: {
+        '18': '4.5rem'
+      },
+      boxShadow: {
+        btn: "8px 16px 24px -8px rgba(0, 0, 0, 0.12)",
+        'ipt-focus': "0 0 0 3px rgba(12, 122, 138, 0.5)",
+        menu: "0 25px 50px -12px rgba(0, 0, 0, 0.35)"
+      },
+      fontSize: {
+        '2xs': '.625rem'
+      },
       colors: {
         passionflower: {
           light: '#e0c3d7',
@@ -101,6 +115,11 @@ module.exports = {
         fog: '#b2aeb1',
         storm: '#665e63',
         night: '#190d15',
+
+        'my-green': '#0e90a3',
+
+        'white-a10': 'rgba(255, 255, 255, 0.1)',
+        'white-a20': 'rgba(255, 255, 255, 0.2)'
       },
     },
     fontFamily: {
@@ -109,7 +128,13 @@ module.exports = {
       mono: ['fira-mono', 'monospace']
     },
   },
-  variants: {},
+  variants: {
+    extend: {
+      borderWidth: ['hover'],
+      ringWidth: ['hover'],
+      ringColor: ['hover']
+    }
+  },
   plugins: [
     require('@tailwindcss/forms')
   ],
