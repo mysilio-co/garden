@@ -8,7 +8,7 @@ export default {
 }
 
 export const StandardAvatar = () => (
-  <Avatar src={avatarImg}/>
+  <Avatar src={avatarImg} />
 )
 StandardAvatar.parameters = {
   backgrounds: { default: "dark" }
