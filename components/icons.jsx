@@ -95,7 +95,15 @@ export const Close = ({ className="" }) => (
 )
 
 export const Search = ({ className="" }) => (
-  <svg className={`w-5 h-5 ${className}`} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <svg className={`${className}`} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path fill="currentColor" d="M11.5 21.75c-5.65 0-10.25-4.6-10.25-10.25S5.85 1.25 11.5 1.25s10.25 4.6 10.25 10.25-4.6 10.25-10.25 10.25zm0-19c-4.83 0-8.75 3.93-8.75 8.75s3.92 8.75 8.75 8.75 8.75-3.93 8.75-8.75-3.92-8.75-8.75-8.75zM22 22.75c-.19 0-.38-.07-.53-.22l-2-2a.754.754 0 0 1 0-1.06c.29-.29.77-.29 1.06 0l2 2c.29.29.29.77 0 1.06-.15.15-.34.22-.53.22z" />
   </svg>
+)
+
+export const AddCircle = ({className=""}) => (
+  <svg className={`${className}`} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 22.75C6.07 22.75 1.25 17.93 1.25 12S6.07 1.25 12 1.25 22.75 6.07 22.75 12 17.93 22.75 12 22.75zm0-20C6.9 2.75 2.75 6.9 2.75 12S6.9 21.25 12 21.25s9.25-4.15 9.25-9.25S17.1 2.75 12 2.75z" fill="currentColor"/>
+    <path d="M16 12.75H8c-.41 0-.75-.34-.75-.75s.34-.75.75-.75h8c.41 0 .75.34.75.75s-.34.75-.75.75z" fill="currentColor"/>
+    <path d="M12 16.75c-.41 0-.75-.34-.75-.75V8c0-.41.34-.75.75-.75s.75.34.75.75v8c0 .41-.34.75-.75.75z" fill="currentColor"/>
+</svg>
 )

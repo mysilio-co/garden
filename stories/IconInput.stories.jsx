@@ -11,7 +11,7 @@ export default {
 export const Search = () => (
   <Formik>
     <IconInput type="search" name="example" placeholder="Search"
-      icon={<SearchIcon className="text-white"/>}
+      icon={<SearchIcon className="ipt-header-search-icon"/>}
       inputClassName="ipt-header-search" />
   </Formik>
 )

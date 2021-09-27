@@ -54,7 +54,8 @@ module.exports = {
       },
       boxShadow: {
         btn: "8px 16px 24px -8px rgba(0, 0, 0, 0.12)",
-        'ipt-focus': "0 0 0 3px rgba(12, 122, 138, 0.5)"
+        'ipt-focus': "0 0 0 3px rgba(12, 122, 138, 0.5)",
+        menu: "0 25px 50px -12px rgba(0, 0, 0, 0.35)"
       },
       fontSize: {
         '2xs': '.625rem'
