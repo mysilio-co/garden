@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token=9ce71b1f5982"
   },
   "dependencies": {
     "@headlessui/react": "^1.2.0",
@@ -66,6 +67,7 @@
     "@tailwindcss/forms": "^0.3.2",
     "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
+    "chromatic": "^5.10.1",
     "postcss": "^8.3.0",
     "prettier": "2.3.2",
     "tailwindcss": "^2.2.4"
