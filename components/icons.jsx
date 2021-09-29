@@ -88,8 +88,8 @@ export const Eyeslash = ({ className="" }) => (
   </svg>
 )
 
-export const Close = ({ className="" }) => (
-  <svg className={`${className}`} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+export const Close = ({ className="", ...props }) => (
+  <svg className={`${className}`} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path fill="currentColor" fillRule="evenodd" clipRule="evenodd" d="m12 13.275 4.463 4.464a.908.908 0 0 0 1.276 0 .908.908 0 0 0 0-1.276L13.275 12l4.464-4.463a.908.908 0 0 0 0-1.276.908.908 0 0 0-1.276 0L12 10.725 7.537 6.26a.908.908 0 0 0-1.276 0 .908.908 0 0 0 0 1.276L10.725 12 6.26 16.463a.908.908 0 0 0 0 1.276.908.908 0 0 0 1.276 0L12 13.275z" />
   </svg>
 )
