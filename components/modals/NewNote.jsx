@@ -4,7 +4,7 @@ import { PrivacyToggle } from '../toggles'
 import { Close as CloseIcon } from '../icons'
 import { Input } from '../inputs'
 
-export default function NewNoteModal({isPublic=false}) {
+export default function NewNoteModal({ isPublic = false, onClose }) {
   const [pub, setPublic] = useState(isPublic)
   return (
     <div className="rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
@@ -13,7 +13,8 @@ export default function NewNoteModal({isPublic=false}) {
           <h2 className="text-white font-bold text-xl">New {pub ? 'Public' : 'Private'} Note</h2>
           <PrivacyToggle enabled={pub} setEnabled={setPublic} />
         </div>
-        <CloseIcon className="text-white h-6 w-6 flex-grow-0" />
+        <CloseIcon className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
+          onClick={() => onClose && onClose()} />
       </div>
       <div className="divide-1 divide-gray-100">
         <Formik>
