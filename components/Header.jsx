@@ -1,15 +1,34 @@
+import { useState } from 'react'
 import { Formik } from 'formik';
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
 import { Logo } from './logo';
 import Avatar from './Avatar';
 import Dropdown from '../components/Dropdown';
+import NewNote from '../components/modals/NewNote';
+import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+
+function NewNoteModal({ isOpen, setIsOpen }) {
+  return (
+    <Dialog open={isOpen} onClose={() => setIsOpen(false)}
+      className="fixed z-10 inset-0 overflow-y-auto"
+    >
+      <Dialog.Overlay className="fixed z-0 inset-0 bg-black opacity-30" />
+
+      <NewNote />
+
+      <button onClick={() => setIsOpen(false)}>Deactivate</button>
+      <button onClick={() => setIsOpen(false)}>Cancel</button>
+    </Dialog>)
+}
+
 export default function Header({ avatarImgSrc }) {
+  const [showNewNote, setShowNewNote] = useState(false)
   return (
     <nav className="bg-my-green rounded-b-2xl flex flex-row justify-between h-18 items-center">
       <div className="flex flex-row items-center">
@@ -30,19 +49,20 @@ export default function Header({ avatarImgSrc }) {
             </div>
             <Dropdown.Item>
               {({ active }) => (
-                <a
-                  href="#"
+                <button
+                  onClick={() => setShowNewNote(true)}
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
                   )}
                 >
                   Note
-                </a>
+                </button>
               )}
             </Dropdown.Item>
           </Dropdown.Items>
         </Dropdown>
+        <NewNoteModal isOpen={showNewNote} setIsOpen={setShowNewNote} />
         <Avatar src={avatarImgSrc} className="mx-12" />
       </div>
     </nav>
