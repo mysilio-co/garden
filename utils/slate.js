@@ -46,8 +46,7 @@ const newElementType = {
 };
 
 function convertLeaf(l) {
-  // must be a text node
-  console.assert(l.text);
+  // should be a text node
   // no conversion needed
   return l;
 }
@@ -89,11 +88,20 @@ function convertElement(e) {
         value: e.name,
       };
     default:
-      return convertLeaf(e);
+      if (e.children) {
+        return {
+          ...e,
+          children: e.children.map(convertElement),
+        };
+      } else if (e.text || e.text === "") {
+        return convertLeaf(e);
+      } else {
+        throw new Error(`Cannot convert Slate JSON:${e}`);
+      }
   }
 }
 
 export function noteBodyToSlateJSON(noteBody) {
-  // takes a legacy slate JSON obejct (stored at the noteBody predicate), and conversts it to the new plate format.
+  // takes a legacy slate JSON object (stored at the noteBody predicate), and  converts it to the new plate format.
   return noteBody && noteBody.map(convertElement);
 }
