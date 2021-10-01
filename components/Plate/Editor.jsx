@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useContext } from "react";
 import * as P from "@udecode/plate";
-import { useSelected, useReadOnly } from "slate-react";
 import {
   ToolbarButtonsList,
   ToolbarButtonsBasicElements,
@@ -9,9 +8,7 @@ import {
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
-import { Portal } from "../../components/elements";
 
-import { useCurrentWorkspace } from "../../hooks/app";
 import { useConcepts } from "../../hooks/concepts";
 import { useWebId } from "swrlit";
 
@@ -282,7 +279,7 @@ export default function Editor({
 }) {
   const webId = useWebId();
   const { concepts } = useConcepts(webId);
-  const { workspace, slug: workspaceSlug } = useCurrentWorkspace();
+  //const { workspace, slug: workspaceSlug } = useCurrentWorkspace();
 
   const editableProps = {
     placeholder: "What's on your mind?",

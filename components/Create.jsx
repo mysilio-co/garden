@@ -121,7 +121,6 @@ export function CreateModal({ isOpen, closeModal }) {
     }
   };
   const firstInputRef = useRef(null)
-  console.log(isOpen)
   return (
     <Dialog open={isOpen} onClose={close} initialFocus={firstInputRef}
       className="fixed z-10 inset-0 overflow-y-auto"
