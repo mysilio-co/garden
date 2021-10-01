@@ -43,7 +43,7 @@ export default function Header({ avatarImgSrc }) {
             </Dropdown.Item>
           </Dropdown.Items>
         </Dropdown>
-        <Avatar src={avatarImgSrc} className="mx-12" />
+        <Avatar src={avatarImgSrc} className="mx-1 w-12 h-12" />
       </div>
     </nav>
   )
