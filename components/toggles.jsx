@@ -29,14 +29,15 @@ export function PrivacyToggle({ enabled, setEnabled }) {
 
 export function NoteVisibilityToggle({ enabled, setEnabled }) {
   return (
-    <div className="flex flex-row text-sm text-white">
-      {enabled && <div className="">Public</div>}
-      {!enabled && <div className="">Private</div>}
+    <div className="flex flex-row mt-2 h-6 text-xs text-white">
+      <div className="object-center mt-1 opacity-50">
+        {enabled ? "Public" : "Private"}
+      </div>
       <Switch
         checked={enabled}
         onChange={setEnabled}
         className={classNames(
-          'bg-white bg-opacity-10 relative inline-flex flex-shrink-0 h-6 w-17 p-0.5 ring-1 ring-white ring-inset rounded-full cursor-pointer transition-colors ease-in-out duration-200'
+          'bg-white bg-opacity-10 relative inline-flex flex-shrink-0 h-6 w-17 ml-2 p-0.5 ring-1 ring-white ring-inset rounded-full cursor-pointer transition-colors ease-in-out duration-200'
         )}>
         <span className="sr-only">Use setting</span>
         <span

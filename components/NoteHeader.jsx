@@ -1,7 +1,7 @@
 import { Logo } from './logo';
 import Avatar from './Avatar';
 import { NoteVisibilityToggle } from './toggles';
-import IconButton  from './IconButton';
+import { ShareIcon }  from './icons';
 import { Button }  from './buttons';
 
 function classNames(...classes) {
@@ -39,10 +39,15 @@ function classNames(...classes) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center absolute inset-y-0 right-0 mr-44">
-        <div className="w-full h-6">
-          <NoteVisibilityToggle enabled={visibility} />
-          <Button />
+      <div className="flex flex-row w-48 absolute mt-6 right-0 mr-16">
+        <div className="flex flex-row h-10 w-full">
+          <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={visibility} />
+          <button type="button" class="ml-7 inline-flex items-center p-2.5 bg-white-a10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
+            <span>
+              Share
+            </span>
+            <ShareIcon className="w-4 h-4" />
+          </button> 
         </div>
       </div>
     </nav>
