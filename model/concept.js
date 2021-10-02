@@ -8,6 +8,7 @@ import {
   setDatetime,
   getDatetime,
   getUrl,
+  getUrlAll
 } from "@inrupt/solid-client";
 import { DCTERMS } from "@inrupt/vocab-common-rdf";
 import {
@@ -51,7 +52,7 @@ function createTag(prefix, name) {
   return createThing({ url: `${prefix}${tagNameToUrlSafeId(name)}` });
 }
 
-function createConceptFor(
+export function createConceptFor(
   name,
   conceptPrefix,
   conceptNames,
@@ -101,4 +102,20 @@ export function createOrUpdateConceptIndex(
   newConcept = setDatetime(newConcept, DCTERMS.modified, new Date());
   newConcept = setDatetime(newConcept, DCTERMS.created, created);
   return setThing(conceptIndex || createSolidDataset(), newConcept);
+}
+
+export function getTags(concept){
+  return getUrlAll(concept, US.tagged)
+}
+
+export function tagUrlToTagName(tagUrl, tagPrefix){
+  return tagUrl.split(tagPrefix)[1]
+}
+
+export function getLinks(concept){
+  return getUrlAll(concept, US.refersTo)
+}
+
+export function conceptUrlToConceptName(conceptUrl, conceptPrefix){
+  return urlSafeIdToConceptName(conceptUrl.split(conceptPrefix)[1])
 }
