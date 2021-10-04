@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, forwardRef } from 'react'
 
 import { Close as CloseIcon } from "./icons"
 import ConnectionsTabs from './ConnectionsTabs'
@@ -16,7 +16,7 @@ function TagsSection({ concept, tagPrefix }) {
   )
 }
 
-function LinksSection({concept, conceptPrefix}){
+function LinksSection({ concept, conceptPrefix }) {
   const links = getLinks(concept)
   return (
     <div className="p-6">
@@ -46,16 +46,18 @@ function ConnectionsSection({ subSection, concept, tagPrefix, conceptPrefix }) {
   }
 }
 
-export default function ConnectionsPanel({ onClose, concept, tagPrefix, conceptPrefix }) {
+const ConnectionsPanel = forwardRef(({ onClose, concept, tagPrefix, conceptPrefix, className }, ref) => {
   const [activeTab, setActiveTab] = useState('links')
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row justify-between p-6">
+    <div className={`flex flex-col ${className}`} ref={ref}>
+      <div className="flex flex-row justify-between p-6 bg-gray-100">
         <h3 className="font-bold text-gray-500 leading-7 text-2xl">Connections</h3>
-        <CloseIcon className="w-6 h-6 text-gray-700" onClick={onClose} />
+        <CloseIcon className="w-6 h-6 text-gray-700 cursor-pointer" onClick={onClose} />
       </div>
       <ConnectionsTabs active={activeTab} onChange={setActiveTab} />
       <ConnectionsSection subSection={activeTab} concept={concept} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} />
     </div>
   )
-}
+})
+
+export default ConnectionsPanel

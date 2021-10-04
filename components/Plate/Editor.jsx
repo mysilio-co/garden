@@ -9,16 +9,8 @@ import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
 
-import { useConcepts } from "../../hooks/concepts";
-import { useWebId } from "swrlit";
-
-import { asUrl } from "@inrupt/solid-client";
-import {
-  urlSafeIdToConceptName,
-  conceptNameToUrlSafeId,
-} from "../../utils/uris";
+import { conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
-import { conceptIdFromUri } from "../../model/concept";
 import {
   useCustomMentionPlugin,
   Patterns,
@@ -276,10 +268,9 @@ export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
+  conceptNames,
+  ...props
 }) {
-  const webId = useWebId();
-  const { concepts } = useConcepts(webId);
-  //const { workspace, slug: workspaceSlug } = useCurrentWorkspace();
 
   const editableProps = {
     placeholder: "What's on your mind?",
@@ -287,11 +278,7 @@ export default function Editor({
 
   const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
     useCustomMentionPlugin({
-      mentionables: concepts
-        ? concepts.map((c) =>
-            toMentionable(urlSafeIdToConceptName(conceptIdFromUri(asUrl(c))))
-          )
-        : [],
+      mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
       pluginKey: ELEMENT_CONCEPT,
       pattern: Patterns.Concept,
       newMentionable: (s) => {
@@ -333,13 +320,14 @@ export default function Editor({
       editableProps={editableProps}
       initialValue={initialValue}
       onChange={onChange}
+      {...props}
     >
-      <P.HeadingToolbar>
+      <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
         <ToolbarButtonsBasicElements />
         <ToolbarButtonsList />
         <P.ToolbarLink icon={<LinkIcon />} />
         <P.ToolbarImage icon={<ImageIcon />} />
-      </P.HeadingToolbar>
+      </div>
 
       <BallonToolbarMarks />
 

@@ -170,6 +170,13 @@ export function useConcepts(webId, workspaceSlug = "default") {
   return result;
 }
 
+export function useConceptNames(){
+  const { concepts } = useConcepts(webId);
+  const conceptNames = concepts && concepts.map(c => urlSafeIdToConceptName(conceptIdFromUri(asUrl(c))))
+  const result = useMemoCompare(conceptNames, equal);
+  return result;
+}
+
 export function useConceptInCurrentWorkspace(name) {
   const webId = useWebId();
   const { slug: workspaceSlug } = useCurrentWorkspace();

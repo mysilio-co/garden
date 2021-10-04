@@ -78,6 +78,7 @@ export function CreateModal({ isOpen, closeModal }) {
     index: conceptIndex,
     saveIndex: saveConceptIndex,
   } = useConcept(webId, workspaceSlug, name);
+  const conceptNames = useConceptNames(webId)
 
   const conceptExists = concept && !isThingLocal(concept);
 
@@ -161,7 +162,7 @@ export function CreateModal({ isOpen, closeModal }) {
               </div>
 
               <div className="text-left p-4">
-                <PlateEditor editorId={editorId} initialValue={value} />
+                <PlateEditor editorId={editorId} initialValue={value} conceptNames={conceptNames} />
               </div>
             </>
           ) : (
