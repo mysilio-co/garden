@@ -13,7 +13,7 @@ import { getUrl, isThingLocal } from "@inrupt/solid-client";
 import { createOrUpdateSlateJSON, saveNote } from "../model/note";
 import { createOrUpdateConceptIndex } from "../model/concept";
 import { useWorkspace, useCurrentWorkspace } from "../hooks/app";
-import { useConcept } from "../hooks/concepts";
+import { useConcept, useConceptNames } from "../hooks/concepts";
 import { Dialog } from '@headlessui/react';
 
 const TabId = {
@@ -78,6 +78,7 @@ export function CreateModal({ isOpen, closeModal }) {
     index: conceptIndex,
     saveIndex: saveConceptIndex,
   } = useConcept(webId, workspaceSlug, name);
+  const conceptNames = useConceptNames(webId)
 
   const conceptExists = concept && !isThingLocal(concept);
 
@@ -121,7 +122,6 @@ export function CreateModal({ isOpen, closeModal }) {
     }
   };
   const firstInputRef = useRef(null)
-  console.log(isOpen)
   return (
     <Dialog open={isOpen} onClose={close} initialFocus={firstInputRef}
       className="fixed z-10 inset-0 overflow-y-auto"
@@ -162,7 +162,7 @@ export function CreateModal({ isOpen, closeModal }) {
               </div>
 
               <div className="text-left p-4">
-                <PlateEditor editorId={editorId} initialValue={value} />
+                <PlateEditor editorId={editorId} initialValue={value} conceptNames={conceptNames} />
               </div>
             </>
           ) : (
