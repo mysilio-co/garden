@@ -30,7 +30,7 @@ export async function sendMagicLink(username, email) {
   return postFormData(magicLinkURI, {
     username,
     email,
-    returnToUrl: `https://understory.garden/login/${username}.myunderstory.com`,
+    returnToUrl: `https://mysilio.garden/login/${username}.myunderstory.com`,
   });
 }
 
