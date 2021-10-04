@@ -17,6 +17,8 @@ const concept = createConceptFor(
   tagPrefix, ["lunch", "breakfast", "sandwiches"]
 )
 
+const conceptNames = ["foo", "bar"]
+
 const ConceptBodyStory = ({ slateJSON, ...args }) => {
   const note = useMemo(() => createOrUpdateSlateJSON(slateJSON), [slateJSON])
   return (
@@ -37,24 +39,27 @@ the UI when changed.
 export const EmptyConceptBody = ConceptBodyStory.bind({})
 EmptyConceptBody.args = {
   slateJSON: [{ children: [{ text: '' }] }],
-  panelStartsOpen: false
+  panelStartsOpen: false,
+  conceptNames
 }
 
 export const SimpleConceptBody = ConceptBodyStory.bind({})
 SimpleConceptBody.args = {
   slateJSON: [{ children: [{ text: 'this is a simple note' }] }],
-  panelStartsOpen: false
+  panelStartsOpen: false,
+  conceptNames
 }
 
 
 export const SimpleConceptBodyPanelOpen = ConceptBodyStory.bind({})
 SimpleConceptBodyPanelOpen.args = {
   slateJSON: [{ children: [{ text: 'this is a simple note with the panel open' }] }],
-  panelStartsOpen: true
+  panelStartsOpen: true,
+  conceptNames
 }
 
 export const NoNoteConceptBody = () => (
   <ConceptBody
     concept={concept}
-    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} />
+    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} conceptNames={conceptNames} />
 )

@@ -316,7 +316,7 @@ export default function NotePage({
   const saveCallback = async function saveNote() {
     const newNote = createOrUpdateSlateJSON(value, note);
     const newConceptIndex = createOrUpdateConceptIndex(
-      editor,
+      value,
       workspace,
       conceptIndex,
       concept,

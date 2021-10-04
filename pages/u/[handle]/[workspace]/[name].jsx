@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
 
-import NotePageComponent from "../../../../components/NotePage"
+import ConceptEditor from "../../../../components/ConceptEditor"
 import { handleToWebId } from "../../../../utils/uris"
 import { WorkspaceProvider } from "../../../../contexts/WorkspaceContext"
 
@@ -12,8 +12,7 @@ export default function NotePage(){
 
   return (
     <WorkspaceProvider webId={webId} slug={workspace}>
-      <NotePageComponent webId={webId} encodedName={name}
-                         path={`/u/${handle}`} readOnly={true}/>
+      <ConceptEditor webId={webId} workspaceSlug={workspace} slug={name}/>
     </WorkspaceProvider>
   )
 }

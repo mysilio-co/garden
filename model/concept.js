@@ -74,7 +74,7 @@ export function createConceptFor(
 }
 
 export function createOrUpdateConceptIndex(
-  editor,
+  newNoteValue,
   workspace,
   conceptIndex,
   concept,
@@ -86,10 +86,12 @@ export function createOrUpdateConceptIndex(
     ? getUrl(concept, US.storedAt)
     : defaultNoteStorageUri(workspace, name);
 
-  const conceptNames = getConceptNodes(editor).map(([concept]) =>
+  const newNoteValueNode = {children: newNoteValue}
+  const conceptNames = getConceptNodes(newNoteValueNode).map(([concept]) =>
     getConceptNameFromNode(concept)
   );
-  const tagNames = getTagNodes(editor).map(([tag]) => getTagNameFromNode(tag));
+
+  const tagNames = getTagNodes(newNoteValueNode).map(([tag]) => getTagNameFromNode(tag));
   const created = getDatetime(concept, DCTERMS.created) || new Date();
   let newConcept = createConceptFor(
     name,
