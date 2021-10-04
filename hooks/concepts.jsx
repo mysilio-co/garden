@@ -170,7 +170,7 @@ export function useConcepts(webId, workspaceSlug = "default") {
   return result;
 }
 
-export function useConceptNames(){
+export function useConceptNames(webId){
   const { concepts } = useConcepts(webId);
   const conceptNames = concepts && concepts.map(c => urlSafeIdToConceptName(conceptIdFromUri(asUrl(c))))
   const result = useMemoCompare(conceptNames, equal);

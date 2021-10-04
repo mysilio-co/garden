@@ -13,7 +13,7 @@ import { getUrl, isThingLocal } from "@inrupt/solid-client";
 import { createOrUpdateSlateJSON, saveNote } from "../model/note";
 import { createOrUpdateConceptIndex } from "../model/concept";
 import { useWorkspace, useCurrentWorkspace } from "../hooks/app";
-import { useConcept } from "../hooks/concepts";
+import { useConcept, useConceptNames } from "../hooks/concepts";
 import { Dialog } from '@headlessui/react';
 
 const TabId = {
