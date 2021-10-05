@@ -45,6 +45,7 @@ import {
   useConceptIndex,
   useCombinedConceptIndex,
   useConcept,
+  useConceptNames
 } from "../hooks/concepts";
 import { useWorkspace, useCurrentWorkspace } from "../hooks/app";
 
@@ -295,6 +296,8 @@ export default function NotePage({
   const [saving, setSaving] = useState(false);
   const saved = value === undefined || body === value;
 
+  const conceptNames = useConceptNames(webId)
+
   useEffect(
     function setValueFromNote() {
       if (body) {
@@ -313,7 +316,7 @@ export default function NotePage({
   const saveCallback = async function saveNote() {
     const newNote = createOrUpdateSlateJSON(value, note);
     const newConceptIndex = createOrUpdateConceptIndex(
-      editor,
+      value,
       workspace,
       conceptIndex,
       concept,
@@ -447,7 +450,7 @@ export default function NotePage({
                 aria-labelledby="slide-over-heading"
               >
                 <div className="w-full flex flex-col flex-grow mx-16 bg-snow">
-                  <PlateEditor editorId={editorId} initialValue={body} />
+                  <PlateEditor editorId={editorId} initialValue={body} conceptNames={conceptNames}/>
                 </div>
               </section>
             </>

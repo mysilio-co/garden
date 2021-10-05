@@ -2,9 +2,10 @@ import {
   createThing,
   setStringNoLocale,
   getUrl,
-  createSolidDataset,
-  saveSolidDatasetAt,
+  getStringNoLocale,
 } from "@inrupt/solid-client";
+
+import { noteBodyToSlateJSON } from "../utils/slate";
 import { conceptNameToUrlSafeId } from "../utils/uris";
 import { saveThing } from "../utils/fetch";
 import { US } from "../vocab";
@@ -39,4 +40,16 @@ export function createOrUpdateSlateJSON(value, note) {
 export async function saveNote(note, concept) {
   const noteStorageUri = concept && getUrl(concept, US.storedAt);
   return await saveThing(noteStorageUri, note);
+}
+
+export function getAndParseNoteBody(note) {
+  const bodyJSON = note && getStringNoLocale(note, US.noteBody);
+  const slateJSON = note && getStringNoLocale(note, US.slateJSON);
+  if (slateJSON) {
+    return JSON.parse(slateJSON);
+  } else if (bodyJSON) {
+    return noteBodyToSlateJSON(JSON.parse(bodyJSON))
+  } else {
+    return null
+  }
 }

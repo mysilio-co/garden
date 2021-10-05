@@ -63,7 +63,7 @@ export default function Header({ avatarImgSrc }) {
           </Dropdown.Items>
         </Dropdown>
         <NewNoteModal isOpen={showNewNote} setIsOpen={setShowNewNote} />
-        <Avatar src={avatarImgSrc} className="mx-12" />
+        <Avatar src={avatarImgSrc} className="mx-12 w-12 h-12" />
       </div>
     </nav>
   )
