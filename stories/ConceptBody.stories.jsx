@@ -61,5 +61,6 @@ SimpleConceptBodyPanelOpen.args = {
 export const NoNoteConceptBody = () => (
   <ConceptBody
     concept={concept}
-    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} conceptNames={conceptNames} />
+    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} conceptNames={conceptNames
+    } />
 )
