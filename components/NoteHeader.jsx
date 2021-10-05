@@ -1,22 +1,14 @@
 import { Logo } from './logo';
 import Avatar from './Avatar';
 import { NoteVisibilityToggle } from './toggles';
-import { Send as SendIcon }  from './icons';
-import { Button }  from './buttons';
+import { Send as SendIcon } from './icons';
+import { Button } from './buttons';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-/*
-      <div className="flex flex-row items-center">
-        <div className="font-medium">{noteTitle}</div>
-        Visblity_Toggle
-        Share_Button <Button /> {noteUrl}
-      </div>
 
-      */
-
-  export default function NoteHeader({ avatarImgSrc, username, noteTitle, noteCreatedAt, noteLastEdit, visibility, noteUrl}) {
+export default function NoteHeader({ avatarImgSrc, username, noteTitle, noteCreatedAt, noteLastEdit, visibility, noteUrl }) {
   return (
     <nav className="bg-my-green b-2xl flex flex-row h-32">
       <div className="flex flex-row items-center">
@@ -34,7 +26,7 @@ function classNames(...classes) {
               <b>Created</b> {noteCreatedAt}
             </div>
             <div className="ml-2 opacity-50">
-            <b>Last Edit</b> {noteLastEdit}
+              <b>Last Edit</b> {noteLastEdit}
             </div>
           </div>
         </div>
