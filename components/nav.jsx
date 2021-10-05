@@ -8,6 +8,7 @@ import { useAuthentication, useLoggedIn, useMyProfile, useContainer, useWebId } 
 import { useRouter } from 'next/router'
 
 import NotePicker from '../components/NotePicker'
+import WebMonetization from '../components/WebMonetization'
 import { CreateButton }from '../components/Create'
 import { useApp, useWorkspacePreferencesFileUris, useWorkspace, useAppSettings } from '../hooks/app'
 import { deleteResource } from '../utils/fetch'

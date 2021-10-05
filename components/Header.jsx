@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { Formik } from 'formik';
+import { getUrl } from '@inrupt/solid-client'
+import { FOAF } from '@inrupt/vocab-common-rdf'
+import { Dialog } from '@headlessui/react';
+
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
 import { Logo } from './logo';
 import Avatar from './Avatar';
-import Dropdown from '../components/Dropdown';
-import NewNote from '../components/modals/NewNote';
-import { Dialog } from '@headlessui/react';
+import Dropdown from './Dropdown';
+import NewNote from './modals/NewNote';
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -27,7 +31,8 @@ function NewNoteModal({ isOpen, setIsOpen }) {
     </Dialog>)
 }
 
-export default function Header({ avatarImgSrc }) {
+export default function Header({ profile }) {
+  const avatarImgSrc = profile && getUrl(profile, FOAF.img)
   const [showNewNote, setShowNewNote] = useState(false)
   return (
     <nav className="bg-my-green rounded-b-2xl flex flex-row justify-between h-18 items-center">

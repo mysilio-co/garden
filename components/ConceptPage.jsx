@@ -5,6 +5,7 @@ import { useConceptAndNote } from '../hooks/app';
 
 import NoteHeader from './NoteHeader';
 import ConceptEditor from './ConceptEditor';
+import WebMonetization from './WebMonetization';
 
 export default function ConceptPage({ editorId = 'concept-page', webId, workspaceSlug, slug }) {
   const conceptName = slug && urlSafeIdToConceptName(slug);
@@ -13,8 +14,9 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
   const { profile: currentUserProfile } = useMyProfile();
   return (
     <div>
+      <WebMonetization webId={webId} />
       <NoteHeader concept={concept} conceptName={conceptName} authorProfile={authorProfile}
-                  currentUserProfile={currentUserProfile}/>
+        currentUserProfile={currentUserProfile} />
       <ConceptEditor webId={webId} workspaceSlug={workspaceSlug} slug={slug}
         concept={concept} note={note} maybeSaveNoteBody={maybeSaveNoteBody} />
     </div>
