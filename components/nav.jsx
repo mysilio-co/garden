@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 
 import { getUrl, getSourceUrl, getBoolean } from '@inrupt/solid-client'
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 
 import NotePicker from '../components/NotePicker'
 import { CreateButton }from '../components/Create'
-import { useApp, useWorkspacePreferencesFileUris, useAppSettings } from '../hooks/app'
+import { useApp, useWorkspacePreferencesFileUris, useWorkspace, useAppSettings } from '../hooks/app'
 import { deleteResource } from '../utils/fetch'
 import { appPrefix } from '../utils/uris'
 import { US } from '../vocab'
