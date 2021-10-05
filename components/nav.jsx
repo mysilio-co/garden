@@ -38,20 +38,6 @@ function DevTools() {
   )
 }
 
-function LoginVerifier(){
-  const { logout } = useAuthentication()
-  const webId = useWebId()
-  const { error } = useWorkspace(webId, "default", "private")
-  useEffect(function(){
-    if (error && (error.statusCode == 401)){
-      logout()
-    }
-  }, [error && error.statusCode])
-  return (
-    <></>
-  )
-}
-
 export default function Nav() {
   const router = useRouter()
   const { query: { devtools } } = router
@@ -88,9 +74,6 @@ export default function Nav() {
         </li>
         <li>
           <ul className="flex justify-between items-center space-x-4">
-            {loggedIn && (
-              <LoginVerifier/>
-            )}
             {loggedIn && (
               <div>
                 {profileImage ? (
