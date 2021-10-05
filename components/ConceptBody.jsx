@@ -6,13 +6,8 @@ import ConnectionsPanel from "./ConnectionsPanel";
 import { InlineLoader } from './elements'
 import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
 
-const conceptNames = ["foo", "bar"]
-
-export default function ConceptBody({ editorId, concept, note, conceptPrefix, tagPrefix, onNoteBodyChange, panelStartsOpen = false }) {
+export default function ConceptBody({ editorId, concept, note, conceptPrefix, tagPrefix, onNoteBodyChange, conceptNames, panelStartsOpen = false }) {
   const [panelOpen, setPanelOpen] = useState(panelStartsOpen)
-
-  // TODO: implement connection panel button
-
   return (
 
     <div className="relative">
@@ -37,7 +32,7 @@ export default function ConceptBody({ editorId, concept, note, conceptPrefix, ta
       <div className="flex flex-row w-full">
         <div className={`flex-grow py-6 bg-white ${panelOpen ? 'pl-18 pr-9' : 'px-44'}`}>
           {note ? (
-            <NoteEditor editorId={editorId} note={note} onChange={onNoteBodyChange} conceptNames={conceptNames} />
+            <NoteEditor editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
           ) : (
             <InlineLoader />
           )}

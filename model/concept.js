@@ -74,7 +74,7 @@ export function createConceptFor(
 }
 
 export function createOrUpdateConceptIndex(
-  editor,
+  newNoteValue,
   workspace,
   conceptIndex,
   concept,
@@ -86,10 +86,12 @@ export function createOrUpdateConceptIndex(
     ? getUrl(concept, US.storedAt)
     : defaultNoteStorageUri(workspace, name);
 
-  const conceptNames = getConceptNodes(editor).map(([concept]) =>
+  const newNoteValueNode = { children: newNoteValue }
+  const conceptNames = getConceptNodes(newNoteValueNode).map(([concept]) =>
     getConceptNameFromNode(concept)
   );
-  const tagNames = getTagNodes(editor).map(([tag]) => getTagNameFromNode(tag));
+
+  const tagNames = getTagNodes(newNoteValueNode).map(([tag]) => getTagNameFromNode(tag));
   const created = getDatetime(concept, DCTERMS.created) || new Date();
   let newConcept = createConceptFor(
     name,
@@ -104,18 +106,26 @@ export function createOrUpdateConceptIndex(
   return setThing(conceptIndex || createSolidDataset(), newConcept);
 }
 
-export function getTags(concept){
+export function getTags(concept) {
   return getUrlAll(concept, US.tagged)
 }
 
-export function tagUrlToTagName(tagUrl, tagPrefix){
+export function tagUrlToTagName(tagUrl, tagPrefix) {
   return tagUrl.split(tagPrefix)[1]
 }
 
-export function getLinks(concept){
+export function getLinks(concept) {
   return getUrlAll(concept, US.refersTo)
 }
 
-export function conceptUrlToConceptName(conceptUrl, conceptPrefix){
+export function conceptUrlToConceptName(conceptUrl, conceptPrefix) {
   return urlSafeIdToConceptName(conceptUrl.split(conceptPrefix)[1])
+}
+
+export function createExampleConcept(name, conceptPrefix) {
+  let concept = createConcept(conceptPrefix, name);
+
+  concept = setDatetime(concept, DCTERMS.created, new Date());
+  concept = setDatetime(concept, DCTERMS.modified, new Date());
+  return concept
 }

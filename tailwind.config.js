@@ -122,6 +122,7 @@ module.exports = {
 
         'my-green': '#0e90a3',
         'my-orange': '#f27a22',
+        'my-yellow': '#f2b822',
 
         'white-a10': 'rgba(255, 255, 255, 0.1)',
         'white-a20': 'rgba(255, 255, 255, 0.2)'

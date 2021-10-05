@@ -85,7 +85,7 @@ export function CreateModal({ isOpen, closeModal }) {
   const save = async function save() {
     const newNote = createOrUpdateSlateJSON(value);
     const newConceptIndex = createOrUpdateConceptIndex(
-      editor,
+      value,
       workspace,
       conceptIndex,
       concept,
