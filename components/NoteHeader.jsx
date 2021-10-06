@@ -1,36 +1,10 @@
-
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
-import {
-  getStringNoLocale,
-  getDatetime,
-  getUrl
-} from "@inrupt/solid-client";
+import { getStringNoLocale, getDatetime, getUrl } from "@inrupt/solid-client";
+import Link from 'next/link'
 
 import { Logo } from './logo';
 import Avatar from './Avatar';
-import { NoteVisibilityToggle } from './toggles';
-import { Send as SendIcon } from './icons';
-
-function getRelativeTime(d1, d2 = new Date()) {
-  var units = {
-    year: 24 * 60 * 60 * 1000 * 365,
-    month: (24 * 60 * 60 * 1000 * 365) / 12,
-    day: 24 * 60 * 60 * 1000,
-    hour: 60 * 60 * 1000,
-    minute: 60 * 1000,
-    second: 1000,
-  };
-
-  const rtf = new Intl.RelativeTimeFormat("en", {
-    numeric: "auto",
-  });
-  var elapsed = d1 - d2;
-
-  // "Math.abs" accounts for both "past" & "future" scenarios
-  for (var u in units)
-    if (Math.abs(elapsed) > units[u] || u == "second")
-      return rtf.format(Math.round(elapsed / units[u]), u);
-}
+import { getRelativeTime } from '../utils/time.js';
 
 export default function NoteHeader({ concept, conceptName, authorProfile, currentUserProfile, visibility }) {
 
@@ -47,7 +21,11 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
       <div className="flex flex-row">
         <div className="flex flex-row items-center">
           <div className="w-18">
-            <Logo className='w-12 -ml-2.5 transform scale-150 opacity-20' />
+            <Link href="/">
+              <a>
+                <Logo className='w-12 -ml-2.5 transform scale-150 opacity-20' />
+              </a>
+            </Link>
           </div>
         </div>
         <div className="flex flex-row flex-col items-left">

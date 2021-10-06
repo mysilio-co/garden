@@ -121,6 +121,7 @@ module.exports = {
         night: '#190d15',
 
         'my-green': '#0e90a3',
+        'my-dark-green': '#0c7a8a',
         'my-orange': '#f27a22',
         'my-yellow': '#f2b822',
 
