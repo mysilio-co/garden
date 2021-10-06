@@ -13,7 +13,7 @@ export const NewNote = ({ setOpen, conceptNames, isPublic = false }) => {
   const [noteValue, setNoteValue] = useState()
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
-      <div className={`flex flex-row justify-between self-stretch h-18 p-6 ${isPublic ? 'bg-my-green' : 'bg-gray-500'}`}>
+      <div className={`flex flex-row justify-between self-stretch h-18 p-6 ${pub ? 'bg-my-green' : 'bg-gray-500'}`}>
         <div className="flex flex-row justify-start items-start gap-4">
           <h2 className="text-white font-bold text-xl">New {pub ? 'Public' : 'Private'} Note</h2>
           <PrivacyToggle enabled={pub} setEnabled={setPublic} />
