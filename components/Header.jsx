@@ -22,14 +22,18 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
         <div className="w-18 flex flex-col justify-center items-center">
           <Link href="/">
             <a>
-              <Logo className='w-7 transform scale-105' />
+              <Logo className="w-7 transform scale-105" />
             </a>
           </Link>
         </div>
         <Formik>
-          <IconInput type="search" name="search" placeholder="Search"
+          <IconInput
+            type="search"
+            name="search"
+            placeholder="Search"
             icon={<SearchIcon className="ipt-header-search-icon" />}
-            inputClassName="ipt-header-search" />
+            inputClassName="ipt-header-search"
+          />
         </Formik>
       </div>
       <div className="flex flex-row items-center">
@@ -56,19 +60,18 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
         <NewNoteModal open={showNewNote} setOpen={setShowNewNote} conceptNames={conceptNames} />
         <Popover>
           <Popover.Button className="outline-none focus:outline-none">
-            <Avatar src={avatarImgSrc} className="mx-12 w-12 h-12 cursor-pointer" />
+            <Avatar
+              src={avatarImgSrc}
+              className="mx-12 w-12 h-12 cursor-pointer"
+            />
           </Popover.Button>
 
           <Popover.Panel className="absolute origin-top-right right-4 z-10 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <Link href="/profile">
-              <a className="menu-item">
-                edit profile
-              </a>
+              <a className="menu-item">edit profile</a>
             </Link>
             <Link href="/settings">
-              <a className="menu-item">
-                settings
-              </a>
+              <a className="menu-item">settings</a>
             </Link>
             <a href="/privacy" className="menu-item" role="menuitem">
               privacy
@@ -77,8 +80,12 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
               terms of service
             </a>
             {loggedIn && (
-              <button type="submit" className="menu-item" role="menuitem"
-                onClick={logout}>
+              <button
+                type="submit"
+                className="menu-item"
+                role="menuitem"
+                onClick={logout}
+              >
                 log out
               </button>
             )}
@@ -86,5 +93,5 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
         </Popover>
       </div>
     </nav>
-  )
+  );
 }
