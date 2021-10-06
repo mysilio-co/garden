@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Formik } from 'formik';
 import { getUrl } from '@inrupt/solid-client'
 import { FOAF } from '@inrupt/vocab-common-rdf'
-import { Dialog } from '@headlessui/react';
 import Link from 'next/link';
 import { Popover } from '@headlessui/react'
 
@@ -11,24 +10,10 @@ import { IconInput } from './inputs';
 import { Logo } from './logo';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
-import NewNote from './modals/NewNote';
+import NewNoteModal from './modals/NewNote';
 import { classNames } from '../utils/html'
 
-function NewNoteModal({ isOpen, setIsOpen }) {
-  return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)}
-      className="fixed z-10 inset-0 overflow-y-auto"
-    >
-      <Dialog.Overlay className="fixed z-0 inset-0 bg-black opacity-30" />
-
-      <NewNote />
-
-      <button onClick={() => setIsOpen(false)}>Deactivate</button>
-      <button onClick={() => setIsOpen(false)}>Cancel</button>
-    </Dialog>)
-}
-
-export default function Header({ profile, loggedIn, logout }) {
+export default function Header({ profile, loggedIn, logout, conceptNames }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img)
   const [showNewNote, setShowNewNote] = useState(false)
   return (
@@ -52,8 +37,8 @@ export default function Header({ profile, loggedIn, logout }) {
         </Formik>
       </div>
       <div className="flex flex-row items-center">
-        <Dropdown label="New">
-          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg shadow-menu text-xs bg-white focus:outline-none">
+        <Dropdown label="New" >
+          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none">
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
@@ -63,7 +48,7 @@ export default function Header({ profile, loggedIn, logout }) {
                   onClick={() => setShowNewNote(true)}
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm w-full text-left'
+                    'menu-item'
                   )}
                 >
                   Note
@@ -72,7 +57,7 @@ export default function Header({ profile, loggedIn, logout }) {
             </Dropdown.Item>
           </Dropdown.Items>
         </Dropdown>
-        <NewNoteModal isOpen={showNewNote} setIsOpen={setShowNewNote} />
+        <NewNoteModal open={showNewNote} setOpen={setShowNewNote} conceptNames={conceptNames} />
         <Popover>
           <Popover.Button className="outline-none focus:outline-none">
             <Avatar
