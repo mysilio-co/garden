@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Loader } from '../components/elements'
 import Nav from '../components/nav'
 
@@ -115,15 +116,19 @@ export function AreaLink({ coords, href}) {
 
 export function ImageMap({ name, src, areas }) {
   return (
-    <div className="flex flex-col justify-center items-center h-full">
+    <div className="flex flex-col justify-center items-center overflow-hidden">
+      <h1 className="text-3xl m-6 text-lagoon-dark">
+        Click around to explore our Garden Map prototype
+      </h1>
       <map name={name}>
         {areas.map(({ coords, href }) => (
           <AreaLink coords={coords} href={href} />
         ))}
       </map>
-      <img
+      <Image
         width={W}
         height={H}
+        layout="fixed"
         usemap={`#${name}`}
         src={src}
       />
@@ -135,7 +140,7 @@ export function Demo({name="dashboard"}) {
   console.log(name)
   const {src, areas} = DemoImageMaps[name]
   return (
-    <div className="page" id="page" className="bg-aquamarine">
+    <div className="page" id="page" className="bg-aquamarine h-screen">
       <Nav />
       <ImageMap key={name} name={name} src={src} areas={areas} />
     </div>
