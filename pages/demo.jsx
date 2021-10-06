@@ -12,12 +12,21 @@ export const StoragePrefix =
 export const DemoPath = "/demo";
 export const DemoPrefix = `${DemoPath}/`;
 
+
 export const MountainDashboard = {
   src: `${StoragePrefix}00-mountains-dashboard.jpg`,
   areas: [
+    /*
+Sun - links to Sky dashboard
+Left arrow - links to Garden path pitch dashboard
+Right arrow - links to Mysilio Garden login/signup screen
+Read Me - description of what this is (garden note? modal pop-up would be better so people don't have to leave the page right away)
+Tree - links to Mysilio.com marketing site
+Plants - links to Garden dashboard
+    */
     {
       href: `${DemoPrefix}vision`,
-      coords: [0, 0, W, H/3],
+      coords: [0, 0, W, H / 3],
     },
     {
       href: `${DemoPrefix}pitch`,
@@ -33,6 +42,13 @@ export const MountainDashboard = {
 export const PathPitch = {
   src: `${StoragePrefix}01-path-pitch.jpg`,
   areas: [
+    /*
+Product vision = https://understory.garden/u/tani.myunderstory.com/default/pFcGoTnHLbR6vXHZdEVW89bZYgmJesMkyK
+Why Now? https://understory.garden/u/tani.myunderstory.com/default/LyQfwzaipmL
+Market Size = https://understory.garden/u/tani.myunderstory.com/default/44VHTqLcTKDP6KQVHYsro
+Team = https://understory.garden/u/tani.myunderstory.com/default/271EUcxT76uHPAgVroyvdM4C
+Funding = https://understory.garden/u/tani.myunderstory.com/default/VcgmBzxsm5ZasszycqkMTenHMP4BQ4
+    */
     {
       href: DemoPath,
       coords: [0, 0, W, H],
@@ -40,18 +56,41 @@ export const PathPitch = {
   ],
 };
 export const ForestLibrary = {
-  src:`${StoragePrefix}02-forest-library.jpg`,
+  src: `${StoragePrefix}02-forest-library.jpg`,
   areas: [
+    /*
+About Solid: https://understory.garden/u/tani.myunderstory.com/default/E2NKVij
+Building the Creator economy: https://understory.garden/u/tani.myunderstory.com/default/21jdcZML2hG1YXioHasgSxujziGBMSWk3FHvCuW
+Worldbuilding: https://understory.garden/u/tani.myunderstory.com/default/6RUdmJM9BtHedkV8wzrzFvQmg7VeZ4RVQBMcdw37
+Metaverse: https://understory.garden/u/tani.myunderstory.com/default/2PmGzU397iuQQ
+The Mysilio Reading Room: https://understory.garden/u/tani.myunderstory.com/default/3AD3JFXpdDPRKP4z8
+Digital Gardens: https://understory.garden/u/tani.myunderstory.com/default/dv4H3AEmdZk6zUNbmuw
+Platform coops: https://understory.garden/u/tani.myunderstory.com/default/iLBJkb92sXiECbA9cvv
+Social knowledge graphs: https://understory.garden/u/tani.myunderstory.com/default/3PHaBYD9kMsF8kdvk1mHKpohYZkpRb3g
+Infinite rooms for thought: https://understory.garden/u/tani.myunderstory.com/default/jRZ5QCkALH1Z2MW1xHsBdKGvbwLVVzubXq
+    */
     {
       href: DemoPath,
       coords: [0, 0, W, H],
     },
   ],
- }
+};
 
 export const SkyVision = {
   src:`${StoragePrefix}03-sky-vision.jpg`,
   areas: [
+    /*
+Sun = Vision/Manifesto = https://understory.garden/u/tani.myunderstory.com/default/21jdcZML2hG1YXioHasxihdiw6feEENXejepjdt
+Birds = Ian/Tani/Travis
+Ian - https://understory.garden/u/ian.myunderstory.com/default/HHkbwnJkxhr
+Travis - https://understory.garden/u/travis.myunderstory.com/default/4bZUgk5Cs7UuP9Eg5QeT5ZrAwAYgQNLSyZ5M
+  ??????? this currently goes to a totally different note, ask Travis what's up with that and get correct link
+Tani - https://understory.garden/u/tani.myunderstory.com/default/3yYHoe
+Could also link "understory family" note instead of individuals on the birds (if we want to be able to include advisors, etc): https://understory.garden/u/tani.myunderstory.com/default/271EUcxT76uHPAgVroyvdM4C
+Cloud = about the Mysilio brand - https://understory.garden/u/tani.myunderstory.com/default/FW445yWvwojgTfQJBjQUFu
+Cloud = our Art 'n D approach: https://understory.garden/u/tani.myunderstory.com/default/BzfF7kX
+Read me note (to be written): https://understory.garden/u/tani.myunderstory.com/default/5LSGKY1KZn
+    */
     {
       href: DemoPath,
       coords: [0, 0, W, H],
