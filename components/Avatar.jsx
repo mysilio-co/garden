@@ -1,15 +1,17 @@
-export default function Avatar({ src, className }) {
+export default function Avatar({ src, className, ...rest }) {
   if (src) {
     return (
       <img
         src={src}
         className={`w-12 h-12 rounded-full border-2 border-white ${className}`}
+        {...rest}
       />
     );
   } else {
     return (
       <span
         className={`inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100 cursor-pointer ${className}`}
+        {...rest}
       >
         <svg
           className="h-full w-full text-gray-300"
