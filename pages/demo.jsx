@@ -3,9 +3,9 @@ import Image from 'next/image'
 import { Loader } from '../components/elements'
 import Nav from '../components/nav'
 
-const scale = 1 / 3;
-const H = 1950 * scale;
-const W = 4050 * scale;
+const Scale = 1 / 3;
+const W = 4050;
+const H = 1950;
 
 export const StoragePrefix =
   "https://ian.myunderstory.com/public/demo/ImageMap/demo/";
@@ -17,24 +17,32 @@ export const MountainDashboard = {
   src: `${StoragePrefix}00-mountains-dashboard.jpg`,
   areas: [
     /*
-Sun - links to Sky dashboard
-Left arrow - links to Garden path pitch dashboard
 Right arrow - links to Mysilio Garden login/signup screen
-Read Me - description of what this is (garden note? modal pop-up would be better so people don't have to leave the page right away)
-Tree - links to Mysilio.com marketing site
 Plants - links to Garden dashboard
     */
-    {
+    { // Sun
       href: `${DemoPrefix}vision`,
-      coords: [0, 0, W, H / 3],
+      coords: [1200, 0, 2800, 600],
     },
-    {
+    { // READ ME
+      href: '#',
+      coords: [1900, 800, 2400, 1200],
+    },
+    { // Left Arrow
       href: `${DemoPrefix}pitch`,
-      coords: [0, (H * 2) / 3, W, H],
+      coords: [0, 1450, 1000, H],
     },
-    {
-      href: `${DemoPrefix}library`,
-      coords: [0, H / 3, W, (H * 2) / 3],
+    { // Right Arrow
+      href: 'https://mysilio.garden',
+      coords: [3300, 1450, W, H],
+    },
+    { // Tree
+      href: 'https://mysilio.com',
+      coords: [450, 600, 1500, 1450],
+    },
+    { // Plants
+      href: 'https://mysilio.com',
+      coords: [2600, 900, 3400, 1450],
     },
   ],
 };
@@ -105,49 +113,12 @@ export const DemoImageMaps = {
   vision: SkyVision,
 }
 
-function useWindowSize() {
-  // taken from: https://usehooks.com/useWindowSize/
-  // Initialize state with undefined width/height so server and client renders match
-  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-  const [windowSize, setWindowSize] = useState({
-    width: undefined,
-    height: undefined,
-  });
-
-  useEffect(() => {
-    // Handler to call on window resize
-    function handleResize() {
-      // Set window width/height to state
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    // Add event listener
-    window.addEventListener("resize", handleResize);
-
-    // Call handler right away so state gets updated with initial window size
-    handleResize();
-
-    // Remove event listener on cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }, []); // Empty array ensures that effect is only run on mount
-
-  return windowSize;
-}
-
-export function AreaLink({ coords, href}) {
+export function AreaLink({ coords, href }) {
   const [x1, y1, x2, y2] = coords;
   return (
     <Link href={href}>
-      <a
-        className={`bg-storm absolute top-${y1} left-${x1} block`}
-        height={y2 - y1}
-        width={x2 - x1}
-        href={href}
-      >
-        <area shape="rect" coords={`${x1},${y1},${x2},${y2}`} href={href} />
+      <a href={href}>
+        <area shape="rect" coords={`${x1*Scale},${y1*Scale},${x2*Scale},${y2*Scale}`} href={href} />
       </a>
     </Link>
   );
@@ -165,8 +136,8 @@ export function ImageMap({ name, src, areas }) {
         ))}
       </map>
       <Image
-        width={W}
-        height={H}
+        width={W*Scale}
+        height={H*Scale}
         layout="fixed"
         usemap={`#${name}`}
         src={src}
