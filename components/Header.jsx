@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { getUrl } from '@inrupt/solid-client'
 import { FOAF } from '@inrupt/vocab-common-rdf'
 import { Dialog } from '@headlessui/react';
+import Link from 'next/link';
 
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
@@ -38,7 +39,11 @@ export default function Header({ profile }) {
     <nav className="bg-my-green rounded-b-2xl flex flex-row justify-between h-18 items-center">
       <div className="flex flex-row items-center">
         <div className="w-18 flex flex-col justify-center items-center">
-          <Logo className='w-7 transform scale-105' />
+          <Link href="/">
+            <a>
+              <Logo className='w-7 transform scale-105' />
+            </a>
+          </Link>
         </div>
         <Formik>
           <IconInput type="search" name="search" placeholder="Search"
