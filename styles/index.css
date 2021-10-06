@@ -104,6 +104,10 @@ strong {
   @apply text-white h-5 w-5;
 }
 
+.menu-item {
+  @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
+}
+
  /* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
 .tab-btn {
@@ -180,34 +184,6 @@ strong {
 
 .cancel:active {
   @apply bg-transparent text-echeveria-dark ring-2 ring-echeveria-dark;
-}
-
-.block {
-  @apply relative pl-4 border-b-2 border-transparent;
-}
-
-.block.is-over {
-  @apply border-blue-300;
-}
-
-.block-sidebar-button {
-  @apply inline-flex items-center border border-transparent text-gray-500 rounded-full invisible;
-}
-
-.block:hover .block-sidebar-button {
-  @apply visible;
-}
-
-.block-sidebar-button:hover {
-  @apply bg-gray-500 text-white visible;
-}
-
-.block-sidebar-button:focus {
-  @apply outline-none;
-}
-
-.ReactModal__Overlay {
-  @apply z-40;
 }
 
 /* Start purging... */

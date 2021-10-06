@@ -29,8 +29,8 @@ const currentUserProfile = createProfileFor(
   new URL(avatarImg, window.location).toString()
 );
 
-export const DashboardNoteHeader = Template.bind({});
-DashboardNoteHeader.args = {
+export const StandardNoteHeader = Template.bind({});
+StandardNoteHeader.args = {
   label: 'Header/NoteDashboard',
   concept,
   conceptName,

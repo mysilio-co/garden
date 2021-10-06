@@ -1,5 +1,5 @@
-export default function Avatar({ src, className }) {
+export default function Avatar({ className, ...rest }) {
   return (
-    <img src={src} className={`rounded-full border-2 border-white ${className}`} />
+    <img className={`rounded-full border-2 border-white ${className}`} {...rest} />
   )
 }

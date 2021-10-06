@@ -4,6 +4,7 @@ import { getUrl } from '@inrupt/solid-client'
 import { FOAF } from '@inrupt/vocab-common-rdf'
 import { Dialog } from '@headlessui/react';
 import Link from 'next/link';
+import { Popover } from '@headlessui/react'
 
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
@@ -11,12 +12,7 @@ import { Logo } from './logo';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import NewNote from './modals/NewNote';
-
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
+import { classNames } from '../utils/html'
 
 function NewNoteModal({ isOpen, setIsOpen }) {
   return (
@@ -32,7 +28,7 @@ function NewNoteModal({ isOpen, setIsOpen }) {
     </Dialog>)
 }
 
-export default function Header({ profile }) {
+export default function Header({ profile, loggedIn, logout }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img)
   const [showNewNote, setShowNewNote] = useState(false)
   return (
@@ -73,7 +69,36 @@ export default function Header({ profile }) {
           </Dropdown.Items>
         </Dropdown>
         <NewNoteModal isOpen={showNewNote} setIsOpen={setShowNewNote} />
-        <Avatar src={avatarImgSrc} className="mx-12 w-12 h-12" />
+        <Popover>
+          <Popover.Button className="outline-none focus:outline-none">
+            <Avatar src={avatarImgSrc} className="mx-12 w-12 h-12 cursor-pointer" />
+          </Popover.Button>
+
+          <Popover.Panel className="absolute origin-top-right right-4 z-10 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+            <Link href="/profile">
+              <a className="menu-item">
+                edit profile
+              </a>
+            </Link>
+            <Link href="/settings">
+              <a className="menu-item">
+                settings
+              </a>
+            </Link>
+            <a href="/privacy" className="menu-item" role="menuitem">
+              privacy
+            </a>
+            <a href="/tos" className="menu-item" role="menuitem">
+              terms of service
+            </a>
+            {loggedIn && (
+              <button type="submit" className="menu-item" role="menuitem"
+                onClick={logout}>
+                log out
+              </button>
+            )}
+          </Popover.Panel>
+        </Popover>
       </div>
     </nav>
   )
