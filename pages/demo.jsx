@@ -192,7 +192,22 @@ export function ImageMap({ name, src, areas }) {
   return (
     <div className="flex flex-col justify-center items-center overflow-hidden">
       <h1 className="text-3xl m-6 text-lagoon-dark">
-        Click around to explore our Garden Map prototype
+        Click around to explore our Garden Map prototype:
+        <Link href={DemoPath}>
+          <a href={DemoPath}> Mountain </a>
+        </Link>{" "}
+        |
+        <Link href={`${DemoPrefix}path`}>
+          <a href={`${DemoPrefix}path`}> Path </a>
+        </Link>{" "}
+        |
+        <Link href={`${DemoPrefix}sky`}>
+          <a href={`${DemoPrefix}sky`}> Sky </a>
+        </Link>{" "}
+        |
+        <Link href={`${DemoPrefix}forest`}>
+          <a href={`${DemoPrefix}forest`}> Forest </a>
+        </Link>
       </h1>
       <map name={name}>
         {areas.map(({ coords, href }) => (
@@ -200,8 +215,8 @@ export function ImageMap({ name, src, areas }) {
         ))}
       </map>
       <Image
-        width={W*Scale}
-        height={H*Scale}
+        width={W * Scale}
+        height={H * Scale}
         layout="fixed"
         usemap={`#${name}`}
         src={src}
