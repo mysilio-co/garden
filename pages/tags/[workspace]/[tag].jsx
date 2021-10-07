@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
 import { getUrl, getThing } from '@inrupt/solid-client'
 
-import { useCombinedConceptIndex } from '../../../hooks/concepts'
+import { useCombinedConceptIndexDataset } from '../../../hooks/concepts'
 import { useWorkspace } from '../../../hooks/app'
 import { WorkspaceProvider } from "../../../contexts/WorkspaceContext"
 import { US } from '../../../vocab'
@@ -17,7 +17,7 @@ export default function TagPage(){
   const webId = useWebId()
   const { workspace } = useWorkspace(webId, workspaceSlug)
   const tagPrefix = workspace && getUrl(workspace, US.tagPrefix)
-  const { index } = useCombinedConceptIndex(webId, workspaceSlug)
+  const { index } = useCombinedConceptIndexDataset(webId, workspaceSlug)
   const conceptUris = index && conceptUrisTaggedWith(index, `${tagPrefix}${tagNameToUrlSafeId(tag)}`)
   const concepts = conceptUris.map(uri => getThing(index, uri))
   return (
