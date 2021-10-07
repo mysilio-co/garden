@@ -61,10 +61,19 @@ const MentionSelectLabel = (m) => {
   return <span className="text-lagoon">@{mention}</span>;
 };
 
+const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
+  return (
+    <pre {...attributes} {...nodeProps} className="bg-gray-100 px-4 py-2 ml-4 mt-2">
+      <code>{children}</code>
+    </pre>
+  )
+}
+
 const components = P.createPlateComponents({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
+  [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
   [ELEMENT_CONCEPT]: P.withProps(P.MentionElement, {
     renderLabel: ConceptElement,
   }),

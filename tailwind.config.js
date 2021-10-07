@@ -132,8 +132,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: ['Montserrat', 'sans-serif'],
-      logo: ['Bellota', 'cursive', 'sans-serif'],
+      sans: ['Inter', 'sans-serif'],
       mono: ['fira-mono', 'monospace']
     },
   },
