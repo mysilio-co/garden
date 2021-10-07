@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useResource, useAuthentication, useLoggedIn, useMyProfile, useProfile, useWebId, useEnsured } from 'swrlit'
-import { Logo } from '../components/logo'
+import { Logo } from '../logo'
 
 export default function Welcome() {
   const [username, setUsername] = useState("")
