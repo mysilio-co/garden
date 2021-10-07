@@ -1,6 +1,7 @@
 @tailwind base;
 /* Write your own custom base styles here */
-
+/*
+TODO: do we need these?
 a {
   @apply text-ocean;
 }
@@ -28,7 +29,7 @@ a:active {
 .a:active {
   @apply text-passionflower;
 }
-
+*/
 blockquote {
   @apply m-2 p-2 bg-gray-100 border-l-2 border-gray-400 text-gray-600;
 }
@@ -52,6 +53,65 @@ strong {
 /* Stop purging. */
 
 /* Write your own custom component styles here */
+
+/* start components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
+
+.btn-md {
+  @apply text-sm px-6 py-2.5;
+}
+
+.btn-emphasis {
+  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset blur-2xl hover:bg-opacity-20 hover:shadow-btn;
+}
+
+.btn-notification {
+  @apply bg-white text-gray-700 hover:bg-gray-100;
+}
+
+.btn-filled {
+  @apply bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 hover:shadow-btn;
+}
+
+.btn-transparent {
+  @apply bg-white text-white bg-opacity-0 hover:bg-opacity-20 hover:ring-1 hover:ring-inset hover:ring-white hover:shadow-btn;
+}
+
+.btn-round {
+  @apply rounded-full;
+}
+
+.btn-square {
+  @apply rounded-lg;
+}
+
+.ipt {
+  @apply rounded-lg border-0 ring-1 ring-gray-300 py-2.5 px-4 text-sm placeholder-gray-200 focus:ring-gray-300 focus:shadow-ipt-focus;
+}
+
+.ipt.error {
+  @apply ring-ember;
+}
+
+.ipt.success {
+  @apply ring-my-green;
+}
+
+.ipt-header-search {
+  @apply rounded-full ring-0 bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-40 hover:ring-0 focus:ring-0 focus:shadow-none;
+}
+
+.ipt-header-search-icon {
+  @apply text-white h-5 w-5;
+}
+
+.ipt-error-message {
+  @apply text-2xs uppercase text-ember pl-4;
+}
+.menu-item {
+  @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
+}
+
+ /* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
 .tab-btn {
   @apply text-xl rounded-lg p-3;
@@ -129,34 +189,6 @@ strong {
   @apply bg-transparent text-echeveria-dark ring-2 ring-echeveria-dark;
 }
 
-.block {
-  @apply relative pl-4 border-b-2 border-transparent;
-}
-
-.block.is-over {
-  @apply border-blue-300;
-}
-
-.block-sidebar-button {
-  @apply inline-flex items-center border border-transparent text-gray-500 rounded-full invisible;
-}
-
-.block:hover .block-sidebar-button {
-  @apply visible;
-}
-
-.block-sidebar-button:hover {
-  @apply bg-gray-500 text-white visible;
-}
-
-.block-sidebar-button:focus {
-  @apply outline-none;
-}
-
-.ReactModal__Overlay {
-  @apply z-40;
-}
-
 /* Start purging... */
 
 @tailwind utilities;
@@ -224,6 +256,7 @@ h2.font-logo {
 .slate-MentionSelect {
   @apply z-50 !important;
 }
+
 /* hex grid inspired by https://github.com/web-tiki/responsive-grid-of-hexagons/blob/css-grid/hexagons.css */
 
 .grid.hex {
@@ -330,3 +363,4 @@ h2.font-logo {
     grid-column-start: 2;
   }
 }
+

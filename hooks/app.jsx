@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react"
-import { useUnderstoryContainerUri, useConceptContainerUri, useStorageContainer } from './uris'
-import { useThing, useResource, useWebId } from 'swrlit'
+import { useState } from "react"
+import equal from "fast-deep-equal/es6";
+
+import { useThing, useWebId } from 'swrlit'
 import {
-  createSolidDataset, getSourceUrl, createThing, getThingAll, getDatetime, getUrl, setUrl,
+  createSolidDataset, createThing, getUrl, setUrl,
   setThing, getThing, getBoolean
 } from '@inrupt/solid-client'
-import { DCTERMS } from '@inrupt/vocab-common-rdf'
-import { WS } from '@inrupt/lit-generated-vocab-solid-common'
-import { US } from '../vocab'
-import { appPrefix } from '../utils/uris'
-import { useWorkspaceContext } from '../contexts/WorkspaceContext'
+
+import { useUnderstoryContainerUri, useStorageContainer } from './uris';
+import { US } from '../vocab';
+import { appPrefix } from '../utils/uris';
+import { useWorkspaceContext } from '../contexts/WorkspaceContext';
+
+import { useConcept } from '../hooks/concepts';
+import { getAndParseNoteBody, createOrUpdateSlateJSON } from '../model/note';
+import { createOrUpdateConceptIndex } from '../model/concept';
+
 
 const appThingName = "app"
 
@@ -118,4 +124,47 @@ export function useAppSettings(webId){
 export function useDevMode(webId){
   const { settings } = useAppSettings(webId)
   return settings && getBoolean(settings, US.devMode)
+}
+
+export function useConceptAndNote(webId, workspaceSlug, conceptName) {
+  const [saving, setSaving] = useState(false)
+  const { workspace } = useWorkspace(webId, workspaceSlug)
+  const {
+    concept,
+    index: conceptIndex,
+    saveIndex: saveConceptIndex,
+  } = useConcept(webId, workspaceSlug, conceptName);
+
+  const noteStorageUri = concept && getUrl(concept, US.storedAt);
+  const {
+    error: noteError,
+    thing: note,
+    save: saveNote,
+    mutate: mutateNote,
+  } = useThing(noteStorageUri);
+
+  async function maybeSaveNoteBody(newValue) {
+    const noteBody = getAndParseNoteBody(note)
+    if (newValue && !equal(newValue, noteBody)) {
+      const newNote = createOrUpdateSlateJSON(newValue, note);
+      const newConceptIndex = createOrUpdateConceptIndex(
+        newValue,
+        workspace,
+        conceptIndex,
+        concept,
+        conceptName
+      );
+      setSaving(true);
+      try {
+        await saveNote(newNote);
+        await saveConceptIndex(newConceptIndex);
+      } catch (e) {
+        console.log("error saving note", e);
+      } finally {
+        setSaving(false);
+      }
+    }
+  }
+
+  return { note, noteError, concept, maybeSaveNoteBody, saving }
 }
