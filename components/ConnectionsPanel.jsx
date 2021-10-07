@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react'
+import { useState, forwardRef, Suspense } from 'react'
 import { asUrl } from '@inrupt/solid-client'
 import { useWebId } from 'swrlit'
 import { namedNode } from "@rdfjs/dataset";
@@ -6,16 +6,16 @@ import Link from 'next/link'
 
 import { US } from "../vocab";
 import {
-   getTags, getLinks, tagUrlToTagName,
+  getTags, getLinks, tagUrlToTagName,
   conceptIdFromUri,
   conceptUrisThatReference,
- } from '../model/concept'
+} from '../model/concept'
 import Label from './Label'
 import { notePath, urlSafeIdToConceptName } from "../utils/uris";
 import { useWorkspaceContext } from "../contexts/WorkspaceContext";
 import {
   useConceptIndex,
-  useCombinedConceptIndex,
+  useCombinedConceptIndexDataset,
   useConcept,
   useConceptNames
 } from "../hooks/concepts";
@@ -38,7 +38,6 @@ function LinkToConcept({ uri, webId, workspaceSlug, ...props }) {
   const id = conceptIdFromUri(uri);
   const name = urlSafeIdToConceptName(id);
   const url = notePath(webId, workspaceSlug, name)
-
   return (
     <Link href={url}>
       <a>
@@ -48,96 +47,57 @@ function LinkToConcept({ uri, webId, workspaceSlug, ...props }) {
   );
 }
 
-function LinksTo({ name }) {
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
-  const { concept } = useConcept(webId, workspaceSlug, name);
-  const conceptUris = concept && getUrlAll(concept, US.refersTo);
-  return (
-    <ul>
-      {conceptUris &&
-        conceptUris.map((uri) => (
-          <li key={uri}>
-            <LinkToConcept uri={uri} />
-          </li>
-        ))}
-    </ul>
-  );
-}
-
-function LinksFrom({ conceptUri }) {
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
-  const { index } = useCombinedConceptIndex(webId, workspaceSlug);
-  const linkingConcepts = index.match(
-    null,
-    namedNode(US.refersTo),
-    namedNode(conceptUri)
-  );
-  return (
-    <ul>
-      {conceptUrisThatReference(index, conceptUri).map((uri) => (
-        <li key={uri}>
-          <LinkToConcept uri={uri} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function useLinksTo(concept) {
+function linksToConceptInIndex(concept, conceptIndex) {
   const conceptUri = asUrl(concept)
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
-  // TODO: useCombinedConceptIndex is broken after some changes in the solid library - fix!
-  const { index } = useCombinedConceptIndex(webId, workspaceSlug);
-  const linkingConcepts = index.match(
-    null,
-    namedNode(US.refersTo),
-    namedNode(conceptUri)
-  );
-  return linkingConcepts;
+  return conceptUrisThatReference(conceptIndex, conceptUri);
 }
 
-function LinksSection({ concept, conceptPrefix }) {
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
+function LinksSection({ concept, conceptName, webId, workspaceSlug, conceptIndex }) {
   const links = getLinks(concept)
-
-  // //TODO
-  // const linksTo = useLinksTo(concept)
-  //console.log("LINKS TO", linksTo)
-
+  const linksTo = conceptIndex ? linksToConceptInIndex(concept, conceptIndex) : []
 
   return (
     <div className="p-6">
-      {
-        links && (links.map(link => (
-          <LinkToConcept uri={link} webId={webId} workspaceSlug={workspaceSlug} />
-        )))
-      }
+      <h4 className="text-lg mb-2">links from {conceptName}</h4>
+      <div className="flex flex-row flex-wrap gap-3">
+        {
+          links && (links.map(link => (
+            <LinkToConcept key={link} uri={link} webId={webId} workspaceSlug={workspaceSlug} />
+          )))
+        }
+      </div>
+      <h4 className="text-lg mt-4 mb-2">links to {conceptName}</h4>
+      <div className="flex flex-row flex-wrap gap-3">
+        {
+          linksTo && (linksTo.map(link => (
+            <LinkToConcept key={link} uri={link} webId={webId} workspaceSlug={workspaceSlug} />
+          )))
+        }
+      </div>
     </div>
   )
 }
 
-function ConnectionsSection({ subSection, concept, tagPrefix, conceptPrefix }) {
+function ConnectionsSection({ subSection, concept, conceptName, tagPrefix, conceptPrefix, webId, workspaceSlug, conceptIndex }) {
   switch (subSection) {
     case 'links':
       return (
-        <LinksSection concept={concept} conceptPrefix={conceptPrefix}>
-          Link
-        </LinksSection>
+        <Suspense fallback={<div>loading..</div>}>
+          <LinksSection concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}>
+            Link
+          </LinksSection>
+        </Suspense>
       )
     case 'tags':
       return (
-        <TagsSection concept={concept} tagPrefix={tagPrefix}>
+        <TagsSection concept={concept} conceptName={conceptName} tagPrefix={tagPrefix}>
           Tags
         </TagsSection>
       )
   }
 }
 
-const ConnectionsPanel = forwardRef(({ onClose, concept, tagPrefix, conceptPrefix, className }, ref) => {
+const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix, conceptPrefix, className, webId, workspaceSlug, conceptIndex }, ref) => {
   const [activeTab, setActiveTab] = useState('links')
   return (
     <div className={`flex flex-col ${className}`} ref={ref}>
@@ -146,7 +106,8 @@ const ConnectionsPanel = forwardRef(({ onClose, concept, tagPrefix, conceptPrefi
         <CloseIcon className="w-6 h-6 text-gray-700 cursor-pointer" onClick={onClose} />
       </div>
       <ConnectionsTabs active={activeTab} onChange={setActiveTab} />
-      <ConnectionsSection subSection={activeTab} concept={concept} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} />
+      <ConnectionsSection subSection={activeTab} concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix}
+        webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex} />
     </div>
   )
 })

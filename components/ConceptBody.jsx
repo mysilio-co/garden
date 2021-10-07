@@ -20,9 +20,12 @@ function CreateNote({ conceptName, onNoteBodyChange }) {
   )
 }
 
-export default function ConceptBody({ concept, note, noteError, conceptPrefix, conceptName, tagPrefix, onNoteBodyChange, conceptNames, editorId, panelStartsOpen = false }) {
+export default function ConceptBody({
+  concept, note, noteError, conceptPrefix, conceptIndex,
+  conceptName, tagPrefix, onNoteBodyChange, conceptNames, editorId, panelStartsOpen = false,
+  workspaceSlug, webId
+}) {
   const [panelOpen, setPanelOpen] = useState(panelStartsOpen)
-
   return (
 
     <div className="relative">
@@ -66,7 +69,8 @@ export default function ConceptBody({ concept, note, noteError, conceptPrefix, c
           leaveTo="translate-x-full"
         >
           <ConnectionsPanel
-            concept={concept} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
+            concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
+            webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
             onClose={() => setPanelOpen(false)} />
         </Transition>
       </div>
