@@ -104,6 +104,9 @@ strong {
   @apply text-white h-5 w-5;
 }
 
+.ipt-error-message {
+  @apply text-2xs uppercase text-ember pl-4;
+}
 .menu-item {
   @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
 }
