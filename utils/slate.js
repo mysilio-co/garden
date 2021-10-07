@@ -1,7 +1,7 @@
 import { Node } from "slate";
 import * as P from "@udecode/plate";
 
-export const EmptySlateJSON = [{ text: "" }];
+export const EmptySlateJSON = [{children: [{ text: "" }]}];
 export const ELEMENT_CONCEPT = "concept";
 export const ELEMENT_TAG = "tag";
 

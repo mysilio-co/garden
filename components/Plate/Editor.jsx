@@ -1,30 +1,35 @@
 import React, { useState, useMemo, useContext } from "react";
 import * as P from "@udecode/plate";
-import {
-  ToolbarButtonsList,
-  ToolbarButtonsBasicElements,
-  BallonToolbarMarks,
-} from "./Toolbars";
+import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
 
-import { conceptNameToUrlSafeId } from "../../utils/uris";
+import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
+import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
+
 import {
   useCustomMentionPlugin,
   Patterns,
   toMentionable,
   fromMentionable,
 } from "./hooks/useCustomMentionPlugin";
-import NoteContext from "../../contexts/NoteContext";
+import {
+  ToolbarButtonsList,
+  ToolbarButtonsBasicElements,
+  BallonToolbarMarks,
+} from "./Toolbars";
 
 const ConceptElement = (m) => {
+  const webId = useWebId();
+  const { slug: workspaceSlug } = useWorkspaceContext();
   const name = fromMentionable(m);
-  const { path } = useContext(NoteContext);
   const id = conceptNameToUrlSafeId(name);
+  const url = notePath(webId, workspaceSlug, name)
+
   return (
-    <Link href={`${path}/${id}`}>
+    <Link href={url}>
       <a className="text-lagoon">[[{name}]]</a>
     </Link>
   );

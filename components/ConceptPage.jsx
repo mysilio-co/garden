@@ -9,7 +9,7 @@ import WebMonetization from './WebMonetization';
 
 export default function ConceptPage({ editorId = 'concept-page', webId, workspaceSlug, slug }) {
   const conceptName = slug && urlSafeIdToConceptName(slug);
-  const { concept, note, maybeSaveNoteBody, saving } = useConceptAndNote(webId, workspaceSlug, conceptName)
+  const { concept, note, noteError, maybeSaveNoteBody, saving } = useConceptAndNote(webId, workspaceSlug, conceptName)
   const { profile: authorProfile } = useProfile(webId);
   const { profile: currentUserProfile } = useMyProfile();
   return (
@@ -18,7 +18,7 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
       <NoteHeader concept={concept} conceptName={conceptName} authorProfile={authorProfile}
         currentUserProfile={currentUserProfile} />
       <ConceptEditor webId={webId} workspaceSlug={workspaceSlug} slug={slug}
-        concept={concept} note={note} maybeSaveNoteBody={maybeSaveNoteBody} />
+        concept={concept} conceptName={conceptName} editorId={conceptName} note={note} noteError={noteError} maybeSaveNoteBody={maybeSaveNoteBody} />
     </div>
   )
 }

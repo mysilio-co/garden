@@ -166,5 +166,5 @@ export function useConceptAndNote(webId, workspaceSlug, conceptName) {
     }
   }
 
-  return { note, concept, maybeSaveNoteBody, saving }
+  return { note, noteError, concept, maybeSaveNoteBody, saving }
 }
