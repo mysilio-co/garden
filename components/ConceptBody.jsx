@@ -5,9 +5,24 @@ import NoteEditor from "./NoteEditor";
 import ConnectionsPanel from "./ConnectionsPanel";
 import { InlineLoader } from './elements'
 import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
+import { EmptySlateJSON } from "../utils/slate";
 
-export default function ConceptBody({ editorId, concept, note, conceptPrefix, tagPrefix, onNoteBodyChange, conceptNames, panelStartsOpen = false }) {
+function CreateNote({ conceptName, onNoteBodyChange }) {
+  return (
+    <div className="flex flex-col items-center">
+      <h3 className="font-bold text-2xl">{conceptName}</h3>
+      <div>does not exist but you can</div>
+      <button className="btn-md btn-filled btn-square mt-8"
+        onClick={() => { onNoteBodyChange(EmptySlateJSON) }}>
+        Create It!
+      </button>
+    </div>
+  )
+}
+
+export default function ConceptBody({ concept, note, noteError, conceptPrefix, conceptName, tagPrefix, onNoteBodyChange, conceptNames, editorId, panelStartsOpen = false }) {
   const [panelOpen, setPanelOpen] = useState(panelStartsOpen)
+
   return (
 
     <div className="relative">
@@ -33,8 +48,11 @@ export default function ConceptBody({ editorId, concept, note, conceptPrefix, ta
         <div className={`flex-grow py-6 bg-white ${panelOpen ? 'pl-18 pr-9' : 'px-44'}`}>
           {note ? (
             <NoteEditor editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
+          ) : (noteError ? (
+            <CreateNote conceptName={conceptName} onNoteBodyChange={onNoteBodyChange} />
           ) : (
             <InlineLoader />
+          )
           )}
 
         </div>
