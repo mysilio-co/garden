@@ -5,7 +5,7 @@ import { Loader } from '../components/elements'
 
 import { useApp } from '../hooks/app'
 
-import Welcome from '../onboarding/Welcome'
+import Welcome from '../components/onboarding/Welcome'
 import Dashboard from '../components/Dashboard'
 
 function InitPage({ initApp }) {
