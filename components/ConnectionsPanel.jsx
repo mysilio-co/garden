@@ -1,10 +1,7 @@
 import { useState, forwardRef, Suspense } from 'react'
 import { asUrl } from '@inrupt/solid-client'
-import { useWebId } from 'swrlit'
-import { namedNode } from "@rdfjs/dataset";
 import Link from 'next/link'
 
-import { US } from "../vocab";
 import {
   getTags, getLinks, tagUrlToTagName,
   conceptIdFromUri,
@@ -12,14 +9,6 @@ import {
 } from '../model/concept'
 import Label from './Label'
 import { notePath, urlSafeIdToConceptName } from "../utils/uris";
-import { useWorkspaceContext } from "../contexts/WorkspaceContext";
-import {
-  useConceptIndex,
-  useCombinedConceptIndexDataset,
-  useConcept,
-  useConceptNames
-} from "../hooks/concepts";
-
 import { Close as CloseIcon } from "./icons"
 import ConnectionsTabs from './ConnectionsTabs'
 
