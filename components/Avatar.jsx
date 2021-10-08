@@ -1,16 +1,16 @@
-export default function Avatar({ src, className, ...rest }) {
+export default function Avatar({ src, className, border=true, ...rest }) {
   if (src) {
     return (
       <img
         src={src}
-        className={`w-12 h-12 rounded-full border-2 border-white ${className}`}
+        className={`rounded-full ${border ? 'border-2 border-white' : ''} ${className}`}
         {...rest}
       />
     );
   } else {
     return (
       <span
-        className={`inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100 cursor-pointer ${className}`}
+        className={`inline-block rounded-full overflow-hidden bg-gray-100 cursor-pointer ${className}`}
         {...rest}
       >
         <svg
