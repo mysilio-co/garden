@@ -36,30 +36,32 @@ export default function ProfilePage() {
     <div className="page">
       <WebMonetization webId={webId} />
       <Nav />
-      <div className="flex flex-row mt-6 mb-6 justify-between items-start">
-        <div className="flex flex-row">
-          {profileImage && <img className="rounded-full h-36 w-36 object-cover mr-12" src={profileImage} />}
-          <div className="flex flex-col">
-            {name && (
-              <h3 className="text-4xl text-center">{name}</h3>
-            )}
+      <div className="px-18">
+        <div className="flex flex-row mt-6 mb-6 justify-between items-start">
+          <div className="flex flex-row">
+            {profileImage && <img className="rounded-full h-36 w-36 object-cover mr-12" src={profileImage} />}
+            <div className="flex flex-col">
+              {name && (
+                <h3 className="text-4xl text-center">{name}</h3>
+              )}
+            </div>
           </div>
+          {(follows && !isMyProfile) && (
+            alreadyFollowing ? (
+              <button className="btn-md btn-filled btn-square py-1" onClick={unfollow}>
+                unfollow
+              </button>
+            ) : (
+              <button className="btn-md btn-filled btn-square py-1" onClick={follow}>
+                follow
+              </button>
+            )
+          )}
         </div>
-        {(follows && !isMyProfile) && (
-          alreadyFollowing ? (
-            <button className="btn py-1" onClick={unfollow}>
-              unfollow
-            </button>
-          ) : (
-            <button className="btn py-1" onClick={follow}>
-              follow
-            </button>
-          )
-        )}
+        <WorkspaceProvider webId={webId} slug="default">
+          <Notes webId={webId} />
+        </WorkspaceProvider>
       </div>
-      <WorkspaceProvider webId={webId} slug="default">
-        <Notes webId={webId} />
-      </WorkspaceProvider>
     </div>
   )
 }

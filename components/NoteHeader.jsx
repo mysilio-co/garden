@@ -1,10 +1,11 @@
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
-import { getStringNoLocale, getDatetime, getUrl } from "@inrupt/solid-client";
+import { getStringNoLocale, getDatetime, getUrl, asUrl } from "@inrupt/solid-client";
 import Link from 'next/link'
 
 import { Logo } from './logo';
 import Avatar from './Avatar';
-import { getRelativeTime } from '../utils/time.js';
+import { getRelativeTime } from '../utils/time';
+import { profilePath } from '../utils/uris';
 
 export default function NoteHeader({ concept, conceptName, authorProfile, currentUserProfile, visibility }) {
 
@@ -16,6 +17,7 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
 
   const currentUserAvatarImgSrc = currentUserProfile && getUrl(currentUserProfile, FOAF.img)
 
+  const authorWebId = authorProfile && asUrl(authorProfile)
   return (
     <nav className="bg-my-green b-2xl flex flex-row justify-between h-32">
       <div className="flex flex-row">
@@ -31,9 +33,17 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
         <div className="flex flex-row flex-col items-left">
           <div className="mt-6 text-white text-4xl font-black">{conceptName}</div>
           <div className="flex flex-row mt-2 h-3 text-sm text-white">
-            <Avatar src={avatarImgSrc} className="h-6 w-6" />
+            <Link href={authorWebId ? profilePath(authorWebId) : ""}>
+              <a>
+                <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
+              </a>
+            </Link>
             <div className="flex flex-row mt-1">
-              <div className="ml-2 font-bold text-my-yellow">{authorName}</div>
+              <Link href={authorWebId ? profilePath(authorWebId) : ""}>
+                <a>
+                  <div className="ml-2 font-bold text-my-yellow">{authorName}</div>
+                </a>
+              </Link>
               <div className="ml-2 opacity-50" text>
                 <b>Created</b> {noteCreatedAt && getRelativeTime(noteCreatedAt)}
               </div>

@@ -1,5 +1,6 @@
 import { asUrl, getDatetime } from "@inrupt/solid-client";
 import Link from "next/link";
+import Image from "next/image";
 import { DCTERMS } from "@inrupt/vocab-common-rdf";
 
 import { conceptIdFromUri } from "../model/concept";
@@ -18,8 +19,8 @@ export default function NoteCard({ concept, workspaceSlug, webId }) {
       <Link href={url}>
         <a>
           <div>
-            <div className="h-40 border-b-4 border-gray-300 bg-gradient-to-b from-my-green to-my-dark-green">
-
+            <div className="h-40 border-b-4 border-gray-300 bg-gradient-to-b from-my-green to-my-dark-green overflow-hidden">
+              <Image className="transform scale-125 -translate-x-14 -translate-y-5" src="/note-card-splash.png" width="640" height="472"/>
             </div>
             <div className="h-56 flex flex-col justify-between p-6">
               <h3 className="text-gray-700 text-xl font-bold">
