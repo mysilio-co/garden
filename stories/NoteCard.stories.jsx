@@ -16,7 +16,11 @@ const conceptPrefix = "https://example.com/concepts#";
 const conceptName = "Social Knowledge Graphs";
 let concept = createExampleConcept(conceptName, conceptPrefix)
 
-const Template = (args) => <NoteCard {...args} />
+const Template = (args) => (
+  <ul className="max-w-sm grid grid-cols-1">
+    <NoteCard {...args} />
+  </ul>
+)
 
 export const BasicNoteCard = Template.bind({});
 BasicNoteCard.args = {
