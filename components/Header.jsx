@@ -38,7 +38,7 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
       </div>
       <div className="flex flex-row items-center">
         <Dropdown label="New" >
-          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none">
+          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
@@ -66,7 +66,7 @@ export default function Header({ profile, loggedIn, logout, conceptNames }) {
             />
           </Popover.Button>
 
-          <Popover.Panel className="absolute origin-top-right right-4 z-10 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+          <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <Link href="/profile">
               <a className="menu-item">edit profile</a>
             </Link>
