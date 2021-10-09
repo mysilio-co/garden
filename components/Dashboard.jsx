@@ -9,7 +9,7 @@ export default function Dashboard() {
   return (
     <>
       <WebMonetization webId={webId} />
-      <HeaderWithData />
+      <HeaderWithData type="dashboard"/>
       <div className="py-6 px-18">
         <WorkspaceProvider webId={webId} slug="default">
           <Notes webId={webId} />
