@@ -18,7 +18,7 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
   const currentUserAvatarImgSrc = currentUserProfile && getUrl(currentUserProfile, FOAF.img)
 
   const authorWebId = authorProfile && asUrl(authorProfile)
-  const bg = myNote ? "bg-header-gradient" : ((privacy == 'private') ? "bg-gray-500": "bg-my-green")
+  const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
   return (
     <nav className={`${bg} b-2xl flex flex-row justify-between h-32`}>
       <div className="flex flex-row">

@@ -367,3 +367,7 @@ h2.font-logo {
 .bg-header-gradient {
   @apply bg-gradient-to-r from-my-green via-ocean to-my-purple;
 }
+
+.bg-header-gray-gradient {
+  @apply bg-gradient-to-r from-gray-500 via-ocean to-my-purple;
+}
