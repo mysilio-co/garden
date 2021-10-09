@@ -133,6 +133,7 @@ export function useConceptAndNote(webId, workspaceSlug, conceptName) {
     concept,
     index: conceptIndex,
     saveIndex: saveConceptIndex,
+    privacy
   } = useConcept(webId, workspaceSlug, conceptName);
 
   const noteStorageUri = concept && getUrl(concept, US.storedAt);
@@ -166,5 +167,5 @@ export function useConceptAndNote(webId, workspaceSlug, conceptName) {
     }
   }
 
-  return { note, noteError, concept, maybeSaveNoteBody, saving }
+  return { note, noteError, concept, maybeSaveNoteBody, saving, privacy }
 }

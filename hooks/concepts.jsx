@@ -122,6 +122,7 @@ export function useConcept(
         concept,
         index: publicIndex,
         saveIndex: savePublicIndex,
+        privacy: 'public'
       };
     } else if (privateConcept) {
       return {
@@ -129,6 +130,7 @@ export function useConcept(
         concept,
         index: privateIndex,
         saveIndex: savePrivateIndex,
+        privacy: 'private'
       };
     } else if (privateIndex && publicIndex) {
       return {

@@ -364,3 +364,6 @@ h2.font-logo {
   }
 }
 
+.bg-header-gradient {
+  @apply bg-gradient-to-r from-my-green via-ocean to-my-purple;
+}

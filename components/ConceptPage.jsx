@@ -1,4 +1,4 @@
-import { useProfile, useMyProfile } from "swrlit";
+import { useProfile, useMyProfile, useWebId } from "swrlit";
 
 import { urlSafeIdToConceptName } from "../utils/uris";
 import { useConceptAndNote } from '../hooks/app';
@@ -9,8 +9,9 @@ import ConceptEditor from './ConceptEditor';
 import WebMonetization from './WebMonetization';
 
 export default function ConceptPage({ editorId = 'concept-page', webId, workspaceSlug, slug }) {
+  const myWebId = useWebId()
   const conceptName = slug && urlSafeIdToConceptName(slug);
-  const { concept, note, noteError, maybeSaveNoteBody, saving } = useConceptAndNote(webId, workspaceSlug, conceptName)
+  const { concept, note, noteError, maybeSaveNoteBody, saving, privacy} = useConceptAndNote(webId, workspaceSlug, conceptName)
   const { profile: authorProfile } = useProfile(webId);
   const { profile: currentUserProfile } = useMyProfile();
   const { index } = useCombinedConceptIndexDataset(webId, workspaceSlug);
@@ -18,7 +19,7 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
     <div>
       <WebMonetization webId={webId} />
       <NoteHeader concept={concept} conceptName={conceptName} authorProfile={authorProfile}
-        currentUserProfile={currentUserProfile} />
+        currentUserProfile={currentUserProfile} myNote={webId === myWebId} privacy={privacy}/>
       <ConceptEditor webId={webId} workspaceSlug={workspaceSlug} slug={slug}
         conceptIndex={index} concept={concept} conceptName={conceptName} editorId={conceptName}
         note={note} noteError={noteError} maybeSaveNoteBody={maybeSaveNoteBody} />
