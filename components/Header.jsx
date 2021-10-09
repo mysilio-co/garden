@@ -13,11 +13,14 @@ import Dropdown from './Dropdown';
 import NewNoteModal from './modals/NewNote';
 import { classNames } from '../utils/html'
 
-export default function Header({ profile, loggedIn, logout, conceptNames }) {
+
+
+export default function Header({ profile, loggedIn, logout, conceptNames, type }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img)
   const [showNewNote, setShowNewNote] = useState(false)
+  const bg = (type == 'dashboard') ? 'bg-gradient-to-r from-my-green via-ocean to-my-purple' : 'bg-my-green';
   return (
-    <nav className="bg-my-green rounded-b-2xl flex flex-row justify-between h-18 items-center">
+    <nav className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center`}>
       <div className="flex flex-row items-center">
         <div className="w-18 flex flex-col justify-center items-center">
           <Link href="/">
