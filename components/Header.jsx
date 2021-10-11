@@ -18,7 +18,7 @@ import { classNames } from '../utils/html'
 export default function Header({ profile, loggedIn, logout, conceptNames, type }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img)
   const [showNewNote, setShowNewNote] = useState(false)
-  const bg = (type == 'dashboard') ? 'bg-gradient-to-r from-my-green via-ocean to-my-purple' : 'bg-my-green';
+  const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
   return (
     <nav className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center`}>
       <div className="flex flex-row items-center">

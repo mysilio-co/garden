@@ -7,7 +7,7 @@ import Avatar from './Avatar';
 import { getRelativeTime } from '../utils/time';
 import { profilePath } from '../utils/uris';
 
-export default function NoteHeader({ concept, conceptName, authorProfile, currentUserProfile, visibility }) {
+export default function NoteHeader({ concept, conceptName, authorProfile, currentUserProfile, myNote, privacy }) {
 
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
@@ -18,8 +18,9 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
   const currentUserAvatarImgSrc = currentUserProfile && getUrl(currentUserProfile, FOAF.img)
 
   const authorWebId = authorProfile && asUrl(authorProfile)
+  const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
   return (
-    <nav className="bg-my-green b-2xl flex flex-row justify-between h-32">
+    <nav className={`${bg} b-2xl flex flex-row justify-between h-32`}>
       <div className="flex flex-row">
         <div className="flex flex-row items-center">
           <div className="w-18">

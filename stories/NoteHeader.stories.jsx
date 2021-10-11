@@ -29,12 +29,35 @@ const currentUserProfile = createProfileFor(
   new URL(avatarImg, window.location).toString()
 );
 
-export const StandardNoteHeader = Template.bind({});
-StandardNoteHeader.args = {
-  label: 'Header/NoteDashboard',
+export const PublicNoteHeader = Template.bind({});
+PublicNoteHeader.args = {
+  label: 'NoteHeader/Public',
   concept,
   conceptName,
   authorProfile,
   currentUserProfile,
-  visibility: "true"
+  privacy="public",
+  myNote: true
+};
+
+export const PrivateNoteHeader = Template.bind({});
+PrivateNoteHeader.args = {
+  label: 'NoteHeader/Private',
+  concept,
+  conceptName,
+  authorProfile,
+  currentUserProfile,
+  privacy="private",
+  myNote: true
+};
+
+export const ThirdPartyNoteHeader = Template.bind({});
+ThirdPartyNoteHeader.args = {
+  label: 'NoteHeader/ThirdParty',
+  concept,
+  conceptName,
+  authorProfile,
+  currentUserProfile,
+  privacy="public",
+  myNote: false
 };
