@@ -114,7 +114,7 @@ export function addFileToIndex(index: SolidDataset, url: string): SolidDataset {
   return setThing(index || createSolidDataset(), FileThing);
 }
 
-export function addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
+export function _addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
   const TagThing = buildThing(
     createThing({ name: `TAG:base58:${base58.encode(tag)}` })
   )
@@ -127,7 +127,7 @@ export function addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
   return setThing(index || createSolidDataset(), TagThing);
 }
 
-export function addMentionToIndex(
+export function _addMentionToIndex(
   index: SolidDataset,
   handle: string
 ): SolidDataset {
@@ -164,7 +164,7 @@ function _addPersonToIndex(
 function _addConceptToIndex(index: SolidDataset, name: string) {
   const ConceptThing = buildThing(
     // NOTE: This will not work if we move the concept.
-    createThing({ name: `COCNEPT:base58:${base58.encode(name)}` })
+    createThing({ name: `CONCEPT:base58:${base58.encode(name)}` })
   )
     .addUrl(RDF.type, SKOS.Concept)
     .addStringNoLocale(SKOS.prefLabel, name)
