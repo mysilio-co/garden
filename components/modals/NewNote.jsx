@@ -18,17 +18,11 @@ import { useConcept, useConceptNames } from "../../hooks/concepts";
 import NoteEditor from "../NoteEditor"
 import { EmptySlateJSON } from "../../utils/slate";
 
-const TabId = {
-  Concept: "Concept",
-  Bookmark: "Bookmark",
-};
 
-export const NewNote = ({ setOpen, isPublic = false }) => {
+export const NewNote = ({ onClose, isPublic = false }) => {
   const [pub, setPublic] = useState(isPublic)
   const [value, setNoteValue] = useState(EmptySlateJSON);
 
-  const tabs = [TabId.Concept, TabId.Bookmark];
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
   const editorId = "create-modal";
@@ -74,7 +68,7 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
 
   const close = () => {
     reset();
-    setOpen(false);
+    onClose();
   };
 
   const onSubmit = () => {
@@ -94,7 +88,7 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
           <PrivacyToggle enabled={pub} setEnabled={setPublic} />
         </div>
         <CloseIcon className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
-          onClick={() => setOpen && setOpen(false)} />
+          onClick={onClose} />
       </div>
       <div className="divide-1 divide-gray-100">
         <Formik>
@@ -139,11 +133,14 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
 }
 
 
-export default function NewNoteModal({ isPublic = false, conceptNames, open, setOpen }) {
+export default function NewNoteModal({ isPublic = false, conceptNames, open, onClose }) {
   return (
     <Transition.Root show={open} as={Fragment}>
-
-      <Dialog as="div" onClose={() => setOpen(false)} className="fixed z-10 inset-0 overflow-y-auto">
+      <Dialog
+        as="div"
+        onClose={onClose}
+        className="fixed z-10 inset-0 overflow-y-auto"
+      >
         <div className="flex items-end justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
@@ -166,12 +163,11 @@ export default function NewNoteModal({ isPublic = false, conceptNames, open, set
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-full sm:w-5/6">
-
-              <NewNote setOpen={setOpen} conceptNames={conceptNames} />
+              <NewNote onClose={onClose} conceptNames={conceptNames} />
             </div>
           </Transition.Child>
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }

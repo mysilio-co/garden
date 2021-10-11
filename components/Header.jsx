@@ -1,30 +1,54 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { Formik } from 'formik';
 import { getUrl } from '@inrupt/solid-client'
-import { FOAF } from '@inrupt/vocab-common-rdf'
+import { FOAF } from '@inrupt/vocab-common-rdf';
 import Link from 'next/link';
 import { Popover } from '@headlessui/react'
 
+import { classNames } from '../utils/html';
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
 import { Logo } from './logo';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import NewNoteModal from './modals/NewNote';
-import { classNames } from '../utils/html'
+import NewBookmarkModal from './modals/NewBookmark';
+import NewUploadModal from './modals/NewUpload';
 
-
+function ActiveModal({ title, open, onClose, conceptNames }) {
+  switch (title) {
+    case 'Note':
+      return (
+        <NewNoteModal
+          open={open}
+          onClose={onClose}
+          conceptNames={conceptNames}
+        />
+      );
+    case 'Bookmark':
+      return <NewBookmarkModal open={open} onClose={onClose} />;
+    case 'Upload':
+      return <NewUploadModal open={open} onClose={onClose} />;
+    case undefined:
+      return <></>;
+    default:
+      throw new Error(`Unknown ActiveModal: ${title}`);
+  }
+}
 
 export default function Header({ profile, loggedIn, logout, conceptNames, type }) {
-  const avatarImgSrc = profile && getUrl(profile, FOAF.img)
-  const [showNewNote, setShowNewNote] = useState(false)
+  const avatarImgSrc = profile && getUrl(profile, FOAF.img);
+  const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
+
   return (
-    <nav className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center`}>
+    <nav
+      className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center`}
+    >
       <div className="flex flex-row items-center">
         <div className="w-18 flex flex-col justify-center items-center">
           <Link href="/">
-            <a>
+            <a className="flex items-center p-2 rounded hover:bg-lagoon-dark hover:no-underline">
               <Logo className="w-7 transform scale-105" />
             </a>
           </Link>
@@ -40,27 +64,38 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
         </Formik>
       </div>
       <div className="flex flex-row items-center">
-        <Dropdown label="New" >
+        <Dropdown label="New">
           <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            <Dropdown.Item>
-              {({ active }) => (
-                <button
-                  onClick={() => setShowNewNote(true)}
-                  className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'menu-item'
+            {['Note', 'Bookmark', 'Upload'].map((title) => {
+              return (
+                <Dropdown.Item>
+                  {({ active }) => (
+                    <a
+                      href="#"
+                      key={title}
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'menu-item'
+                      )}
+                      onClick={() => setActiveModal(title)}
+                    >
+                      {title}
+                    </a>
                   )}
-                >
-                  Note
-                </button>
-              )}
-            </Dropdown.Item>
+                </Dropdown.Item>
+              );
+            })}
           </Dropdown.Items>
         </Dropdown>
-        <NewNoteModal open={showNewNote} setOpen={setShowNewNote} conceptNames={conceptNames} />
+        <ActiveModal
+          title={activeModal}
+          open={!!activeModal}
+          onClose={() => setActiveModal(undefined)}
+          conceptNames={conceptNames}
+        />
         <Popover>
           <Popover.Button className="outline-none focus:outline-none">
             <Avatar
