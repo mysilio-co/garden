@@ -115,7 +115,7 @@ export const NewNote = ({ onClose, isPublic = false }) => {
             </div>
             <div className="px-6 py-5 h-96">
               <NoteEditor editorId={editorId} onNoteBodyChange={setNoteValue} conceptNames={conceptNames}
-                editableProps={{ className: "overflow-scroll h-5/6" }} />
+                editableProps={{ className: "overflow-auto h-5/6" }} />
             </div>
           </>
         </Formik>
