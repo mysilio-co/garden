@@ -3,7 +3,7 @@ import { useWebId } from "swrlit";
 import { useWorkspaceContext } from "../contexts/WorkspaceContext";
 import { useConcepts } from "../hooks/concepts";
 import { Loader } from './elements'
-import NoteCard from "./NoteCard"
+import NoteCard from "./cards/NoteCard"
 import { hasNote } from "../model/concept"
 
 export function CardsFromConcepts({ concepts, webId, workspaceSlug }) {
@@ -12,12 +12,14 @@ export function CardsFromConcepts({ concepts, webId, workspaceSlug }) {
       {concepts &&
         concepts.map((concept) => {
           if (hasNote(concept)) {
-            <NoteCard
-              key={asUrl(concept)}
-              concept={concept}
-              webId={webId}
-              workspaceSlug={workspaceSlug}
-            />;
+            return (
+              <NoteCard
+                key={asUrl(concept)}
+                concept={concept}
+                webId={webId}
+                workspaceSlug={workspaceSlug}
+              />
+            );
           }
         })}
     </ul>

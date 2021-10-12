@@ -1,6 +1,6 @@
 import React from 'react';
 
-import NoteCard from '../components/NoteCard';
+import NoteCard from '../components/cards/NoteCard';
 import { createExampleConcept } from '../model/concept';
 
 export default {
