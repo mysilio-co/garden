@@ -3,9 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { DCTERMS, FOAF } from "@inrupt/vocab-common-rdf";
 
-import { conceptIdFromUri } from "../model/concept";
-import { notePath, urlSafeIdToConceptName } from "../utils/uris";
-import { getRelativeTime } from '../utils/time.js';
+import { conceptIdFromUri } from "../../model/concept";
+import { notePath, urlSafeIdToConceptName } from "../../utils/uris";
+import { getRelativeTime } from '../../utils/time.js';
 
 export default function NoteCard({ concept, workspaceSlug, webId }) {
   const uri = asUrl(concept);

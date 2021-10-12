@@ -3,18 +3,29 @@ import { Formik, Field, Form } from "formik";
 import { Transition, Dialog } from '@headlessui/react';
 import { Close as CloseIcon, TickCircle } from '../icons'
 import * as Yup from "yup";
-import { addFileToIndex } from '../../model';
+import { useConceptIndex } from '../../hooks/concepts';
+import { useImageUploadUri } from '../../hooks/uris';
+import { useWebId } from 'swrlit';
+import { addImageToIndex } from '../../model';
+import { ImageUploadAndEditor } from '../../components/ImageUploader';
 
-export function NewUpload ({ onClose }) {
-  const webId = useWebId()
+export function NewImage({ onClose }) {
+  const webId = useWebId();
   const { index, save } = useConceptIndex(webId);
+  const [imageUrl, setImageUrl] = useState(undefined);
 
-  const initialValues = { file: null }
-  const onSubmit = async ({ file }) => {
-    // const newIndex = addFileToIndex(index, url);
-    // save(newIndex);
+  const onSubmit = () => {
+    const newIndex = addImageToIndex(index, imageUrl);
+    save(newIndex);
     onClose();
   };
+
+  const onSave = (url) => {
+    console.log(url);
+    setImageUrl(url);
+  };
+
+  const imageUploadUri = useImageUploadUri(webId);
 
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
@@ -28,49 +39,44 @@ export function NewUpload ({ onClose }) {
         />
       </div>
       <div className="divide-1 divide-gray-100">
-        <Formik
-          initialValues={initialValues}
-          onSubmit={onSubmit}
-          validationSchema={Yup.object().shape({
-            file: Yup.mixed().required(),
-          })}
-        >
-          <Form>
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
-              <label
-                htmlFor="file"
-                className="text-sm font-medium text-gray-900"
-              >
-                Upload a file or image
-              </label>
-              <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
-                <Field id="file" name="file" type="file" className="ipt" />
-              </div>
-            </div>
-            <div className="h-20 bg-gray-50 flex flex-row justify-end items-center px-6">
-              <button
-                type="button"
-                className="btn-md btn-filled btn-square h-10 mr-1"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
-              >
-                Create
-                <TickCircle className="ml-1 text-my-green h-4 w-4" />
-              </button>
-            </div>
-          </Form>
-        </Formik>
+        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
+          <label htmlFor="file" className="text-sm font-medium text-gray-900">
+            Upload an Image
+          </label>
+          <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
+            {!imageUrl ? (
+              <ImageUploadAndEditor
+                onSave={onSave}
+                imageUploadContainerUri={imageUploadUri}
+              />
+            ) : (
+              <img src={imageUrl} />
+            )}
+          </div>
+        </div>
+        <div className="h-20 bg-gray-50 flex flex-row justify-end items-center px-6">
+          <button
+            type="button"
+            className="btn-md btn-filled btn-square h-10 mr-1"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+            onSubmit={onSubmit}
+          >
+            Create
+            <TickCircle className="ml-1 text-my-green h-4 w-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function NewUploadModal({ isPublic = false, open, onClose }) {
+export default function NewImageModal({ isPublic = false, open, onClose }) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -100,7 +106,7 @@ export default function NewUploadModal({ isPublic = false, open, onClose }) {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-full sm:w-5/6">
-              <NewUpload onClose={onClose} />
+              <NewImage onClose={onClose} />
             </div>
           </Transition.Child>
         </div>

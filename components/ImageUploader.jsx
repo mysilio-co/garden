@@ -125,7 +125,7 @@ const uploadToContainerFromCanvas = (canvas, containerUri, type, { fetch: passed
 
 })
 
-const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
+export const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
   const reader = new FileReader()
   const myFetch = passedFetch || fetch
   reader.onload = async f => {

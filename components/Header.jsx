@@ -13,7 +13,8 @@ import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import NewNoteModal from './modals/NewNote';
 import NewBookmarkModal from './modals/NewBookmark';
-import NewUploadModal from './modals/NewUpload';
+import NewImageModal from './modals/NewImage';
+import NewFileModal from './modals/NewFile';
 
 function ActiveModal({ title, open, onClose, conceptNames }) {
   switch (title) {
@@ -27,8 +28,10 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
       );
     case 'Bookmark':
       return <NewBookmarkModal open={open} onClose={onClose} />;
-    case 'Upload':
-      return <NewUploadModal open={open} onClose={onClose} />;
+    case 'File':
+      return <NewFileModal open={open} onClose={onClose} />;
+    case 'Image':
+      return <NewImageModal open={open} onClose={onClose} />;
     case undefined:
       return <></>;
     default:
@@ -69,7 +72,7 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {['Note', 'Bookmark', 'Upload'].map((title) => {
+            {['Note', 'Bookmark', 'Image', 'File'].map((title) => {
               return (
                 <Dropdown.Item>
                   {({ active }) => (
