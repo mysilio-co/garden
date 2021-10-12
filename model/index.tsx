@@ -59,29 +59,6 @@ Mention shoudl be set at the prefLabel for a particular Concept.
 // the TS happy. But this is a brittle assumption that may break later.
 type SolidDatasetCore = SolidDataset & DatasetCore;
 
-export function getAllLinks(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(FOAF.Link))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
-
-export function getAllImages(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(FOAF.Image))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
-export function getAllFiles(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(MY.FOAF.File))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
-
 export function addLinkToIndex(index: SolidDataset, url: string): SolidDataset {
   const LinkThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
