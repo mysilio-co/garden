@@ -2,8 +2,21 @@ import { useState, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react';
 import { Formik, Field, Form } from "formik";
 import { Close as CloseIcon, TickCircle } from '../icons'
+import { useConceptIndex } from '../../hooks/concepts';
+import { useWebId } from 'swrlit';
+import { addLinkToIndex } from '../../model/index';
 
 export function NewBookmark({ onClose }) {
+  const webId = useWebId()
+  const { index, save } = useConceptIndex(webId);
+
+  const initialValues = { url: '' };
+  const onSubmit = async ({ url }) => {
+    const newIndex = addLinkToIndex(index, url);
+    await save(newIndex);
+    onClose();
+  };
+
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
       <div className="flex flex-row justify-between self-stretch h-18 p-6 bg-my-green">
@@ -16,17 +29,11 @@ export function NewBookmark({ onClose }) {
         />
       </div>
       <div className="divide-1 divide-gray-100">
-        <Formik
-          initialValues={{ url: '' }}
-          onSubmit={async (values) => {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            alert(JSON.stringify(values, null, 2));
-          }}
-        >
+        <Formik initialValues={initialValues} onSubmit={onSubmit}>
           <Form>
             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
               <label
-                htmlFor="name"
+                htmlFor="url"
                 className="text-sm font-medium text-gray-900"
               >
                 URL
