@@ -86,7 +86,8 @@ export function addLinkToIndex(index: SolidDataset, url: string): SolidDataset {
   const LinkThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
-    .addStringNoLocale(DCTERMS.format, MIME.html)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date())
     .build();
   return setThing(index || createSolidDataset(), LinkThing);
 }
@@ -98,6 +99,8 @@ export function addImageToIndex(
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date())
     // TODO:     .addStringNoLocale(DCTERMS.format, ...)
     .build();
 
@@ -108,6 +111,8 @@ export function addFileToIndex(index: SolidDataset, url: string): SolidDataset {
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.File)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date())
     // TODO:     .addStringNoLocale(DCTERMS.format, ...)
     .build();
 
