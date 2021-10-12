@@ -3,8 +3,19 @@ import { Formik, Field, Form } from "formik";
 import { Transition, Dialog } from '@headlessui/react';
 import { Close as CloseIcon, TickCircle } from '../icons'
 import * as Yup from "yup";
+import { addFileToIndex } from '../../model';
 
 export function NewUpload ({ onClose }) {
+  const webId = useWebId()
+  const { index, save } = useConceptIndex(webId);
+
+  const initialValues = { file: null }
+  const onSubmit = async ({ file }) => {
+    // const newIndex = addFileToIndex(index, url);
+    // save(newIndex);
+    onClose();
+  };
+
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
       <div className="flex flex-row justify-between self-stretch h-18 p-6 bg-my-green">
@@ -18,20 +29,8 @@ export function NewUpload ({ onClose }) {
       </div>
       <div className="divide-1 divide-gray-100">
         <Formik
-          initialValues={{ file: null }}
-          onSubmit={async (values) => {
-            console.alert(
-              JSON.stringify(
-                {
-                  fileName: values.file.name,
-                  type: values.file.type,
-                  size: `${values.file.size} bytes`,
-                },
-                null,
-                2
-              )
-            );
-          }}
+          initialValues={initialValues}
+          onSubmit={onSubmit}
           validationSchema={Yup.object().shape({
             file: Yup.mixed().required(),
           })}
@@ -45,12 +44,7 @@ export function NewUpload ({ onClose }) {
                 Upload a file or image
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
-                <Field
-                  id="file"
-                  name="file"
-                  type="file"
-                  className="ipt"
-                />
+                <Field id="file" name="file" type="file" className="ipt" />
               </div>
             </div>
             <div className="h-20 bg-gray-50 flex flex-row justify-end items-center px-6">
