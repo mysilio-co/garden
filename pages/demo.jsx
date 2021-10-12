@@ -60,27 +60,27 @@ export const PathPitch = {
     {
       // Team
       href: "/u/tani.myunderstory.com/default/271EUcxT76uHPAgVroyvdM4C",
-      coords: [1000, 100, 1400, H],
+      coords: [1000, 100, 1350, 350],
     },
     {
       // Market Size
       href: "/u/tani.myunderstory.com/default/44VHTqLcTKDP6KQVHYsro",
-      coords: [0, 0, 1000, H],
+      coords: [600, 275, 900, 550],
     },
     {
       // Why Now?
       href: "/u/tani.myunderstory.com/default/LyQfwzaipmL",
-      coords: [1000, 0, W, H],
+      coords: [1100, 0, 1400, 700],
     },
     {
       // Product vision
       href: "/u/tani.myunderstory.com/default/pFcGoTnHLbR6vXHZdEVW89bZYgmJesMkyK",
-      coords: [450, 0, 900, H],
+      coords: [450, 550, 900, H],
     },
     {
       // Garden Soil
       href: "/u/tani.myunderstory.com/default/E2NKVij",
-      coords: [190, 0, 450, H],
+      coords: [200, 300, 550, 600],
     },
   ],
 };
