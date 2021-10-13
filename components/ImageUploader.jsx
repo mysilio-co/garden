@@ -303,7 +303,7 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
     const newImagePath = response.headers.get("location")
 
     const newImageUrl = new URL(newImagePath, response.url)
-    onSave && onSave(newImageUrl.toString())
+    onSave && onSave(newImageUrl.toString(), file);
   }
 
   return (

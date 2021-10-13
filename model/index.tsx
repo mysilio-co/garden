@@ -71,20 +71,26 @@ export function addLinkToIndex(index: SolidDataset, url: string): SolidDataset {
 
 export function addImageToIndex(
   index: SolidDataset,
-  url: string
+  url: string,
+  file: File
 ): SolidDataset {
+  const lastModified = new Date(file.lastModified);
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
-    .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date())
-    // TODO:     .addStringNoLocale(DCTERMS.format, ...)
+    .addDatetime(DCTERMS.modified, lastModified)
+    .addDatetime(DCTERMS.created, lastModified)
+    .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
   return setThing(index || createSolidDataset(), ImageThing);
 }
 
-export function addFileToIndex(index: SolidDataset, file: File, url: string): SolidDataset {
+export function addFileToIndex(
+  index: SolidDataset,
+  url: string,
+  file: File
+): SolidDataset {
   const lastModified = new Date(file.lastModified);
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)

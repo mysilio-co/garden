@@ -13,16 +13,17 @@ export function NewImage({ onClose }) {
   const webId = useWebId();
   const { index, save } = useConceptIndex(webId);
   const [imageUrl, setImageUrl] = useState(undefined);
+  const [file, setFile] = useState(undefined);
 
   const onSubmit = () => {
-    const newIndex = addImageToIndex(index, imageUrl);
+    const newIndex = addImageToIndex(index, imageUrl, file);
     save(newIndex);
     onClose();
   };
 
-  const onSave = (url) => {
-    console.log(url);
+  const onSave = (url, file) => {
     setImageUrl(url);
+    setFile(file);
   };
 
   const imageUploadUri = useImageUploadUri(webId);

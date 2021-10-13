@@ -12,12 +12,12 @@ import { useFileContainerUri } from '../../hooks/uris';
 export function NewFile({ onClose }) {
   const webId = useWebId();
   const { index, save } = useConceptIndex(webId);
-const fileContainerUri = useFileContainerUri();
+  const fileContainerUri = useFileContainerUri();
   const initialValues = { file: null };
   const onSubmit = async ({ file }) => {
-    const fileUrl = ``
-    await uploadFromFile
-    const newIndex = addFileToIndex(index, url);
+    const fileUrl = `${fileContainerUri}${file.name}`;
+    await uploadFromFile(file, fileUrl);
+    const newIndex = addFileToIndex(index, url, file);
     save(newIndex);
     onClose();
   };
