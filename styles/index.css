@@ -133,62 +133,6 @@ strong {
   @apply bg-snow text-night h-screen overflow-y-scroll w-screen;
 }
 
-.btn {
-  @apply mx-2 rounded-lg border-none drop-shadow-lg px-4 py-2 bg-echeveria text-base font-medium text-snow;
-}
-
-.btn:hover {
-  @apply outline-none ring-2 ring-offset-2 ring-echeveria ring-offset-echeveria-light bg-echeveria-dark;
-}
-
-.btn:focus {
-  @apply outline-none ring-2 ring-offset-2 ring-echeveria ring-offset-echeveria-light;
-}
-
-.btn:active {
-  @apply outline-none ring-2 ring-offset-0 ring-echeveria bg-echeveria-dark;
-}
-
-.btn:disabled {
-  @apply bg-echeveria-light cursor-not-allowed;
-}
-
-.destructive {
-  @apply bg-ember;
-}
-
-.destructive:hover {
-  @apply bg-ember-dark ring-ember ring-offset-ember-light;
-}
-
-.destructive:focus {
-  @apply ring-ember ring-offset-ember-light;
-}
-
-.destructive:active {
-  @apply bg-ember-dark ring-ember;
-}
-
-.destructive:disabled {
-  @apply bg-ember-light cursor-not-allowed;
-}
-
-.cancel {
-  @apply bg-transparent text-echeveria;
-}
-
-.cancel:hover {
-  @apply bg-transparent text-echeveria-dark;
-}
-
-.cancel:focus {
-  @apply bg-transparent ring-2 ring-echeveria;
-}
-
-.cancel:active {
-  @apply bg-transparent text-echeveria-dark ring-2 ring-echeveria-dark;
-}
-
 /* Start purging... */
 
 @tailwind utilities;

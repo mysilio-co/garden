@@ -1,13 +1,16 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import * as P from "@udecode/plate";
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
 
+import Modal from '../Modal';
 import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
 import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
+import { useImageUploadUri } from "../../hooks/uris";
+import { ImageUploadAndEditor } from "../ImageUploader";
 
 import {
   useCustomMentionPlugin,
@@ -20,6 +23,7 @@ import {
   ToolbarButtonsBasicElements,
   BallonToolbarMarks,
 } from "./Toolbars";
+import ToolbarImageButton from "./ToolbarImageButton"
 
 const ConceptElement = (m) => {
   const webId = useWebId();
@@ -278,6 +282,18 @@ const defaultPlugins = [
   P.createSelectOnBackspacePlugin({ allow: P.ELEMENT_IMAGE }),
 ];
 
+function useImageUrlGetterAndSaveCallback() {
+  const onSaveRef = useRef()
+  const imageUrlGetter = () => new Promise((resolve, reject) => {
+    onSaveRef.current = resolve
+  })
+
+  return {
+    imageUrlGetter,
+    onSave: onSaveRef.current,
+  }
+}
+
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
@@ -325,6 +341,19 @@ export default function Editor({
     [conceptPlugin, tagPlugin, mentionPlugin]
   );
 
+
+  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
+  const imageGetterResolveRef = useRef()
+  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
+    imageGetterResolveRef.current = resolve
+    setImageUploaderOpen(true)
+  })
+  const webId = useWebId()
+  const imageUploadUri = useImageUploadUri(webId)
+  function imageUploaderOnSave(url){
+    imageGetterResolveRef.current(url)
+    setImageUploaderOpen(false)
+  }
   return (
     <P.Plate
       id={editorId}
@@ -340,10 +369,22 @@ export default function Editor({
         <ToolbarButtonsBasicElements />
         <ToolbarButtonsList />
         <P.ToolbarLink icon={<LinkIcon />} />
-        <P.ToolbarImage icon={<ImageIcon />} />
+        <ToolbarImageButton getImageUrl={imageUrlGetter} />
       </div>
 
+      <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+        <div>
+          <ImageUploadAndEditor
+            onSave={imageUploaderOnSave}
+            onClose={() => { setImageUploaderOpen(false) }}
+            imageUploadContainerUri={imageUploadUri}
+          />
+        </div>
+      </Modal>
+
       <BallonToolbarMarks />
+
+
 
       <P.MentionSelect
         {...getConceptProps()}
