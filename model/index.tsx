@@ -44,14 +44,6 @@ specify that they can (and should) be used for all content, including Images.
 Please rememember to add additional format information using DCTERMS.format.  As
 reccomended by the DCTERMS documentation, we use mime types:
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types</DCTERMS>
-
-Tags and Mentions will be implemented as SKOS_XL.Label (with the appropriate
-'@' or '#' included in the label string).  Mentions should also be linked to an
-FOAF:Person record, as they include additional semantices beyong just labeling.
-This allows us to maintain Label Things to represent Tags and Mentions
-independanlty of Concepts and Bookmarks.  Mutiple Labels can be set on a Concept, and
-SKOS_XL.Label can be easily reset on mutiple Concepts. Neither a Tag nor a
-Mention shoudl be set at the prefLabel for a particular Concept.
 */
 
 // This is a temporary hack. We create a DatasetCore from a SolidDataset, and
