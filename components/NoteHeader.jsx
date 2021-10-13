@@ -65,12 +65,16 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
       </div>
       <div className="flex flex-row mt-6">
         <div className="flex flex-row h-10 mr-4">
-          {privacyUpdatingTo ? (
-            <PrivacyChanger name={conceptName}
-              changeTo={privacyUpdatingTo} onFinished={() => setPrivacyUpdatingTo(null)} />
-          ) : (
-            <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={privacy == 'public'}
-              setEnabled={setNoteVisibilityEnabled} />
+          {myNote && (
+            <>
+              {privacyUpdatingTo ? (
+                <PrivacyChanger name={conceptName}
+                  changeTo={privacyUpdatingTo} onFinished={() => setPrivacyUpdatingTo(null)} />
+              ) : (
+                <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={privacy == 'public'}
+                  setEnabled={setNoteVisibilityEnabled} />
+              )}
+            </>
           )}
           {/*
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white-a10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">

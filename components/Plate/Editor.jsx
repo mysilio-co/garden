@@ -299,11 +299,13 @@ export default function Editor({
   initialValue = "",
   onChange,
   conceptNames,
+  readOnly,
   ...props
 }) {
 
   const editableProps = {
     placeholder: "What's on your mind?",
+    readOnly
   };
 
   const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
@@ -350,7 +352,7 @@ export default function Editor({
   })
   const webId = useWebId()
   const imageUploadUri = useImageUploadUri(webId)
-  function imageUploaderOnSave(url){
+  function imageUploaderOnSave(url) {
     imageGetterResolveRef.current(url)
     setImageUploaderOpen(false)
   }
@@ -365,36 +367,40 @@ export default function Editor({
       onChange={onChange}
       {...props}
     >
-      <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
-        <ToolbarButtonsBasicElements />
-        <ToolbarButtonsList />
-        <P.ToolbarLink icon={<LinkIcon />} />
-        <ToolbarImageButton getImageUrl={imageUrlGetter} />
-      </div>
+      {!readOnly && (
+        <>
+          <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
+            <ToolbarButtonsBasicElements />
+            <ToolbarButtonsList />
+            <P.ToolbarLink icon={<LinkIcon />} />
+            <ToolbarImageButton getImageUrl={imageUrlGetter} />
+          </div>
 
-      <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
-        <div>
-          <ImageUploadAndEditor
-            onSave={imageUploaderOnSave}
-            onClose={() => { setImageUploaderOpen(false) }}
-            imageUploadContainerUri={imageUploadUri}
+          <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+            <div>
+              <ImageUploadAndEditor
+                onSave={imageUploaderOnSave}
+                onClose={() => { setImageUploaderOpen(false) }}
+                imageUploadContainerUri={imageUploadUri}
+              />
+            </div>
+          </Modal>
+
+          <BallonToolbarMarks />
+
+
+
+          <P.MentionSelect
+            {...getConceptProps()}
+            renderLabel={ConceptSelectLabel}
           />
-        </div>
-      </Modal>
-
-      <BallonToolbarMarks />
-
-
-
-      <P.MentionSelect
-        {...getConceptProps()}
-        renderLabel={ConceptSelectLabel}
-      />
-      <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
-      <P.MentionSelect
-        {...getMentionProps()}
-        renderLabel={MentionSelectLabel}
-      />
+          <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
+          <P.MentionSelect
+            {...getMentionProps()}
+            renderLabel={MentionSelectLabel}
+          />
+        </>
+      )}
     </P.Plate>
   );
 }

@@ -21,7 +21,7 @@ function CreateNote({ conceptName, onNoteBodyChange }) {
 }
 
 export default function ConceptBody({
-  concept, note, noteError, conceptPrefix, conceptIndex,
+  concept, note, noteError, conceptPrefix, conceptIndex, myNote,
   conceptName, tagPrefix, onNoteBodyChange, conceptNames, editorId, panelStartsOpen = false,
   workspaceSlug, webId
 }) {
@@ -50,7 +50,7 @@ export default function ConceptBody({
       <div className="flex flex-row w-full">
         <div className={`flex-grow py-6 bg-white ${panelOpen ? 'pl-18 pr-9' : 'px-44'}`}>
           {note ? (
-            <NoteEditor editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
+            <NoteEditor myNote={myNote} editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
           ) : (noteError ? (
             <CreateNote conceptName={conceptName} onNoteBodyChange={onNoteBodyChange} />
           ) : (
