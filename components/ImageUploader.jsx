@@ -202,12 +202,9 @@ export default function ImageUploader({ element, onClose, onUpload, uploadDirect
     }
   }, [file])
 
-  const onFileChanged = event => {
-    if (event.target.files) {
-      const file = event.target.files[0]
-      setFile(file)
-    }
-  }
+  const onFileChanged = (file) => {
+    setFile(file);
+  };
 
   return (
     <>
@@ -263,7 +260,10 @@ function UploadFileButton({ onFileChanged, ...rest }) {
         accept="image/*"
         style={{ display: 'none' }}
         type="file"
-        onChange={onFileChanged}
+        onChange={(e) => {
+          const f = e.target.files && e.target.files[0];
+          onFileChanged(f);
+        }}
       />
     </>
   )
@@ -276,12 +276,9 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
   const [croppedCanvas, setCroppedCanvas] = useState()
 
   const [file, setFile] = useState()
-  const onFileChanged = event => {
-    if (event.target.files) {
-      const file = event.target.files[0]
-      setFile(file)
-    }
-  }
+  const onFileChanged = (file) => {
+    setFile(file);
+  };
 
   useEffect(() => {
     let objectUrl;

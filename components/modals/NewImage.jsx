@@ -17,9 +17,11 @@ export function NewImage({ onClose }) {
   const [file, setFile] = useState(undefined);
 
   const onSubmit = () => {
-    const newIndex = addImageToIndex(index, imageUrl, file);
-    save(newIndex);
-    onClose();
+    if (file) {
+      const newIndex = addImageToIndex(index, imageUrl, file);
+      save(newIndex);
+      onClose();
+    }
   };
 
   const onSave = (url, file) => {
@@ -67,7 +69,7 @@ export function NewImage({ onClose }) {
           <button
             type="submit"
             className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
-            onSubmit={onSubmit}
+            onClick={onSubmit}
           >
             Create
             <TickCircle className="ml-1 text-my-green h-4 w-4" />
