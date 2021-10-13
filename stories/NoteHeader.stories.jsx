@@ -36,7 +36,7 @@ PublicNoteHeader.args = {
   conceptName,
   authorProfile,
   currentUserProfile,
-  privacy="public",
+  privacy: "public",
   myNote: true
 };
 
@@ -47,7 +47,7 @@ PrivateNoteHeader.args = {
   conceptName,
   authorProfile,
   currentUserProfile,
-  privacy="private",
+  privacy: "private",
   myNote: true
 };
 
@@ -58,6 +58,6 @@ ThirdPartyNoteHeader.args = {
   conceptName,
   authorProfile,
   currentUserProfile,
-  privacy="public",
+  privacy: "public",
   myNote: false
 };
