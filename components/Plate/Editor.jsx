@@ -373,7 +373,7 @@ export default function Editor({
             <ToolbarButtonsBasicElements />
             <ToolbarButtonsList />
             <P.ToolbarLink icon={<LinkIcon />} />
-            <ToolbarImageButton getImageUrl={imageUrlGetter} />
+            <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
           </div>
 
           <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
