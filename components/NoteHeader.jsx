@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
 import { getStringNoLocale, getDatetime, getUrl, asUrl } from "@inrupt/solid-client";
 import Link from 'next/link'
@@ -6,6 +7,8 @@ import { Logo } from './logo';
 import Avatar from './Avatar';
 import { getRelativeTime } from '../utils/time';
 import { profilePath } from '../utils/uris';
+import { NoteVisibilityToggle } from './toggles'
+import PrivacyChanger from './PrivacyChanger'
 
 export default function NoteHeader({ concept, conceptName, authorProfile, currentUserProfile, myNote, privacy }) {
 
@@ -16,6 +19,11 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
   const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
 
   const currentUserAvatarImgSrc = currentUserProfile && getUrl(currentUserProfile, FOAF.img)
+
+  const [privacyUpdatingTo, setPrivacyUpdatingTo] = useState(false)
+  function setNoteVisibilityEnabled(isEnabled) {
+    setPrivacyUpdatingTo(isEnabled ? 'public' : 'private')
+  }
 
   const authorWebId = authorProfile && asUrl(authorProfile)
   const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
@@ -57,8 +65,18 @@ export default function NoteHeader({ concept, conceptName, authorProfile, curren
       </div>
       <div className="flex flex-row mt-6">
         <div className="flex flex-row h-10 mr-4">
+          {myNote && (
+            <>
+              {privacyUpdatingTo ? (
+                <PrivacyChanger name={conceptName}
+                  changeTo={privacyUpdatingTo} onFinished={() => setPrivacyUpdatingTo(null)} />
+              ) : (
+                <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={privacy == 'public'}
+                  setEnabled={setNoteVisibilityEnabled} />
+              )}
+            </>
+          )}
           {/*
-          <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={visibility} />
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white-a10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
             <span>
               Share
