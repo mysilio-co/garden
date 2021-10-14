@@ -1,10 +1,10 @@
-import { useSlateStatic } from 'slate-react';
+import { useStoreEditorRef } from '@udecode/plate-core';
 import { insertImage } from '@udecode/plate-image';
 
 import { UploadImage as UploadImageIcon } from '../icons'
 
-export default function ToobarImageButton({ getImageUrl }) {
-  const editor = useSlateStatic();
+export default function ToobarImageButton({ getImageUrl, editorId }) {
+  const editor = useStoreEditorRef(editorId);
   async function onMouseDown(event) {
     event.preventDefault();
     event.stopPropagation();
