@@ -12,9 +12,9 @@ function classNames(...classes) {
 export default function Login({ avatarImgSrc }) {
   return (
     <div className="flex flex-row items-stretch relative h-screen overflow-hidden">
-      <div className="relative z-10 bg-my-green p-14 text-white text-sm h-full md:w-1/2 w-full">
-        <div className="relative">
-          <Logo className='w-4/5 z-0 absolute -ml-16 mt-20 transform scale-150 opacity-20' />
+      <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-passionflower p-14 text-white text-sm h-full md:w-1/2 w-full">
+        <div className="relative w-4/5">
+          <Logo className='z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5' />
         </div>
         <div className="text-2xl mt-36">
         Welcome to
@@ -36,11 +36,12 @@ export default function Login({ avatarImgSrc }) {
           </button>
         </div>
         <div className="flex text-xs my-4">
-        By logging in you agree to our terms of service
+        By logging in you agree to our 
+        <a href="">terms of service</a>
         </div>
       </div> 
-      <div className="flex flex-row items-stretch absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden"> 
-        <Image className="z-0 object-cover" src={forestImage} alt="forest" layout="fill" /> 
+      <div className="flex flex-row  items-stretch bg-gradient-to-br from-my-green via-ocean to-passionflower absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden"> 
+        <Image className="z-0 object-cover mix-blend-hard-light opacity-60" src={forestImage} alt="forest" layout="fill" /> 
       </div>
     </div>
   )
