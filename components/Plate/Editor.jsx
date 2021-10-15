@@ -283,14 +283,23 @@ const defaultPlugins = [
 ];
 
 function useImageUrlGetterAndSaveCallback() {
-  const onSaveRef = useRef()
-  const imageUrlGetter = () => new Promise((resolve, reject) => {
-    onSaveRef.current = resolve
+  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
+  const imageGetterResolveRef = useRef()
+  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
+    imageGetterResolveRef.current = resolve
+    setImageUploaderOpen(true)
   })
+  const webId = useWebId()
+  const imageUploadUri = useImageUploadUri(webId)
+  function imageUploaderOnSave(url) {
+    imageGetterResolveRef.current(url)
+    setImageUploaderOpen(false)
+  }
 
   return {
-    imageUrlGetter,
-    onSave: onSaveRef.current,
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
   }
 }
 
@@ -344,18 +353,11 @@ export default function Editor({
   );
 
 
-  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
-  const imageGetterResolveRef = useRef()
-  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
-    imageGetterResolveRef.current = resolve
-    setImageUploaderOpen(true)
-  })
-  const webId = useWebId()
-  const imageUploadUri = useImageUploadUri(webId)
-  function imageUploaderOnSave(url) {
-    imageGetterResolveRef.current(url)
-    setImageUploaderOpen(false)
-  }
+  const {
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
+  } = useImageUrlGetterAndSaveCallback()
   return (
     <P.Plate
       id={editorId}
