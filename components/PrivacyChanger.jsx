@@ -24,6 +24,7 @@ import { useWorkspace } from "../hooks/app";
 import { deleteResource } from "../utils/fetch";
 import {
   createNote,
+  getAndParseNoteBody,
   noteStorageFileAndThingName,
 } from "../model/note";
 import { US } from "../vocab";
@@ -95,7 +96,7 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
       setStringNoLocale(
         privateNote || createNote(),
         US.slateJSON,
-        getStringNoLocale(publicNote, US.slateJSON)
+        JSON.stringify(getAndParseNoteBody(publicNote))
       )
     );
     await savePrivateIndex(
@@ -116,7 +117,7 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
       setStringNoLocale(
         publicNote || createNote(),
         US.slateJSON,
-        getStringNoLocale(privateNote, US.slateJSON)
+        JSON.stringify(getAndParseNoteBody(privateNote))
       )
     );
     await savePublicIndex(
