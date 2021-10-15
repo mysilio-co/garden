@@ -24,6 +24,7 @@ import { useWorkspace } from "../hooks/app";
 import { deleteResource } from "../utils/fetch";
 import {
   createNote,
+  getAndParseNoteBody,
   noteStorageFileAndThingName,
 } from "../model/note";
 import { US } from "../vocab";
@@ -91,18 +92,13 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
   );
 
   async function makePrivate() {
-    let newPrivateNote = privateNote || createNote();
-    newPrivateNote = setStringNoLocale(
-      newPrivateNote,
-      US.slateJSON,
-      getStringNoLocale(publicNote, US.slateJSON)
+    await savePrivateNote(
+      setStringNoLocale(
+        privateNote || createNote(),
+        US.slateJSON,
+        JSON.stringify(getAndParseNoteBody(publicNote))
+      )
     );
-    newPrivateNote = setStringNoLocale(
-      newPrivateNote,
-      US.noteBody,
-      getStringNoLocale(publicNote, US.noteBody)
-    );
-    await savePrivateNote(newPrivateNote);
     await savePrivateIndex(
       setThing(
         privateIndex || createSolidDataset(),
@@ -117,18 +113,13 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
     mutatePublicNote(null, true)
   }
   async function makePublic() {
-    let newPublicNote = publicNote || createNote();
-    newPublicNote = setStringNoLocale(
-      newPublicNote,
-      US.slateJSON,
-      getStringNoLocale(privateNote, US.slateJSON)
+    await savePublicNote(
+      setStringNoLocale(
+        publicNote || createNote(),
+        US.slateJSON,
+        JSON.stringify(getAndParseNoteBody(privateNote))
+      )
     );
-    newPublicNote = setStringNoLocale(
-      newPublicNote,
-      US.noteBody,
-      getStringNoLocale(privateNote, US.noteBody)
-    );
-    await savePublicNote(newPublicNote);
     await savePublicIndex(
       setThing(
         publicIndex || createSolidDataset(),
