@@ -91,13 +91,18 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
   );
 
   async function makePrivate() {
-    await savePrivateNote(
-      setStringNoLocale(
-        privateNote || createNote(),
-        US.slateJSON,
-        getStringNoLocale(publicNote, US.slateJSON)
-      )
+    let newPrivateNote = privateNote || createNote();
+    newPrivateNote = setStringNoLocale(
+      newPrivateNote,
+      US.slateJSON,
+      getStringNoLocale(publicNote, US.slateJSON)
     );
+    newPrivateNote = setStringNoLocale(
+      newPrivateNote,
+      US.noteBody,
+      getStringNoLocale(publicNote, US.noteBody)
+    );
+    await savePrivateNote(newPrivateNote);
     await savePrivateIndex(
       setThing(
         privateIndex || createSolidDataset(),
@@ -112,13 +117,18 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
     mutatePublicNote(null, true)
   }
   async function makePublic() {
-    await savePublicNote(
-      setStringNoLocale(
-        publicNote || createNote(),
-        US.slateJSON,
-        getStringNoLocale(privateNote, US.slateJSON)
-      )
+    let newPublicNote = publicNote || createNote();
+    newPublicNote = setStringNoLocale(
+      newPublicNote,
+      US.slateJSON,
+      getStringNoLocale(privateNote, US.slateJSON)
     );
+    newPublicNote = setStringNoLocale(
+      newPublicNote,
+      US.noteBody,
+      getStringNoLocale(privateNote, US.noteBody)
+    );
+    await savePublicNote(newPublicNote);
     await savePublicIndex(
       setThing(
         publicIndex || createSolidDataset(),
