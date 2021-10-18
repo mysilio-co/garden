@@ -11,6 +11,7 @@ import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
+import { ExternalLinkIcon } from '../icons'
 
 import {
   useCustomMentionPlugin,
@@ -73,6 +74,17 @@ const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
   )
 }
 
+function LinkElement({ attributes, children, element, nodeProps }) {
+  return (
+    <>
+      <a className="text-my-purple underline" href={element.url} {...attributes} {...nodeProps}>{children}</a>
+      <a href={element.url} contentEditable={false} target="_blank" rel="noopener noreferrer">
+        <ExternalLinkIcon className="inline w-4 h-4" />
+      </a>
+    </>
+  )
+}
+
 const components = P.createPlateComponents({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
@@ -87,6 +99,7 @@ const components = P.createPlateComponents({
   [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
     renderLabel: MentionElement,
   }),
+  [P.ELEMENT_LINK]: LinkElement
 });
 
 const defaultOptions = P.createPlateOptions();
