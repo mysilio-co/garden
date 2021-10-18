@@ -22,49 +22,54 @@ export default function PodLogin({ avatarImgSrc }) {
         <div class="text-8xl font-black">solid pod</div>
       </div> 
       <div className="flex flex-row z-10 w-1/2">
-        <div className="flex flex-col mt-36 w-full ">
+        <div className="flex flex-col mt-36 px-20 flex-grow">
           <Formik>
-            <>
-            Username
-            <Input type="text" name="username"
-              className="flex flex-row" />
-            </>
-          </Formik>
-          <Formik>
-            <div className="mt-2">
-            Password
-            <Input type="text" name="password"
-              className="flex flex-row" />
+            <div className="text-white">
+              Username
+              <Input type="text" name="username"
+                className="flex flex-row mt-2" />
             </div>
           </Formik>
+          <Formik>
+            <div className="text-white mt-2">
+            Password
+            <Input type="text" name="password"
+              className="flex flex-row mt-2" />
+            </div>
+          </Formik>
+          <div className="flex flex-row">
+            <button
+              type="button"
+              className={`btn bg-white text-my-green mt-8`}
+            >
+              Login
+            </button>
+            <div className="text-right text-sm text-my-yellow flex-grow mt-8">
+              Forgot password?
+            </div>
+          </div>
           <button
             type="button"
-            className={`btn bg-white text-center text-my-green flex mt-8`}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            className={`btn bg-white items-center text-my-green flex mt-8`}
+            className={`btn text-white border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8`}
           >
             Login with certificate (WebId-TLS)
           </button>
           <button
             type="button"
-            className={`btn bg-white text-center text-my-green flex mt-8`}
+            className={`btn bg-white border-white border-8 border-opacity-100 bg-opacity-20 text-center text-white mt-8`}
           >
             Create an account
           </button>
           <button
             type="button"
-            className={`btn bg-white text-center text-my-green flex mt-8`}
+            className={`btn bg-opacity-0 text-center text-white mt-8`}
           >
             Cancel
           </button>
         </div>
       </div>
       <div className="flex flex-row z-0 items-stretch bg-gradient-to-br from-my-green via-ocean to-passionflower absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden"> 
-        <Image className="z-0 object-cover mix-blend-hard-light opacity-60" src={forestImage} alt="forest" layout="fill" /> 
+        <Image className="z-0 object-cover mix-blend-soft-light opacity-90 filter blur-md" src={forestImage} alt="forest" layout="fill" /> 
       </div>
     </div>
   )
