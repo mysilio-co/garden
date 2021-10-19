@@ -21,7 +21,7 @@ export default function PodLogin({ avatarImgSrc }) {
         </div> 
         <div class="md:text-8xl text-4xl font-black">solid pod</div>
       </div> 
-      <div className="flex flex-row z-10 mt-36 md:mt-0 md:w-1/2 absolute md:relative">
+      <div className="flex flex-row z-10 w-full mt-36 md:mt-0 md:w-1/2 absolute md:relative">
         <div className="flex flex-col md:mt-36 px-20 flex-grow">
           <Formik>
             <div className="text-white">
