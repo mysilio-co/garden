@@ -11,6 +11,7 @@ import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
+import { ExternalLinkIcon } from '../icons'
 
 import {
   useCustomMentionPlugin,
@@ -73,6 +74,17 @@ const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
   )
 }
 
+function LinkElement({ attributes, children, element, nodeProps }) {
+  return (
+    <>
+      <a className="text-my-purple underline" href={element.url} {...attributes} {...nodeProps}>{children}</a>
+      <a href={element.url} contentEditable={false} target="_blank" rel="noopener noreferrer">
+        <ExternalLinkIcon className="inline w-4 h-4" />
+      </a>
+    </>
+  )
+}
+
 const components = P.createPlateComponents({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
@@ -87,6 +99,7 @@ const components = P.createPlateComponents({
   [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
     renderLabel: MentionElement,
   }),
+  [P.ELEMENT_LINK]: LinkElement
 });
 
 const defaultOptions = P.createPlateOptions();
@@ -283,14 +296,23 @@ const defaultPlugins = [
 ];
 
 function useImageUrlGetterAndSaveCallback() {
-  const onSaveRef = useRef()
-  const imageUrlGetter = () => new Promise((resolve, reject) => {
-    onSaveRef.current = resolve
+  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
+  const imageGetterResolveRef = useRef()
+  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
+    imageGetterResolveRef.current = resolve
+    setImageUploaderOpen(true)
   })
+  const webId = useWebId()
+  const imageUploadUri = useImageUploadUri(webId)
+  function imageUploaderOnSave(url) {
+    imageGetterResolveRef.current(url)
+    setImageUploaderOpen(false)
+  }
 
   return {
-    imageUrlGetter,
-    onSave: onSaveRef.current,
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
   }
 }
 
@@ -344,18 +366,11 @@ export default function Editor({
   );
 
 
-  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
-  const imageGetterResolveRef = useRef()
-  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
-    imageGetterResolveRef.current = resolve
-    setImageUploaderOpen(true)
-  })
-  const webId = useWebId()
-  const imageUploadUri = useImageUploadUri(webId)
-  function imageUploaderOnSave(url) {
-    imageGetterResolveRef.current(url)
-    setImageUploaderOpen(false)
-  }
+  const {
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
+  } = useImageUrlGetterAndSaveCallback()
   return (
     <P.Plate
       id={editorId}

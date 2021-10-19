@@ -167,5 +167,9 @@ export function useConceptAndNote(webId, workspaceSlug, conceptName) {
     }
   }
 
-  return { note, noteError, concept, maybeSaveNoteBody, saving, privacy }
+  async function saveConcept(newConcept){
+    return await saveConceptIndex(setThing(conceptIndex, newConcept))
+  }
+
+  return { note, noteError, maybeSaveNoteBody, concept, saveConcept, saving, privacy }
 }
