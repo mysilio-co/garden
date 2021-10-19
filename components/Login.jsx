@@ -12,7 +12,7 @@ function classNames(...classes) {
 export default function Login({ avatarImgSrc }) {
   return (
     <div className="flex flex-row items-stretch relative h-screen overflow-hidden">
-      <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-passionflower p-14 text-white text-sm h-full md:w-1/2 w-full">
+      <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-passionflower p-14 text-white text-sm h-full lg:w-1/2 w-full">
         <div className="relative w-4/5">
           <Logo className='z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5' />
         </div>
