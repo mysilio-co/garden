@@ -50,19 +50,19 @@ export default function PodLogin({ avatarImgSrc }) {
           </div>
           <button
             type="button"
-            className={`btn text-white border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8`}
+            className={`text-white border-t border-b border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8 p-6`}
           >
             Login with certificate (WebId-TLS)
           </button>
           <button
             type="button"
-            className={`btn bg-white border-white border-8 border-opacity-100 bg-opacity-20 text-center text-white mt-8`}
+            className={`p-2 bg-white border border-opacity-100 border-white bg-opacity-20 text-center text-white mt-8 rounded-full`}
           >
             Create an account
           </button>
           <button
             type="button"
-            className={`btn bg-opacity-0 text-center text-white mt-8`}
+            className={`btn bg-opacity-0 text-center text-white mt-6`}
           >
             Cancel
           </button>
