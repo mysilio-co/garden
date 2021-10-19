@@ -2,8 +2,9 @@ import { Logo } from './logo';
 import { Formik } from 'formik'
 import { ArrowRight as ArrowRightIcon } from './icons'
 import { Input } from './inputs';
+import { ArrowCircleRight } from './icons'
 import Image from 'next/image';
-import forestImage from "../public/forest-landscape.png";
+import forestImage from '../public/forest-landscape.png';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -40,9 +41,9 @@ export default function PodLogin({ avatarImgSrc }) {
           <div className="flex flex-row">
             <button
               type="button"
-              className={`btn bg-white text-my-green mt-8`}
+              className={`flex btn-md btn-filled btn-square bg-white text-my-green mt-8 h-10`}
             >
-              Login
+              Login <ArrowCircleRight className="w-10 h-10 -m-1 ml-2" />
             </button>
             <div className="text-right text-sm text-my-yellow flex-grow mt-8">
               Forgot password?
