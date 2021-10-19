@@ -21,7 +21,6 @@ export function NewFile({ onClose }) {
   const onSubmit = async () => {
     if (file) {
       const fileUrl = `${fileContainerUri}${file.name}`;
-      console.log('url', fileUrl);
       await uploadFromFile(file, fileUrl);
       const newIndex = addFileToIndex(index, fileUrl, file);
       save(newIndex);
