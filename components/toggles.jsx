@@ -21,8 +21,19 @@ export function PrivacyToggle({ enabled, setEnabled }) {
           enabled ? 'translate-x-5' : 'translate-x-0',
           'flex-grow-0 pointer-events-none inline-block h-5 w-5 p-1 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 flex flex-row items-center justify-center'
         )}>
-        {!enabled && (<Eyeslash className="flex-grow-0"/>)}
+        {!enabled && (<Eyeslash className="flex-grow-0" />)}
       </span>
     </Switch>
+  )
+}
+
+export function NoteVisibilityToggle({ enabled, setEnabled }) {
+  return (
+    <div className="flex flex-row mt-2 h-6 text-xs text-white">
+      <div className="object-center mt-1 opacity-50 mr-2">
+        {enabled ? "Public" : "Private"}
+      </div>
+      <PrivacyToggle enabled={enabled} setEnabled={setEnabled} />
+    </div >
   )
 }

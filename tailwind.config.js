@@ -2,65 +2,56 @@ module.exports = {
   purge: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      backgroundImage: {
-        'forest-image': "url('./static/media/public/forest-landscape.png')",
+      minWidth: {
+        '1/5': '20%',
+        '1/4': '25%',
+        '2/5': '40%',
+        '1/2': '50%',
+        '3/5': '60%',
+        '3/4': '75%',
+        '4/5': '80%',
       },
-    },
-    minWidth: {
-      '0': '0',
-      '1/5': '20%',
-      '1/4': '25%',
-      '2/5': '40%',
-      '1/2': '50%',
-      '3/5': '60%',
-      '3/4': '75%',
-      '4/5': '80%',
-      'full': '100%',
-    },
-    minHeight: {
-      '0': '0',
-      '1/5': '20%',
-      '1/4': '25%',
-      '2/5': '40%',
-      '1/2': '50%',
-      '3/5': '60%',
-      '3/4': '75%',
-      '4/5': '80%',
-      'full': '100%',
-    },
-    maxWidth: {
-      '0': '0',
-      '1/5': '20%',
-      '1/4': '25%',
-      '2/5': '40%',
-      '1/2': '50%',
-      '3/5': '60%',
-      '3/4': '75%',
-      '4/5': '80%',
-      'full': '100%',
-    },
-    maxHeight: {
-      '0': '0',
-      '1/5': '20%',
-      '1/4': '25%',
-      '2/5': '40%',
-      '1/2': '50%',
-      '3/5': '60%',
-      '3/4': '75%',
-      '4/5': '80%',
-      'full': '100%',
-    },
-    extend: {
+      minHeight: {
+        '1/5': '20%',
+        '1/4': '25%',
+        '2/5': '40%',
+        '1/2': '50%',
+        '3/5': '60%',
+        '3/4': '75%',
+        '4/5': '80%',
+      },
+      maxWidth: {
+        '1/5': '20%',
+        '1/4': '25%',
+        '2/5': '40%',
+        '1/2': '50%',
+        '3/5': '60%',
+        '3/4': '75%',
+        '4/5': '80%',
+      },
+      maxHeight: {
+        '1/5': '20%',
+        '1/4': '25%',
+        '2/5': '40%',
+        '1/2': '50%',
+        '3/5': '60%',
+        '3/4': '75%',
+        '4/5': '80%',
+      },
       height: {
         '18': '4.5rem'
       },
       width: {
         '18': '4.5rem'
       },
+      padding: {
+        '18': '4.5rem'
+      },
       boxShadow: {
         btn: "8px 16px 24px -8px rgba(0, 0, 0, 0.12)",
         'ipt-focus': "0 0 0 3px rgba(12, 122, 138, 0.5)",
-        menu: "0 25px 50px -12px rgba(0, 0, 0, 0.35)"
+        menu: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
+        label: "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px -1px rgba(0, 0, 0, 0.1)"
       },
       fontSize: {
         '2xs': '.625rem'
@@ -91,7 +82,7 @@ module.exports = {
         },
 
         coral: {
-          light:  '#fbcbb7',
+          light: '#fbcbb7',
           DEFAULT: '#f6895a',
           dark: '#a45b3c',
         },
@@ -123,14 +114,20 @@ module.exports = {
 
         'my-green': '#0e90a3',
         'my-yellow': '#f2b822',
+        'my-dark-green': '#0c7a8a',
+        'my-orange': '#f27a22',
+        'my-yellow': '#f2b822',
+        'my-purple': '#944c7d',
 
         'white-a10': 'rgba(255, 255, 255, 0.1)',
         'white-a20': 'rgba(255, 255, 255, 0.2)'
       },
+      backgroundImage: {
+        'forest-image': 'url("/img/forest-landscape.png")',
+      },
     },
     fontFamily: {
-      sans: ['Montserrat', 'sans-serif'],
-      logo: ['Bellota', 'cursive', 'sans-serif'],
+      sans: ['Inter', 'sans-serif'],
       mono: ['fira-mono', 'monospace']
     },
   },

@@ -9,6 +9,7 @@ import {
   setUrl,
   getThing,
   createThing,
+  toRdfJsDataset,
 } from "@inrupt/solid-client";
 import { DCTERMS } from "@inrupt/vocab-common-rdf";
 import { useResource, useWebId, useThing } from "swrlit";
@@ -40,22 +41,28 @@ export function useConceptIndex(
   }
 }
 
-export function useCombinedConceptIndex(webId, workspaceSlug) {
-  const { index: privateIndex, save: savePrivateIndex } = useConceptIndex(
+export function useCombinedConceptIndexDataset(webId, workspaceSlug) {
+  const { index: privateIndex } = useConceptIndex(
     webId,
     workspaceSlug,
     "private"
   );
-  const { index: publicIndex, save: savePublicIndex } = useConceptIndex(
+  const { index: publicIndex } = useConceptIndex(
     webId,
     workspaceSlug,
     "public"
   );
+
+  const combinedIndex = useMemo(() => {
+    const privateIndexDataset = privateIndex && toRdfJsDataset(privateIndex)
+    const publicIndexDataset = publicIndex && toRdfJsDataset(publicIndex)
+    return dataset([
+      ...(privateIndexDataset || []),
+      ...(publicIndexDataset || []),
+    ])
+  }, [publicIndex, privateIndex])
   return {
-    index: dataset([
-      ...(privateIndex && privateIndex.quads ? privateIndex.quads : []),
-      ...(publicIndex && publicIndex.quads ? publicIndex.quads : []),
-    ]),
+    index: combinedIndex,
   };
 }
 
@@ -115,6 +122,7 @@ export function useConcept(
         concept,
         index: publicIndex,
         saveIndex: savePublicIndex,
+        privacy: 'public'
       };
     } else if (privateConcept) {
       return {
@@ -122,6 +130,7 @@ export function useConcept(
         concept,
         index: privateIndex,
         saveIndex: savePrivateIndex,
+        privacy: 'private'
       };
     } else if (privateIndex && publicIndex) {
       return {
@@ -167,6 +176,13 @@ export function useConcepts(webId, workspaceSlug = "default") {
         getDatetime(b, DCTERMS.modified) - getDatetime(a, DCTERMS.modified)
     );
   const result = useMemoCompare({ concepts }, equal);
+  return result;
+}
+
+export function useConceptNames(webId) {
+  const { concepts } = useConcepts(webId);
+  const conceptNames = concepts && concepts.map(c => urlSafeIdToConceptName(conceptIdFromUri(asUrl(c))))
+  const result = useMemoCompare(conceptNames, equal);
   return result;
 }
 

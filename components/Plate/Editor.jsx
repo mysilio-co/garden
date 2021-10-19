@@ -1,61 +1,40 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import * as P from "@udecode/plate";
-import { useSelected, useReadOnly } from "slate-react";
-import {
-  ToolbarButtonsList,
-  ToolbarButtonsBasicElements,
-  BallonToolbarMarks,
-} from "./Toolbars";
+import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
-import { Portal } from "../../components/elements";
 
-import { useCurrentWorkspace } from "../../hooks/app";
-import { useConcepts } from "../../hooks/concepts";
-import { useWebId } from "swrlit";
-
-import { asUrl } from "@inrupt/solid-client";
-import {
-  urlSafeIdToConceptName,
-  conceptNameToUrlSafeId,
-} from "../../utils/uris";
+import Modal from '../Modal';
+import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
+import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
-import { conceptIdFromUri } from "../../model/concept";
+import { useImageUploadUri } from "../../hooks/uris";
+import { ImageUploadAndEditor } from "../ImageUploader";
+import { ExternalLinkIcon } from '../icons'
+
 import {
   useCustomMentionPlugin,
   Patterns,
   toMentionable,
   fromMentionable,
 } from "./hooks/useCustomMentionPlugin";
-import NoteContext from "../../contexts/NoteContext";
-
-const TestMentionables = [
-  { value: "0", name: "Aayla Secura", email: "aayla_secura@force.com" },
-  { value: "1", name: "Adi Gallia", email: "adi_gallia@force.com" },
-  {
-    value: "2",
-    name: "Admiral Dodd Rancit",
-    email: "admiral_dodd_rancit@force.com",
-  },
-  {
-    value: "3",
-    name: "Admiral Firmus Piett",
-    email: "admiral_firmus_piett@force.com",
-  },
-  {
-    value: "4",
-    name: "Admiral Gial Ackbar",
-    email: "admiral_gial_ackbar@force.com",
-  },
-];
+import {
+  ToolbarButtonsList,
+  ToolbarButtonsBasicElements,
+  BallonToolbarMarks,
+} from "./Toolbars";
+import ToolbarImageButton from "./ToolbarImageButton"
 
 const ConceptElement = (m) => {
+  const webId = useWebId();
+  const { slug: workspaceSlug } = useWorkspaceContext();
   const name = fromMentionable(m);
-  const { path } = useContext(NoteContext);
   const id = conceptNameToUrlSafeId(name);
+  const url = notePath(webId, workspaceSlug, name)
+
   return (
-    <Link href={`${path}/${id}`}>
+    <Link href={url}>
       <a className="text-lagoon">[[{name}]]</a>
     </Link>
   );
@@ -87,10 +66,30 @@ const MentionSelectLabel = (m) => {
   return <span className="text-lagoon">@{mention}</span>;
 };
 
+const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
+  return (
+    <pre {...attributes} {...nodeProps} className="bg-gray-100 px-4 py-2 ml-4 mt-2">
+      <code>{children}</code>
+    </pre>
+  )
+}
+
+function LinkElement({ attributes, children, element, nodeProps }) {
+  return (
+    <>
+      <a className="text-my-purple underline" href={element.url} {...attributes} {...nodeProps}>{children}</a>
+      <a href={element.url} contentEditable={false} target="_blank" rel="noopener noreferrer">
+        <ExternalLinkIcon className="inline w-4 h-4" />
+      </a>
+    </>
+  )
+}
+
 const components = P.createPlateComponents({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
+  [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
   [ELEMENT_CONCEPT]: P.withProps(P.MentionElement, {
     renderLabel: ConceptElement,
   }),
@@ -100,6 +99,7 @@ const components = P.createPlateComponents({
   [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
     renderLabel: MentionElement,
   }),
+  [P.ELEMENT_LINK]: LinkElement
 });
 
 const defaultOptions = P.createPlateOptions();
@@ -295,26 +295,44 @@ const defaultPlugins = [
   P.createSelectOnBackspacePlugin({ allow: P.ELEMENT_IMAGE }),
 ];
 
+function useImageUrlGetterAndSaveCallback() {
+  const [imageUploaderOpen, setImageUploaderOpen] = useState(false)
+  const imageGetterResolveRef = useRef()
+  const imageUrlGetter = (e) => new Promise((resolve, reject) => {
+    imageGetterResolveRef.current = resolve
+    setImageUploaderOpen(true)
+  })
+  const webId = useWebId()
+  const imageUploadUri = useImageUploadUri(webId)
+  function imageUploaderOnSave(url) {
+    imageGetterResolveRef.current(url)
+    setImageUploaderOpen(false)
+  }
+
+  return {
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
+  }
+}
+
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
+  conceptNames,
+  readOnly,
+  ...props
 }) {
-  const webId = useWebId();
-  const { concepts } = useConcepts(webId);
-  const { workspace, slug: workspaceSlug } = useCurrentWorkspace();
 
   const editableProps = {
     placeholder: "What's on your mind?",
+    readOnly
   };
 
   const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
     useCustomMentionPlugin({
-      mentionables: concepts
-        ? concepts.map((c) =>
-            toMentionable(urlSafeIdToConceptName(conceptIdFromUri(asUrl(c))))
-          )
-        : [],
+      mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
       pluginKey: ELEMENT_CONCEPT,
       pattern: Patterns.Concept,
       newMentionable: (s) => {
@@ -324,7 +342,7 @@ export default function Editor({
 
   const { getMentionSelectProps: getTagProps, plugin: tagPlugin } =
     useCustomMentionPlugin({
-      mentionables: TestMentionables.map((m) => toMentionable(m.email)),
+      mentionables: [],
       pluginKey: ELEMENT_TAG,
       pattern: Patterns.Tag,
       newMentionable: (s) => {
@@ -334,7 +352,7 @@ export default function Editor({
 
   const { getMentionSelectProps: getMentionProps, plugin: mentionPlugin } =
     useCustomMentionPlugin({
-      mentionables: TestMentionables.map((m) => toMentionable(m.name)),
+      mentionables: [],
       pluginKey: P.ELEMENT_MENTION,
       pattern: Patterns.Mention,
       newMentionable: (s) => {
@@ -347,6 +365,12 @@ export default function Editor({
     [conceptPlugin, tagPlugin, mentionPlugin]
   );
 
+
+  const {
+    imageUploaderOpen, setImageUploaderOpen,
+    imageUploadUri, imageUploaderOnSave,
+    imageUrlGetter
+  } = useImageUrlGetterAndSaveCallback()
   return (
     <P.Plate
       id={editorId}
@@ -356,25 +380,42 @@ export default function Editor({
       editableProps={editableProps}
       initialValue={initialValue}
       onChange={onChange}
+      {...props}
     >
-      <P.HeadingToolbar>
-        <ToolbarButtonsBasicElements />
-        <ToolbarButtonsList />
-        <P.ToolbarLink icon={<LinkIcon />} />
-        <P.ToolbarImage icon={<ImageIcon />} />
-      </P.HeadingToolbar>
+      {!readOnly && (
+        <>
+          <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
+            <ToolbarButtonsBasicElements />
+            <ToolbarButtonsList />
+            <P.ToolbarLink icon={<LinkIcon />} />
+            <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+          </div>
 
-      <BallonToolbarMarks />
+          <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+            <div>
+              <ImageUploadAndEditor
+                onSave={imageUploaderOnSave}
+                onClose={() => { setImageUploaderOpen(false) }}
+                imageUploadContainerUri={imageUploadUri}
+              />
+            </div>
+          </Modal>
 
-      <P.MentionSelect
-        {...getConceptProps()}
-        renderLabel={ConceptSelectLabel}
-      />
-      <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
-      <P.MentionSelect
-        {...getMentionProps()}
-        renderLabel={MentionSelectLabel}
-      />
+          <BallonToolbarMarks />
+
+
+
+          <P.MentionSelect
+            {...getConceptProps()}
+            renderLabel={ConceptSelectLabel}
+          />
+          <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
+          <P.MentionSelect
+            {...getMentionProps()}
+            renderLabel={MentionSelectLabel}
+          />
+        </>
+      )}
     </P.Plate>
   );
 }

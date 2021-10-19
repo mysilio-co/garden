@@ -1,19 +1,18 @@
 import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
 
-import NotePageComponent from "../../../../components/NotePage"
+import ConceptPageComponent from "../../../../components/ConceptPage"
 import { handleToWebId } from "../../../../utils/uris"
 import { WorkspaceProvider } from "../../../../contexts/WorkspaceContext"
 
-export default function NotePage(){
+export default function ConceptPage(){
   const router = useRouter()
   const { query: { name, workspace, handle } } = router
   const webId = handleToWebId(handle)
 
   return (
     <WorkspaceProvider webId={webId} slug={workspace}>
-      <NotePageComponent webId={webId} encodedName={name}
-                         path={`/u/${handle}`} readOnly={true}/>
+      <ConceptPageComponent webId={webId} workspaceSlug={workspace} slug={name}/>
     </WorkspaceProvider>
   )
 }

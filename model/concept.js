@@ -8,8 +8,10 @@ import {
   setDatetime,
   getDatetime,
   getUrl,
+  setUrl,
+  getUrlAll
 } from "@inrupt/solid-client";
-import { DCTERMS } from "@inrupt/vocab-common-rdf";
+import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
 import {
   getConceptNodes,
   getConceptNameFromNode,
@@ -51,7 +53,7 @@ function createTag(prefix, name) {
   return createThing({ url: `${prefix}${tagNameToUrlSafeId(name)}` });
 }
 
-function createConceptFor(
+export function createConceptFor(
   name,
   conceptPrefix,
   conceptNames,
@@ -73,7 +75,7 @@ function createConceptFor(
 }
 
 export function createOrUpdateConceptIndex(
-  editor,
+  newNoteValue,
   workspace,
   conceptIndex,
   concept,
@@ -85,10 +87,12 @@ export function createOrUpdateConceptIndex(
     ? getUrl(concept, US.storedAt)
     : defaultNoteStorageUri(workspace, name);
 
-  const conceptNames = getConceptNodes(editor).map(([concept]) =>
+  const newNoteValueNode = { children: newNoteValue }
+  const conceptNames = getConceptNodes(newNoteValueNode).map(([concept]) =>
     getConceptNameFromNode(concept)
   );
-  const tagNames = getTagNodes(editor).map(([tag]) => getTagNameFromNode(tag));
+
+  const tagNames = getTagNodes(newNoteValueNode).map(([tag]) => getTagNameFromNode(tag));
   const created = getDatetime(concept, DCTERMS.created) || new Date();
   let newConcept = createConceptFor(
     name,
@@ -100,5 +104,33 @@ export function createOrUpdateConceptIndex(
   newConcept = addUrl(newConcept, US.storedAt, storageUri);
   newConcept = setDatetime(newConcept, DCTERMS.modified, new Date());
   newConcept = setDatetime(newConcept, DCTERMS.created, created);
+  newConcept = setUrl(newConcept, FOAF.img, getUrl(concept, FOAF.img))
+  // TODO: right now this destroys anything that currently exists on the concept, so any time we add
+  // anything to the concept data model we need to be sure to manually copy it over here. this feels wrong
+  // so let's figure out a more coherent model for all of this.
   return setThing(conceptIndex || createSolidDataset(), newConcept);
+}
+
+export function getTags(concept) {
+  return getUrlAll(concept, US.tagged)
+}
+
+export function tagUrlToTagName(tagUrl, tagPrefix) {
+  return tagUrl.split(tagPrefix)[1]
+}
+
+export function getLinks(concept) {
+  return getUrlAll(concept, US.refersTo)
+}
+
+export function conceptUrlToConceptName(conceptUrl, conceptPrefix) {
+  return urlSafeIdToConceptName(conceptUrl.split(conceptPrefix)[1])
+}
+
+export function createExampleConcept(name, conceptPrefix) {
+  let concept = createConcept(conceptPrefix, name);
+
+  concept = setDatetime(concept, DCTERMS.created, new Date());
+  concept = setDatetime(concept, DCTERMS.modified, new Date());
+  return concept
 }

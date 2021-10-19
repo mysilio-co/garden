@@ -1,6 +1,7 @@
 @tailwind base;
 /* Write your own custom base styles here */
-
+/*
+TODO: do we need these?
 a {
   @apply text-ocean;
 }
@@ -28,7 +29,7 @@ a:active {
 .a:active {
   @apply text-passionflower;
 }
-
+*/
 blockquote {
   @apply m-2 p-2 bg-gray-100 border-l-2 border-gray-400 text-gray-600;
 }
@@ -103,6 +104,13 @@ strong {
   @apply text-white h-5 w-5;
 }
 
+.ipt-error-message {
+  @apply text-2xs uppercase text-ember pl-4;
+}
+.menu-item {
+  @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
+}
+
  /* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
 .tab-btn {
@@ -123,90 +131,6 @@ strong {
 
 .page {
   @apply bg-snow text-night h-screen overflow-y-scroll w-screen;
-}
-
-.btn {
-  @apply mx-2 rounded-lg border-none drop-shadow-lg px-4 py-2 bg-echeveria text-base font-medium text-snow;
-}
-
-.btn:hover {
-  @apply outline-none ring-2 ring-offset-2 ring-echeveria ring-offset-echeveria-light bg-echeveria-dark;
-}
-
-.btn:focus {
-  @apply outline-none ring-2 ring-offset-2 ring-echeveria ring-offset-echeveria-light;
-}
-
-.btn:active {
-  @apply outline-none ring-2 ring-offset-0 ring-echeveria bg-echeveria-dark;
-}
-
-.btn:disabled {
-  @apply bg-echeveria-light cursor-not-allowed;
-}
-
-.destructive {
-  @apply bg-ember;
-}
-
-.destructive:hover {
-  @apply bg-ember-dark ring-ember ring-offset-ember-light;
-}
-
-.destructive:focus {
-  @apply ring-ember ring-offset-ember-light;
-}
-
-.destructive:active {
-  @apply bg-ember-dark ring-ember;
-}
-
-.destructive:disabled {
-  @apply bg-ember-light cursor-not-allowed;
-}
-
-.cancel {
-  @apply bg-transparent text-echeveria;
-}
-
-.cancel:hover {
-  @apply bg-transparent text-echeveria-dark;
-}
-
-.cancel:focus {
-  @apply bg-transparent ring-2 ring-echeveria;
-}
-
-.cancel:active {
-  @apply bg-transparent text-echeveria-dark ring-2 ring-echeveria-dark;
-}
-
-.block {
-  @apply relative pl-4 border-b-2 border-transparent;
-}
-
-.block.is-over {
-  @apply border-blue-300;
-}
-
-.block-sidebar-button {
-  @apply inline-flex items-center border border-transparent text-gray-500 rounded-full invisible;
-}
-
-.block:hover .block-sidebar-button {
-  @apply visible;
-}
-
-.block-sidebar-button:hover {
-  @apply bg-gray-500 text-white visible;
-}
-
-.block-sidebar-button:focus {
-  @apply outline-none;
-}
-
-.ReactModal__Overlay {
-  @apply z-40;
 }
 
 /* Start purging... */
@@ -383,3 +307,45 @@ h2.font-logo {
     grid-column-start: 2;
   }
 }
+
+.bg-header-gradient {
+  @apply bg-gradient-to-r from-my-green via-ocean to-my-purple;
+}
+
+.bg-header-gray-gradient {
+  @apply bg-gradient-to-r from-gray-500 via-ocean to-my-purple;
+}
+
+.tippy-box {
+  @apply relative bg-gray-700 opacity-50;
+}
+
+.tippy-arrow {
+  @apply text-gray-700;
+}
+
+/*
+[data-tippy-root] {
+    max-width: calc(100vw - 10px);
+}
+
+.tippy-box {
+  @apply relative text-sm bg-gray-500 text-white rounded-lg px-2 py-1 transition-transform transition-opacity transition-visibility;
+}
+
+.tippy-content {
+  @apply relative px-1 py-2 z-10;
+}
+
+.tippy-arrow {
+  @apply text-gray-500;
+}
+
+.tippy-box[data-placement^=top]>.tippy-arrow {
+    bottom: 0;
+}
+
+.tippy-arrow {
+  @apply w-4 h-4 text-gray-500;
+}
+*/

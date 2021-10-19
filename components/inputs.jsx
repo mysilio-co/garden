@@ -8,7 +8,7 @@ export function Input({ className = '', inputClassName = '', ...props }) {
   return (
     <div className={`flex flex-col ${className}`}>
       <input className={`ipt ${validationClassName} ${inputClassName}`} {...props} />
-      {meta.error && (<span className="text-2xs uppercase text-ember pl-4">{meta.error.toString()}</span>)}
+      {meta.error && (<span className="ipt-error-message">{meta.error.toString()}</span>)}
     </div>
   )
 }

@@ -35,6 +35,15 @@ export function understoryGardenConceptPrefix(webId, workspaceSlug) {
   );
 }
 
+export function notePath(webId, workspaceSlug, name) {
+  return (
+    webId &&
+    name &&
+    `${profilePath(webId)}/${workspaceSlug}/${conceptNameToUrlSafeId(name)}`
+  );
+}
+
+// deprecated
 export function publicNotePath(webId, workspaceSlug, name) {
   return (
     webId &&
@@ -43,6 +52,7 @@ export function publicNotePath(webId, workspaceSlug, name) {
   );
 }
 
+// deprecated
 export function privateNotePath(workspaceSlug, name) {
   return name && `/notes/${workspaceSlug}/${conceptNameToUrlSafeId(name)}`;
 }
