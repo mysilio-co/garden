@@ -25,7 +25,7 @@ const TabId = {
 
 export const NewNote = ({ setOpen, isPublic = false }) => {
   const [pub, setPublic] = useState(isPublic)
-  const [value, setNoteValue] = useState()
+  const [value, setNoteValue] = useState(EmptySlateJSON);
 
   const tabs = [TabId.Concept, TabId.Bookmark];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
