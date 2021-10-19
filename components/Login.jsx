@@ -37,7 +37,7 @@ export default function Login({ avatarImgSrc }) {
         </div>
         <div className="flex text-xs my-4">
         By logging in you agree to our 
-        <a className="text-my-yellow" href="">terms of service</a>
+        <a className="ml-1 text-my-yellow" href="">terms of service</a>
         </div>
       </div> 
       <div className="flex flex-row  items-stretch bg-gradient-to-br from-my-green via-ocean to-passionflower absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden"> 
