@@ -38,26 +38,26 @@ export default function PodLogin({ avatarImgSrc }) {
               className="flex flex-row mt-2" />
             </div>
           </Formik>
-          <div className="flex flex-row">
+          <div className="flex flex-col md:flex-row">
             <button
               type="button"
               className={`flex btn-md btn-filled btn-square bg-white text-my-green mt-8 h-10`}
             >
               Login <ArrowCircleRight className="w-10 h-10 -m-1 ml-2" />
             </button>
-            <div className="text-right text-sm text-my-yellow flex-grow mt-8">
+            <div className="text-right text-sm text-my-yellow flex-grow mt-3 md:mt-8">
               Forgot password?
             </div>
           </div>
           <button
             type="button"
-            className={`text-white text-sm border-t border-b border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8 p-3 md:p-6`}
+            className={`text-white text-sm border-t border-b border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-5 md:mt-8 p-3 md:p-6`}
           >
             Login with certificate (WebId-TLS)
           </button>
           <button
             type="button"
-            className={`p-2 bg-white border border-opacity-100 border-white bg-opacity-20 text-center text-white mt-4 md:mt-8 rounded-full`}
+            className={`p-2 bg-white border border-opacity-100 border-white bg-opacity-20 text-center text-white mt-5 md:mt-8 rounded-full`}
           >
             Create an account
           </button>
