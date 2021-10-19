@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import '../styles/index.css'
+import 'tippy.js/dist/tippy.css';
 import "cropperjs/dist/cropper.css";
+import '../styles/index.css'
 import { AuthenticationProvider } from 'swrlit'
 import Head from 'next/head'
 import { useRouter } from 'next/router'

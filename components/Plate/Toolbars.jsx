@@ -1,5 +1,3 @@
-import 'tippy.js/animations/scale.css';
-import 'tippy.js/dist/tippy.css';
 import { TippyProps } from '@tippyjs/react';
 import * as P from '@udecode/plate'
 
