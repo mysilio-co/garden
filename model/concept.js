@@ -104,7 +104,10 @@ export function createOrUpdateConceptIndex(
   newConcept = addUrl(newConcept, US.storedAt, storageUri);
   newConcept = setDatetime(newConcept, DCTERMS.modified, new Date());
   newConcept = setDatetime(newConcept, DCTERMS.created, created);
-  newConcept = setUrl(newConcept, FOAF.img, getUrl(concept, FOAF.img))
+  const img = concept && getUrl(concept, FOAF.img);
+  if (img) {
+    newConcept = setUrl(newConcept, FOAF.img, getUrl(concept, FOAF.img));
+  }
   // TODO: right now this destroys anything that currently exists on the concept, so any time we add
   // anything to the concept data model we need to be sure to manually copy it over here. this feels wrong
   // so let's figure out a more coherent model for all of this.
