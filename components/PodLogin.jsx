@@ -16,13 +16,13 @@ export default function PodLogin({ avatarImgSrc }) {
         <div className="relative w-4/5">
           <Logo className='z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5' />
         </div>
-        <div className="text-2xl mt-36">
+        <div className="text-2xl md:mt-36">
          Please login to your 
         </div> 
-        <div class="text-8xl font-black">solid pod</div>
+        <div class="md:text-8xl text-4xl font-black">solid pod</div>
       </div> 
-      <div className="flex flex-row z-10 w-1/2">
-        <div className="flex flex-col mt-36 px-20 flex-grow">
+      <div className="flex flex-row z-10 mt-36 md:mt-0 md:w-1/2 absolute md:relative">
+        <div className="flex flex-col md:mt-36 px-20 flex-grow">
           <Formik>
             <div className="text-white">
               Username
@@ -50,13 +50,13 @@ export default function PodLogin({ avatarImgSrc }) {
           </div>
           <button
             type="button"
-            className={`text-white border-t border-b border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8 p-6`}
+            className={`text-white text-sm border-t border-b border-opacity-100 border-white rounded-r-sm bg-opacity-0 items-center mt-8 p-3 md:p-6`}
           >
             Login with certificate (WebId-TLS)
           </button>
           <button
             type="button"
-            className={`p-2 bg-white border border-opacity-100 border-white bg-opacity-20 text-center text-white mt-8 rounded-full`}
+            className={`p-2 bg-white border border-opacity-100 border-white bg-opacity-20 text-center text-white mt-4 md:mt-8 rounded-full`}
           >
             Create an account
           </button>
