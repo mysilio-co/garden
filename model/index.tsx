@@ -71,6 +71,7 @@ export function addImageToIndex(
     .addUrl(RDF.type, FOAF.Image)
     .addDatetime(DCTERMS.modified, new Date())
     .addDatetime(DCTERMS.created, new Date(file.lastModified))
+    .addStringNoLocale(DCTERMS.title, file.name)
     .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
@@ -87,6 +88,7 @@ export function addFileToIndex(
     .addUrl(RDF.type, MY.FOAF.File)
     .addDatetime(DCTERMS.modified, new Date())
     .addDatetime(DCTERMS.created, new Date(file.lastModified))
+    .addStringNoLocale(DCTERMS.title, file.name)
     .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 

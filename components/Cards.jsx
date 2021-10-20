@@ -4,6 +4,10 @@ import { useWorkspaceContext } from "../contexts/WorkspaceContext";
 import { useConcepts } from "../hooks/concepts";
 import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"
+import ImageCard from "./cards/ImageCard"
+import FileCard from "./cards/FileCard"
+import LinkCard from "./cards/LinkCard"
+
 import {
   isConcept,
   isBookmarkedLink,
@@ -26,11 +30,11 @@ export function CardsFromConcepts({ concepts, webId, workspaceSlug }) {
               />
             );
           } else if (isBookmarkedImage(concept)) {
-            return <span>Image</span>
+              return <ImageCard key={asUrl(concept)} image={concept} />;
           } else if (isBookmarkedFile(concept)) {
-            return <span>File</span>
+              return <FileCard key={asUrl(concept)} file={concept} />;
           } else if (isBookmarkedLink(concept))
-            return <span>Link</span>;
+              return <LinkCard key={asUrl(concept)} link={concept} />;
         })}
     </ul>
   );
