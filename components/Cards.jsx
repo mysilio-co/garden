@@ -1,27 +1,32 @@
 import { asUrl } from "@inrupt/solid-client";
 import { useWebId } from "swrlit";
-
 import { useWorkspaceContext } from "../contexts/WorkspaceContext";
-
-
 import { useConcepts } from "../hooks/concepts";
-
 import { Loader } from './elements'
-import NoteCard from "./NoteCard"
+import NoteCard from "./cards/NoteCard"
+import { hasNote } from "../model/concept"
 
-export function NotesFromConcepts({ concepts, webId, workspaceSlug }) {
+export function CardsFromConcepts({ concepts, webId, workspaceSlug }) {
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
       {concepts &&
-        concepts.map((concept) => (
-          <NoteCard key={asUrl(concept)} concept={concept}
-            webId={webId} workspaceSlug={workspaceSlug} />
-        ))}
+        concepts.map((concept) => {
+          if (hasNote(concept)) {
+            return (
+              <NoteCard
+                key={asUrl(concept)}
+                concept={concept}
+                webId={webId}
+                workspaceSlug={workspaceSlug}
+              />
+            );
+          }
+        })}
     </ul>
   );
 }
 
-export default function Notes({ }) {
+export default function Cards({ }) {
   const myWebId = useWebId()
   const { slug: workspaceSlug, webId } = useWorkspaceContext()
   const { concepts } = useConcepts(webId, workspaceSlug);
@@ -29,14 +34,14 @@ export default function Notes({ }) {
   return (
     <>
       {concepts ? (concepts.length > 0 ? (
-        <NotesFromConcepts webId={webId} concepts={concepts} workspaceSlug={workspaceSlug} />
+        <CardsFromConcepts webId={webId} concepts={concepts} workspaceSlug={workspaceSlug} />
       ) : (
         <div>
           <h2 className="text-2xl mb-2">
             {(myWebId === webId) ? (
-              "You have no notes. Add something to your garden using the New button in the header above."
+              "You have nothing in your garden yet. Add something using the New button in the header above."
             ) : (
-              `No notes.`
+              `This garden is empty.`
             )}
 
           </h2>

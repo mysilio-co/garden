@@ -98,9 +98,9 @@ function ProfileImage({profile, save, ...props}){
   const [editingProfileImage, setEditingProfileImage] = useState(false)
   const webId = useWebId()
   const imageUploadContainer = useImageUploadUri(webId)
-  function saveProfileImage(newProfileImageUri){
-    save(new URL(newProfileImageUri, webId).toString())
-    setEditingProfileImage(false)
+  function saveProfileImage(newProfileImageUri, file) {
+    save(new URL(newProfileImageUri, webId).toString());
+    setEditingProfileImage(false);
   }
   function onEdit(){
     setEditingProfileImage(true)

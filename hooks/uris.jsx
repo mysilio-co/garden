@@ -18,6 +18,11 @@ export function useImageUploadUri(webId, path='public') {
   return understoryContainerUri && `${understoryContainerUri}images/`
 }
 
+export function useFileContainerUri(webId, path = 'public') {
+  const understoryContainerUri = useUnderstoryContainerUri(webId, path);
+  return understoryContainerUri && `${understoryContainerUri}files/`;
+}
+
 export function useArchiveContainerUri(webId, path = 'public') {
   const storageContainer = useStorageContainer(webId)
   return storageContainer && `${storageContainer}${path}/${appPrefix}/messages/archive`

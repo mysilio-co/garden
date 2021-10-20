@@ -17,18 +17,13 @@ import { useCurrentWorkspace } from "../../hooks/app";
 import { useConcept, useConceptNames } from "../../hooks/concepts";
 import NoteEditor from "../NoteEditor"
 import { EmptySlateJSON } from "../../utils/slate";
+import Modal from '../Modal';
 
-const TabId = {
-  Concept: "Concept",
-  Bookmark: "Bookmark",
-};
 
-export const NewNote = ({ setOpen, isPublic = false }) => {
+export const NewNote = ({ onClose, isPublic = false }) => {
   const [pub, setPublic] = useState(isPublic)
   const [value, setNoteValue] = useState(EmptySlateJSON);
 
-  const tabs = [TabId.Concept, TabId.Bookmark];
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
   const editorId = "create-modal";
@@ -74,7 +69,7 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
 
   const close = () => {
     reset();
-    setOpen(false);
+    onClose();
   };
 
   const onSubmit = () => {
@@ -94,7 +89,7 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
           <PrivacyToggle enabled={pub} setEnabled={setPublic} />
         </div>
         <CloseIcon className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
-          onClick={() => setOpen && setOpen(false)} />
+          onClick={onClose} />
       </div>
       <div className="divide-1 divide-gray-100">
         <Formik>
@@ -121,7 +116,7 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
             </div>
             <div className="px-6 py-5 h-96">
               <NoteEditor editorId={editorId} onNoteBodyChange={setNoteValue} conceptNames={conceptNames}
-                editableProps={{ className: "overflow-scroll h-5/6" }} />
+                editableProps={{ className: "overflow-auto h-5/6" }} />
             </div>
           </>
         </Formik>
@@ -139,39 +134,10 @@ export const NewNote = ({ setOpen, isPublic = false }) => {
 }
 
 
-export default function NewNoteModal({ isPublic = false, conceptNames, open, setOpen }) {
+export default function NewNoteModal({ isPublic = false, conceptNames, open, onClose }) {
   return (
-    <Transition.Root show={open} as={Fragment}>
-
-      <Dialog as="div" onClose={() => setOpen(false)} className="fixed z-10 inset-0 overflow-y-auto">
-        <div className="flex items-end justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-20 hams transition-opacity backdrop-filter backdrop-blur-lg" />
-          </Transition.Child>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-full sm:w-5/6">
-
-              <NewNote setOpen={setOpen} conceptNames={conceptNames} />
-            </div>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition.Root>
-  )
+    <Modal open={open} onClose={onClose}>
+      <NewNote onClose={onClose} conceptNames={conceptNames} />
+    </Modal>
+  );
 }
