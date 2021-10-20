@@ -22,7 +22,7 @@ export async function postFormData(uri, body) {
   });
 }
 
-const SolidServerURI = "https://myunderstory.com";
+const SolidServerURI = "https://mysilio.me";
 
 export async function sendMagicLink(username, email) {
   const magicLinkURI = SolidServerURI + "/magic-link/generate";
@@ -30,7 +30,7 @@ export async function sendMagicLink(username, email) {
   return postFormData(magicLinkURI, {
     username,
     email,
-    returnToUrl: `https://mysilio.garden/login/${username}.myunderstory.com`,
+    returnToUrl: `https://mysilio.garden/login/${username}.mysilio.me`,
   });
 }
 

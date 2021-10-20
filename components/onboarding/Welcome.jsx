@@ -8,7 +8,7 @@ export default function Welcome() {
   const [badHandle, setBadHandle] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
   const { loginHandle, logout } = useAuthentication()
-  const handle = username.includes(".") ? username : `${username}.myunderstory.com`
+  const handle = username.includes(".") ? username : `${username}.mysilio.me`
   async function logIn() {
     setBadHandle(false)
     setLoggingIn(true)

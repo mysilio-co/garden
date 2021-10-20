@@ -12,6 +12,6 @@ module.exports = {
     return config;
   },
   images: {
-    domains: ["ian.myunderstory.com"],
+    domains: ["ian.mysilio.me"],
   },
 };
