@@ -27,7 +27,7 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
           conceptNames={conceptNames}
         />
       );
-    case 'Bookmark':
+    case 'Link':
       return <NewBookmarkModal open={open} onClose={onClose} />;
     case 'File':
       return <NewFileModal open={open} onClose={onClose} />;
@@ -74,7 +74,7 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
               Create New
             </div>
             {(!isPreviewEnv()
-              ? ['Note', 'Bookmark', 'Image', 'File']
+              ? ['Note', 'Link', 'Image', 'File']
               : ['Note']
             ).map((title) => {
               return (
