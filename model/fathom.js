@@ -2,6 +2,8 @@ import * as Fathom from 'fathom-client'
 
 const VercelEnv = process.env.VERCEL_ENV || ''
 
+
+//TODO fix fathom
 export const FathomSiteId = (VercelEnv === "production") ? 'TMUOYFGA': 'TGJRMEAN'
 export const FathomSite = (VercelEnv === "production") ?  'understory.garden' : 'staging.understory.garden'
 // FathomGoals
