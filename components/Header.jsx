@@ -73,7 +73,7 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {(!isPreviewEnv()
+            {(isPreviewEnv()
               ? ['Note', 'Link', 'Image', 'File']
               : ['Note']
             ).map((title) => {
