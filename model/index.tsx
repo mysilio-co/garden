@@ -10,7 +10,7 @@ import {
   createSolidDataset,
 } from "@inrupt/solid-client";
 import { MY, MIME } from "../vocab";
-import { SKOS, RDF, FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
+import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
 import * as base58 from "micro-base58";
 
 /*
@@ -66,12 +66,11 @@ export function addImageToIndex(
   url: string,
   file: File
 ): SolidDataset {
-  const lastModified = new Date(file.lastModified);
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
-    .addDatetime(DCTERMS.modified, lastModified)
-    .addDatetime(DCTERMS.created, lastModified)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date(file.lastModified))
     .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
@@ -83,12 +82,11 @@ export function addFileToIndex(
   url: string,
   file: File
 ): SolidDataset {
-  const lastModified = new Date(file.lastModified);
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.File)
-    .addDatetime(DCTERMS.modified, lastModified)
-    .addDatetime(DCTERMS.created, lastModified)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date(file.lastModified))
     .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
