@@ -15,6 +15,7 @@ import NewNoteModal from './modals/NewNote';
 import NewBookmarkModal from './modals/NewBookmark';
 import NewImageModal from './modals/NewImage';
 import NewFileModal from './modals/NewFile';
+import { isPreviewEnv } from '../model/flags';
 
 function ActiveModal({ title, open, onClose, conceptNames }) {
   switch (title) {
@@ -72,7 +73,10 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {['Note', 'Bookmark', 'Image', 'File'].map((title) => {
+            {(!isPreviewEnv()
+              ? ['Note', 'Bookmark', 'Image', 'File']
+              : ['Note']
+            ).map((title) => {
               return (
                 <Dropdown.Item>
                   {({ active }) => (
