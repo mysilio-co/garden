@@ -6,7 +6,7 @@ import { useProfile, useMyProfile, useWebId } from 'swrlit'
 import Link from 'next/link'
 
 import { handleToWebId, profilePath } from "../../utils/uris"
-import Notes from '../../components/Notes'
+import Cards from '../../components/Cards'
 import Nav from '../../components/nav'
 import WebMonetization from '../../components/WebMonetization'
 import { WorkspaceProvider } from '../../contexts/WorkspaceContext'
@@ -39,29 +39,38 @@ export default function ProfilePage() {
       <div className="px-18">
         <div className="flex flex-row mt-6 mb-6 justify-between items-start">
           <div className="flex flex-row">
-            {profileImage && <img className="rounded-full h-36 w-36 object-cover mr-12" src={profileImage} />}
+            {profileImage && (
+              <img
+                className="rounded-full h-36 w-36 object-cover mr-12"
+                src={profileImage}
+              />
+            )}
             <div className="flex flex-col">
-              {name && (
-                <h3 className="text-4xl text-center">{name}</h3>
-              )}
+              {name && <h3 className="text-4xl text-center">{name}</h3>}
             </div>
           </div>
-          {(follows && !isMyProfile) && (
-            alreadyFollowing ? (
-              <button className="btn-md btn-filled btn-square py-1" onClick={unfollow}>
+          {follows &&
+            !isMyProfile &&
+            (alreadyFollowing ? (
+              <button
+                className="btn-md btn-filled btn-square py-1"
+                onClick={unfollow}
+              >
                 unfollow
               </button>
             ) : (
-              <button className="btn-md btn-filled btn-square py-1" onClick={follow}>
+              <button
+                className="btn-md btn-filled btn-square py-1"
+                onClick={follow}
+              >
                 follow
               </button>
-            )
-          )}
+            ))}
         </div>
         <WorkspaceProvider webId={webId} slug="default">
-          <Notes webId={webId} />
+          <Cards webId={webId} />
         </WorkspaceProvider>
       </div>
     </div>
-  )
+  );
 }

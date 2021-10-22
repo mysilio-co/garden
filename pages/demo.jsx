@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Loader } from '../components/elements'
 import Nav from '../components/nav'
 
-const Scale = 1;
+const Scale = 3/4;
 const W = 1920;
 const H = 924;
 

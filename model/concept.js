@@ -137,3 +137,7 @@ export function createExampleConcept(name, conceptPrefix) {
   concept = setDatetime(concept, DCTERMS.modified, new Date());
   return concept
 }
+
+export function hasNote(concept) {
+  return !!getUrl(concept, US.storedAt);
+}

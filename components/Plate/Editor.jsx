@@ -302,7 +302,7 @@ function useImageUrlGetterAndSaveCallback() {
   })
   const webId = useWebId()
   const imageUploadUri = useImageUploadUri(webId)
-  function imageUploaderOnSave(url) {
+  function imageUploaderOnSave(url, file) {
     imageGetterResolveRef.current(url)
     setImageUploaderOpen(false)
   }

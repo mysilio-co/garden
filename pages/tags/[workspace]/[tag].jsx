@@ -8,7 +8,7 @@ import { WorkspaceProvider } from "../../../contexts/WorkspaceContext"
 import { US } from '../../../vocab'
 import { tagNameToUrlSafeId } from '../../../utils/uris'
 import { conceptUrisTaggedWith } from '../../../model/concept'
-import { NotesFromConcepts } from '../../../components/Notes'
+import { CardsFromConcepts } from '../../../components/Cards'
 import Nav from '../../../components/nav'
 
 export default function TagPage(){
@@ -21,15 +21,14 @@ export default function TagPage(){
   const conceptUris = index && conceptUrisTaggedWith(index, `${tagPrefix}${tagNameToUrlSafeId(tag)}`)
   const concepts = conceptUris.map(uri => getThing(index, uri))
   return (
-
     <WorkspaceProvider webId={webId} slug={workspace}>
       <div className="page">
-        <Nav/>
+        <Nav />
         <div className="text-center py-6">
           <h1 className="text-4xl">notes tagged with #{tag}</h1>
-          <NotesFromConcepts webId={webId} concepts={concepts}/>
+          <CardsFromConcepts webId={webId} concepts={concepts} />
         </div>
       </div>
     </WorkspaceProvider>
-  )
+  );
 }
