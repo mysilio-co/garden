@@ -26,7 +26,7 @@ For now, the Index file will still be serialized to
 
 I am going to try something a bit experimental here, using existing ontologies
 as much as possible rather than inventing our own.  This model file will try
-storing and indexing data using the SKOS, DCTERMS, and FOAF ontologies.  
+storing and indexing data using the SKOS, DCTERMS, and FOAF ontologies.
 
 An Image will be stored as a url with the FOAF.Image type.
 A File will be stored as a url with the MY.FOAF.File type from the MY.FOAF extension.
@@ -99,7 +99,7 @@ export function _addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
   const TagThing = buildThing(
     createThing({ name: `TAG:base58:${base58.encode(tag)}` })
   )
-    .addUrl(RDF.type, SKOS.Label)
+    //.addUrl(RDF.type, SKOS.Label)
     .addUrl(RDF.type, MY.SKOS.Tag)
     .addStringNoLocale(SKOS.prefLabel, tag)
     // TODO:     .addStringNoLocale(DCTERMS.format, ...)
@@ -115,7 +115,7 @@ export function _addMentionToIndex(
   const MentionThing = buildThing(
     createThing({ name: `MENTION:base58:${base58.encode(handle)}` })
   )
-    .addUrl(RDF.type, SKOS.Label)
+    //.addUrl(RDF.type, SKOS.Label)
     .addUrl(RDF.type, MY.SKOS.Mention)
     .addStringNoLocale(SKOS.prefLabel, handle)
     .build();
