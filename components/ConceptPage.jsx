@@ -21,7 +21,7 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
       <WebMonetization webId={webId} />
       <NoteHeader concept={concept} saveConcept={saveConcept} conceptName={conceptName} authorProfile={authorProfile}
         currentUserProfile={currentUserProfile} myNote={myNote} privacy={privacy}/>
-      <ConceptEditor webId={webId} workspaceSlug={workspaceSlug} slug={slug} myNote={myNote}
+      <ConceptEditor webId={webId} authorWebId={webId} workspaceSlug={workspaceSlug} slug={slug} myNote={myNote}
         conceptIndex={index} concept={concept} conceptName={conceptName} editorId={conceptName}
         note={note} noteError={noteError} maybeSaveNoteBody={maybeSaveNoteBody} />
     </div>
