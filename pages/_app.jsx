@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import 'tippy.js/dist/tippy.css';
 import "cropperjs/dist/cropper.css";
 import '../styles/index.css'
-import { AuthenticationProvider } from 'swrlit'
+import { AuthenticationProvider, useAuthentication } from 'swrlit'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { DndProvider } from 'react-dnd'
@@ -10,6 +10,17 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { SWRConfig } from 'swr'
 import { useFathom } from '../hooks/fathom'
 import LoginVerifier from '../components/LoginVerifier'
+
+function RenderAfterAuthed({ children }) {
+  const { info } = useAuthentication()
+
+  return info ? (
+    <>
+    {children}
+    </>
+  ) : (<></>)
+}
+
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
@@ -19,7 +30,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-      <link
+        <link
           href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=optional"
           rel="stylesheet"
         />
@@ -33,16 +44,25 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <SWRConfig value={{ shouldRetryOnError: false }}>
         <DndProvider backend={HTML5Backend}>
-          <AuthenticationProvider>
-            <>
-              <LoginVerifier />
-              <Component {...pageProps} />
-            </>
-          </AuthenticationProvider>
+          <>
+            <LoginVerifier />
+            <Component {...pageProps} />
+          </>
         </DndProvider>
       </SWRConfig>
     </>
   )
 }
 
-export default MyApp
+function AuthedApp(props) {
+  const router = useRouter()
+  return (
+    <AuthenticationProvider onSessionRestore={url => router.push(url)}>
+      <RenderAfterAuthed>
+        <MyApp {...props} />
+      </RenderAfterAuthed>
+    </AuthenticationProvider>
+  )
+}
+
+export default AuthedApp

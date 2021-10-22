@@ -76,3 +76,13 @@ export const conceptUriToName = (conceptUri) =>
 export function tagNameToUrlSafeId(tagName) {
   return encodeURIComponent(tagName);
 }
+
+export function handleToIdp(handle) {
+  try {
+    new URL(handle);
+    // if this doesn't throw, it's a valid URL
+    return handle
+  } catch (_) {
+    return `https://${handle}`
+  }
+}
