@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps }) {
 function AuthedApp(props) {
   const router = useRouter()
   return (
-    <AuthenticationProvider onSessionRestore={url => router.push(url)}>
+    <AuthenticationProvider onSessionRestore={url => router.replace(url)}>
       <RenderAfterAuthed>
         <MyApp {...props} />
       </RenderAfterAuthed>
