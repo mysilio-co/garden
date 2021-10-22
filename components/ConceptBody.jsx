@@ -23,7 +23,7 @@ function CreateNote({ conceptName, onNoteBodyChange }) {
 export default function ConceptBody({
   concept, note, noteError, conceptPrefix, conceptIndex, myNote,
   conceptName, tagPrefix, onNoteBodyChange, conceptNames, editorId, panelStartsOpen = false,
-  workspaceSlug, webId
+  workspaceSlug, webId, authorWebId
 }) {
   const [panelOpen, setPanelOpen] = useState(panelStartsOpen)
   return (
@@ -52,11 +52,17 @@ export default function ConceptBody({
           {note ? (
             <NoteEditor myNote={myNote} editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
           ) : (noteError ? (
-            <CreateNote conceptName={conceptName} onNoteBodyChange={onNoteBodyChange} />
+            (webId === authorWebId) ? (
+              <CreateNote conceptName={conceptName} onNoteBodyChange={onNoteBodyChange} />
+            ) : (
+              <div className="flex flex-col items-center">
+                <h3 className="font-bold text-2xl">{conceptName}</h3>
+                <div>does not exist</div>
+              </div>
+            )
           ) : (
             <InlineLoader />
-          )
-          )}
+          ))}
 
         </div>
         <Transition
@@ -70,7 +76,7 @@ export default function ConceptBody({
         >
           <ConnectionsPanel
             concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
-            webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
+            webId={authorWebId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
             onClose={() => setPanelOpen(false)} />
         </Transition>
       </div>
