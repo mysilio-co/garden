@@ -27,14 +27,12 @@ import {
 import ToolbarImageButton from "./ToolbarImageButton"
 
 const ConceptElement = (m) => {
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
+  const { webId, slug: workspaceSlug } = useWorkspaceContext();
   const name = fromMentionable(m);
-  const id = conceptNameToUrlSafeId(name);
   const url = notePath(webId, workspaceSlug, name)
 
   return (
-    <Link href={url}>
+    <Link href={url || ""}>
       <a className="text-lagoon">[[{name}]]</a>
     </Link>
   );

@@ -132,6 +132,15 @@ export function useConcept(
         saveIndex: savePrivateIndex,
         privacy: 'private'
       };
+    } else if (thisConcept) {
+      // this means there's no public or private concept but we did successfully create a new one
+      return {
+        conceptUri,
+        concept,
+        index: (newConceptPrivacy == 'private') ? privateIndex : publicIndex,
+        saveIndex: (newConceptPrivacy == 'private') ? savePrivateIndex : savePublicIndex,
+        privacy: 'newConceptPrivacy'
+      }
     } else if (privateIndex && publicIndex) {
       return {
         conceptUri,

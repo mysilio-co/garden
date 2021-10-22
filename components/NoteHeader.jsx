@@ -41,7 +41,7 @@ export default function NoteHeader({ concept, saveConcept, conceptName, authorPr
     await saveConcept(setUrl(concept, FOAF.img, url))
     setCoverImageUploaderOpen(false)
   }
-
+  const authorProfilePath = authorWebId && profilePath(authorWebId)
   return (
     <div className="flex flex-col">
       <nav className={`${bg} b-2xl flex flex-row justify-between h-32`}>
@@ -57,24 +57,26 @@ export default function NoteHeader({ concept, saveConcept, conceptName, authorPr
           </div>
           <div className="flex flex-row flex-col items-left">
             <div className="mt-6 text-white text-4xl font-black">{conceptName}</div>
-            <div className="flex flex-row mt-2 h-3 text-sm text-white">
-              <Link href={authorWebId ? profilePath(authorWebId) : ""}>
-                <a>
-                  <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
-                </a>
-              </Link>
-              <div className="flex flex-row mt-1">
-                <Link href={authorWebId ? profilePath(authorWebId) : ""}>
-                  <a>
-                    <div className="ml-2 font-bold text-my-yellow">{authorName}</div>
-                  </a>
-                </Link>
-                <div className="ml-2 opacity-50" text>
-                  <b>Created</b> {noteCreatedAt && getRelativeTime(noteCreatedAt)}
-                </div>
-                <div className="ml-2 opacity-50">
-                  <b>Last Edit</b> {noteLastEdit && getRelativeTime(noteLastEdit)}
-                </div>
+            <div className="flex flex-row mt-3 h-3 text-sm text-white items-center">
+              {authorProfilePath && (
+                <>
+                  <Link href={authorProfilePath}>
+                    <a>
+                      <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
+                    </a>
+                  </Link>
+                  <Link href={authorProfilePath}>
+                    <a>
+                      <div className="ml-2 font-bold text-my-yellow">{authorName}</div>
+                    </a>
+                  </Link>
+                </>
+              )}
+              <div className="ml-2 opacity-50">
+                <b>Created</b> {noteCreatedAt && getRelativeTime(noteCreatedAt)}
+              </div>
+              <div className="ml-2 opacity-50">
+                <b>Last Edit</b> {noteLastEdit && getRelativeTime(noteLastEdit)}
               </div>
             </div>
           </div>
@@ -110,13 +112,13 @@ export default function NoteHeader({ concept, saveConcept, conceptName, authorPr
         )}
         {myNote && (
           <>
-        <Tooltip content={<span>Upload Cover Image</span>}>
-          <button className="hover:shadow-menu" onClick={() => setCoverImageUploaderOpen(true)}>
-            <UploadImage className="w-6 h-6 text-gray-700 mt-4 opacity-10 group-hover:opacity-90" />
-          </button>
-        </Tooltip>
-        <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
-          onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
+            <Tooltip content={<span>Upload Cover Image</span>}>
+              <button className="hover:shadow-menu" onClick={() => setCoverImageUploaderOpen(true)}>
+                <UploadImage className="w-6 h-6 text-gray-700 mt-4 opacity-10 group-hover:opacity-90" />
+              </button>
+            </Tooltip>
+            <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
+              onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
           </>
         )}
       </div>

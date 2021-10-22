@@ -22,6 +22,7 @@ import Modal from '../Modal';
 
 export const NewNote = ({ onClose, isPublic = false }) => {
   const [pub, setPublic] = useState(isPublic)
+  const privacy = pub ? 'public' : 'private'
   const [value, setNoteValue] = useState(EmptySlateJSON);
 
   const [createAnother, setCreateAnother] = useState(false);
@@ -30,17 +31,16 @@ export const NewNote = ({ onClose, isPublic = false }) => {
   const { setValue, resetEditor } = usePlateActions(editorId);
 
   const webId = useWebId();
-  const { workspace, slug: workspaceSlug } = useCurrentWorkspace();
+  const { workspace, slug: workspaceSlug } = useCurrentWorkspace(privacy);
   const [name, setName] = useState("");
 
   const {
     concept,
     index: conceptIndex,
     saveIndex: saveConceptIndex,
-  } = useConcept(webId, workspaceSlug, name, pub ? 'public' : 'private');
+  } = useConcept(webId, workspaceSlug, name, privacy);
   const conceptNames = useConceptNames(webId)
   const conceptExists = concept && !isThingLocal(concept);
-
   const save = async function save() {
     const newNote = createOrUpdateSlateJSON(value);
     const newConceptIndex = createOrUpdateConceptIndex(

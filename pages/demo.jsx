@@ -8,7 +8,7 @@ const W = 1920;
 const H = 924;
 
 export const StoragePrefix =
-  "https://ian.myunderstory.com/public/demo/ImageMap/demo/";
+  "https://ian.mysilio.me/public/demo/ImageMap/demo/";
 export const DemoPath = "/demo";
 export const DemoPrefix = `${DemoPath}/`;
 
@@ -23,7 +23,7 @@ export const MountainDashboard = {
     },
     {
       // READ ME
-      href: "/u/tani.myunderstory.com/default/5LSGKY1KZn",
+      href: "/u/tani.mysilio.me/default/5LSGKY1KZn",
       coords: [950, 400, 1200, 600],
     },
     {
@@ -54,32 +54,32 @@ export const PathPitch = {
   areas: [
     {
       // Funding
-      href: "/u/tani.myunderstory.com/default/VcgmBzxsm5ZasszycqkMTenHMP4BQ4",
+      href: "/u/tani.mysilio.me/default/VcgmBzxsm5ZasszycqkMTenHMP4BQ4",
       coords: [700, 50, 1000, 275],
     },
     {
       // Team
-      href: "/u/tani.myunderstory.com/default/271EUcxT76uHPAgVroyvdM4C",
+      href: "/u/tani.mysilio.me/default/271EUcxT76uHPAgVroyvdM4C",
       coords: [1000, 100, 1350, 350],
     },
     {
       // Market Size
-      href: "/u/tani.myunderstory.com/default/44VHTqLcTKDP6KQVHYsro",
+      href: "/u/tani.mysilio.me/default/44VHTqLcTKDP6KQVHYsro",
       coords: [600, 275, 900, 550],
     },
     {
       // Why Now?
-      href: "/u/tani.myunderstory.com/default/LyQfwzaipmL",
+      href: "/u/tani.mysilio.me/default/LyQfwzaipmL",
       coords: [1100, 0, 1400, 700],
     },
     {
       // Product vision
-      href: "/u/tani.myunderstory.com/default/pFcGoTnHLbR6vXHZdEVW89bZYgmJesMkyK",
+      href: "/u/tani.mysilio.me/default/pFcGoTnHLbR6vXHZdEVW89bZYgmJesMkyK",
       coords: [450, 550, 900, H],
     },
     {
       // Garden Soil
-      href: "/u/tani.myunderstory.com/default/E2NKVij",
+      href: "/u/tani.mysilio.me/default/E2NKVij",
       coords: [200, 300, 550, 600],
     },
   ],
@@ -89,42 +89,42 @@ export const ForestLibrary = {
   areas: [
     {
       //  Butterfly // Infinite rooms for thought
-      href: "/u/tani.myunderstory.com/default/jRZ5QCkALH1Z2MW1xHsBdKGvbwLVVzubXq",
+      href: "/u/tani.mysilio.me/default/jRZ5QCkALH1Z2MW1xHsBdKGvbwLVVzubXq",
       coords: [200, 370, 380, 600],
     },
     {
       // Normal Bee // Building the Creator economy
-      href: " /u/tani.myunderstory.com/default/21jdcZML2hG1YXioHasgSxujziGBMSWk3FHvCuW",
+      href: " /u/tani.mysilio.me/default/21jdcZML2hG1YXioHasgSxujziGBMSWk3FHvCuW",
       coords: [480, 0, 780, 500],
     },
     {
       // Plants // Digital Gardens
-      href: "/u/tani.myunderstory.com/default/dv4H3AEmdZk6zUNbmuw",
+      href: "/u/tani.mysilio.me/default/dv4H3AEmdZk6zUNbmuw",
       coords: [840, 0, 1500, 600],
     },
     {
       // Cartoon Bee // Metaverse
-      href: "/u/tani.myunderstory.com/default/2PmGzU397iuQQ",
+      href: "/u/tani.mysilio.me/default/2PmGzU397iuQQ",
       coords: [1600, 140, 1750, 320],
     },
     {
       // Two Shroom Snail // Platform Coops
-      href: "/u/tani.myunderstory.com/default/iLBJkb92sXiECbA9cvv",
+      href: "/u/tani.mysilio.me/default/iLBJkb92sXiECbA9cvv",
       coords: [0, 650, 420, H],
     },
     {
       // Single Shroom // Mysilio Reading Room
-      href: "/u/tani.myunderstory.com/default/3AD3JFXpdDPRKP4z8",
+      href: "/u/tani.mysilio.me/default/3AD3JFXpdDPRKP4z8",
       coords: [700, 610, 970, H],
     },
     {
       // Triple Shroom // Social Knowledge Graphs
-      href: "/u/tani.myunderstory.com/default/3PHaBYD9kMsF8kdvk1mHKpohYZkpRb3g",
+      href: "/u/tani.mysilio.me/default/3PHaBYD9kMsF8kdvk1mHKpohYZkpRb3g",
       coords: [1140, 610, 1390, H],
     },
     {
       // Gnome // Worldbuilding
-      href: "/u/tani.myunderstory.com/default/6RUdmJM9BtHedkV8wzrzFvQmg7VeZ4RVQBMcdw37",
+      href: "/u/tani.mysilio.me/default/6RUdmJM9BtHedkV8wzrzFvQmg7VeZ4RVQBMcdw37",
       coords: [1610, 710, W, H],
     },
   ],
@@ -135,32 +135,32 @@ export const SkyVision = {
   areas: [
     {
       // Left Cloud  // Mysilio Brand
-      href: "/u/tani.myunderstory.com/default/FW445yWvwojgTfQJBjQUFu",
+      href: "/u/tani.mysilio.me/default/FW445yWvwojgTfQJBjQUFu",
       coords: [0, 0, 530, 650],
     },
     {
       // Sun // Vision
-      href: "/u/tani.myunderstory.com/default/21jdcZML2hG1YXioHasxihdiw6feEENXejepjdt",
+      href: "/u/tani.mysilio.me/default/21jdcZML2hG1YXioHasxihdiw6feEENXejepjdt",
       coords: [530, 0, 980, 500],
     },
     {
       // Blue Bird // Tani
-      href: "/u/tani.myunderstory.com/default/3yYHoe",
+      href: "/u/tani.mysilio.me/default/3yYHoe",
       coords: [980, 250, 1280, 550],
     },
     {
       // Orange Bird // Ian
-      href: "/u/ian.myunderstory.com/default/HHkbwnJkxhr",
+      href: "/u/ian.mysilio.me/default/HHkbwnJkxhr",
       coords: [1280, 520, 1620, H],
     },
     {
       // Yellow Bird // Travis
-      href: "/u/travis.myunderstory.com/default/4bZUgk5Cs7UuP9Eg5QeT5ZrAwAYgQNLSyZ5M",
+      href: "/u/travis.mysilio.me/default/4bZUgk5Cs7UuP9Eg5QeT5ZrAwAYgQNLSyZ5M",
       coords: [820, 550, 1150, H],
     },
     {
       // Right Cloud  // Art n' D
-      href: "/u/tani.myunderstory.com/default/BzfF7kX",
+      href: "/u/tani.mysilio.me/default/BzfF7kX",
       coords: [1300, 0, W, 550],
     },
   ],
