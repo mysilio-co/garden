@@ -25,10 +25,10 @@ import { useCurrentWorkspace } from "./app";
 import { useMemoCompare } from "./react";
 import equal from "fast-deep-equal/es6";
 
-export function useConceptIndex(
+export function useWorkspaceIndex(
   webId,
-  workspaceSlug = "default",
-  storage = "public"
+  workspaceSlug = 'default',
+  storage = 'public'
 ) {
   const { workspace } = useWorkspace(webId, workspaceSlug, storage);
   const conceptIndexUri = workspace && getUrl(workspace, US.conceptIndex);
@@ -163,6 +163,7 @@ export function useConcept(
 export function useConceptsFromStorage(webId, storage, workspaceSlug) {
   const { index, ...rest } = useConceptIndex(webId, workspaceSlug, storage);
   const concepts = index && getThingAll(index);
+  // filter for concepts here
   return { concepts, ...rest };
 }
 
