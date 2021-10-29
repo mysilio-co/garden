@@ -4,7 +4,7 @@ import { Transforms } from 'slate';
 
 import { useSlateStatic } from 'slate-react';
 
-import { fetch } from 'solid-auth-fetcher'
+import { fetch } from '@inrupt/solid-client-authn-browser'
 import { v1 as uuid } from 'uuid';
 import Cropper from 'react-cropper';
 import newBlobReducer from 'image-blob-reduce'
