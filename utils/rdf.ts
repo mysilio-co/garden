@@ -41,10 +41,7 @@ export function isBookmark(thing: Thing): boolean {
 }
 
 export function isBookmarkedImage(thing: Thing): boolean {
-  // Inrupt vocabs return NamedNodes,
-  // ours currently only returns the IRI
-  // so grab the IRI from the inrupt vocab so this works
-  return hasRDFTypes(thing, [MY.SKOS.Bookmark, FOAF.Image.iri.value]);
+  return hasRDFTypes(thing, [MY.SKOS.Bookmark, FOAF.Image]);
 }
 
 export function isBookmarkedLink(thing: Thing): boolean {
