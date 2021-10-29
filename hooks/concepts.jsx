@@ -20,7 +20,8 @@ import { useWorkspace } from "./app";
 import { US } from "../vocab";
 import { conceptNameToUrlSafeId, urlSafeIdToConceptName } from "../utils/uris";
 import { defaultNoteStorageUri } from "../model/note";
-import { conceptIdFromUri } from "../model/concept";
+import { conceptIdFromUri } from '../model/concept';
+import { isConcept } from '../utils/rdf';
 import { useCurrentWorkspace } from "./app";
 import { useMemoCompare } from "./react";
 import equal from "fast-deep-equal/es6";
@@ -41,13 +42,13 @@ export function useWorkspaceIndex(
   }
 }
 
-export function useCombinedConceptIndexDataset(webId, workspaceSlug) {
-  const { index: privateIndex } = useConceptIndex(
+export function useCombinedWorkspaceIndexDataset(webId, workspaceSlug) {
+  const { index: privateIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "private"
   );
-  const { index: publicIndex } = useConceptIndex(
+  const { index: publicIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "public"
@@ -95,12 +96,12 @@ export function useConcept(
   const conceptUri =
     conceptPrefix && name && `${conceptPrefix}${conceptNameToUrlSafeId(name)}`;
 
-  const { index: privateIndex, save: savePrivateIndex } = useConceptIndex(
+  const { index: privateIndex, save: savePrivateIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "private"
   );
-  const { index: publicIndex, save: savePublicIndex } = useConceptIndex(
+  const { index: publicIndex, save: savePublicIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "public"
@@ -160,22 +161,51 @@ export function useConcept(
   }
 }
 
-export function useConceptsFromStorage(webId, storage, workspaceSlug) {
-  const { index, ...rest } = useConceptIndex(webId, workspaceSlug, storage);
-  const concepts = index && getThingAll(index);
-  // filter for concepts here
-  return { concepts, ...rest };
+export function useWorkspaceThings(webId, storage, workspaceSlug) {
+  const { index, ...rest } = useWorkspaceIndex(webId, workspaceSlug, storage);
+  const things = index && getThingAll(index);
+  return { things, ...rest };
+}
+
+export function useConceptThings(webId, storage, workspaceSlug) {
+  const { things, ...rest } = useWorkspaceThings(webId, storage, workspaceSlug);
+  return {
+    concepts: things.filter(hasNote),
+    ...rest,
+  };
+}
+
+export function useGarden(webId, workspaceSlug = "default") {
+  const { things: publicGarden } = useWorkspaceThings(
+    webId,
+    'public',
+    workspaceSlug
+  );
+  const { things: privateGarden } = useWorkspaceThings(
+    webId,
+    'private',
+    workspaceSlug
+  );
+
+  const garden =
+    (publicGarden || privateGarden) &&
+    [...(publicGarden || []), ...(privateGarden || [])].sort(
+      (a, b) =>
+        getDatetime(b, DCTERMS.modified) - getDatetime(a, DCTERMS.modified)
+    );
+  const result = useMemoCompare({ garden }, equal);
+  return result;
 }
 
 export function useConcepts(webId, workspaceSlug = "default") {
-  const { concepts: publicConcepts } = useConceptsFromStorage(
+  const { concepts: publicConcepts } = useConceptThings(
     webId,
     "public",
     workspaceSlug
   );
-  const { concepts: privateConcepts } = useConceptsFromStorage(
+  const { concepts: privateConcepts } = useConceptThings(
     webId,
-    "private",
+    'private',
     workspaceSlug
   );
 

@@ -12,7 +12,7 @@ import Modal from '../Modal';
 
 export function NewImage({ onClose }) {
   const webId = useWebId();
-  const { index, save } = useConceptIndex(webId);
+  const { index, save } = useWorkspaceIndex(webId);
   const [imageUrl, setImageUrl] = useState(undefined);
   const [file, setFile] = useState(undefined);
 

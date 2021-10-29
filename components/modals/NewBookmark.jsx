@@ -9,7 +9,7 @@ import Modal from '../Modal';
 
 export function NewBookmark({ onClose }) {
   const webId = useWebId()
-  const { index, save } = useConceptIndex(webId);
+  const { index, save } = useWorkspaceIndex(webId);
 
   const initialValues = { url: '' };
   const onSubmit = async ({ url }) => {
