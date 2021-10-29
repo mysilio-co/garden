@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react';
 import { Formik, Field, Form } from "formik";
 import { Close as CloseIcon, TickCircle } from '../icons'
-import { useConceptIndex } from '../../hooks/concepts';
+import { useWorkspaceIndex } from '../../hooks/concepts';
 import { useWebId } from 'swrlit';
 import { addLinkToIndex } from '../../model/index';
 import Modal from '../Modal';

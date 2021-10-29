@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react'
 import { Formik, Field, Form } from "formik";
 import { Transition, Dialog } from '@headlessui/react';
 import { Close as CloseIcon, TickCircle } from '../icons'
-import { useConceptIndex } from '../../hooks/concepts';
+import { useWorkspaceIndex } from '../../hooks/concepts';
 import { useWebId } from 'swrlit';
 import { addFileToIndex } from '../../model';
 import { uploadFromFile } from '../../components/ImageUploader';
@@ -11,7 +11,7 @@ import Modal from '../Modal';
 
 export function NewFile({ onClose }) {
   const webId = useWebId();
-  const { index, save } = useConceptIndex(webId);
+  const { index, save } = useWorkspaceIndex(webId);
   const fileContainerUri = useFileContainerUri(webId);
   const [file, setFile] = useState()
   const onFileChanged = (file) => {

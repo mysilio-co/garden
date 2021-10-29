@@ -3,7 +3,7 @@ import { Formik, Field, Form } from "formik";
 import { Transition, Dialog } from '@headlessui/react';
 import { Close as CloseIcon, TickCircle } from '../icons'
 import * as Yup from "yup";
-import { useConceptIndex } from '../../hooks/concepts';
+import { useWorkspaceIndex } from '../../hooks/concepts';
 import { useImageUploadUri } from '../../hooks/uris';
 import { useWebId } from 'swrlit';
 import { addImageToIndex } from '../../model';
