@@ -1,4 +1,4 @@
-import { fetch } from "solid-auth-fetcher";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   setThing,
   createSolidDataset,
