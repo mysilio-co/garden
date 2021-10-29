@@ -2,18 +2,19 @@ import { useState, useCallback } from 'react'
 import { useResource, useAuthentication, useLoggedIn, useMyProfile, useProfile, useWebId, useEnsured } from 'swrlit'
 import { Logo } from '../logo'
 import { Loader } from '../elements'
+import { handleToIdp } from '../../utils/uris'
 
 export default function Welcome() {
   const [username, setUsername] = useState("")
   const [badHandle, setBadHandle] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
-  const { loginHandle, logout } = useAuthentication()
+  const { login } = useAuthentication()
   const handle = username.includes(".") ? username : `${username}.mysilio.me`
   async function logIn() {
     setBadHandle(false)
     setLoggingIn(true)
     try {
-      await loginHandle(handle);
+      await login({oidcIssuer: handleToIdp(handle), redirectUrl: window.location.href, clientName: "Mysilio Garden"});
     } catch (e) {
       console.log("error:", e)
       setBadHandle(true)
