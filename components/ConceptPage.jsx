@@ -11,7 +11,7 @@ import WebMonetization from './WebMonetization';
 export default function ConceptPage({ editorId = 'concept-page', webId, workspaceSlug, slug }) {
   const myWebId = useWebId()
   const conceptName = slug && urlSafeIdToConceptName(slug);
-  const { concept, saveConcept, note, noteError, maybeSaveNoteBody, saving, privacy} = useConceptAndNote(webId, workspaceSlug, conceptName)
+  const { concept, saveConcept, note, noteError, maybeSaveNoteBody, deleteConcept, saving, privacy } = useConceptAndNote(webId, workspaceSlug, conceptName)
   const { profile: authorProfile } = useProfile(webId);
   const { profile: currentUserProfile } = useMyProfile();
   const { index } = useCombinedConceptIndexDataset(webId, workspaceSlug);
@@ -20,7 +20,7 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
     <div>
       <WebMonetization webId={webId} />
       <NoteHeader concept={concept} saveConcept={saveConcept} conceptName={conceptName} authorProfile={authorProfile}
-        currentUserProfile={currentUserProfile} myNote={myNote} privacy={privacy}/>
+        currentUserProfile={currentUserProfile} myNote={myNote} privacy={privacy} deleteConcept={deleteConcept} />
       <ConceptEditor webId={webId} authorWebId={webId} workspaceSlug={workspaceSlug} slug={slug} myNote={myNote}
         conceptIndex={index} concept={concept} conceptName={conceptName} editorId={conceptName}
         note={note} noteError={noteError} maybeSaveNoteBody={maybeSaveNoteBody} />
