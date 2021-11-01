@@ -40,10 +40,17 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
   }
 }
 
-export default function Header({ profile, loggedIn, logout, conceptNames, type }) {
+export default function Header({
+  profile,
+  loggedIn,
+  logout,
+  conceptNames,
+  type,
+  onSearch,
+}) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const [activeModal, setActiveModal] = useState(undefined);
-  const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
+  const bg = type == 'dashboard' ? 'bg-header-gradient' : 'bg-my-green';
 
   return (
     <nav
@@ -64,6 +71,10 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
             placeholder="Search"
             icon={<SearchIcon className="ipt-header-search-icon" />}
             inputClassName="ipt-header-search"
+            onChange={(e) => {
+              e.preventDefault();
+              onSearch(e.target.value);
+            }}
           />
         </Formik>
       </div>

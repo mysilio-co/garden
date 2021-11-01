@@ -1,7 +1,5 @@
 import { asUrl } from "@inrupt/solid-client";
 import { useWebId } from "swrlit";
-import { useWorkspaceContext } from "../contexts/WorkspaceContext";
-import { useGarden } from '../hooks/concepts';
 import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"
 import ImageCard from "./cards/ImageCard"
@@ -40,10 +38,8 @@ export function CardsFromGarden({ garden, webId, workspaceSlug }) {
   );
 }
 
-export default function Cards({ }) {
-  const myWebId = useWebId()
-  const { slug: workspaceSlug, webId } = useWorkspaceContext()
-  const { garden } = useGarden(webId, workspaceSlug);
+export default function Cards({ workspaceSlug, webId, garden }) {
+  const myWebId = useWebId();
 
   return (
     <>
