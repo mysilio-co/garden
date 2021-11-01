@@ -170,7 +170,7 @@ export function useWorkspaceThings(webId, storage, workspaceSlug) {
 export function useConceptThings(webId, storage, workspaceSlug) {
   const { things, ...rest } = useWorkspaceThings(webId, storage, workspaceSlug);
   return {
-    concepts: things.filter(hasNote),
+    concepts: things && things.filter(hasNote),
     ...rest,
   };
 }

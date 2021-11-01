@@ -47,8 +47,8 @@ export default function Cards({ }) {
 
   return (
     <>
-      {concepts ? (
-        concepts.length > 0 ? (
+      {garden ? (
+        garden.length > 0 ? (
           <CardsFromGarden
             webId={webId}
             garden={garden}
