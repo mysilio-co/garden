@@ -4,7 +4,7 @@ import equal from "fast-deep-equal/es6";
 import { useThing, useWebId } from 'swrlit'
 import {
   createSolidDataset, createThing, getUrl, setUrl,
-  setThing, getThing, getBoolean
+  setThing, getThing, getBoolean, removeThing
 } from '@inrupt/solid-client'
 
 import { useUnderstoryContainerUri, useStorageContainer } from './uris';
@@ -15,6 +15,7 @@ import { useWorkspaceContext } from '../contexts/WorkspaceContext';
 import { useConcept } from '../hooks/concepts';
 import { getAndParseNoteBody, createOrUpdateSlateJSON } from '../model/note';
 import { createOrUpdateConceptIndex } from '../model/concept';
+import { deleteResource } from '../utils/fetch'
 
 
 const appThingName = "app"
@@ -22,8 +23,8 @@ const appThingName = "app"
 const prefsPath = "workspace/default/prefs.ttl"
 const prefsWorkspaceName = "workspace"
 
-function createNewAppResource(appContainerUri, privateAppContainerUri){
-  let app = createThing({name: appThingName})
+function createNewAppResource(appContainerUri, privateAppContainerUri) {
+  let app = createThing({ name: appThingName })
   let defaultWorkspace = createThing()
   defaultWorkspace = setUrl(defaultWorkspace, US.publicPrefs, `${appContainerUri}${prefsPath}#${prefsWorkspaceName}`)
   defaultWorkspace = setUrl(defaultWorkspace, US.privatePrefs, `${privateAppContainerUri}${prefsPath}#${prefsWorkspaceName}`)
@@ -31,11 +32,11 @@ function createNewAppResource(appContainerUri, privateAppContainerUri){
   let resource = createSolidDataset()
   resource = setThing(resource, defaultWorkspace)
   resource = setThing(resource, app)
-  return {app, resource}
+  return { app, resource }
 }
 
-function createWorkspacePrefs(conceptPrefix, tagPrefix, workspacePreferencesFileUri){
-  let workspace = createThing({name: prefsWorkspaceName})
+function createWorkspacePrefs(conceptPrefix, tagPrefix, workspacePreferencesFileUri) {
+  let workspace = createThing({ name: prefsWorkspaceName })
   workspace = setUrl(workspace, US.conceptPrefix, conceptPrefix)
   workspace = setUrl(workspace, US.tagPrefix, tagPrefix)
   workspace = setUrl(workspace, US.conceptIndex, new URL("concepts.ttl", workspacePreferencesFileUri).toString())
@@ -44,20 +45,20 @@ function createWorkspacePrefs(conceptPrefix, tagPrefix, workspacePreferencesFile
   return workspace
 }
 
-export function useApp(webId){
+export function useApp(webId) {
   const appContainerUri = useUnderstoryContainerUri(webId)
 
   const privateAppContainerUri = useUnderstoryContainerUri(webId, 'private')
   const publicWorkspacePrefsUri = appContainerUri && `${appContainerUri}${prefsPath}#${prefsWorkspaceName}`
-  const {save: savePublicPrefs} = useThing(publicWorkspacePrefsUri)
+  const { save: savePublicPrefs } = useThing(publicWorkspacePrefsUri)
   const privateWorkspacePrefsUri = privateAppContainerUri && `${privateAppContainerUri}${prefsPath}#${prefsWorkspaceName}`
-  const {save: savePrivatePrefs} = useThing(privateWorkspacePrefsUri)
+  const { save: savePrivatePrefs } = useThing(privateWorkspacePrefsUri)
   const appUri = appContainerUri && `${appContainerUri}app.ttl#${appThingName}`
-  const {thing: app, saveResource: saveAppResource, ...rest} = useThing(appUri)
+  const { thing: app, saveResource: saveAppResource, ...rest } = useThing(appUri)
   const conceptPrefix = useConceptPrefix(webId, 'default')
   const tagPrefix = useTagPrefix(webId, 'default')
 
-  async function initApp(){
+  async function initApp() {
     const { resource: appResource } = createNewAppResource(appContainerUri, privateAppContainerUri)
     await saveAppResource(appResource)
     const privatePrefs = createWorkspacePrefs(conceptPrefix, tagPrefix, privateWorkspacePrefsUri)
@@ -67,10 +68,10 @@ export function useApp(webId){
     console.log("initialized!")
   }
 
-  return {app, initApp, saveResource: saveAppResource, ...rest}
+  return { app, initApp, saveResource: saveAppResource, ...rest }
 }
 
-export function useWorkspacePreferencesFileUris(webId, workspaceSlug='default'){
+export function useWorkspacePreferencesFileUris(webId, workspaceSlug = 'default') {
   const { app } = useApp(webId)
   // we're ignoring the workspaceSlug parameter for now, but eventually we'll want to use this to get the currect workspace
   const { thing: workspaceInfo } = useThing(app && getUrl(app, US.hasWorkspace))
@@ -80,17 +81,17 @@ export function useWorkspacePreferencesFileUris(webId, workspaceSlug='default'){
   }
 }
 
-function useConceptPrefix(webId, workspaceSlug){
+function useConceptPrefix(webId, workspaceSlug) {
   const storageContainerUri = useStorageContainer(webId)
   return storageContainerUri && `${storageContainerUri}${appPrefix}/${workspaceSlug}/concepts#`
 }
 
-function useTagPrefix(webId, workspaceSlug){
+function useTagPrefix(webId, workspaceSlug) {
   const storageContainerUri = useStorageContainer(webId)
   return storageContainerUri && `${storageContainerUri}${appPrefix}/${workspaceSlug}/tags#`
 }
 
-export function useWorkspace(webId, slug, storage='public'){
+export function useWorkspace(webId, slug, storage = 'public') {
   const workspacePreferencesFileUris = useWorkspacePreferencesFileUris(webId, slug)
   const workspacePreferencesFileUri = workspacePreferencesFileUris && workspacePreferencesFileUris[storage]
   const { thing: workspace, ...rest } = useThing(workspacePreferencesFileUri)
@@ -99,17 +100,17 @@ export function useWorkspace(webId, slug, storage='public'){
 
 }
 
-export function useCurrentWorkspace(storage='public'){
+export function useCurrentWorkspace(storage = 'public') {
   const webId = useWebId()
   const { slug: workspaceSlug } = useWorkspaceContext()
   return useWorkspace(webId, workspaceSlug, storage)
 }
 
-function createSettings(){
-  return createThing({name: "settings"})
+function createSettings() {
+  return createThing({ name: "settings" })
 }
 
-export function useAppSettings(webId){
+export function useAppSettings(webId) {
   const { app, resource: appResource, saveResource: saveAppResource } = useApp(webId)
   const settingsUri = app && getUrl(app, US.hasSettings)
   const settings = app && (settingsUri ? getThing(appResource, settingsUri) : createSettings())
@@ -118,10 +119,10 @@ export function useAppSettings(webId){
     newAppResource = setThing(newAppResource, setUrl(app, US.hasSettings, newSettings))
     return saveAppResource(newAppResource)
   }
-  return { settings,  save }
+  return { settings, save }
 }
 
-export function useDevMode(webId){
+export function useDevMode(webId) {
   const { settings } = useAppSettings(webId)
   return settings && getBoolean(settings, US.devMode)
 }
@@ -167,9 +168,18 @@ export function useConceptAndNote(webId, workspaceSlug, conceptName) {
     }
   }
 
-  async function saveConcept(newConcept){
+  async function saveConcept(newConcept) {
     return await saveConceptIndex(setThing(conceptIndex, newConcept))
   }
 
-  return { note, noteError, maybeSaveNoteBody, concept, saveConcept, saving, privacy }
+  async function deleteConcept() {
+    await Promise.all([
+      deleteResource(noteStorageUri),
+      concept && saveConceptIndex(removeThing(conceptIndex, concept))
+    ])
+    // mutate to invalidate the cache for the note
+    mutateNote()
+  }
+
+  return { note, noteError, maybeSaveNoteBody, concept, saveConcept, deleteConcept, saving, privacy }
 }

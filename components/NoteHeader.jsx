@@ -2,6 +2,7 @@ import { useState } from "react"
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
 import { getStringNoLocale, getDatetime, getUrl, setUrl, asUrl } from "@inrupt/solid-client";
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
 
 import { Logo } from './logo';
@@ -10,13 +11,13 @@ import { getRelativeTime } from '../utils/time';
 import { profilePath } from '../utils/uris';
 import { NoteVisibilityToggle } from './toggles'
 import PrivacyChanger from './PrivacyChanger'
-import { UploadImage } from './icons'
+import { UploadImage, Trashcan } from './icons'
 import { Tooltip } from './elements'
 import ImageUploadModal from './modals/ImageUpload'
 import { useImageUploadUri } from "../hooks/uris";
 
-export default function NoteHeader({ concept, saveConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy }) {
-
+export default function NoteHeader({ concept, saveConcept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy }) {
+  const router = useRouter()
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
 
@@ -42,6 +43,13 @@ export default function NoteHeader({ concept, saveConcept, conceptName, authorPr
     setCoverImageUploaderOpen(false)
   }
   const authorProfilePath = authorWebId && profilePath(authorWebId)
+  async function deleteAndRedirect() {
+    const confirmed = confirm(`Are you sure you want to delete ${conceptName}?`)
+    if (confirmed) {
+      await deleteConcept()
+      router.push("/")
+    }
+  }
   return (
     <div className="flex flex-col">
       <nav className={`${bg} b-2xl flex flex-row justify-between h-32`}>
@@ -85,6 +93,9 @@ export default function NoteHeader({ concept, saveConcept, conceptName, authorPr
           <div className="flex flex-row h-10 mr-4">
             {myNote && (
               <>
+                <button onClick={deleteAndRedirect} className="mx-4">
+                  <Trashcan className="h-6 w-6 text-white" />
+                </button>
                 {privacyUpdatingTo ? (
                   <PrivacyChanger name={conceptName}
                     changeTo={privacyUpdatingTo} onFinished={() => setPrivacyUpdatingTo(null)} />
