@@ -10,7 +10,8 @@ import {
   getThing,
   createThing,
   toRdfJsDataset,
-} from "@inrupt/solid-client";
+  getStringNoLocale,
+} from '@inrupt/solid-client';
 import { DCTERMS } from "@inrupt/vocab-common-rdf";
 import { useResource, useWebId, useThing } from "swrlit";
 import Fuse from "fuse.js";
@@ -21,7 +22,12 @@ import { US } from "../vocab";
 import { conceptNameToUrlSafeId, urlSafeIdToConceptName } from "../utils/uris";
 import { defaultNoteStorageUri } from "../model/note";
 import { conceptIdFromUri } from '../model/concept';
-import { isConcept } from '../utils/rdf';
+import {
+  isConcept,
+  isBookmarkedLink,
+  isBookmarkedImage,
+  isBookmarkedFile,
+} from '../utils/rdf';
 import { useCurrentWorkspace } from "./app";
 import { useMemoCompare } from "./react";
 import equal from "fast-deep-equal/es6";
@@ -251,6 +257,64 @@ export function useConceptNamesMatching(search) {
     },
     [concepts, search]
   );
+}
+
+function fuseEntryFromGardenEntry(thing) {
+  if (isConcept(thing)) {
+    return {
+      thing: thing,
+      type: 'note',
+      name: urlSafeIdToConceptName(conceptIdFromUri(asUrl(thing))),
+    };
+  } else if (isBookmarkedImage(thing)) {
+    return {
+      thing: thing,
+      type: 'image',
+      name: thing && getStringNoLocale(thing, DCTERMS.title),
+    };
+  } else if (isBookmarkedFile(thing)) {
+    return {
+      thing: thing,
+      type: 'file',
+      name: thing && getStringNoLocale(thing, DCTERMS.title),
+    };
+  } else if (isBookmarkedLink(thing)) {
+    return {
+      thing: thing,
+      type: 'link',
+      name: asUrl(thing),
+    };
+  }
+  return {};
+}
+
+function fuseFromGarden(garden) {
+  return garden && garden.map(fuseEntryFromGardenEntry);
+}
+
+export function useFuse(garden) {
+  const options = { includeScore: true, keys: ['name'] }; 
+  const [fuse] = useState(new Fuse([], options));
+  return useMemo(() => {
+    fuse.setCollection(fuseFromGarden(garden) || []);
+    return { fuse };
+  }, [garden]);
+}
+
+export function useFilteredGarden(
+  webId,
+  workspaceSlug = 'default',
+  search = ''
+) {
+  const { garden } = useGarden(webId, workspaceSlug);
+  const { fuse } = useFuse(garden);
+  if (search) {
+    const result = fuse.search(search);
+    console.log(garden, search, result);
+    return { garden: result.map(({ item }) => item.thing) };
+  } else {
+    return { garden };
+  }
 }
 
 export function useNote(concept) {

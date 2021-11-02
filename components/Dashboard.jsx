@@ -3,15 +3,15 @@ import { useWebId } from 'swrlit'
 import WebMonetization from '../components/WebMonetization'
 import HeaderWithData from '../components/HeaderWithData'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
-import { useGarden } from '../hooks/concepts';
+import { useFilteredGarden } from '../hooks/concepts';
 import Cards from '../components/Cards';
+import { FurnitureStore } from 'rdf-namespaces/dist/schema'
 
 export default function Dashboard() {
   const webId = useWebId();
   const workspaceSlug = 'default';
-  const { garden } = useGarden(webId, workspaceSlug);
-
   const [search, setSearch] = useState('');
+  const { garden } = useFilteredGarden(webId, workspaceSlug, search);
 
   return (
     <>
@@ -19,7 +19,6 @@ export default function Dashboard() {
       <HeaderWithData
         type="dashboard"
         onSearch={(s) => {
-          console.log(s);
           setSearch(s);
         }}
       />
