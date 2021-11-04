@@ -16,7 +16,7 @@ function RenderAfterAuthed({ children }) {
 
   return info ? (
     <>
-    {children}
+      {children}
     </>
   ) : (<></>)
 }
@@ -54,14 +54,20 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-function AuthedApp(props) {
+function AuthedApp({ pageProps, ...rest }) {
+  const { statusCode } = pageProps
   const router = useRouter()
-  return (
-    <AuthenticationProvider onSessionRestore={url => router.replace(url)}>
-      <RenderAfterAuthed>
-        <MyApp {...props} />
-      </RenderAfterAuthed>
-    </AuthenticationProvider>
+  // if we try to render auth around the 404 it triggers an infinite redirect loop,
+  // I think because the 404 is a special static page in Next.js? to avoid this, don't render
+  // auth around the 404 page
+  return (statusCode == 404) ? (
+    <MyApp pageProps={pageProps} {...rest} />
+  ): (
+      <AuthenticationProvider onSessionRestore = {url => router.replace(url)}>
+        <RenderAfterAuthed>
+          <MyApp pageProps={pageProps} {...rest} />
+        </RenderAfterAuthed>
+    </AuthenticationProvider >
   )
 }
 
