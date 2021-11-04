@@ -139,64 +139,91 @@ function GnomeThingEditor({ webId, thing, updateThing, cancelAdd }) {
   const currentCSS = thing && getStringNoLocale(thing, US.usesCSS)
   return (
     <div className="mb-12">
-      { savingGate ? (
+      {savingGate ? (
         <Loader />
-      ) : (
-        editingGate ? (
-          <Formik
-            initialValues={{
-              conceptName: chosenConceptName,
-              css: currentCSS || ''
-            }}
-            validationSchema={SinglePageGateSchema}
-            onSubmit={save}
-          >
-            {({ errors, touched, setFieldValue, values: { conceptName } }) => (
+      ) : editingGate ? (
+        <Formik
+          initialValues={{
+            conceptName: chosenConceptName,
+            css: currentCSS || '',
+          }}
+          validationSchema={SinglePageGateSchema}
+          onSubmit={save}
+        >
+          {({ errors, touched, setFieldValue, values: { conceptName } }) => (
+            <Form>
+              <div className="flex flex-col">
+                <div>
+                  <h3 className="mb-3">
+                    What note would you like to use for your Gate?
+                  </h3>
 
-              <Form>
-                <div className="flex flex-col">
-                  <div>
-                    <h3 className="mb-3">What note would you like to use for your Gate?</h3>
-
-                    {editingNoteName ? (
-                      <NotePicker onSubmit={(newConceptName) => {
-                        setFieldValue('conceptName', newConceptName)
+                  {editingNoteName ? (
+                    <NotePicker
+                      onSubmit={(newConceptName) => {
+                        setFieldValue('conceptName', newConceptName);
                         // we need to set this here so that the concept loader above will
                         // load the concept
-                        setChosenConceptName(newConceptName)
-                        setEditingNoteName(false)
+                        setChosenConceptName(newConceptName);
+                        setEditingNoteName(false);
                       }}
-                        initialSelectedName={conceptName}/>
-                    ) : (
-                      <div className="flex justify-between">
-                        <h5 className="font-bold">{conceptName}</h5>
-                        <button className="btn" onClick={() => setEditingNoteName(true)}>Pick a different note</button>
-                      </div>
-                    )}
-                  </div>
-                  <Field id="css" name="css"
-                    as="textarea"
-                    className="my-3"
-                    placeholder="add custom css" />
-                  {errors.css && touched.css ? <div className="text-red-500">{errors.css}</div> : null}
-
-                  <div className="flex mt-1">
-                    <button className="btn" disabled={!conceptName} type="submit">Save and Deploy Gate</button>
-                    <button className="btn" onClick={cancelEdit}>Cancel</button>
-                  </div>
+                      initialSelectedName={conceptName}
+                    />
+                  ) : (
+                    <div className="flex justify-between">
+                      <h5 className="font-bold">{conceptName}</h5>
+                      <button
+                        className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+                        onClick={() => setEditingNoteName(true)}
+                      >
+                        Pick a different note
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </Form>
-            )}
-          </Formik>
-        ) : (
-          <div className="flex justify-between mt-3">
-            <GnomeThingEntry thing={thing} />
-            <button className="btn" onClick={() => setEditingGate(true)}>Edit Gate</button>
-          </div>
-        ))
-      }
-    </div >
-  )
+                <Field
+                  id="css"
+                  name="css"
+                  as="textarea"
+                  className="my-3"
+                  placeholder="add custom css"
+                />
+                {errors.css && touched.css ? (
+                  <div className="text-red-500">{errors.css}</div>
+                ) : null}
+
+                <div className="flex mt-1">
+                  <button
+                    className="btn-md btn-filled btn-square h-10 mr-1"
+                    onClick={cancelEdit}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+                    disabled={!conceptName}
+                    type="submit"
+                  >
+                    Save and Deploy Gate
+                  </button>
+                </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      ) : (
+        <div className="flex justify-between mt-3">
+          <GnomeThingEntry thing={thing} />
+          <button
+            className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+            onClick={() => setEditingGate(true)}
+          >
+            Edit Gate
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function GnomesResourceEditor({ webId }) {
@@ -229,22 +256,40 @@ function GnomesResourceEditor({ webId }) {
   return (
     <div className="mt-3">
       {devMode && (
-        <button className="btn" onClick={() => { deleteResource(getSourceUrl(resource)) }}>
+        <button
+          className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+          onClick={() => {
+            deleteResource(getSourceUrl(resource));
+          }}
+        >
           Delete Gnomes Resource
         </button>
       )}
-      { gnomeThings && gnomeThings.map((thing, i) => (
-        <GnomeThingEditor key={i}
+      {gnomeThings &&
+        gnomeThings.map((thing, i) => (
+          <GnomeThingEditor
+            key={i}
+            webId={webId}
+            thing={thing}
+            updateThing={updateThing}
+          />
+        ))}
+      {addingNewGnome ? (
+        <GnomeThingEditor
           webId={webId}
-          thing={thing}
-          updateThing={updateThing} />
-      ))}
-      { addingNewGnome ?
-        (<GnomeThingEditor webId={webId} updateThing={updateThing} cancelAdd={cancel} />) :
-        (<button className="btn" onClick={() => setAddingNewGnome(true)}>Create a New Gate</button>)
-      }
+          updateThing={updateThing}
+          cancelAdd={cancel}
+        />
+      ) : (
+        <button
+          className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+          onClick={() => setAddingNewGnome(true)}
+        >
+          Create a New Gate
+        </button>
+      )}
     </div>
-  )
+  );
 }
 
 export default function Profile() {
