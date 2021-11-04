@@ -2,6 +2,7 @@ import { createThing, setUrl, setStringNoLocale, asUrl, getSourceUrl } from '@in
 import { US } from '../vocab'
 import greg from 'greg'
 import * as base58 from 'micro-base58'
+import * as proquint from 'proquint';
 
 export const GnomeType = {
   Gate: "gate"
