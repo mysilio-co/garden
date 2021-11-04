@@ -5,7 +5,6 @@ import HeaderWithData from '../components/HeaderWithData'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
 import { useFilteredGarden } from '../hooks/concepts';
 import Cards from '../components/Cards';
-import { FurnitureStore } from 'rdf-namespaces/dist/schema'
 
 export default function Dashboard() {
   const webId = useWebId();

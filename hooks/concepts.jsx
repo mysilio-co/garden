@@ -310,7 +310,6 @@ export function useFilteredGarden(
   const { fuse } = useFuse(garden);
   if (search) {
     const result = fuse.search(search);
-    console.log(garden, search, result);
     return { garden: result.map(({ item }) => item.thing) };
   } else {
     return { garden };

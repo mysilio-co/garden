@@ -50,7 +50,7 @@ export default function Header({
 }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const [activeModal, setActiveModal] = useState(undefined);
-  const bg = type == 'dashboard' ? 'bg-header-gradient' : 'bg-my-green';
+  const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
 
   return (
     <nav
