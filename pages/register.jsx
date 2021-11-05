@@ -75,12 +75,12 @@ export default function RegistrationPage(){
           <div className="flex flex-col">
             <Field id="username" name="username"
                    type="text"
-                   className="rounded text-2xl mb-3"
+                   className="rounded text-2xl mb-3 text-gray-800"
                    placeholder="pick a username" />
             {errors.username && touched.username ? <div className="text-red-500">{errors.username}</div> : null}
 
             <Field
-              className="rounded text-2xl"
+              className="rounded text-2xl text-gray-800"
               id="email"
               name="email"
               placeholder="what's your email"
