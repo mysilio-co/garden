@@ -1,5 +1,3 @@
-import { namedNode, dataset } from "@rdfjs/dataset";
-import type { DatasetCore } from "@rdfjs/types";
 import {
   Thing,
   SolidDataset,
@@ -48,8 +46,8 @@ type Collection = {
 };
 
 enum HTMLTemplate {
-  ConceptPage = "ConceptPage",
-  CollectionPage = "CollectionPage",
+  ConceptPage = 'concept-page',
+  CollectionPage = 'collection-page',
 } 
 
 type ConceptPageConfig = {
@@ -83,15 +81,15 @@ export function newsletterIdFromTitle(title: string) {
 }
 
 export function newNewsletter(
-  dataset: SolidDataset,
+  manifest: SolidDataset,
   title: string
 ): SolidDataset {
-  dataset = dataset || createSolidDataset();
+  manifest = manifest || createSolidDataset();
   const thing = buildThing(createThing({ name: newsletterIdFromTitle(title) }))
     .addUrl(RDF.type, SIOC.Container)
     .addUrl(RDF.type, MY.SIOC.Newsletter)
     .build();
-  return setThing(dataset, thing);
+  return setThing(manifest, thing);
 } 
 
 export function userIdFromEmail(email: string) {
@@ -99,17 +97,17 @@ export function userIdFromEmail(email: string) {
 }
 
 export function addSubscriberToNewsletter(
-  dataset: SolidDataset,
+  manifest: SolidDataset,
   newsletter: Newsletter,
   email: string
 ): SolidDataset {
-  dataset = dataset || createSolidDataset();
+  manifest = manifest || createSolidDataset();
   const thing = buildThing(createThing({ name: userIdFromEmail(email) }))
     .addUrl(RDF.type, SIOC.User)
     .addUrl(SIOC.subscriber_of, newsletter.iri)
     .addStringNoLocale(SIOC.email, email)
     .build();
-  return setThing(dataset, thing);
+  return setThing(manifest, thing);
 }
 
 export function editionId(newsletter: Newsletter, no: EditionNo) {
@@ -144,7 +142,7 @@ export function htmlConfigId() {
   return `html_config:uuid:${uuid()}`;
 }
 
-export function newConceptPageConfigThing(concept: Concept): Thing {
+function newConceptPageConfigThing(concept: Concept): Thing {
   return buildThing(createThing({ name: htmlConfigId() }))
     .addUrl(RDF.type, MY.HTML.Config)
     .addUrl(MY.HTML.uses_template, HTMLTemplate.ConceptPage)
@@ -152,7 +150,7 @@ export function newConceptPageConfigThing(concept: Concept): Thing {
     .build();
 }
 
-export function newCollectionPageConfigThing(
+function newCollectionPageConfigThing(
   concept: Concept,
   collection: Collection
 ): Thing {
@@ -165,7 +163,7 @@ export function newCollectionPageConfigThing(
 }
 
 export function newEdition(
-  index: SolidDataset,
+  manifest: SolidDataset,
   newsletter: Newsletter,
   concept: Concept,
   collection?: Collection
@@ -173,7 +171,7 @@ export function newEdition(
   const HTMLConfig = collection
     ? newCollectionPageConfigThing(concept, collection)
     : newConceptPageConfigThing(concept);
-  index = setThing(index || createSolidDataset(), HTMLConfig);
+  manifest = setThing(manifest || createSolidDataset(), HTMLConfig);
 
   const Edition = buildThing(createThing({ name: nextEditionId(newsletter) }))
     .addUrl(RDF.type, SIOC.Item)
@@ -183,8 +181,26 @@ export function newEdition(
     .addUrl(MY.HTML.configured_by, asUrl(HTMLConfig))
     .build();
 
-  return setThing(index, Edition);
+  return setThing(manifest, Edition);
 }
+
+export function newConceptPage(
+  manifest: SolidDataset,
+) {
+
+}
+
+export function newCollectionPage(
+
+) {
+
+}
+
+export function newLinkPage() {
+
+}
+
+export function publishPage() {}
 
 export function publishEdition() {}
 
