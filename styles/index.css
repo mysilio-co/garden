@@ -1,35 +1,23 @@
+
 @tailwind base;
 /* Write your own custom base styles here */
-/*
-TODO: do we need these?
-a {
-  @apply text-ocean;
+
+.link {
+  @apply text-gray-300;
 }
 
-a:hover {
-  @apply underline bg-mist;
+.link:hover {
+  @apply underline;
 }
 
-a:visited {
-  @apply text-passionflower;
+.link:visited {
+  @apply text-gray-100;
 }
 
-a:active {
-  @apply text-passionflower;
+.link:active {
+  @apply text-gray-100;
 }
 
-.a {
-  @apply text-ocean bg-transparent;
-}
-
-.a:hover {
-  @apply underline bg-mist;
-}
-
-.a:active {
-  @apply text-passionflower;
-}
-*/
 blockquote {
   @apply m-2 p-2 bg-gray-100 border-l-2 border-gray-400 text-gray-600;
 }
@@ -201,6 +189,10 @@ h2.font-logo {
   @apply z-50 !important;
 }
 
+.slate-ToolbarButton-active {
+  @apply text-ocean;
+}
+
 /* hex grid inspired by https://github.com/web-tiki/responsive-grid-of-hexagons/blob/css-grid/hexagons.css */
 
 .grid.hex {
@@ -306,6 +298,10 @@ h2.font-logo {
     /* first hexagon of even rows */
     grid-column-start: 2;
   }
+}
+
+.bg-login-gradient {
+  @apply bg-gradient-to-br from-my-green via-ocean to-my-purple;
 }
 
 .bg-header-gradient {

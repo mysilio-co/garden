@@ -31,7 +31,7 @@ export default function Welcome() {
     }
   }
   return (
-    <div className="relative h-screen bg-gradient-to-br from-my-green via-ocean to-my-purple pt-12 px-12 text-left">
+    <div className="relative h-screen bg-login-gradient pt-12 px-12 text-left">
       <Logo className="absolute top-0 -left-32 h-screen opacity-10 pointer-events-none" />
       <div className="mb-12 text-white" >
         <h2 className="text-3xl sm:text-2xl md:text-6xl lg:text-7xl font-bold">
