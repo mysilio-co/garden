@@ -2,7 +2,7 @@ import { useProfile, useMyProfile, useWebId } from "swrlit";
 
 import { urlSafeIdToConceptName } from "../utils/uris";
 import { useConceptAndNote } from '../hooks/app';
-import { useCombinedConceptIndexDataset } from '../hooks/concepts'
+import { useCombinedWorkspaceIndexDataset } from '../hooks/concepts'
 
 import NoteHeader from './NoteHeader';
 import ConceptEditor from './ConceptEditor';
@@ -14,7 +14,7 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
   const { concept, saveConcept, note, noteError, maybeSaveNoteBody, deleteConcept, saving, privacy } = useConceptAndNote(webId, workspaceSlug, conceptName)
   const { profile: authorProfile } = useProfile(webId);
   const { profile: currentUserProfile } = useMyProfile();
-  const { index } = useCombinedConceptIndexDataset(webId, workspaceSlug);
+  const { index } = useCombinedWorkspaceIndexDataset(webId, workspaceSlug);
   const myNote = (webId === myWebId)
   return (
     <div>

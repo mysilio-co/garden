@@ -2,14 +2,14 @@ import { useState, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react';
 import { Formik, Field, Form } from "formik";
 import { Close as CloseIcon, TickCircle } from '../icons'
-import { useConceptIndex } from '../../hooks/concepts';
+import { useWorkspaceIndex } from '../../hooks/concepts';
 import { useWebId } from 'swrlit';
 import { addLinkToIndex } from '../../model/index';
 import Modal from '../Modal';
 
 export function NewBookmark({ onClose }) {
   const webId = useWebId()
-  const { index, save } = useConceptIndex(webId);
+  const { index, save } = useWorkspaceIndex(webId);
 
   const initialValues = { url: '' };
   const onSubmit = async ({ url }) => {

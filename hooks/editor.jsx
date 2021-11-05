@@ -4,9 +4,6 @@ import { Editor, Transforms, Range } from 'slate'
 import { useConceptNamesMatching } from '../hooks/concepts'
 import { insertConcept } from '../utils/editor'
 
-import { useConcepts } from './concepts'
-
-
 function searchForOpenConcepts(editor){
   const { selection } = editor
   if (selection && Range.isCollapsed(selection)){
