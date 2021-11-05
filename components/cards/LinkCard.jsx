@@ -11,8 +11,7 @@ export default function LinkCard({ link}) {
 
   return (
     <li className="col-span-1 bg-white rounded-lg overflow-hidden shadow-label list-none">
-      <Link href={url}>
-        <a>
+        <a href={url} target="_blank">
           <div>
             <div className="h-40 border-b-4 border-gray-300 overflow-hidden">
               <div className="bg-gradient-to-b from-my-green to-my-dark-green">
@@ -38,7 +37,6 @@ export default function LinkCard({ link}) {
             </div>
           </div>
         </a>
-      </Link>
     </li>
   );
 }
