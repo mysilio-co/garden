@@ -6,18 +6,18 @@ import { handleToIdp } from '../../utils/uris'
 export default function Login() {
   const router = useRouter()
   const { handle } = router.query
-  const { session, login } = useAuthentication()
+  const { info, login } = useAuthentication()
   const [loggingIn, setLoggingIn] = useState(false)
   useEffect(function logUserIn() {
-    if (handle && !loggingIn && session) {
-      if (session.loggedIn) {
+    if (handle && !loggingIn && info) {
+      if (info.isLoggedIn) {
         router.replace("/")
-      } else if (session) {
+      } else {
         setLoggingIn(true)
-        login(handleToIdp(handle))
+        login({oidcIssuer: handleToIdp(handle), redirectUrl: window.location.href, clientName: "Mysilio Garden"})
       }
     }
-  }, [login, session, handle])
+  }, [login, info, handle])
   return (
     <div></div>
   )
