@@ -51,13 +51,32 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Comm
 // the TS happy. But this is a brittle assumption that may break later.
 type SolidDatasetCore = SolidDataset & DatasetCore;
 
-export function addLinkToIndex(index: SolidDataset, url: string): SolidDataset {
-  const LinkThing = buildThing(createThing({ url }))
+type OGTags = {
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: {
+    url: string;
+  };
+  ogUrl: string;
+};
+
+export function addLinkToIndex(
+  index: SolidDataset,
+  url: string,
+  og?: OGTags
+): SolidDataset {
+  const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
     .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date())
-    .build();
+    .addDatetime(DCTERMS.created, new Date());
+  if (og) {
+    builder
+      .addUrl(FOAF.depiction, og && og.ogImage.url)
+      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
+      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
+    }
+  const LinkThing = builder.build();
   return setThing(index || createSolidDataset(), LinkThing);
 }
 

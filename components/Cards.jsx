@@ -4,7 +4,7 @@ import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"
 import ImageCard from "./cards/ImageCard"
 import FileCard from "./cards/FileCard"
-import LinkCard from "./cards/LinkCard"
+import BookmarkCard from './cards/BookmarkCard';
 
 import {
   isConcept,
@@ -32,7 +32,7 @@ export function CardsFromGarden({ garden, webId, workspaceSlug }) {
           } else if (isBookmarkedFile(thing)) {
             return <FileCard key={asUrl(thing)} file={thing} />;
           } else if (isBookmarkedLink(thing))
-            return <LinkCard key={asUrl(thing)} link={thing} />;
+            return <BookmarkCard key={asUrl(thing)} link={thing} />;
         })}
     </ul>
   );
