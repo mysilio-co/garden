@@ -27,7 +27,7 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
           conceptNames={conceptNames}
         />
       );
-    case 'Link':
+    case 'Bookmark':
       return <NewBookmarkModal open={open} onClose={onClose} />;
     case 'File':
       return <NewFileModal open={open} onClose={onClose} />;
@@ -84,10 +84,7 @@ export default function Header({
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {(isPreviewEnv()
-              ? ['Note', 'Link', 'Image', 'File']
-              : ['Note']
-            ).map((title) => {
+            {['Note', 'Bookmark', 'Image', 'File'].map((title) => {
               return (
                 <Dropdown.Item>
                   {({ active }) => (
