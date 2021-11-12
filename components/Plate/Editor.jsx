@@ -385,7 +385,7 @@ export default function Editor({
           <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
             <ToolbarButtonsBasicElements />
             <ToolbarButtonsList />
-            <P.ToolbarLink icon={<LinkIcon />} />
+            <P.LinkToolbarButton icon={<LinkIcon />} />
             <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
           </div>
 
@@ -403,12 +403,12 @@ export default function Editor({
 
 
 
-          <P.MentionSelect
+          <P.MentionCombobox
             {...getConceptProps()}
             renderLabel={ConceptSelectLabel}
           />
-          <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
-          <P.MentionSelect
+          <P.MentionCombobox {...getTagProps()} renderLabel={TagSelectLabel} />
+          <P.MentionCombobox
             {...getMentionProps()}
             renderLabel={MentionSelectLabel}
           />
