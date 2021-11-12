@@ -64,6 +64,7 @@ export default function Header({
             </a>
           </Link>
         </div>
+      {{loggedIn && (
         <Formik>
           <IconInput
             type="search"
@@ -105,6 +106,7 @@ export default function Header({
             })}
           </Dropdown.Items>
         </Dropdown>
+        )}
         <ActiveModal
           title={activeModal}
           open={!!activeModal}
@@ -120,12 +122,16 @@ export default function Header({
           </Popover.Button>
 
           <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <Link href="/profile">
-              <a className="menu-item">edit profile</a>
-            </Link>
-            <Link href="/settings">
-              <a className="menu-item">settings</a>
-            </Link>
+            {loggedIn && (
+              <>
+                <Link href="/profile">
+                  <a className="menu-item">edit profile</a>
+                </Link>
+                <Link href="/settings">
+                  <a className="menu-item">settings</a>
+                </Link>
+              </>
+            )}
             <a href="/privacy" className="menu-item" role="menuitem">
               privacy
             </a>
