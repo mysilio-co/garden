@@ -64,20 +64,21 @@ export default function Header({
             </a>
           </Link>
         </div>
-      {{loggedIn && (
-        <Formik>
-          <IconInput
-            type="search"
-            name="search"
-            placeholder="Search"
-            icon={<SearchIcon className="ipt-header-search-icon" />}
-            inputClassName="ipt-header-search"
-            onChange={(e) => {
-              e.preventDefault();
-              onSearch(e.target.value);
-            }}
-          />
-        </Formik>
+        {loggedIn && (
+          <Formik>
+            <IconInput
+              type="search"
+              name="search"
+              placeholder="Search"
+              icon={<SearchIcon className="ipt-header-search-icon" />}
+              inputClassName="ipt-header-search"
+              onChange={(e) => {
+                e.preventDefault();
+                onSearch(e.target.value);
+              }}
+            />
+          </Formik>
+        )}
       </div>
       <div className="flex flex-row items-center">
         <Dropdown label="New">
@@ -106,7 +107,6 @@ export default function Header({
             })}
           </Dropdown.Items>
         </Dropdown>
-        )}
         <ActiveModal
           title={activeModal}
           open={!!activeModal}
