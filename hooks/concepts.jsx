@@ -21,7 +21,7 @@ import { useWorkspace } from "./app";
 import { US } from "../vocab";
 import { conceptNameToUrlSafeId, urlSafeIdToConceptName } from "../utils/uris";
 import { defaultNoteStorageUri } from "../model/note";
-import { conceptIdFromUri } from '../model/concept';
+import { conceptIdFromUri, hasNote } from '../model/concept';
 import {
   isConcept,
   isBookmarkedLink,
@@ -293,7 +293,7 @@ function fuseFromGarden(garden) {
 }
 
 export function useFuse(garden) {
-  const options = { includeScore: true, keys: ['name'] }; 
+  const options = { includeScore: true, keys: ['name'] };
   const [fuse] = useState(new Fuse([], options));
   return useMemo(() => {
     fuse.setCollection(fuseFromGarden(garden) || []);
