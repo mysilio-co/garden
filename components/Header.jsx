@@ -57,46 +57,50 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
             </a>
           </Link>
         </div>
-        <Formik>
-          <IconInput
-            type="search"
-            name="search"
-            placeholder="Search"
-            icon={<SearchIcon className="ipt-header-search-icon" />}
-            inputClassName="ipt-header-search"
-          />
-        </Formik>
+        {loggedIn && (
+          <Formik>
+            <IconInput
+              type="search"
+              name="search"
+              placeholder="Search"
+              icon={<SearchIcon className="ipt-header-search-icon" />}
+              inputClassName="ipt-header-search"
+            />
+          </Formik>
+        )}
       </div>
       <div className="flex flex-row items-center">
-        <Dropdown label="New">
-          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
-            <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
-              Create New
-            </div>
-            {(isPreviewEnv()
-              ? ['Note', 'Link', 'Image', 'File']
-              : ['Note']
-            ).map((title) => {
-              return (
-                <Dropdown.Item>
-                  {({ active }) => (
-                    <a
-                      href="#"
-                      key={title}
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'menu-item'
-                      )}
-                      onClick={() => setActiveModal(title)}
-                    >
-                      {title}
-                    </a>
-                  )}
-                </Dropdown.Item>
-              );
-            })}
-          </Dropdown.Items>
-        </Dropdown>
+        {loggedIn && (
+          <Dropdown label="New">
+            <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
+              <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
+                Create New
+              </div>
+              {(isPreviewEnv()
+                ? ['Note', 'Link', 'Image', 'File']
+                : ['Note']
+              ).map((title) => {
+                return (
+                  <Dropdown.Item>
+                    {({ active }) => (
+                      <a
+                        href="#"
+                        key={title}
+                        className={classNames(
+                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                          'menu-item'
+                        )}
+                        onClick={() => setActiveModal(title)}
+                      >
+                        {title}
+                      </a>
+                    )}
+                  </Dropdown.Item>
+                );
+              })}
+            </Dropdown.Items>
+          </Dropdown>
+        )}
         <ActiveModal
           title={activeModal}
           open={!!activeModal}
@@ -112,12 +116,16 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
           </Popover.Button>
 
           <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <Link href="/profile">
-              <a className="menu-item">edit profile</a>
-            </Link>
-            <Link href="/settings">
-              <a className="menu-item">settings</a>
-            </Link>
+            {loggedIn && (
+              <>
+                <Link href="/profile">
+                  <a className="menu-item">edit profile</a>
+                </Link>
+                <Link href="/settings">
+                  <a className="menu-item">settings</a>
+                </Link>
+              </>
+            )}
             <a href="/privacy" className="menu-item" role="menuitem">
               privacy
             </a>
