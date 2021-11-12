@@ -16,6 +16,9 @@ export default function ProfilePage() {
   const router = useRouter()
   const { query: { handle } } = router
   const webId = handleToWebId(handle)
+  const workspaceSlug = 'default';
+  const { garden } = useGarden(webId, workspaceSlug);
+
   const { profile } = useProfile(webId)
   const name = profile && getStringNoLocale(profile, FOAF.name)
 
@@ -67,8 +70,8 @@ export default function ProfilePage() {
               </button>
             ))}
         </div>
-        <WorkspaceProvider webId={webId} slug="default">
-          <Cards webId={webId} />
+        <WorkspaceProvider webId={webId} slug={workspaceSlug}>
+          <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
         </WorkspaceProvider>
       </div>
     </div>

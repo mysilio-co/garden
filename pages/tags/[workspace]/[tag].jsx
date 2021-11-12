@@ -2,13 +2,12 @@ import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
 import { getUrl, getThing } from '@inrupt/solid-client'
 
-import { useCombinedConceptIndexDataset } from '../../../hooks/concepts'
+import { useCombinedWorkspaceIndexDataset } from '../../../hooks/concepts'
 import { useWorkspace } from '../../../hooks/app'
 import { WorkspaceProvider } from "../../../contexts/WorkspaceContext"
 import { US } from '../../../vocab'
 import { tagNameToUrlSafeId } from '../../../utils/uris'
 import { conceptUrisTaggedWith } from '../../../model/concept'
-import { CardsFromConcepts } from '../../../components/Cards'
 import Nav from '../../../components/nav'
 
 export default function TagPage(){
@@ -17,7 +16,7 @@ export default function TagPage(){
   const webId = useWebId()
   const { workspace } = useWorkspace(webId, workspaceSlug)
   const tagPrefix = workspace && getUrl(workspace, US.tagPrefix)
-  const { index } = useCombinedConceptIndexDataset(webId, workspaceSlug)
+  const { index } = useCombinedWorkspaceIndexDataset(webId, workspaceSlug)
   const conceptUris = index && conceptUrisTaggedWith(index, `${tagPrefix}${tagNameToUrlSafeId(tag)}`)
   const concepts = conceptUris.map(uri => getThing(index, uri))
   return (
@@ -26,7 +25,7 @@ export default function TagPage(){
         <Nav />
         <div className="text-center py-6">
           <h1 className="text-4xl">notes tagged with #{tag}</h1>
-          <CardsFromConcepts webId={webId} concepts={concepts} />
+          <CardsFromGarden webId={webId} garden={concepts} />
         </div>
       </div>
     </WorkspaceProvider>

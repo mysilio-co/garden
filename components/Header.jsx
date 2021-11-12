@@ -27,7 +27,7 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
           conceptNames={conceptNames}
         />
       );
-    case 'Link':
+    case 'Bookmark':
       return <NewBookmarkModal open={open} onClose={onClose} />;
     case 'File':
       return <NewFileModal open={open} onClose={onClose} />;
@@ -40,7 +40,14 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
   }
 }
 
-export default function Header({ profile, loggedIn, logout, conceptNames, type }) {
+export default function Header({
+  profile,
+  loggedIn,
+  logout,
+  conceptNames,
+  type,
+  onSearch,
+}) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
@@ -65,42 +72,41 @@ export default function Header({ profile, loggedIn, logout, conceptNames, type }
               placeholder="Search"
               icon={<SearchIcon className="ipt-header-search-icon" />}
               inputClassName="ipt-header-search"
+              onChange={(e) => {
+                e.preventDefault();
+                onSearch(e.target.value);
+              }}
             />
           </Formik>
         )}
       </div>
       <div className="flex flex-row items-center">
-        {loggedIn && (
-          <Dropdown label="New">
-            <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
-              <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
-                Create New
-              </div>
-              {(isPreviewEnv()
-                ? ['Note', 'Link', 'Image', 'File']
-                : ['Note']
-              ).map((title) => {
-                return (
-                  <Dropdown.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        key={title}
-                        className={classNames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                          'menu-item'
-                        )}
-                        onClick={() => setActiveModal(title)}
-                      >
-                        {title}
-                      </a>
-                    )}
-                  </Dropdown.Item>
-                );
-              })}
-            </Dropdown.Items>
-          </Dropdown>
-        )}
+        <Dropdown label="New">
+          <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
+            <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
+              Create New
+            </div>
+            {['Note', 'Bookmark', 'Image', 'File'].map((title) => {
+              return (
+                <Dropdown.Item>
+                  {({ active }) => (
+                    <a
+                      href="#"
+                      key={title}
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'menu-item'
+                      )}
+                      onClick={() => setActiveModal(title)}
+                    >
+                      {title}
+                    </a>
+                  )}
+                </Dropdown.Item>
+              );
+            })}
+          </Dropdown.Items>
+        </Dropdown>
         <ActiveModal
           title={activeModal}
           open={!!activeModal}

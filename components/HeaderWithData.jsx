@@ -10,6 +10,13 @@ export default function HeaderWithData(props) {
   const { logout } = useAuthentication()
   const conceptNames = useConceptNames()
   return (
-    <Header profile={profile} loggedIn={loggedIn} logout={logout} conceptNames={conceptNames} {...props} />
-  )
+    <Header
+      profile={profile}
+      loggedIn={loggedIn}
+      logout={logout}
+      conceptNames={conceptNames}
+      onSearch={props.onSearch}
+      {...props}
+    />
+  );
 }

@@ -36,6 +36,7 @@
     "micro-base58": "^0.4.3",
     "next": "^10.2.2",
     "node-fetch": "^2.6.1",
+    "open-graph-scraper": "^4.10.0",
     "rdf-namespaces": "^1.9.2",
     "react": "^17.0.2",
     "react-cropper": "^2.1.4",
