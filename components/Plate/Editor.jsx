@@ -100,8 +100,6 @@ const components = P.createPlateComponents({
 
 const defaultOptions = P.createPlateOptions();
 
-const preFormat = (editor) => P.unwrapList(editor);
-
 const optionsAutoformat = {
   rules: autoformatRules
 };
@@ -149,9 +147,9 @@ const defaultPlugins = [
   P.createAutoformatPlugin(optionsAutoformat),
   P.createResetNodePlugin(optionsResetBlockTypePlugin),
   P.createComboboxPlugin(),
-  P.createMentionPlugin({ trigger: '@',  pluginKey: 'mention' }),
-  P.createMentionPlugin({ trigger: '#',  pluginKey: 'tag' }),
-  P.createMentionPlugin({ trigger: '[[', pluginKey: 'concept' }),
+  P.createMentionPlugin({ trigger: '@', pluginKey: 'mention' }),
+  P.createMentionPlugin({ trigger: '#', pluginKey: 'tag' }),
+  P.createMentionPlugin({ trigger: '[', pluginKey: 'concept' }),
   P.createSoftBreakPlugin({
     rules: [
       { hotkey: "shift+enter" },
@@ -206,11 +204,17 @@ function useImageUrlGetterAndSaveCallback() {
   }
 }
 
+function toMentionable(name){
+  return {key: name, text: name}
+}
+
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
   conceptNames,
+  tagNames,
+  mentionNames,
   readOnly,
   ...props
 }) {
@@ -219,42 +223,8 @@ export default function Editor({
     placeholder: "What's on your mind?",
     readOnly
   };
-/*
-  const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
-    useCustomMentionPlugin({
-      mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
-      pluginKey: ELEMENT_CONCEPT,
-      pattern: Patterns.Concept,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
 
-  const { getMentionSelectProps: getTagProps, plugin: tagPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: ELEMENT_TAG,
-      pattern: Patterns.Tag,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const { getMentionSelectProps: getMentionProps, plugin: mentionPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: P.ELEMENT_MENTION,
-      pattern: Patterns.Mention,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-*/
-  const plugins = defaultPlugins /*useMemo(
-    () => [...defaultPlugins, conceptPlugin, tagPlugin, mentionPlugin],
-    [conceptPlugin, tagPlugin, mentionPlugin]
-  );*/
-
+  const plugins = defaultPlugins
 
   const {
     imageUploaderOpen, setImageUploaderOpen,
@@ -293,9 +263,9 @@ export default function Editor({
 
           <BallonToolbarMarks />
 
-          <P.MentionCombobox items={["foo", "bar"]} pluginKey="mention"/>
-          <P.MentionCombobox items={["foo", "bar"]} pluginKey="tag"/>
-          <P.MentionCombobox items={["foo", "bar"]} pluginKey="concept" />
+          <P.MentionCombobox items={mentionNames ? mentionNames.map(toMentionable) : []} pluginKey="mention" />
+          <P.MentionCombobox items={tagNames ? tagNames.map(toMentionable) : []} pluginKey="tag" />
+          <P.MentionCombobox items={conceptNames ? conceptNames.map(toMentionable) : []} pluginKey="concept" />
         </>
       )}
     </P.Plate>
