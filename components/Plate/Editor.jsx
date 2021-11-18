@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef } from "react";
 import * as P from "@udecode/plate";
+import { comboboxStore } from '@udecode/plate'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
@@ -204,8 +205,15 @@ function useImageUrlGetterAndSaveCallback() {
   }
 }
 
-function toMentionable(name){
-  return {key: name, text: name}
+function toMentionable(name) {
+  return { key: name, text: name }
+}
+
+function useComboboxItems(names){
+  const currentComboboxText = comboboxStore.get.text()
+  return useMemo(() => {
+    return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
+  }, [names, currentComboboxText])
 }
 
 export default function Editor({
@@ -231,6 +239,11 @@ export default function Editor({
     imageUploadUri, imageUploaderOnSave,
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
+
+  const mentionItems = useComboboxItems(mentionNames)
+  const conceptItems = useComboboxItems(conceptNames)
+  const tagItems = useComboboxItems(tagNames)
+
   return (
     <P.Plate
       id={editorId}
@@ -263,9 +276,9 @@ export default function Editor({
 
           <BallonToolbarMarks />
 
-          <P.MentionCombobox items={mentionNames ? mentionNames.map(toMentionable) : []} pluginKey="mention" />
-          <P.MentionCombobox items={tagNames ? tagNames.map(toMentionable) : []} pluginKey="tag" />
-          <P.MentionCombobox items={conceptNames ? conceptNames.map(toMentionable) : []} pluginKey="concept" />
+          <P.MentionCombobox items={mentionItems} pluginKey="mention" />
+          <P.MentionCombobox items={tagItems} pluginKey="tag" />
+          <P.MentionCombobox items={conceptItems} pluginKey="concept" />
         </>
       )}
     </P.Plate>
