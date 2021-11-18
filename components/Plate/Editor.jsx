@@ -14,9 +14,6 @@ import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
 
 import {
-  useCustomMentionPlugin,
-  Patterns,
-  toMentionable,
   fromMentionable,
 } from "./hooks/useCustomMentionPlugin";
 import {
@@ -260,6 +257,10 @@ const defaultPlugins = [
   P.createNodeIdPlugin(),
   P.createAutoformatPlugin(optionsAutoformat),
   P.createResetNodePlugin(optionsResetBlockTypePlugin),
+  P.createComboboxPlugin(),
+  P.createMentionPlugin({ trigger: '@',  pluginKey: 'mention' }),
+  P.createMentionPlugin({ trigger: '#',  pluginKey: 'tag' }),
+  P.createMentionPlugin({ trigger: '[[', pluginKey: 'concept' }),
   P.createSoftBreakPlugin({
     rules: [
       { hotkey: "shift+enter" },
@@ -327,7 +328,7 @@ export default function Editor({
     placeholder: "What's on your mind?",
     readOnly
   };
-
+/*
   const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
     useCustomMentionPlugin({
       mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
@@ -357,11 +358,11 @@ export default function Editor({
         return toMentionable(s);
       },
     });
-
-  const plugins = useMemo(
+*/
+  const plugins = defaultPlugins /*useMemo(
     () => [...defaultPlugins, conceptPlugin, tagPlugin, mentionPlugin],
     [conceptPlugin, tagPlugin, mentionPlugin]
-  );
+  );*/
 
 
   const {
@@ -401,17 +402,9 @@ export default function Editor({
 
           <BallonToolbarMarks />
 
-
-
-          <P.MentionCombobox
-            {...getConceptProps()}
-            renderLabel={ConceptSelectLabel}
-          />
-          <P.MentionCombobox {...getTagProps()} renderLabel={TagSelectLabel} />
-          <P.MentionCombobox
-            {...getMentionProps()}
-            renderLabel={MentionSelectLabel}
-          />
+          <P.MentionCombobox items={["foo", "bar"]} pluginKey="mention"/>
+          <P.MentionCombobox items={["foo", "bar"]} pluginKey="tag"/>
+          <P.MentionCombobox items={["foo", "bar"]} pluginKey="concept" />
         </>
       )}
     </P.Plate>
