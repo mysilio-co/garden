@@ -12,6 +12,7 @@ import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
+import { autoformatRules } from './autoformat/autoformatRules'
 
 import {
   fromMentionable,
@@ -102,117 +103,7 @@ const defaultOptions = P.createPlateOptions();
 const preFormat = (editor) => P.unwrapList(editor);
 
 const optionsAutoformat = {
-  rules: [
-    {
-      type: P.ELEMENT_H1,
-      markup: "#",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H2,
-      markup: "##",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H3,
-      markup: "###",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["*", "-"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_UL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["1.", "1)"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_OL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_TODO_LI,
-      markup: ["[]"],
-    },
-    {
-      type: P.ELEMENT_BLOCKQUOTE,
-      markup: [">"],
-      preFormat,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["**", "**"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["__", "__"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["*", "*"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["_", "_"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_CODE,
-      between: ["`", "`"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.ELEMENT_CODE_BLOCK,
-      markup: "``",
-      trigger: "`",
-      triggerAtBlockStart: false,
-      preFormat,
-      format: (editor) => {
-        P.insertEmptyCodeBlock(editor, {
-          defaultType: P.getPlatePluginType(editor, P.ELEMENT_DEFAULT),
-          insertNodesOptions: { select: true },
-        });
-      },
-    },
-  ],
+  rules: autoformatRules
 };
 
 const resetBlockTypesCommonRule = {
