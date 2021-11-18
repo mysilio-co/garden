@@ -143,7 +143,7 @@ const defaultPlugins = [
   P.createListPlugin(),
   P.createTodoListPlugin(),
   P.createImagePlugin(),
-  P.createLinkPlugin(),
+  P.createLinkPlugin({ rangeBeforeOptions: { multiPaths: false } }),
   P.createKbdPlugin(),
   P.createNodeIdPlugin(),
   P.createAutoformatPlugin(optionsAutoformat),
