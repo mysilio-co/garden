@@ -127,37 +127,39 @@ export const BallonToolbarMarks = () => {
   };
 
   return (
-    <P.BalloonToolbar
-      direction={direction}
-      hiddenDelay={hiddenDelay}
-      theme={theme}
-      arrow={arrow}
-    >
-      <P.MarkToolbarButton
-        type={P.getPlatePluginType(editor, P.MARK_BOLD)}
-        icon={<FormatBold />}
-        tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
-      />
-      <P.MarkToolbarButton
-        type={P.getPlatePluginType(editor, P.MARK_ITALIC)}
-        icon={<FormatItalic />}
-        tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
-      />
-      <P.MarkToolbarButton
-        type={P.getPlatePluginType(editor, P.MARK_UNDERLINE)}
-        icon={<FormatUnderlined />}
-        tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
-      />
-      <P.MarkToolbarButton
-        type={P.getPlatePluginType(editor, P.MARK_CODE)}
-        icon={<CodeAlt />}
-        tooltip={{ content: 'Code', ...tooltip }}
-      />
-      <P.MarkToolbarButton
-        type={P.getPlatePluginType(editor, P.MARK_HIGHLIGHT)}
-        icon={<Highlight />}
-        tooltip={{ content: 'Highlight', ...tooltip }}
-      />
-    </P.BalloonToolbar>
+    <div onMouseDown={(e) => { e.stopPropagation() }}>
+      <P.BalloonToolbar
+        direction={direction}
+        hiddenDelay={hiddenDelay}
+        theme={theme}
+        arrow={arrow}
+      >
+        <P.MarkToolbarButton
+          type={P.getPlatePluginType(editor, P.MARK_BOLD)}
+          icon={<FormatBold />}
+          tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPlatePluginType(editor, P.MARK_ITALIC)}
+          icon={<FormatItalic />}
+          tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPlatePluginType(editor, P.MARK_UNDERLINE)}
+          icon={<FormatUnderlined />}
+          tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPlatePluginType(editor, P.MARK_CODE)}
+          icon={<CodeAlt />}
+          tooltip={{ content: 'Code', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPlatePluginType(editor, P.MARK_HIGHLIGHT)}
+          icon={<Highlight />}
+          tooltip={{ content: 'Highlight', ...tooltip }}
+        />
+      </P.BalloonToolbar>
+    </div>
   );
 };
