@@ -217,8 +217,12 @@ function MentionComboboxComponent({ }) {
 
 function TagComboboxComponent({ }) {
   return (
-    <div  className="text-sm p-2 font-bold">insert tag</div>
+    <div className="text-sm p-2 font-bold">insert tag</div>
   )
+}
+
+function ConceptItem({ item }) {
+  return `[[${item.text}]]`
 }
 
 export default function Editor({
@@ -283,7 +287,7 @@ export default function Editor({
 
           <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
           <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
-          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent}/>
+          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent} />
         </>
       )}
     </P.Plate>
