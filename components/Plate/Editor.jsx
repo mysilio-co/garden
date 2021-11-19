@@ -17,14 +17,15 @@ import { ExternalLinkIcon } from '../icons'
 import { autoformatRules } from './autoformat/autoformatRules'
 
 import {
-  fromMentionable,
-} from "./hooks/useCustomMentionPlugin";
-import {
   ToolbarButtonsList,
   ToolbarButtonsBasicElements,
   BallonToolbarMarks,
 } from "./Toolbars";
 import ToolbarImageButton from "./ToolbarImageButton"
+
+export const fromMentionable = (m) => {
+  return m.value;
+};
 
 const ConceptElement = (m) => {
   const { webId, slug: workspaceSlug } = useWorkspaceContext();
@@ -45,21 +46,6 @@ const TagElement = (m) => {
 };
 
 const MentionElement = (m) => {
-  const mention = fromMentionable(m);
-  return <span className="text-lagoon">@{mention}</span>;
-};
-
-const ConceptSelectLabel = (m) => {
-  const name = fromMentionable(m);
-  return <span className="text-lagoon">[[{name}]]</span>;
-};
-
-const TagSelectLabel = (m) => {
-  const tag = fromMentionable(m);
-  return <span className="text-lagoon">#{tag}</span>;
-};
-
-const MentionSelectLabel = (m) => {
   const mention = fromMentionable(m);
   return <span className="text-lagoon">@{mention}</span>;
 };
