@@ -36,23 +36,23 @@ export const ToolbarButtonsBasicElements = () => {
 
   return (
     <>
-      <P.CodeBlockToolbarButton
+      <P.BlockToolbarButton
         type={P.getPlatePluginType(editor, P.ELEMENT_H1)}
         icon={<LooksOne />}
       />
-      <P.CodeBlockToolbarButton
+      <P.BlockToolbarButton
         type={P.getPlatePluginType(editor, P.ELEMENT_H2)}
         icon={<LooksTwo />}
       />
-      <P.CodeBlockToolbarButton
+      <P.BlockToolbarButton
         type={P.getPlatePluginType(editor, P.ELEMENT_H3)}
         icon={<Looks3 />}
       />
-      <P.CodeBlockToolbarButton
+      <P.BlockToolbarButton
         type={P.getPlatePluginType(editor, P.ELEMENT_BLOCKQUOTE)}
         icon={<FormatQuote />}
       />
-      <P.CodeBlockToolbarButton
+      <P.BlockToolbarButton
         type={P.getPlatePluginType(editor, P.ELEMENT_CODE_BLOCK)}
         icon={<CodeBlock />}
       />
