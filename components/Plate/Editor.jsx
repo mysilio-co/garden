@@ -27,14 +27,18 @@ export const fromMentionable = (m) => {
   return m.value;
 };
 
-const ConceptElement = (m) => {
+const ConceptElement = ({ attributes, element, children }) => {
   const { webId, slug: workspaceSlug } = useWorkspaceContext();
   const name = fromMentionable(m);
   const url = notePath(webId, workspaceSlug, name)
 
   return (
     <Link href={url || ""}>
-      <a className="text-lagoon">[[{name}]]</a>
+      <a {...attributes} className="text-lagoon group">
+        <span className="opacity-50 group-hover:opacity-100">[[</span>
+        {element.value}
+        <span className="opacity-50 group-hover:opacity-100">]]</span>
+      </a>
     </Link>
   );
 };
@@ -74,9 +78,7 @@ const components = P.createPlateComponents({
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
-  [ELEMENT_CONCEPT]: P.withProps(P.MentionElement, {
-    renderLabel: ConceptElement,
-  }),
+  [ELEMENT_CONCEPT]: ConceptElement,
   [ELEMENT_TAG]: P.withProps(P.MentionElement, {
     renderLabel: TagElement,
   }),
@@ -287,7 +289,7 @@ export default function Editor({
 
           <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
           <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
-          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent} />
+          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent} onRenderItem={ConceptItem} />
         </>
       )}
     </P.Plate>
