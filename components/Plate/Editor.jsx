@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef } from "react";
 import * as P from "@udecode/plate";
+
 import { comboboxStore } from '@udecode/plate'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
@@ -209,11 +210,29 @@ function toMentionable(name) {
   return { key: name, text: name }
 }
 
-function useComboboxItems(names){
+function useComboboxItems(names) {
   const currentComboboxText = comboboxStore.get.text()
   return useMemo(() => {
     return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
   }, [names, currentComboboxText])
+}
+
+function ConceptComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert concept</div>
+  )
+}
+
+function MentionComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert mention</div>
+  )
+}
+
+function TagComboboxComponent({ }) {
+  return (
+    <div  className="text-sm p-2 font-bold">insert tag</div>
+  )
 }
 
 export default function Editor({
@@ -276,9 +295,9 @@ export default function Editor({
 
           <BallonToolbarMarks />
 
-          <P.MentionCombobox items={mentionItems} pluginKey="mention" />
-          <P.MentionCombobox items={tagItems} pluginKey="tag" />
-          <P.MentionCombobox items={conceptItems} pluginKey="concept" />
+          <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
+          <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
+          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent}/>
         </>
       )}
     </P.Plate>
