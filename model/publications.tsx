@@ -77,7 +77,7 @@ export function getNewsletter(manifest: SolidDataset, title: string): Thing {
     manifest &&
     getThingAll(manifest)
       .filter((t) => {
-        hasRDFType(t, MY.News.Newsletter);
+        return hasRDFType(t, MY.News.Newsletter);
       })
       .find((t) => {
         return title === getStringNoLocale(t, DCTERMS.title);
