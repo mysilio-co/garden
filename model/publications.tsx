@@ -177,26 +177,11 @@ export function newEdition(
   return setThing(manifest, Edition);
 }
 
-export function newConceptPage(
-  manifest: SolidDataset,
-) {
-
-}
-
-export function newCollectionPage(
-
-) {
-
-}
-
-export function newLinkPage() {
-
-}
+export function newConceptPage() {}
+export function newCollectionPage() {}
+export function newLinkPage() {}
 
 export function publishPage() {}
-
 export function publishEdition() {}
-
 export function deliverEdition() {}
-
 export function publishAndDeliver() {}
