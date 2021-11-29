@@ -23,7 +23,7 @@ export const NewNewsletter = ({ onClose }) => {
 
   const webId = useWebId();
   const { workspace, slug: workspaceSlug } = useCurrentWorkspace('private');
-  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
 
   const [csv, setCSV] = useState();
   const [subscribers, setSubscribers] = useState();
@@ -52,11 +52,16 @@ export const NewNewsletter = ({ onClose }) => {
   const save = async function save() {
     // Create newsletter
     setSaving(true);
-    const newManifest =
-      addNewsletterWithSubscribers(manifest, name, subscribers);
+    console.log('trying to save', title);
+    console.log('subscriber count: ', subscribers.length);
+    const newManifest = addNewsletterWithSubscribers(
+      manifest,
+      title,
+      subscribers
+    );
     try {
-    } catch (e) {
       saveManifest(newManifest);
+    } catch (e) {
       console.log('error saving newsletter', e);
     } finally {
       setSaving(false);
@@ -77,16 +82,16 @@ export const NewNewsletter = ({ onClose }) => {
       <div className="divide-1 divide-gray-100">
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
           <label htmlFor="name" className="text-sm font-medium text-gray-900">
-            Name your Newsletter
+            Give your new newsletter a Title:
           </label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
             <input
               type="text"
-              name="name"
-              id="name"
+              name="title"
+              id="title"
               className={`ipt ${newsletterExists ? 'error' : ''}`}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
             {newsletterExists && (
               <span className="ipt-error-message">
@@ -97,7 +102,7 @@ export const NewNewsletter = ({ onClose }) => {
         </div>
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
           <label htmlFor="name" className="text-sm font-medium text-gray-900">
-            Upload a CSV of your subscribers
+            Upload a CSV of your Subscribers
           </label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
             <input
