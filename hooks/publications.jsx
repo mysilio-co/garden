@@ -1,5 +1,5 @@
 import {
-  createSolidDataset, getThing,
+  createSolidDataset, getThing, setThing,
 } from "@inrupt/solid-client";
 import { useResource, useWebId, useThing } from "swrlit";
 import { useWorkspacePreferencesFileUris } from './app';
@@ -23,5 +23,19 @@ export function usePublicationManifest(webId, workspaceSlug) {
     workspaceSlug
   );
   const publicationsIri = privatePrefix && `${privatePrefix}publications.ttl`;
-  return useOrCreateResource(publicationsIri);
+  const { resource: manifest, save: saveManifest } = useOrCreateResource(publicationsIri);
+  return [manifest, saveManifest];
+}
+
+export function useNewsletter(webId, workspaceSlug, title) {
+  const { resource: manifest, save: saveManifest } = usePublicationManifest(
+    webId,
+    workspaceSlug
+  );
+  const newsletter = getNewsletter(manifest, title);
+  const saveNewsletter = (newThing) => {
+    const newManifest = newThing && setThing(manifest, thing);
+    newManifest && saveManifest(newManifest);
+  }
+  return [ newsletter, saveNewsletter ];
 }

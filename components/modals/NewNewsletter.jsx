@@ -10,7 +10,7 @@ import {
   usePublicationManifest,
   useNewsletter,
 } from '../../hooks/publications';
-import { getNewsletter } from '../../model/publications';
+import { addNewsletterWithSubscribers, getNewsletter } from '../../model/publications';
 
 function validEmail(email) {
   const re =
@@ -46,15 +46,17 @@ export const NewNewsletter = ({ onClose }) => {
       });
   }, [csv]);
 
-  const { manifest: resource, saveManifest: saveResource } =
-    usePublicationManifest(webId, workspaceSlug);
+  const [manifest, saveManifest] = usePublicationManifest(webId, workspaceSlug);
   const newsletterExists = !!getNewsletter(manifest, title);
 
   const save = async function save() {
     // Create newsletter
     setSaving(true);
+    const newManifest =
+      addNewsletterWithSubscribers(manifest, name, subscribers);
     try {
     } catch (e) {
+      saveManifest(newManifest);
       console.log('error saving newsletter', e);
     } finally {
       setSaving(false);

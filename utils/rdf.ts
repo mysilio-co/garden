@@ -26,7 +26,7 @@ export function isUUID(iri: IRI): boolean {
   return url.protocol == 'urn:' && url.pathname.indexOf('uuid:') == 0;
 }
 
-export function uuid(thing: Thing): URN {
+export function getUUID(thing: Thing): UUID {
   const iri = asUrl(thing);
   if (isUUID(asUrl(thing))) {
     return iri;
