@@ -137,16 +137,24 @@ export function useWorkspace(webId, slug, storage = 'public') {
   const workspacePreferencesFileUri = workspacePreferencesFileUris && workspacePreferencesFileUris[storage]
   const tagPrefix = useTagPrefix(webId, slug)
   const conceptPrefix = useConceptPrefix(webId, slug);
-  const { thing: workspace, ...rest } = useThing(workspacePreferencesFileUri)
+  const {
+    thing: workspace,
+    save: saveWorkspace,
+    ...rest
+  } = useThing(workspacePreferencesFileUri);
   const ensuredWorkspace = ensureWorkspace(
     workspace,
     conceptPrefix,
     tagPrefix,
     workspacePreferencesFileUri
   );
-
-  return { workspace: ensuredWorkspace, slug, ...rest };
-
+  useEffect(() => {
+    if (workspacePreferencesFileUri && ensuredWorkspace !== workspace) {
+      console.log(saveWorkspace);
+      saveWorkspace(ensuredWorkspace);
+    }
+  }, [workspacePreferencesFileUri, ensuredWorkspace, workspace]);
+  return { workspace: ensuredWorkspace, slug, saveWorkspace, ...rest };
 }
 
 export function useCurrentWorkspace(storage = 'public') {
