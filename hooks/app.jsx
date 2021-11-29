@@ -35,14 +35,55 @@ function createNewAppResource(appContainerUri, privateAppContainerUri) {
   return { app, resource }
 }
 
-function createWorkspacePrefs(conceptPrefix, tagPrefix, workspacePreferencesFileUri) {
-  let workspace = createThing({ name: prefsWorkspaceName })
-  workspace = setUrl(workspace, US.conceptPrefix, conceptPrefix)
-  workspace = setUrl(workspace, US.tagPrefix, tagPrefix)
-  workspace = setUrl(workspace, US.conceptIndex, new URL("concepts.ttl", workspacePreferencesFileUri).toString())
-  workspace = setUrl(workspace, US.noteStorage, new URL("notes/", workspacePreferencesFileUri).toString())
-  workspace = setUrl(workspace, US.backupsStorage, new URL(`backups/`, workspacePreferencesFileUri).toString())
+function ensureUrl(workspace, url, value) {
+  if (!workspace || !url || !value || getUrl(workspace, url)) {
+    return workspace;
+  } else {
+    return setUrl(workspace, url, value);
+  }
+}
+
+function ensureWorkspace(
+  workspace,
+  conceptPrefix,
+  tagPrefix,
+  workspacePreferencesFileUri
+) {
+  workspace = workspace || createThing({ name: prefsWorkspaceName });
+  workspace = ensureUrl(workspace, US.conceptPrefix, conceptPrefix)
+  workspace = ensureUrl(workspace, US.tagPrefix, tagPrefix)
+  if (workspacePreferencesFileUri) {
+    workspace = ensureUrl(
+      workspace,
+      US.conceptIndex,
+      new URL('concepts.ttl', workspacePreferencesFileUri).toString()
+    );
+    workspace = ensureUrl(
+      workspace,
+      US.publicationManifest,
+      new URL('publications.ttl', workspacePreferencesFileUri).toString()
+    );
+    workspace = ensureUrl(
+      workspace,
+      US.noteStorage,
+      new URL('notes/', workspacePreferencesFileUri).toString()
+    );
+    workspace = ensureUrl(
+      workspace,
+      US.backupsStorage,
+      new URL(`backups/`, workspacePreferencesFileUri).toString()
+    );
+  }
   return workspace
+}
+
+function createWorkspacePrefs(conceptPrefix, tagPrefix, workspacePreferencesFileUri) {
+  return ensureWorkspace(
+    undefined,
+    conceptPrefix,
+    tagPrefix,
+    workspacePreferencesFileUri
+  );
 }
 
 export function useApp(webId) {
@@ -94,9 +135,17 @@ function useTagPrefix(webId, workspaceSlug) {
 export function useWorkspace(webId, slug, storage = 'public') {
   const workspacePreferencesFileUris = useWorkspacePreferencesFileUris(webId, slug)
   const workspacePreferencesFileUri = workspacePreferencesFileUris && workspacePreferencesFileUris[storage]
+  const tagPrefix = useTagPrefix(webId, slug)
+  const conceptPrefix = useConceptPrefix(webId, slug);
   const { thing: workspace, ...rest } = useThing(workspacePreferencesFileUri)
+  const ensuredWorkspace = ensureWorkspace(
+    workspace,
+    conceptPrefix,
+    tagPrefix,
+    workspacePreferencesFileUri
+  );
 
-  return { workspace, slug, ...rest }
+  return { workspace: ensuredWorkspace, slug, ...rest };
 
 }
 

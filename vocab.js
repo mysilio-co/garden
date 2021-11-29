@@ -28,6 +28,7 @@ export const US = {
   monetizedFor: `${understoryRoot}monetizedFor`,
   usesCSS: `${understoryRoot}usesCSS`,
   slateJSON: `${understoryRoot}slateJSON`, // https://docs.slatejs.org/concepts/02-nodes
+  publicationManifest: `${understoryRoot}publicationManifest`,
 };
 
 const MY_PREFIX = "https://vocab.mysilio.com/my/";

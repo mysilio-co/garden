@@ -1,9 +1,13 @@
 import {
-  createSolidDataset, getThing, setThing,
-} from "@inrupt/solid-client";
+  createSolidDataset,
+  getThing,
+  setThing,
+  getUrl,
+} from '@inrupt/solid-client';
 import { useResource, useWebId, useThing } from "swrlit";
-import { useWorkspacePreferencesFileUris } from './app';
+import { useWorkspace } from './app';
 import { getNewsletter } from '../model/publications';
+import { US } from '../vocab';
 
 export function useOrCreateResource(iri) {
   const response = useResource(iri);
@@ -18,11 +22,9 @@ export function useOrCreateResource(iri) {
 }
 
 export function usePublicationManifest(webId, workspaceSlug) {
-  const { privatePrefix } = useWorkspacePreferencesFileUris(
-    webId,
-    workspaceSlug
-  );
-  const publicationsIri = privatePrefix && `${privatePrefix}publications.ttl`;
+  const { workspace } = useWorkspace(webId, workspaceSlug, 'private');
+  const publicationsIri = getUrl(workspace, US.publicationManifest);
+  console.log('using publication manifest:', publicationsIri);
   const { resource: manifest, save: saveManifest } = useOrCreateResource(publicationsIri);
   return [manifest, saveManifest];
 }

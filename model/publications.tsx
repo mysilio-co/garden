@@ -60,7 +60,7 @@ type Edition = Thing & { };
 export function createNewsletter(title: string) {
   return buildThing(createThingWithUUID())
     .addUrl(RDF.type, SIOC.Container)
-    .addUrl(RDF.type, MY.SIOC.Newsletter)
+    .addUrl(RDF.type, MY.News.Newsletter)
     .addStringNoLocale(DCTERMS.title, title)
     .build();
 }
@@ -73,13 +73,16 @@ export function addNewsletter(
 } 
 
 export function getNewsletter(manifest: SolidDataset, title: string): Thing {
-  return getThingAll(manifest)
-    .filter((t) => {
-      hasRDFType(t, MY.SIOC.Newsletter);
-    })
-    .find((t) => {
-      return title === getStringNoLocale(t, DCTERMS.title);
-    });
+  return (
+    manifest &&
+    getThingAll(manifest)
+      .filter((t) => {
+        hasRDFType(t, MY.News.Newsletter);
+      })
+      .find((t) => {
+        return title === getStringNoLocale(t, DCTERMS.title);
+      })
+  );
 }
 
 export function createSubscriber(newsletter: Newsletter, info: SubscriberInfo) {
