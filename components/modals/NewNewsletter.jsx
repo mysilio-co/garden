@@ -52,8 +52,6 @@ export const NewNewsletter = ({ onClose }) => {
   const save = async function save() {
     // Create newsletter
     setSaving(true);
-    console.log('trying to save', title);
-    console.log('subscriber count: ', subscribers.length);
     const newManifest = addNewsletterWithSubscribers(
       manifest,
       title,

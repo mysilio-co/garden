@@ -12,6 +12,7 @@ import {
   getBoolean,
   removeThing,
 } from '@inrupt/solid-client';
+import { dequal } from 'dequal';
 
 import { useUnderstoryContainerUri, useStorageContainer } from './uris';
 import { US } from '../vocab';
@@ -199,11 +200,12 @@ export function useWorkspace(webId, slug, storage = 'public') {
     workspacePreferencesFileUri
   );
   useEffect(() => {
-    if (workspacePreferencesFileUri && ensuredWorkspace !== workspace) {
-      console.log(saveWorkspace);
+    if (workspace && !dequal(ensuredWorkspace, workspace)) {
+      console.log('updating workspace from:', workspace);
+      console.log('updating workspace to:', ensuredWorkspace);
       saveWorkspace(ensuredWorkspace);
     }
-  }, [workspacePreferencesFileUri, ensuredWorkspace, workspace]);
+  }, [ensuredWorkspace, workspace]);
   return { workspace: ensuredWorkspace, slug, saveWorkspace, ...rest };
 }
 

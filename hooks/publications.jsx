@@ -24,7 +24,6 @@ export function useOrCreateResource(iri) {
 export function usePublicationManifest(webId, workspaceSlug) {
   const { workspace } = useWorkspace(webId, workspaceSlug, 'private');
   const publicationsIri = getUrl(workspace, US.publicationManifest);
-  console.log('using publication manifest:', publicationsIri);
   const { resource: manifest, save: saveManifest } = useOrCreateResource(publicationsIri);
   return [manifest, saveManifest];
 }
