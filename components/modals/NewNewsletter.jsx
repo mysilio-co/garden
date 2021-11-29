@@ -63,6 +63,7 @@ export const NewNewsletter = ({ onClose }) => {
       console.log('error saving newsletter', e);
     } finally {
       setSaving(false);
+      onClose();
     }
   };
 
