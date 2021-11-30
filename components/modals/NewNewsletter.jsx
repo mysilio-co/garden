@@ -10,7 +10,11 @@ import {
   usePublicationManifest,
   useNewsletter,
 } from '../../hooks/publications';
-import { addNewsletterWithSubscribers, getNewsletter } from '../../model/publications';
+import {
+  addNewsletterWithSubscribers,
+  addNewsletter,
+  getNewsletter,
+} from '../../model/publications';
 
 function validEmail(email) {
   const re =
@@ -25,8 +29,8 @@ export const NewNewsletter = ({ onClose }) => {
   const { workspace, slug: workspaceSlug } = useCurrentWorkspace('private');
   const [title, setTitle] = useState('');
 
-  const [csv, setCSV] = useState();
-  const [subscribers, setSubscribers] = useState();
+  const [csv, setCSV] = useState(undefined);
+  const [subscribers, setSubscribers] = useState(undefined);
 
   useEffect(() => {
     csv &&
@@ -48,15 +52,16 @@ export const NewNewsletter = ({ onClose }) => {
 
   const [manifest, saveManifest] = usePublicationManifest(webId, workspaceSlug);
   const newsletterExists = !!getNewsletter(manifest, title);
+  console.log(newsletterExists);
 
   const save = async function save() {
     // Create newsletter
     setSaving(true);
-    const newManifest = addNewsletterWithSubscribers(
-      manifest,
-      title,
-      subscribers
-    );
+    console.log("old", manifest);
+    const newManifest = subscribers
+      ? addNewsletterWithSubscribers(manifest, title, subscribers)
+      : addNewsletter(manifest, title);
+    console.log("new",newManifest);
     try {
       saveManifest(newManifest);
     } catch (e) {
