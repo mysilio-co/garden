@@ -52,16 +52,13 @@ export const NewNewsletter = ({ onClose }) => {
 
   const [manifest, saveManifest] = usePublicationManifest(webId, workspaceSlug);
   const newsletterExists = !!getNewsletter(manifest, title);
-  console.log(newsletterExists);
 
   const save = async function save() {
     // Create newsletter
     setSaving(true);
-    console.log("old", manifest);
     const newManifest = subscribers
       ? addNewsletterWithSubscribers(manifest, title, subscribers)
       : addNewsletter(manifest, title);
-    console.log("new",newManifest);
     try {
       saveManifest(newManifest);
     } catch (e) {
