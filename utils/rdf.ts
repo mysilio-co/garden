@@ -7,13 +7,37 @@ import {
   setDatetime,
   getDatetime,
   getUrl,
+  asUrl,
   setUrl,
   getUrlAll,
   Thing,
   IriString,
   Iri,
 } from '@inrupt/solid-client';
-import { FOAF, DCTERMS, RDF } from "@inrupt/vocab-common-rdf";
+import { uuidUrn } from '../utils/uris';
+import { FOAF, DCTERMS, RDF, OWL } from '@inrupt/vocab-common-rdf';
+
+export type IRI = string;
+export type URN = IRI;
+export type UUID = URN;
+
+export function isUUID(iri: IRI): boolean {
+  const url = new URL(iri);
+  return url.protocol == 'urn:' && url.pathname.indexOf('uuid:') == 0;
+}
+
+export function uuid(thing: Thing): URN {
+  const iri = asUrl(thing);
+  if (isUUID(asUrl(thing))) {
+    return iri;
+  } else {
+    return getUrlAll(thing, OWL.sameAs).find(isUUID);
+  }
+}
+
+export function createThingWithUUID(): Thing {
+  return createThing({ url: uuidUrn() });
+}
 
 export function hasUSNote(thing: Thing): boolean {
   return !!getUrl(thing, US.storedAt);

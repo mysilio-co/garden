@@ -3,6 +3,7 @@ import {
 } from "@inrupt/solid-client";
 import { useResource, useWebId, useThing } from "swrlit";
 import { useWorkspacePreferencesFileUris } from './app';
+import { getNewsletter } from '../model/publications';
 
 export function useOrCreateResource(iri) {
   const response = useResource(iri);
@@ -23,9 +24,4 @@ export function usePublicationManifest(webId, workspaceSlug) {
   );
   const publicationsIri = privatePrefix && `${privatePrefix}publications.ttl`;
   return useOrCreateResource(publicationsIri);
-}
-
-export function useNewsletter(webId, title, workspaceSlug) {
-  const manifest = usePublicationManifest(webId, workspaceSlug);
-  return getThing(manifest, newsletterIdFromTitle);
 }

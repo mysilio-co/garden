@@ -6,7 +6,11 @@ import { isThingLocal } from '@inrupt/solid-client';
 import { Close as CloseIcon, TickCircle } from '../icons';
 import { useCurrentWorkspace } from '../../hooks/app';
 import Modal from '../Modal';
-import { usePublicationManifest } from '../../hooks/publications';
+import {
+  usePublicationManifest,
+  useNewsletter,
+} from '../../hooks/publications';
+import { getNewsletter } from '../../model/publications';
 
 function validEmail(email) {
   const re =
@@ -44,14 +48,14 @@ export const NewNewsletter = ({ onClose }) => {
 
   const { manifest: resource, saveManifest: saveResource } =
     usePublicationManifest(webId, workspaceSlug);
-  const newsletterExists = false;
+  const newsletterExists = !!getNewsletter(manifest, title);
 
   const save = async function save() {
     // Create newsletter
     setSaving(true);
     try {
     } catch (e) {
-      console.log('error saving note', e);
+      console.log('error saving newsletter', e);
     } finally {
       setSaving(false);
     }

@@ -5,13 +5,16 @@ import {
   buildThing,
   setThing,
   getThing,
+  getUrlAll,
   asUrl,
   createSolidDataset,
+  getThingAll,
+  getStringNoLocale,
 } from '@inrupt/solid-client';
+import { IRI, UUID, getUUID, createThingWithUUID, hasRDFType } from '../utils/rdf';
 import { MY, SIOC } from "../vocab";
-import { RDF, SKOS, DCTERMS } from '@inrupt/vocab-common-rdf';
-import * as base58 from "micro-base58";
-import { v1 as uuid } from 'uuid';
+import { RDF, SKOS, DCTERMS, OWL} from '@inrupt/vocab-common-rdf';
+
 
 /*
 Design:
@@ -22,28 +25,17 @@ each specified by a volume and issue number.
 
 */
 
-type IRI = string;
-type WebId = IRI;
+type Newsletter = Thing & {};
 
-type Newsletter = {
-  iri: IRI;
-  title: string;
-  author: string;
-  editions: Edition[];
-  distributionList: Subscriber[];
-};
-
-type Subscriber = {
+type SubscriberInfo = {
   email: string;
 };
 
-type Concept = {
-  iri: IRI;
-};
+type Subscriber = Thing & {};
 
-type Collection = {
-  iri: IRI;
-};
+type Concept = Thing & {};
+
+type Collection = Thing & {};
 
 enum HTMLTemplate {
   ConceptPage = 'concept-page',
@@ -52,71 +44,79 @@ enum HTMLTemplate {
 
 type ConceptPageConfig = {
   template: HTMLTemplate.ConceptPage
-  concept: Concept
+  concept: IRI
 }
 
 type CollectionPageConfig = {
   template: HTMLTemplate.CollectionPage
-  concept: Concept,
-  collection: Collection
+  concept: IRI,
+  collection: IRI
 }
 
 type HTMLConfig = ConceptPageConfig | CollectionPageConfig 
 
-type Edition = {
-  iri: IRI;
-  publicationIri: IRI;
-  volume: number;
-  issue: number;
-  config: HTMLConfig
-};
+type Edition = Thing & { };
 
-type EditionNo = {
-  volume: number,
-  issue: number
-}
-
-export function newsletterIdFromTitle(title: string) {
-  return `newsletter:base58:${base58.encode(title)}`;
+export function createNewsletter(title: string) {
+  return buildThing(createThingWithUUID())
+    .addUrl(RDF.type, SIOC.Container)
+    .addUrl(RDF.type, MY.SIOC.Newsletter)
+    .addStringNoLocale(DCTERMS.title, title)
+    .build();
 }
 
 export function addNewsletter(
   manifest: SolidDataset,
   title: string
 ): SolidDataset {
-  manifest = manifest || createSolidDataset();
-  const thing = buildThing(createThing({ name: newsletterIdFromTitle(title) }))
-    .addUrl(RDF.type, SIOC.Container)
-    .addUrl(RDF.type, MY.SIOC.Newsletter)
-    .addStringNoLocale(DCTERMS.title, title)
-    .build();
-  return setThing(manifest, thing);
+  return setThing(manifest || createSolidDataset(), createNewsletter(title));
 } 
 
-export function userIdFromEmail(email: string) {
-  return `user:base58:${base58.encode(email)}`; 
+export function getNewsletter(manifest: SolidDataset, title: string): Thing {
+  return getThingAll(manifest)
+    .filter((t) => {
+      hasRDFType(t, MY.SIOC.Newsletter);
+    })
+    .find((t) => {
+      return title === getStringNoLocale(t, DCTERMS.title);
+    });
+}
+
+export function createSubscriber(newsletter: Newsletter, info: SubscriberInfo) {
+  return buildThing(createThingWithUUID())
+    .addUrl(RDF.type, SIOC.User)
+    .addUrl(SIOC.subscriber_of, getUUID(newsletter))
+    .addStringNoLocale(SIOC.email, info.email)
+    .build();
+}
+
+export function getSubscribers(
+  manifest: SolidDataset,
+  newsletter: Newsletter
+): Subscriber[] {
+  return getThingAll(manifest).filter((t) => {
+    hasRDFType(t, SIOC.User) &&
+      getUUID(newsletter) === getStringNoLocale(t, SIOC.subscriber_of);
+  });
 }
 
 // use private datasets only 
 export function addSubscriberToNewsletter(
   manifest: SolidDataset,
   newsletter: Newsletter,
-  subscriber: Subscriber,
+  subscriber: SubscriberInfo
 ): SolidDataset {
-  manifest = manifest || createSolidDataset();
-  const thing = buildThing(createThing({ name: userIdFromEmail(subscriber.email) }))
-    .addUrl(RDF.type, SIOC.User)
-    .addUrl(SIOC.subscriber_of, newsletter.iri)
-    .addStringNoLocale(SIOC.email, subscriber.email)
-    .build();
-  return setThing(manifest, thing);
+  return setThing(
+    manifest || createSolidDataset(),
+    createSubscriber(newsletter, subscriber)
+  );
 }
 
 export function addSubcribersToNewsletter(
   manifest: SolidDataset,
   newsletter: Newsletter,
-  subscribers: Subscriber[]
-) {
+  subscribers: SubscriberInfo[]
+): SolidDataset {
   manifest = manifest || createSolidDataset();
   for (const sub of subscribers) {
     manifest = addSubscriberToNewsletter(manifest, newsletter, sub)
@@ -124,44 +124,22 @@ export function addSubcribersToNewsletter(
   return manifest
 }
 
-
-export function editionId(newsletter: Newsletter, no: EditionNo) {
-  const newsletterId = newsletterIdFromTitle(newsletter.title);
-  return  `${newsletterId}:${no.volume}:${no.issue}`;
-}
-
-export function nextEditionNo(newsletter: Newsletter): EditionNo {
-  return {
-    volume: 1,
-    issue: newsletter.editions.length + 1
-  }
-}
-
-export function currentEditionNo(newsletter: Newsletter): EditionNo {
-  return {
-    volume: 1,
-    // starts at 1.  0 if there are no editions yet
-    issue: newsletter.editions.length,
-  };
-}
-
-export function currentEditionId(newsletter: Newsletter) {
-  return editionId(newsletter, currentEditionNo(newsletter));
-}
-
-export function nextEditionId(newsletter: Newsletter) {
-  return editionId(newsletter, nextEditionNo(newsletter));
-}
-
-export function htmlConfigId() {
-  return `html_config:uuid:${uuid()}`;
+export function addNewsletterWithSubscribers(
+  manifest: SolidDataset,
+  title: string,
+  subscribers: SubscriberInfo[]
+) {
+  const newsletter = createNewsletter(title);
+  manifest = setThing(manifest || createSolidDataset(), newsletter);
+  manifest = addSubcribersToNewsletter(manifest, newsletter, subscribers);
+  return manifest;
 }
 
 function newConceptPageConfigThing(concept: Concept): Thing {
-  return buildThing(createThing({ name: htmlConfigId() }))
+  return buildThing(createThingWithUUID())
     .addUrl(RDF.type, MY.HTML.Config)
     .addUrl(MY.HTML.uses_template, HTMLTemplate.ConceptPage)
-    .addUrl(MY.HTML.uses_concept, concept.iri)
+    .addUrl(MY.HTML.uses_concept, getUUID(concept))
     .build();
 }
 
@@ -169,11 +147,11 @@ function newCollectionPageConfigThing(
   concept: Concept,
   collection: Collection
 ): Thing {
-  return buildThing(createThing({ name: htmlConfigId() }))
+  return buildThing(createThingWithUUID())
     .addUrl(RDF.type, MY.HTML.Config)
     .addUrl(MY.HTML.uses_template, HTMLTemplate.CollectionPage)
-    .addUrl(MY.HTML.uses_collection, collection.iri)
-    .addUrl(MY.HTML.uses_concept, concept.iri)
+    .addUrl(MY.HTML.uses_collection, getUUID(collection))
+    .addUrl(MY.HTML.uses_concept, getUUID(concept))
     .build();
 }
 
@@ -188,12 +166,12 @@ export function newEdition(
     : newConceptPageConfigThing(concept);
   manifest = setThing(manifest || createSolidDataset(), HTMLConfig);
 
-  const Edition = buildThing(createThing({ name: nextEditionId(newsletter) }))
+  const Edition = buildThing(createThingWithUUID())
     .addUrl(RDF.type, SIOC.Item)
     .addUrl(RDF.type, MY.News.Edition)
-    .addUrl(SIOC.has_container, newsletter.iri)
-    .addUrl(SIOC.edition_of, newsletter.iri)
-    .addUrl(MY.HTML.configured_by, asUrl(HTMLConfig))
+    .addUrl(SIOC.has_container, getUUID(newsletter))
+    .addUrl(SIOC.edition_of, getUUID(newsletter))
+    .addUrl(MY.HTML.configured_by, getUUID(HTMLConfig))
     .build();
 
   return setThing(manifest, Edition);
