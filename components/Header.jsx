@@ -15,6 +15,7 @@ import NewNoteModal from './modals/NewNote';
 import NewBookmarkModal from './modals/NewBookmark';
 import NewImageModal from './modals/NewImage';
 import NewFileModal from './modals/NewFile';
+import NewNewsletterModal from './modals/NewNewsletter';
 import { isPreviewEnv } from '../model/flags';
 
 function ActiveModal({ title, open, onClose, conceptNames }) {
@@ -33,6 +34,8 @@ function ActiveModal({ title, open, onClose, conceptNames }) {
       return <NewFileModal open={open} onClose={onClose} />;
     case 'Image':
       return <NewImageModal open={open} onClose={onClose} />;
+    case 'Newsletter':
+      return <NewNewsletterModal open={open} onClose={onClose} />;
     case undefined:
       return <></>;
     default:
@@ -86,7 +89,10 @@ export default function Header({
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {['Note', 'Bookmark', 'Image', 'File'].map((title) => {
+            {(isPreviewEnv()
+              ? ['Note', 'Link', 'Image', 'File', 'Newsletter']
+              : ['Note', 'Link', 'Image', 'File']
+            ).map((title) => {
               return (
                 <Dropdown.Item>
                   {({ active }) => (

@@ -9,7 +9,7 @@ import {
   createSolidDataset,
 } from '@inrupt/solid-client';
 import { MY, SIOC } from "../vocab";
-import { RDF, SKOS } from '@inrupt/vocab-common-rdf';
+import { RDF, SKOS, DCTERMS } from '@inrupt/vocab-common-rdf';
 import * as base58 from "micro-base58";
 import { v1 as uuid } from 'uuid';
 
@@ -80,7 +80,7 @@ export function newsletterIdFromTitle(title: string) {
   return `newsletter:base58:${base58.encode(title)}`;
 }
 
-export function newNewsletter(
+export function addNewsletter(
   manifest: SolidDataset,
   title: string
 ): SolidDataset {
@@ -88,6 +88,7 @@ export function newNewsletter(
   const thing = buildThing(createThing({ name: newsletterIdFromTitle(title) }))
     .addUrl(RDF.type, SIOC.Container)
     .addUrl(RDF.type, MY.SIOC.Newsletter)
+    .addStringNoLocale(DCTERMS.title, title)
     .build();
   return setThing(manifest, thing);
 } 
@@ -96,19 +97,33 @@ export function userIdFromEmail(email: string) {
   return `user:base58:${base58.encode(email)}`; 
 }
 
+// use private datasets only 
 export function addSubscriberToNewsletter(
   manifest: SolidDataset,
   newsletter: Newsletter,
-  email: string
+  subscriber: Subscriber,
 ): SolidDataset {
   manifest = manifest || createSolidDataset();
-  const thing = buildThing(createThing({ name: userIdFromEmail(email) }))
+  const thing = buildThing(createThing({ name: userIdFromEmail(subscriber.email) }))
     .addUrl(RDF.type, SIOC.User)
     .addUrl(SIOC.subscriber_of, newsletter.iri)
-    .addStringNoLocale(SIOC.email, email)
+    .addStringNoLocale(SIOC.email, subscriber.email)
     .build();
   return setThing(manifest, thing);
 }
+
+export function addSubcribersToNewsletter(
+  manifest: SolidDataset,
+  newsletter: Newsletter,
+  subscribers: Subscriber[]
+) {
+  manifest = manifest || createSolidDataset();
+  for (const sub of subscribers) {
+    manifest = addSubscriberToNewsletter(manifest, newsletter, sub)
+  }
+  return manifest
+}
+
 
 export function editionId(newsletter: Newsletter, no: EditionNo) {
   const newsletterId = newsletterIdFromTitle(newsletter.title);

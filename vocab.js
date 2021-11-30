@@ -37,7 +37,6 @@ const MY_FOAF = `${MY_PREFIX}foaf#`;
 const MY_NEWS = `${MY_INCUBATOR}newsletter#`;
 const MY_HTML = `${MY_INCUBATOR}html#`;
 
-const MY_HTML = `${MY_INCUBATOR}html#`;
 export const MY = {
   SKOS: {
     Bookmark: `${MY_SKOS}Bookmark`, // disjoint with SKOS:Concept. Concepts and Bookmarks can both point to the same notes / resources, but a Bookmark is explicitly defined as a "Concept Fragmet" rather than a full Concept.
