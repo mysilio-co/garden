@@ -18,6 +18,10 @@ import NewFileModal from './modals/NewFile';
 import NewNewsletterModal from './modals/NewNewsletter';
 import { isPreviewEnv } from '../model/flags';
 
+const ActiveModalTitles = isPreviewEnv()
+  ? ['Note', 'Link', 'Image', 'File', 'Newsletter']
+  : ['Note', 'Link', 'Image', 'File'];
+
 function ActiveModal({ title, open, onClose, conceptNames }) {
   switch (title) {
     case 'Note':
@@ -89,10 +93,7 @@ export default function Header({
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
               Create New
             </div>
-            {(isPreviewEnv()
-              ? ['Note', 'Link', 'Image', 'File', 'Newsletter']
-              : ['Note', 'Link', 'Image', 'File']
-            ).map((title) => {
+            {ActiveModalTitles.map((title) => {
               return (
                 <Dropdown.Item>
                   {({ active }) => (
