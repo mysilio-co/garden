@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useRef } from "react";
 import * as P from "@udecode/plate";
+
+import { comboboxStore } from '@udecode/plate'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
@@ -12,13 +14,8 @@ import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
+import { autoformatRules } from './autoformat/autoformatRules'
 
-import {
-  useCustomMentionPlugin,
-  Patterns,
-  toMentionable,
-  fromMentionable,
-} from "./hooks/useCustomMentionPlugin";
 import {
   ToolbarButtonsList,
   ToolbarButtonsBasicElements,
@@ -26,14 +23,22 @@ import {
 } from "./Toolbars";
 import ToolbarImageButton from "./ToolbarImageButton"
 
-const ConceptElement = (m) => {
+export const fromMentionable = (m) => {
+  return m.value;
+};
+
+const ConceptElement = ({ attributes, element, children }) => {
   const { webId, slug: workspaceSlug } = useWorkspaceContext();
   const name = fromMentionable(m);
   const url = notePath(webId, workspaceSlug, name)
 
   return (
     <Link href={url || ""}>
-      <a className="text-lagoon">[[{name}]]</a>
+      <a {...attributes} className="text-lagoon group">
+        <span className="opacity-50 group-hover:opacity-100">[[</span>
+        {element.value}
+        <span className="opacity-50 group-hover:opacity-100">]]</span>
+      </a>
     </Link>
   );
 };
@@ -45,21 +50,6 @@ const TagElement = (m) => {
 };
 
 const MentionElement = (m) => {
-  const mention = fromMentionable(m);
-  return <span className="text-lagoon">@{mention}</span>;
-};
-
-const ConceptSelectLabel = (m) => {
-  const name = fromMentionable(m);
-  return <span className="text-lagoon">[[{name}]]</span>;
-};
-
-const TagSelectLabel = (m) => {
-  const tag = fromMentionable(m);
-  return <span className="text-lagoon">#{tag}</span>;
-};
-
-const MentionSelectLabel = (m) => {
   const mention = fromMentionable(m);
   return <span className="text-lagoon">@{mention}</span>;
 };
@@ -88,9 +78,7 @@ const components = P.createPlateComponents({
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
-  [ELEMENT_CONCEPT]: P.withProps(P.MentionElement, {
-    renderLabel: ConceptElement,
-  }),
+  [ELEMENT_CONCEPT]: ConceptElement,
   [ELEMENT_TAG]: P.withProps(P.MentionElement, {
     renderLabel: TagElement,
   }),
@@ -102,120 +90,8 @@ const components = P.createPlateComponents({
 
 const defaultOptions = P.createPlateOptions();
 
-const preFormat = (editor) => P.unwrapList(editor);
-
 const optionsAutoformat = {
-  rules: [
-    {
-      type: P.ELEMENT_H1,
-      markup: "#",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H2,
-      markup: "##",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H3,
-      markup: "###",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["*", "-"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_UL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["1.", "1)"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_OL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_TODO_LI,
-      markup: ["[]"],
-    },
-    {
-      type: P.ELEMENT_BLOCKQUOTE,
-      markup: [">"],
-      preFormat,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["**", "**"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["__", "__"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["*", "*"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["_", "_"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_CODE,
-      between: ["`", "`"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.ELEMENT_CODE_BLOCK,
-      markup: "``",
-      trigger: "`",
-      triggerAtBlockStart: false,
-      preFormat,
-      format: (editor) => {
-        P.insertEmptyCodeBlock(editor, {
-          defaultType: P.getPlatePluginType(editor, P.ELEMENT_DEFAULT),
-          insertNodesOptions: { select: true },
-        });
-      },
-    },
-  ],
+  rules: autoformatRules
 };
 
 const resetBlockTypesCommonRule = {
@@ -255,11 +131,15 @@ const defaultPlugins = [
   P.createListPlugin(),
   P.createTodoListPlugin(),
   P.createImagePlugin(),
-  P.createLinkPlugin(),
+  P.createLinkPlugin({ rangeBeforeOptions: { multiPaths: false } }),
   P.createKbdPlugin(),
   P.createNodeIdPlugin(),
   P.createAutoformatPlugin(optionsAutoformat),
   P.createResetNodePlugin(optionsResetBlockTypePlugin),
+  P.createComboboxPlugin(),
+  P.createMentionPlugin({ trigger: '@', pluginKey: 'mention' }),
+  P.createMentionPlugin({ trigger: '#', pluginKey: 'tag' }),
+  P.createMentionPlugin({ trigger: '[', pluginKey: 'concept' }),
   P.createSoftBreakPlugin({
     rules: [
       { hotkey: "shift+enter" },
@@ -314,11 +194,46 @@ function useImageUrlGetterAndSaveCallback() {
   }
 }
 
+function toMentionable(name) {
+  return { key: name, text: name }
+}
+
+function useComboboxItems(names) {
+  const currentComboboxText = comboboxStore.get.text()
+  return useMemo(() => {
+    return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
+  }, [names, currentComboboxText])
+}
+
+function ConceptComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert concept</div>
+  )
+}
+
+function MentionComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert mention</div>
+  )
+}
+
+function TagComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert tag</div>
+  )
+}
+
+function ConceptItem({ item }) {
+  return `[[${item.text}]]`
+}
+
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
   conceptNames,
+  tagNames,
+  mentionNames,
   readOnly,
   ...props
 }) {
@@ -328,47 +243,18 @@ export default function Editor({
     readOnly
   };
 
-  const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
-    useCustomMentionPlugin({
-      mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
-      pluginKey: ELEMENT_CONCEPT,
-      pattern: Patterns.Concept,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const { getMentionSelectProps: getTagProps, plugin: tagPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: ELEMENT_TAG,
-      pattern: Patterns.Tag,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const { getMentionSelectProps: getMentionProps, plugin: mentionPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: P.ELEMENT_MENTION,
-      pattern: Patterns.Mention,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const plugins = useMemo(
-    () => [...defaultPlugins, conceptPlugin, tagPlugin, mentionPlugin],
-    [conceptPlugin, tagPlugin, mentionPlugin]
-  );
-
+  const plugins = defaultPlugins
 
   const {
     imageUploaderOpen, setImageUploaderOpen,
     imageUploadUri, imageUploaderOnSave,
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
+
+  const mentionItems = useComboboxItems(mentionNames)
+  const conceptItems = useComboboxItems(conceptNames)
+  const tagItems = useComboboxItems(tagNames)
+
   return (
     <P.Plate
       id={editorId}
@@ -385,7 +271,7 @@ export default function Editor({
           <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
             <ToolbarButtonsBasicElements />
             <ToolbarButtonsList />
-            <P.ToolbarLink icon={<LinkIcon />} />
+            <P.LinkToolbarButton icon={<LinkIcon />} />
             <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
           </div>
 
@@ -401,17 +287,9 @@ export default function Editor({
 
           <BallonToolbarMarks />
 
-
-
-          <P.MentionSelect
-            {...getConceptProps()}
-            renderLabel={ConceptSelectLabel}
-          />
-          <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
-          <P.MentionSelect
-            {...getMentionProps()}
-            renderLabel={MentionSelectLabel}
-          />
+          <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
+          <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
+          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent} onRenderItem={ConceptItem} />
         </>
       )}
     </P.Plate>
