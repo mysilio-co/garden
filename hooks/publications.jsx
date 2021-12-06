@@ -7,7 +7,7 @@ import {
 import { useResource, useWebId, useThing } from "swrlit";
 import { useWorkspace } from './app';
 import { getNewsletter } from '../model/publications';
-import { US } from '../vocab';
+import { MY } from '../vocab';
 
 export function useOrCreateResource(iri) {
   const response = useResource(iri);
@@ -23,20 +23,30 @@ export function useOrCreateResource(iri) {
 
 export function usePublicationManifest(webId, workspaceSlug) {
   const { workspace } = useWorkspace(webId, workspaceSlug, 'private');
-  const publicationsIri = getUrl(workspace, US.publicationManifest);
-  const { resource: manifest, save: saveManifest } = useOrCreateResource(publicationsIri);
-  return [manifest, saveManifest];
+  const pub = getUrl(workspace, MY.News.publicationManifest);
+  const res = useOrCreateResource(pub);
+  res.manifest = res.resource;
+  res.saveManifest = res.save;
+  return res 
 }
 
+export function useSubscriptionManifest(webId, workspaceSlug) {
+  const { workspace } = useWorkspace(webId, workspaceSlug, 'private');
+  const sub = getUrl(workspace, MY.News.subscriptionManifest);
+  const res = useOrCreateResource(pub);
+  res.manifest = res.resource;
+  res.saveManifest = res.save;
+  return res 
+}
 export function useNewsletter(webId, workspaceSlug, title) {
-  const { resource: manifest, save: saveManifest } = usePublicationManifest(
+  const res = usePublicationManifest(
     webId,
     workspaceSlug
   );
-  const newsletter = getNewsletter(manifest, title);
-  const saveNewsletter = (newThing) => {
-    const newManifest = newThing && setThing(manifest, thing);
-    newManifest && saveManifest(newManifest);
+  res.newsletter = getNewsletter(res.manifest, title);
+  res.saveNewsletter = (newThing) => {
+    const newManifest = newThing && setThing(res.manifest, thing);
+    newManifest && res.saveManifest(newManifest);
   }
-  return [ newsletter, saveNewsletter ];
+  return res; 
 }

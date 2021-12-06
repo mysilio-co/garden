@@ -28,7 +28,6 @@ export const US = {
   monetizedFor: `${understoryRoot}monetizedFor`,
   usesCSS: `${understoryRoot}usesCSS`,
   slateJSON: `${understoryRoot}slateJSON`, // https://docs.slatejs.org/concepts/02-nodes
-  publicationManifest: `${understoryRoot}publicationManifest`,
 };
 
 const MY_PREFIX = "https://vocab.mysilio.com/my/";
@@ -47,6 +46,8 @@ export const MY = {
     Link: `${MY_FOAF}Link`, // subclass of Document, disjoint with File. For resources that are intended to be treated as Links / viewed in a WebBrowser
   },
   News: {
+    publicationManifest: `${understoryRoot}publicationManifest`,
+    subscriptionManifest: `${understoryRoot}subscriptionManifest`,
     Newsletter: `${MY_NEWS}Newsletter`, // subclass of SIOC:Container
     Edition: `${MY_NEWS}Edition`, // subclass of SIOC:Item
     has_edition: `${MY_NEWS}has_edition`,

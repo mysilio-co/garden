@@ -15,7 +15,7 @@ import {
 import { dequal } from 'dequal';
 
 import { useUnderstoryContainerUri, useStorageContainer } from './uris';
-import { US } from '../vocab';
+import { US, MY } from '../vocab';
 import { appPrefix } from '../utils/uris';
 import { useWorkspaceContext } from '../contexts/WorkspaceContext';
 
@@ -74,8 +74,13 @@ function ensureWorkspace(
     );
     workspace = ensureUrl(
       workspace,
-      US.publicationManifest,
+      MY.News.publicationManifest,
       new URL('publications.ttl', workspacePreferencesFileUri).toString()
+    );
+    workspace = ensureUrl(
+      workspace,
+      MY.News.subscriptionManifest,
+      new URL('subscriptions.ttl', workspacePreferencesFileUri).toString()
     );
     workspace = ensureUrl(
       workspace,

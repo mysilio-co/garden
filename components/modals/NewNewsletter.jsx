@@ -50,8 +50,8 @@ export const NewNewsletter = ({ onClose }) => {
       });
   }, [csv]);
 
-  const [manifest, saveManifest] = usePublicationManifest(webId, workspaceSlug);
-  const newsletterExists = !!getNewsletter(manifest, title);
+  const { manifest, saveManifest, newsletter } = useNewsletter(webId, workspaceSlug);
+  const newsletterExists = !!newsletter;
 
   const save = async function save() {
     // Create newsletter
