@@ -73,7 +73,7 @@ function LinkElement({ attributes, children, element, nodeProps }) {
   )
 }
 
-const components = P.createPlateComponents({
+const components = P.createPlateUI({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
@@ -87,8 +87,6 @@ const components = P.createPlateComponents({
   }),
   [P.ELEMENT_LINK]: LinkElement
 });
-
-const defaultOptions = P.createPlateOptions();
 
 const optionsAutoformat = {
   rules: autoformatRules
@@ -114,12 +112,8 @@ const optionsResetBlockTypePlugin = {
   ],
 };
 
-/* TODO:" add mentionables for Concepts, and friends */
-
 const defaultPlugins = [
-  P.createReactPlugin(),
-  P.createHistoryPlugin(),
-  P.createHeadingPlugin({ levels: 3 }),
+  P.createHeadingPlugin({ options: { levels: 3 } }),
   P.createParagraphPlugin(),
   P.createBoldPlugin(),
   P.createItalicPlugin(),
@@ -131,46 +125,50 @@ const defaultPlugins = [
   P.createListPlugin(),
   P.createTodoListPlugin(),
   P.createImagePlugin(),
-  P.createLinkPlugin({ rangeBeforeOptions: { multiPaths: false } }),
+  P.createLinkPlugin({ options: { rangeBeforeOptions: { multiPaths: false } } }),
   P.createKbdPlugin(),
   P.createNodeIdPlugin(),
-  P.createAutoformatPlugin(optionsAutoformat),
-  P.createResetNodePlugin(optionsResetBlockTypePlugin),
+  P.createAutoformatPlugin({ options: optionsAutoformat }),
+  P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
   P.createComboboxPlugin(),
-  P.createMentionPlugin({ trigger: '@', pluginKey: 'mention' }),
-  P.createMentionPlugin({ trigger: '#', pluginKey: 'tag' }),
-  P.createMentionPlugin({ trigger: '[', pluginKey: 'concept' }),
+  P.createMentionPlugin({ key: 'mention', options: { trigger: '@' } }),
+  P.createMentionPlugin({ key: 'tag', options: { trigger: '#' } }),
+  P.createMentionPlugin({ key: 'concept', options: { trigger: '[' } }),
   P.createSoftBreakPlugin({
-    rules: [
-      { hotkey: "shift+enter" },
-      {
-        hotkey: "enter",
-        query: {
-          allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TD],
+    options: {
+      rules: [
+        { hotkey: "shift+enter" },
+        {
+          hotkey: "enter",
+          query: {
+            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TD],
+          },
         },
-      },
-    ],
+      ],
+    }
   }),
   P.createExitBreakPlugin({
-    rules: [
-      {
-        hotkey: "mod+enter",
-      },
-      {
-        hotkey: "mod+shift+enter",
-        before: true,
-      },
-      {
-        hotkey: "enter",
-        query: {
-          start: true,
-          end: true,
-          allow: P.KEYS_HEADING,
+    options: {
+      rules: [
+        {
+          hotkey: "mod+enter",
         },
-      },
-    ],
+        {
+          hotkey: "mod+shift+enter",
+          before: true,
+        },
+        {
+          hotkey: "enter",
+          query: {
+            start: true,
+            end: true,
+            allow: P.KEYS_HEADING,
+          },
+        },
+      ],
+    }
   }),
-  P.createSelectOnBackspacePlugin({ allow: P.ELEMENT_IMAGE }),
+  P.createSelectOnBackspacePlugin({ options: { query: { allow: P.ELEMENT_IMAGE } } }),
 ];
 
 function useImageUrlGetterAndSaveCallback() {
@@ -243,7 +241,9 @@ export default function Editor({
     readOnly
   };
 
-  const plugins = defaultPlugins
+  const plugins = P.createPlugins(defaultPlugins, {
+    components
+  })
 
   const {
     imageUploaderOpen, setImageUploaderOpen,
@@ -259,8 +259,6 @@ export default function Editor({
     <P.Plate
       id={editorId}
       plugins={plugins}
-      components={components}
-      options={defaultOptions}
       editableProps={editableProps}
       initialValue={initialValue}
       onChange={onChange}
