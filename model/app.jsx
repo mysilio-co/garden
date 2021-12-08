@@ -34,14 +34,6 @@ export function createNewAppResource(appContainerUri, privateAppContainerUri) {
   return { app, resource };
 }
 
-function ensureUrl(workspace, url, value) {
-  if (!workspace || !url || !value || getUrl(workspace, url)) {
-    return workspace;
-  } else {
-    return setUrl(workspace, url, value);
-  }
-}
-
 export function ensureUrl(workspace, url, value) {
   if (!workspace || !url || !value || getUrl(workspace, url)) {
     return workspace;
