@@ -30,14 +30,6 @@ export function usePublicationManifest(webId, workspaceSlug) {
   return res 
 }
 
-export function useSubscriptionManifest(webId, workspaceSlug) {
-  const { workspace } = useWorkspace(webId, workspaceSlug, 'private');
-  const sub = getUrl(workspace, MY.News.subscriptionManifest);
-  const res = useOrCreateResource(pub);
-  res.manifest = res.resource;
-  res.saveManifest = res.save;
-  return res 
-}
 export function useNewsletter(webId, workspaceSlug, title) {
   const res = usePublicationManifest(
     webId,

@@ -23,104 +23,27 @@ import { useConcept } from '../hooks/concepts';
 import { getAndParseNoteBody, createOrUpdateSlateJSON } from '../model/note';
 import { createOrUpdateConceptIndex } from '../model/concept';
 import { deleteResource } from '../utils/fetch';
-
-const appThingName = 'app';
-
-const prefsPath = 'workspace/default/prefs.ttl';
-const prefsWorkspaceName = 'workspace';
-
-function createNewAppResource(appContainerUri, privateAppContainerUri) {
-  let app = createThing({ name: appThingName });
-  let defaultWorkspace = createThing();
-  defaultWorkspace = setUrl(
-    defaultWorkspace,
-    US.publicPrefs,
-    `${appContainerUri}${prefsPath}#${prefsWorkspaceName}`
-  );
-  defaultWorkspace = setUrl(
-    defaultWorkspace,
-    US.privatePrefs,
-    `${privateAppContainerUri}${prefsPath}#${prefsWorkspaceName}`
-  );
-  app = setUrl(app, US.hasWorkspace, defaultWorkspace);
-  let resource = createSolidDataset();
-  resource = setThing(resource, defaultWorkspace);
-  resource = setThing(resource, app);
-  return { app, resource };
-}
-
-function ensureUrl(workspace, url, value) {
-  if (!workspace || !url || !value || getUrl(workspace, url)) {
-    return workspace;
-  } else {
-    return setUrl(workspace, url, value);
-  }
-}
-
-function ensureWorkspace(
-  workspace,
-  conceptPrefix,
-  tagPrefix,
-  workspacePreferencesFileUri
-) {
-  workspace = workspace || createThing({ name: prefsWorkspaceName });
-  workspace = ensureUrl(workspace, US.conceptPrefix, conceptPrefix);
-  workspace = ensureUrl(workspace, US.tagPrefix, tagPrefix);
-  if (workspacePreferencesFileUri) {
-    workspace = ensureUrl(
-      workspace,
-      US.conceptIndex,
-      new URL('concepts.ttl', workspacePreferencesFileUri).toString()
-    );
-    workspace = ensureUrl(
-      workspace,
-      MY.News.publicationManifest,
-      new URL('publications.ttl', workspacePreferencesFileUri).toString()
-    );
-    workspace = ensureUrl(
-      workspace,
-      MY.News.subscriptionManifest,
-      new URL('subscriptions.ttl', workspacePreferencesFileUri).toString()
-    );
-    workspace = ensureUrl(
-      workspace,
-      US.noteStorage,
-      new URL('notes/', workspacePreferencesFileUri).toString()
-    );
-    workspace = ensureUrl(
-      workspace,
-      US.backupsStorage,
-      new URL(`backups/`, workspacePreferencesFileUri).toString()
-    );
-  }
-  return workspace;
-}
-
-function createWorkspacePrefs(
-  conceptPrefix,
-  tagPrefix,
-  workspacePreferencesFileUri
-) {
-  return ensureWorkspace(
-    undefined,
-    conceptPrefix,
-    tagPrefix,
-    workspacePreferencesFileUri
-  );
-}
+import {
+  createNewAppResource,
+  createWorkspacePrefs,
+  ensureWorkspace,
+  AppThingName,
+  PrefsPath,
+  PrefsWorkspaceName
+} from '../model/app';
 
 export function useApp(webId) {
   const appContainerUri = useUnderstoryContainerUri(webId);
 
   const privateAppContainerUri = useUnderstoryContainerUri(webId, 'private');
   const publicWorkspacePrefsUri =
-    appContainerUri && `${appContainerUri}${prefsPath}#${prefsWorkspaceName}`;
+    appContainerUri && `${appContainerUri}${PrefsPath}#${PrefsWorkspaceName}`;
   const { save: savePublicPrefs } = useThing(publicWorkspacePrefsUri);
   const privateWorkspacePrefsUri =
     privateAppContainerUri &&
-    `${privateAppContainerUri}${prefsPath}#${prefsWorkspaceName}`;
+    `${privateAppContainerUri}${PrefsPath}#${PrefsWorkspaceName}`;
   const { save: savePrivatePrefs } = useThing(privateWorkspacePrefsUri);
-  const appUri = appContainerUri && `${appContainerUri}app.ttl#${appThingName}`;
+  const appUri = appContainerUri && `${appContainerUri}app.ttl#${AppThingName}`;
   const {
     thing: app,
     saveResource: saveAppResource,
