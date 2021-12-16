@@ -12,7 +12,7 @@ export function getConceptNodes(node) {
 }
 
 export function getConceptNameFromNode(node) {
-  return node.value;
+  return node.name;
 }
 
 export function getTagNodes(node) {
