@@ -11,6 +11,7 @@ import Nav from '../../components/nav'
 import WebMonetization from '../../components/WebMonetization'
 import { WorkspaceProvider } from '../../contexts/WorkspaceContext'
 import { useFollows } from '../../hooks/people'
+import { useGarden } from '../../hooks/concepts.jsx'
 
 export default function ProfilePage() {
   const router = useRouter()
