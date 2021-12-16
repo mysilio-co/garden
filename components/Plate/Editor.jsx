@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
 import * as P from "@udecode/plate";
 
-import { comboboxStore } from '@udecode/plate'
+import { comboboxStore, getComboboxStoreById } from '@udecode/plate'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
@@ -204,10 +204,10 @@ const createConceptPlugin = P.createPluginFactory({
 
 const LEAF_CONCEPT_BRACKET = 'conceptLeafBracket'
 
-function ConceptBracketLeaf({children}){
+function ConceptBracketLeaf({ children }) {
   return (
     <span className="opacity-50 group-hover:opacity-100">
-    {children}
+      {children}
     </span>
   )
 }
@@ -403,7 +403,8 @@ export default function Editor({
 
           <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
           <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
-          <P.MentionCombobox items={conceptItems} pluginKey="concept" component={ConceptComboboxComponent} onRenderItem={ConceptItem} />
+          <P.Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onRenderItem={ConceptItem}
+            onSelectItem={(x) => { console.log("select", x) }} />
         </>
       )}
     </P.Plate>

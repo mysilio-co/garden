@@ -32,7 +32,7 @@ import { LooksOne } from '@styled-icons/material/LooksOne';
 import { LooksTwo } from '@styled-icons/material/LooksTwo';
 
 export const ToolbarButtonsBasicElements = () => {
-  const editor = P.usePlateEditorRef(P.usePlateEventId());
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
@@ -64,7 +64,7 @@ export const ToolbarButtonsBasicElements = () => {
 // TODO: list break / have weird behavior when switching between list types, probably due to poor logic in
 // https://github.com/udecode/plate/blob/ac3f7d9072c3dd12e971d52af68d07ee18496f57/packages/elements/list/src/transforms/toggleList.ts
 export const ToolbarButtonsList = () => {
-  const editor = P.usePlateEditorRef(P.usePlateEventId());
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
@@ -81,7 +81,7 @@ export const ToolbarButtonsList = () => {
 };
 
 export const ToolbarButtonsBasicMarks = () => {
-  const editor = P.usePlateEditorRef(P.usePlateEventId());
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
@@ -111,7 +111,7 @@ export const ToolbarButtonsBasicMarks = () => {
 };
 
 export const BallonToolbarMarks = () => {
-  const editor = P.usePlateEditorRef(P.usePlateEventId());
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   const arrow = false;
   const theme = 'dark';
