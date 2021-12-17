@@ -132,7 +132,8 @@ module.exports = {
     extend: {
       borderWidth: ['hover'],
       ringWidth: ['hover'],
-      ringColor: ['hover']
+      ringColor: ['hover'],
+      display: ['group-hover']
     }
   },
   plugins: [

@@ -1,10 +1,6 @@
 import { useState, Fragment } from 'react'
 import { Formik } from 'formik'
-import { Transition, Dialog } from '@headlessui/react';
-import {
-  useStoreEditorState,
-  usePlateActions,
-} from "@udecode/plate";
+import { getPlateActions } from "@udecode/plate";
 import { useWebId } from "swrlit";
 import { isThingLocal } from "@inrupt/solid-client";
 
@@ -28,7 +24,7 @@ export const NewNote = ({ onClose, isPublic = false }) => {
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
   const editorId = "create-modal";
-  const { setValue, resetEditor } = usePlateActions(editorId);
+  const { value: setValue, resetEditor } = getPlateActions(editorId);
 
   const webId = useWebId();
   const { workspace, slug: workspaceSlug } = useCurrentWorkspace(privacy);
@@ -126,7 +122,7 @@ export const NewNote = ({ onClose, isPublic = false }) => {
         <button type="submit" onClick={onSubmit}
           className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center" disabled={conceptExists}>
           Create
-          <TickCircle className="ml-1 text-my-green h-4 w-4"/>
+          <TickCircle className="ml-1 text-my-green h-4 w-4" />
         </button>
       </div>
     </div>
