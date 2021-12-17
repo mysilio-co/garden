@@ -1,4 +1,5 @@
 import * as base58 from "micro-base58";
+import { v1 as uuid } from 'uuid';
 
 export const appPrefix =
   process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/env/dev";
@@ -85,4 +86,8 @@ export function handleToIdp(handle) {
   } catch (_) {
     return `https://${handle}`
   }
+}
+
+export function uuidUrn() {
+  return `urn:uuid:${uuid()}`;
 }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next",
+    "test": "jest",
     "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
@@ -16,6 +17,7 @@
     "@inrupt/solid-common-vocab": "^0.5.3",
     "@mysilio/plate-ui-combobox": "9.0.2",
     "@octokit/request": "^5.4.15",
+    "@rdfjs/namespace": "^1.1.0",
     "@styled-icons/boxicons-regular": "^10.38.0",
     "@styled-icons/foundation": "^10.34.0",
     "@styled-icons/material": "^10.34.0",
@@ -35,9 +37,10 @@
     "is-url": "^1.2.4",
     "make-empty-github-commit": "^1.2.1",
     "micro-base58": "^0.4.3",
-    "next": "^10.2.2",
+    "next": "^12.0.7",
     "node-fetch": "^2.6.1",
     "open-graph-scraper": "^4.10.0",
+    "papaparse": "^5.3.1",
     "rdf-namespaces": "^1.9.2",
     "react": "^17.0.2",
     "react-cropper": "^2.1.4",
@@ -68,11 +71,15 @@
     "@storybook/addon-links": "^6.3.8",
     "@storybook/react": "^6.3.8",
     "@tailwindcss/forms": "^0.3.2",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
     "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
     "chromatic": "^5.10.1",
+    "jest": "^27.4.3",
     "postcss": "^8.3.0",
     "prettier": "2.3.2",
+    "react-test-renderer": "^17.0.2",
     "tailwindcss": "^2.2.4"
   }
 }
