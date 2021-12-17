@@ -339,12 +339,6 @@ function useComboboxItems(store, names) {
   }, [names, currentComboboxText])
 }
 
-function ConceptComboboxComponent({ }) {
-  return (
-    <div className="text-sm p-2 font-bold">insert concept</div>
-  )
-}
-
 function MentionComboboxComponent({ }) {
   return (
     <div className="text-sm p-2 font-bold">insert mention</div>
