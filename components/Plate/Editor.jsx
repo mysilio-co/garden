@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
 import * as P from "@udecode/plate";
 
-import { comboboxStore, getComboboxStoreById } from '@udecode/plate'
+import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
@@ -111,7 +111,7 @@ const optionsResetBlockTypePlugin = {
   ],
 };
 
-const conceptRegex = /\[\[(.*)\]\]/
+const conceptRegex = /\[\[(.*)\]\](.*)/
 
 function hasConceptParent(editor, path) {
   const parent = Node.get(editor, path.slice(0, -1))
@@ -142,7 +142,6 @@ export const withConcepts = editor => {
         Transforms.setNodes(editor, {
           name: node.value
         }, { at: path })
-
         const childText = `[[${node.value}]]`
         if (node.children[0].text != childText) {
           const childTextStart = { path: [...path, 0], offset: 0 }
@@ -156,12 +155,23 @@ export const withConcepts = editor => {
         return
       }
 
-      // make sure name always matches text
       const conceptMatch = Node.string(node).match(conceptRegex)
       if (conceptMatch) {
-        const [_, name] = conceptMatch
+        const [_, name, extra] = conceptMatch
+
+        // make sure name always matches text
         if (node.name !== name) {
           Transforms.setNodes(editor, { name }, { at: path })
+          return
+        }
+
+        // make sure a concept doesn't eat the text after it
+        if (extra !== '') {
+          const childText = `[[${node.name}]]`
+          Transforms.splitNodes(editor, {
+            at: { path: [...path, 0], offset: childText.length },
+            match: n => (n.type === ELEMENT_CONCEPT)
+          })
           return
         }
       } else {
@@ -236,6 +246,8 @@ const defaultPlugins = [
   P.createNodeIdPlugin(),
   P.createAutoformatPlugin({ options: optionsAutoformat }),
   P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
+  createComboboxPlugin(),
+  // for now we need to support both combobox plugins
   P.createComboboxPlugin(),
   P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
   P.createMentionPlugin({ key: ELEMENT_TAG, options: { trigger: '#' } }),
@@ -303,8 +315,8 @@ function toMentionable(name) {
   return { key: name, text: name }
 }
 
-function useComboboxItems(names) {
-  const currentComboboxText = comboboxStore.get.text()
+function useComboboxItems(store, names) {
+  const currentComboboxText = store.get.text()
   return useMemo(() => {
     return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
   }, [names, currentComboboxText])
@@ -330,6 +342,10 @@ function TagComboboxComponent({ }) {
 
 function ConceptItem({ item }) {
   return `[[${item.text}]]`
+}
+
+function onConceptSelect(editor, item) {
+  Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
 }
 
 export default function Editor({
@@ -358,9 +374,11 @@ export default function Editor({
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
 
-  const mentionItems = useComboboxItems(mentionNames)
-  const conceptItems = useComboboxItems(conceptNames)
-  const tagItems = useComboboxItems(tagNames)
+  // use the standard combobox because we're using the mentions stuff
+  const mentionItems = useComboboxItems(P.comboboxStore, mentionNames)
+  const tagItems = useComboboxItems(P.comboboxStore, tagNames)
+
+  const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
 
   const plateEditor = P.usePlateEditorRef()
   useEffect(function () {
@@ -403,8 +421,7 @@ export default function Editor({
 
           <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
           <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
-          <P.Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onRenderItem={ConceptItem}
-            onSelectItem={(x) => { console.log("select", x) }} />
+          <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
         </>
       )}
     </P.Plate>

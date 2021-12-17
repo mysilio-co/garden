@@ -14,6 +14,7 @@
     "@inrupt/lit-generated-vocab-solid-common": "^0.3.9",
     "@inrupt/solid-client": "^1.13.0",
     "@inrupt/solid-common-vocab": "^0.5.3",
+    "@mysilio/plate-ui-combobox": "9.0.2",
     "@octokit/request": "^5.4.15",
     "@styled-icons/boxicons-regular": "^10.38.0",
     "@styled-icons/foundation": "^10.34.0",
