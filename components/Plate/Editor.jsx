@@ -29,16 +29,10 @@ export const fromMentionable = (m) => {
 };
 
 const ConceptElement = ({ attributes, element, children }) => {
-  const { webId, slug: workspaceSlug } = useWorkspaceContext();
-  const name = fromMentionable(m);
-  const url = notePath(webId, workspaceSlug, name)
-
   return (
-    <Link href={url || ""}>
-      <a {...attributes} className="text-lagoon group">
-        {children}
-      </a>
-    </Link>
+    <span {...attributes} className="text-lagoon group">
+      {children}
+    </span>
   );
 };
 
@@ -186,6 +180,8 @@ export const withConcepts = editor => {
   return editor
 }
 
+const LEAF_CONCEPT_START = 'conceptLeafStart'
+const LEAF_CONCEPT_END = 'conceptLeafEnd'
 
 const createConceptPlugin = P.createPluginFactory({
   key: ELEMENT_CONCEPT,
@@ -200,32 +196,52 @@ const createConceptPlugin = P.createPluginFactory({
         {
           anchor: { path: textPath, offset: 0 },
           focus: { path: textPath, offset: 2 },
-          [LEAF_CONCEPT_BRACKET]: true
+          [LEAF_CONCEPT_START]: true
         },
         {
           anchor: { path: textPath, offset: textLength - 2 },
           focus: { path: textPath, offset: textLength },
-          [LEAF_CONCEPT_BRACKET]: true
+          [LEAF_CONCEPT_END]: true,
+          conceptName: node.name
         }
       ]
     }
   }
 })
 
-const LEAF_CONCEPT_BRACKET = 'conceptLeafBracket'
-
-function ConceptBracketLeaf({ children }) {
+function ConceptStartLeaf({ children }) {
   return (
     <span className="opacity-50 group-hover:opacity-100">
       {children}
     </span>
   )
 }
+function ConceptEndLeaf({ children, leaf }) {
+  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const name = leaf.conceptName
+  const url = notePath(webId, workspaceSlug, name)
+  return (
+    <span className="opacity-50 group-hover:opacity-100 relative">
+      {children}
+      <Link href={url}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline" />
+        </a>
+      </Link>
+    </span>
 
-const createConceptBracketPlugin = P.createPluginFactory({
-  key: LEAF_CONCEPT_BRACKET,
+  )
+}
+
+const createConceptStartPlugin = P.createPluginFactory({
+  key: LEAF_CONCEPT_START,
   isLeaf: true,
-  component: ConceptBracketLeaf
+  component: ConceptStartLeaf
+})
+const createConceptEndPlugin = P.createPluginFactory({
+  key: LEAF_CONCEPT_END,
+  isLeaf: true,
+  component: ConceptEndLeaf
 })
 
 const defaultPlugins = [
@@ -252,7 +268,8 @@ const defaultPlugins = [
   P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
   P.createMentionPlugin({ key: ELEMENT_TAG, options: { trigger: '#' } }),
   createConceptPlugin(),
-  createConceptBracketPlugin(),
+  createConceptStartPlugin(),
+  createConceptEndPlugin(),
   P.createSoftBreakPlugin({
     options: {
       rules: [
@@ -338,10 +355,6 @@ function TagComboboxComponent({ }) {
   return (
     <div className="text-sm p-2 font-bold">insert tag</div>
   )
-}
-
-function ConceptItem({ item }) {
-  return `[[${item.text}]]`
 }
 
 function onConceptSelect(editor, item) {
