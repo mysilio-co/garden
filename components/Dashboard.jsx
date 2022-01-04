@@ -5,13 +5,15 @@ import HeaderWithData from '../components/HeaderWithData'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
 import { useFilteredGarden } from '../hooks/concepts';
 import Cards from '../components/Cards';
+import ProfileDrawerWithData from './ProfileDrawerWithData'
 
 export default function Dashboard() {
   const webId = useWebId();
   const workspaceSlug = 'default';
   const [search, setSearch] = useState('');
   const { garden } = useFilteredGarden(webId, workspaceSlug, search);
-
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
+  console.log(profileDrawerOpen)
   return (
     <>
       <WebMonetization webId={webId} />
@@ -20,10 +22,13 @@ export default function Dashboard() {
         onSearch={(s) => {
           setSearch(s);
         }}
+        setDrawerOpen={setProfileDrawerOpen}
+        drawerOpen={profileDrawerOpen}
       />
       <div className="py-6 px-18">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
+          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen}/>
         </WorkspaceProvider>
       </div>
     </>
