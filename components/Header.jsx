@@ -19,8 +19,8 @@ import NewNewsletterModal from './modals/NewNewsletter';
 import { isPreviewEnv } from '../model/flags';
 
 const ActiveModalTitles = isPreviewEnv()
-  ? ['Note', 'Link', 'Image', 'File', 'Newsletter']
-  : ['Note', 'Link', 'Image', 'File'];
+  ? ['Note', 'Bookmark', 'Image', 'File', 'Newsletter']
+  : ['Note', 'Bookmark', 'Image', 'File'];
 
 function ActiveModal({ title, open, onClose, conceptNames }) {
   switch (title) {
