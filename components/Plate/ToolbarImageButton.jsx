@@ -1,10 +1,9 @@
-import { useStoreEditorRef } from '@udecode/plate-core';
-import { insertImage } from '@udecode/plate-image';
+import { usePlateEditorRef, insertImage  } from '@udecode/plate';
 
 import { UploadImage as UploadImageIcon } from '../icons'
 
 export default function ToobarImageButton({ getImageUrl, editorId }) {
-  const editor = useStoreEditorRef(editorId);
+  const editor = usePlateEditorRef(editorId);
   async function onMouseDown(event) {
     event.preventDefault();
     event.stopPropagation();

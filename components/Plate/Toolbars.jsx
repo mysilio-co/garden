@@ -32,28 +32,28 @@ import { LooksOne } from '@styled-icons/material/LooksOne';
 import { LooksTwo } from '@styled-icons/material/LooksTwo';
 
 export const ToolbarButtonsBasicElements = () => {
-  const editor = P.useStoreEditorRef(P.useEventEditorId('focus'));
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
-      <P.ToolbarElement
-        type={P.getPlatePluginType(editor, P.ELEMENT_H1)}
+      <P.BlockToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_H1)}
         icon={<LooksOne />}
       />
-      <P.ToolbarElement
-        type={P.getPlatePluginType(editor, P.ELEMENT_H2)}
+      <P.BlockToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_H2)}
         icon={<LooksTwo />}
       />
-      <P.ToolbarElement
-        type={P.getPlatePluginType(editor, P.ELEMENT_H3)}
+      <P.BlockToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_H3)}
         icon={<Looks3 />}
       />
-      <P.ToolbarElement
-        type={P.getPlatePluginType(editor, P.ELEMENT_BLOCKQUOTE)}
+      <P.BlockToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_BLOCKQUOTE)}
         icon={<FormatQuote />}
       />
-      <P.ToolbarCodeBlock
-        type={P.getPlatePluginType(editor, P.ELEMENT_CODE_BLOCK)}
+      <P.BlockToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_CODE_BLOCK)}
         icon={<CodeBlock />}
       />
     </>
@@ -64,16 +64,16 @@ export const ToolbarButtonsBasicElements = () => {
 // TODO: list break / have weird behavior when switching between list types, probably due to poor logic in
 // https://github.com/udecode/plate/blob/ac3f7d9072c3dd12e971d52af68d07ee18496f57/packages/elements/list/src/transforms/toggleList.ts
 export const ToolbarButtonsList = () => {
-  const editor = P.useStoreEditorRef(P.useEventEditorId('focus'));
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
-      <P.ToolbarList
-        type={P.getPlatePluginType(editor, P.ELEMENT_UL)}
+      <P.ListToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_UL)}
         icon={<FormatListBulleted />}
       />
-      <P.ToolbarList
-        type={P.getPlatePluginType(editor, P.ELEMENT_OL)}
+      <P.ListToolbarButton
+        type={P.getPluginType(editor, P.ELEMENT_OL)}
         icon={<FormatListNumbered />}
       />
     </>
@@ -81,28 +81,28 @@ export const ToolbarButtonsList = () => {
 };
 
 export const ToolbarButtonsBasicMarks = () => {
-  const editor = P.useStoreEditorRef(P.useEventEditorId('focus'));
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   return (
     <>
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_BOLD)}
+      <P.MarkToolbarButton
+        type={P.getPluginType(editor, P.MARK_BOLD)}
         icon={<FormatBold />}
       />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_ITALIC)}
+      <P.MarkToolbarButton
+        type={P.getPluginType(editor, P.MARK_ITALIC)}
         icon={<FormatItalic />}
       />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_UNDERLINE)}
+      <P.MarkToolbarButton
+        type={P.getPluginType(editor, P.MARK_UNDERLINE)}
         icon={<FormatUnderlined />}
       />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_CODE)}
+      <P.MarkToolbarButton
+        type={P.getPluginType(editor, P.MARK_CODE)}
         icon={<CodeAlt />}
       />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_HIGHLIGHT)}
+      <P.MarkToolbarButton
+        type={P.getPluginType(editor, P.MARK_HIGHLIGHT)}
         icon={<Highlight />}
         tooltip={{ content: 'Highlight', ...tooltip }}
       />
@@ -111,7 +111,7 @@ export const ToolbarButtonsBasicMarks = () => {
 };
 
 export const BallonToolbarMarks = () => {
-  const editor = P.useStoreEditorRef(P.useEventEditorId('focus'));
+  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
 
   const arrow = false;
   const theme = 'dark';
@@ -127,37 +127,39 @@ export const BallonToolbarMarks = () => {
   };
 
   return (
-    <P.BalloonToolbar
-      direction={direction}
-      hiddenDelay={hiddenDelay}
-      theme={theme}
-      arrow={arrow}
-    >
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_BOLD)}
-        icon={<FormatBold />}
-        tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
-      />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_ITALIC)}
-        icon={<FormatItalic />}
-        tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
-      />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_UNDERLINE)}
-        icon={<FormatUnderlined />}
-        tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
-      />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_CODE)}
-        icon={<CodeAlt />}
-        tooltip={{ content: 'Code', ...tooltip }}
-      />
-      <P.ToolbarMark
-        type={P.getPlatePluginType(editor, P.MARK_HIGHLIGHT)}
-        icon={<Highlight />}
-        tooltip={{ content: 'Highlight', ...tooltip }}
-      />
-    </P.BalloonToolbar>
+    <div onMouseDown={(e) => { e.stopPropagation() }}>
+      <P.BalloonToolbar
+        direction={direction}
+        hiddenDelay={hiddenDelay}
+        theme={theme}
+        arrow={arrow}
+      >
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_BOLD)}
+          icon={<FormatBold />}
+          tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_ITALIC)}
+          icon={<FormatItalic />}
+          tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_UNDERLINE)}
+          icon={<FormatUnderlined />}
+          tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_CODE)}
+          icon={<CodeAlt />}
+          tooltip={{ content: 'Code', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_HIGHLIGHT)}
+          icon={<Highlight />}
+          tooltip={{ content: 'Highlight', ...tooltip }}
+        />
+      </P.BalloonToolbar>
+    </div>
   );
 };
