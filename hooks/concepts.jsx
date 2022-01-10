@@ -79,15 +79,15 @@ export function useConceptPrefix(webId, workspaceSlug) {
   return conceptPrefix;
 }
 
-function maybeNewConcept(url, workspace, name) {
+function maybeNewConcept(workspace, name) {
+  const noteStorageUri = defaultNoteStorageUri(workspace, name)
   return (
-    url &&
-    workspace &&
     name &&
+    noteStorageUri &&
     setUrl(
       createThing({ name }),
       US.storedAt,
-      defaultNoteStorageUri(workspace, name)
+      noteStorageUri
     )
   );
 }
@@ -112,16 +112,19 @@ export function useConcept(
     workspaceSlug,
     "public"
   );
+
   const publicConcept =
     publicIndex && conceptUri && getThing(publicIndex, conceptUri);
   const privateConcept =
     privateIndex && conceptUri && getThing(privateIndex, conceptUri);
   const { workspace } = useWorkspace(webId, workspaceSlug, newConceptPrivacy);
+
   const thisConcept =
     publicConcept ||
     privateConcept ||
-    maybeNewConcept(conceptUri, workspace, name);
+    maybeNewConcept(workspace, name);
   const concept = useMemoCompare(thisConcept, equal);
+
   if (conceptUri) {
     if (publicConcept) {
       return {
