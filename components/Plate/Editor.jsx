@@ -223,7 +223,7 @@ function ConceptEndLeaf({ children, leaf }) {
   return (
     <span className="opacity-50 group-hover:opacity-100 relative">
       {children}
-      <Link href={url}>
+      <Link href={url || ""}>
         <a contentEditable={false} className="hidden group-hover:inline">
           <ExternalLinkIcon className="h-4 w-4 inline" />
         </a>
