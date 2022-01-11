@@ -192,6 +192,7 @@ const createConceptPlugin = P.createPluginFactory({
     if (node.type === 'concept') {
       const textPath = [...path, 0]
       const textLength = node.children[0].text.length
+      console.log("NODE", node)
       return [
         {
           anchor: { path: textPath, offset: 0 },
@@ -223,7 +224,7 @@ function ConceptEndLeaf({ children, leaf }) {
   return (
     <span className="opacity-50 group-hover:opacity-100 relative">
       {children}
-      <Link href={url}>
+      <Link href={url || ""}>
         <a contentEditable={false} className="hidden group-hover:inline">
           <ExternalLinkIcon className="h-4 w-4 inline" />
         </a>
