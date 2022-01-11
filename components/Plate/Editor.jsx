@@ -192,7 +192,6 @@ const createConceptPlugin = P.createPluginFactory({
     if (node.type === 'concept') {
       const textPath = [...path, 0]
       const textLength = node.children[0].text.length
-      console.log("NODE", node)
       return [
         {
           anchor: { path: textPath, offset: 0 },
