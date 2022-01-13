@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useWebId } from 'swrlit'
+
 import WebMonetization from '../components/WebMonetization'
 import HeaderWithData from '../components/HeaderWithData'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
@@ -28,7 +29,7 @@ export default function Dashboard() {
       <div className="py-6 px-18">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
-          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen}/>
+          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId}/>
         </WorkspaceProvider>
       </div>
     </>

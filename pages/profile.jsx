@@ -9,10 +9,9 @@ import { FOAF } from '@inrupt/vocab-common-rdf'
 import Nav from '../components/nav'
 import WebMonetization from '../components/WebMonetization'
 import { profilePath } from '../utils/uris'
-import { useImageUploadUri } from '../hooks/uris'
 import { EditIcon } from '../components/icons'
-import { ImageUploadAndEditor } from '../components/ImageUploader'
 import { getPaymentPointer, setPaymentPointer } from '../model/profile'
+import ProfileImage from '../components/ProfileImage'
 
 function Name({name, save, ...props}){
   const [newName, setNewName] = useState()
@@ -74,7 +73,7 @@ function WebMonetizationPointer({profile, save, ...props}){
             Set PaymentPointer
           </button>
         </div>
-      ): (
+      ) : (
         <div className="relative flex flex-row">
           <h3 className="text-xl text-center mb-3">
             {paymentPointer || (
@@ -87,37 +86,6 @@ function WebMonetizationPointer({profile, save, ...props}){
             <EditIcon className="relative -top-6 text-purple-300 cursor-pointer"
                       onClick={onEdit} />
           )}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function ProfileImage({profile, save, ...props}){
-  const profileImage = profile && getUrl(profile, FOAF.img)
-  const [editingProfileImage, setEditingProfileImage] = useState(false)
-  const webId = useWebId()
-  const imageUploadContainer = useImageUploadUri(webId)
-  function saveProfileImage(newProfileImageUri, file) {
-    save(new URL(newProfileImageUri, webId).toString());
-    setEditingProfileImage(false);
-  }
-  function onEdit(){
-    setEditingProfileImage(true)
-  }
-  return (
-    <div {...props}>
-      {editingProfileImage ? (
-        <div className="flex flex-row justify-center">
-          <ImageUploadAndEditor onSave={saveProfileImage}
-                                imageUploadContainerUri={imageUploadContainer}
-                                onClose={() => setEditingProfileImage(false)} />
-        </div>
-      ): (
-        <div className="relative flex flex-row">
-          {profileImage && <img className="rounded-full h-36 w-36 object-cover mr-12" src={profileImage} /> }
-          <EditIcon className="relative -top-6 text-purple-300 cursor-pointer"
-                    onClick={onEdit} />
         </div>
       )}
     </div>
