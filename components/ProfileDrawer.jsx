@@ -16,14 +16,9 @@ function EllipsesMenu({ loggedIn, logout }) {
 
       <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
         {loggedIn && (
-          <>
-            <Link href="/profile">
-              <a className="menu-item">edit profile</a>
-            </Link>
-            <Link href="/settings">
-              <a className="menu-item">settings</a>
-            </Link>
-          </>
+          <Link href="/settings">
+            <a className="menu-item">settings</a>
+          </Link>
         )}
         <a href="/privacy" className="menu-item" role="menuitem">
           privacy
