@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useWebId } from 'swrlit';
 import { getUrl, setUrl } from '@inrupt/solid-client';
 import { FOAF } from '@inrupt/vocab-common-rdf';
-import { useImageUploadUri } from '../hooks/uris';
-import { EditIcon } from './icons';
-import { ImageUploadAndEditor } from './ImageUploader';
-import Avatar from './Avatar'
-import Modal from './Modal';
+import { useImageUploadUri } from '../../hooks/uris';
+import { EditIcon } from '../icons';
+import { ImageUploadAndEditor } from '../ImageUploader';
+import Avatar from '../Avatar'
+import Modal from '../Modal';
 
 export default function ProfileImage({ profile, saveProfile, ...props }) {
   const profileImage = profile && getUrl(profile, FOAF.img);
