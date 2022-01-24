@@ -6,12 +6,15 @@ import ProfileImage from './ProfileDrawer/Image'
 import Name from './ProfileDrawer/Name'
 import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer'
 import { profilePath } from '../utils/uris'
+import { Close } from './icons'
 
 function EllipsesMenu({ loggedIn, logout }) {
   return (
     <Popover>
       <Popover.Button className="outline-none focus:outline-none">
-        <button className="rounded-full border h-8 w-8">...</button>
+        <button className="rounded-full border h-8 w-8 text-gray-500">
+          <span className="align-top relative -top-1">...</span>
+        </button>
       </Popover.Button>
 
       <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
@@ -54,7 +57,9 @@ export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, 
         </div>
         <div className="flex justify-end">
           <EllipsesMenu loggedIn={loggedIn} logout={logout} />
-          <button className="rounded-full border h-8 w-8 ml-2" onClick={() => setIsOpen(false)}>x</button>
+          <button className="rounded-full border h-8 w-8 ml-2" onClick={() => setIsOpen(false)}>
+            <Close className="w-5 h-5 m-auto text-gray-500" />
+          </button>
         </div>
       </div>
       <div className="flex flex-row justify-between">
