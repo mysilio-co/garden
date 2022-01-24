@@ -1,8 +1,5 @@
 import {
   autoformatArrow,
-  autoformatLegal,
-  autoformatLegalHtml,
-  autoformatMath,
   autoformatPunctuation,
   autoformatSmartQuotes,
 } from '@udecode/plate';
@@ -16,8 +13,5 @@ export const autoformatRules = [
   ...autoformatMarks,
   ...autoformatSmartQuotes,
   ...autoformatPunctuation,
-  ...autoformatLegal,
-  ...autoformatLegalHtml,
   ...autoformatArrow,
-  ...autoformatMath,
 ];
