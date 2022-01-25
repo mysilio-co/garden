@@ -14,7 +14,6 @@ export default function Dashboard() {
   const [search, setSearch] = useState('');
   const { garden } = useFilteredGarden(webId, workspaceSlug, search);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
-  console.log(profileDrawerOpen)
   return (
     <>
       <WebMonetization webId={webId} />

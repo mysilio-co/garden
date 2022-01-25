@@ -28,8 +28,7 @@ export default function RegistrationPage(){
     console.log(result)
   }
   return (
-    <div className="page text-center p-6">
-      <Nav/>
+    <div className="text-center text-white w-full p-16 bg-login-gradient">
       <h3 className="text-5xl mt-12 mb-6">
         get a magic login link
       </h3>
