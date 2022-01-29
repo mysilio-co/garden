@@ -20,6 +20,8 @@ import { newSinglePageGateThing, updateSinglePageGateThing, setupGnome, updateDe
 import NotePicker from '../components/NotePicker'
 import { Loader, InlineLoader } from '../components/elements'
 import { deleteResource } from '../utils/fetch';
+import HeaderWithData from '../components/HeaderWithData'
+import ProfileDrawerWithData from '../components/ProfileDrawerWithData'
 
 const SinglePageGateSchema = Yup.object().shape({
   css: Yup.string()
@@ -292,16 +294,21 @@ function GnomesResourceEditor({ webId }) {
   );
 }
 
-export default function Profile() {
+export default function Settings() {
   const webId = useWebId()
   const { settings, save } = useAppSettings(webId)
   function onChange(newSettings) {
     save(newSettings)
   }
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
+
   return (
     <div className="page">
       <WebMonetization webId={webId} />
-      <Nav />
+      <HeaderWithData
+        setDrawerOpen={setProfileDrawerOpen}
+        drawerOpen={profileDrawerOpen}
+      />
       <h1 className="text-5xl text-center mb-12">Settings</h1>
       <div className="mx-36">
         <SectionHeader title="Gates"
@@ -329,6 +336,7 @@ export default function Profile() {
           />
         )}
       </div>
+      <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId}/>
     </div>
   )
 }

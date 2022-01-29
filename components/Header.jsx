@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import { getUrl } from '@inrupt/solid-client'
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import Link from 'next/link';
-import { Popover } from '@headlessui/react'
 
 import { classNames } from '../utils/html';
 import { Search as SearchIcon } from './icons';
@@ -54,6 +53,8 @@ export default function Header({
   conceptNames,
   type,
   onSearch,
+  drawerOpen,
+  setDrawerOpen
 }) {
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const [activeModal, setActiveModal] = useState(undefined);
@@ -61,7 +62,7 @@ export default function Header({
 
   return (
     <nav
-      className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center`}
+      className={`${bg} rounded-b-2xl flex flex-row justify-between h-18 items-center relative z-30`}
     >
       <div className="flex flex-row items-center">
         <div className="w-18 flex flex-col justify-center items-center">
@@ -120,43 +121,13 @@ export default function Header({
           onClose={() => setActiveModal(undefined)}
           conceptNames={conceptNames}
         />
-        <Popover>
-          <Popover.Button className="outline-none focus:outline-none">
-            <Avatar
-              src={avatarImgSrc}
-              className="mx-12 w-12 h-12 cursor-pointer"
-            />
-          </Popover.Button>
 
-          <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            {loggedIn && (
-              <>
-                <Link href="/profile">
-                  <a className="menu-item">edit profile</a>
-                </Link>
-                <Link href="/settings">
-                  <a className="menu-item">settings</a>
-                </Link>
-              </>
-            )}
-            <a href="/privacy" className="menu-item" role="menuitem">
-              privacy
-            </a>
-            <a href="/tos" className="menu-item" role="menuitem">
-              terms of service
-            </a>
-            {loggedIn && (
-              <button
-                type="submit"
-                className="menu-item"
-                role="menuitem"
-                onClick={logout}
-              >
-                log out
-              </button>
-            )}
-          </Popover.Panel>
-        </Popover>
+        <Avatar
+          src={avatarImgSrc}
+          className="mx-12 w-12 h-12 cursor-pointer"
+          onClick={() => setDrawerOpen(!drawerOpen)}
+        />
+
       </div>
     </nav>
   );

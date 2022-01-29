@@ -5,7 +5,7 @@ import { US, PP } from '../vocab'
 
 
 export function getPaymentPointer(profile) {
-  return profile && (getStringNoLocale(profile, US.paymentPointer) || getStringNoLocale(profile, PP.paymentPointer))
+  return profile && (getStringNoLocale(profile, PP.paymentPointer) || getStringNoLocale(profile, US.paymentPointer))
 }
 
 export function setPaymentPointer(profile, newPaymentPointer) {
