@@ -48,7 +48,7 @@ export default function ConceptBody({
       </Transition>
 
       <div className="flex flex-row w-full">
-        <div className={`flex-grow py-6 bg-white ${panelOpen ? 'pl-18 pr-9' : 'px-44'}`}>
+        <div className={`flex-grow py-6 bg-white p-18 ${panelOpen ? 'pr-9' : 'pr-18'}`}>
           {note ? (
             <NoteEditor myNote={myNote} editorId={editorId} note={note} onNoteBodyChange={onNoteBodyChange} conceptNames={conceptNames} />
           ) : (noteError ? (

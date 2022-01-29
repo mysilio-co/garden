@@ -20,7 +20,7 @@ import { autoformatRules } from './autoformat/autoformatRules'
 import {
   ToolbarButtonsList,
   ToolbarButtonsBasicElements,
-  BallonToolbarMarks,
+  ToolbarButtonsBasicMarks,
 } from "./Toolbars";
 import ToolbarImageButton from "./ToolbarImageButton"
 
@@ -407,11 +407,12 @@ export default function Editor({
     >
       {!readOnly && (
         <>
-          <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
+          <div className="flex flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
             <ToolbarButtonsBasicElements />
             <ToolbarButtonsList />
             <P.LinkToolbarButton icon={<LinkIcon />} />
             <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+            <ToolbarButtonsBasicMarks />
           </div>
 
           <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
@@ -424,7 +425,7 @@ export default function Editor({
             </div>
           </Modal>
 
-          <BallonToolbarMarks />
+
 
           <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
           <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
