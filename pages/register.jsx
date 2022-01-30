@@ -9,6 +9,7 @@ const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, 'Too Short!')
     .max(50, 'Too Long!')
+    .matches(/^[a-z0-9]+$/, "Your username should only contain lowercase letters a-z and numbers 0-9 and without periods or spaces.")
     .required('username is required'),
   email: Yup.string()
     .email('invalid email')
