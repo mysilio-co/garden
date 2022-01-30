@@ -80,7 +80,7 @@ export function useConceptPrefix(webId, workspaceSlug) {
 }
 
 function maybeNewConcept(workspace, name) {
-  const noteStorageUri = defaultNoteStorageUri(workspace, name)
+  const noteStorageUri = name && defaultNoteStorageUri(workspace, name)
   return (
     name &&
     noteStorageUri &&

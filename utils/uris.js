@@ -63,7 +63,7 @@ export function noteUriToWebId(noteUri) {
 }
 
 export const conceptNameToUrlSafeId = (name) =>
-  base58.encode(name.toLowerCase());
+  name && base58.encode(name.toLowerCase());
 
 export const urlSafeIdToConceptName = (id) =>
   new TextDecoder().decode(base58.decode(id));

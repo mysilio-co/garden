@@ -17,12 +17,12 @@ export function createNote() {
 }
 
 export function noteStorageFileAndThingName(name) {
-  return `${conceptNameToUrlSafeId(name)}.ttl#${thingName}`;
+  return name && `${conceptNameToUrlSafeId(name)}.ttl#${thingName}`;
 }
 
 export function defaultNoteStorageUri(workspace, name) {
   const containerUri = workspace && getUrl(workspace, US.noteStorage);
-  return containerUri && `${containerUri}${noteStorageFileAndThingName(name)}`;
+  return containerUri && name && `${containerUri}${noteStorageFileAndThingName(name)}`;
 }
 
 export function createOrUpdateNoteBody(note, value) {
