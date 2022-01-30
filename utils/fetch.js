@@ -24,12 +24,13 @@ export async function postFormData(uri, body) {
 
 const SolidServerURI = "https://mysilio.me";
 
-export async function sendMagicLink(username, email) {
+export async function sendMagicLink(username, email, password) {
   const magicLinkURI = SolidServerURI + "/magic-link/generate";
   console.log("Sending magic link to " + email);
   return postFormData(magicLinkURI, {
     username,
     email,
+    password,
     returnToUrl: `https://mysilio.garden/login/${username}.mysilio.me`,
   });
 }
