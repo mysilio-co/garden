@@ -21,14 +21,14 @@ export default function WebMonetizationPointer({ profile, saveProfile, ...props 
   return (
     <div {...props}>
       {editingPaymentPointer ? (
-        <div className="flex flex-row justify-center">
-          <input className="text-xl input-text mr-3"
+        <div className="flex flex-row">
+          <input className="ipt-with-btn"
             value={newPaymentPointer}
             autoFocus
             onChange={e => setNewPaymentPointer(e.target.value)} type="text"
             placeholder="New Payment Pointer" />
-          <button className="btn" onClick={savePaymentPointer}>
-            Set PaymentPointer
+          <button className="btn-md btn-on-ipt" onClick={savePaymentPointer}>
+            Save
           </button>
         </div>
       ) : (
