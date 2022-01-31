@@ -30,7 +30,7 @@ export async function sendMagicLink(username, email, password) {
     username,
     email,
     password,
-    returnToUrl: `https://mysilio.garden/login/${username}.mysilio.me`,
+    returnToUrl: `https://${window.location.origin}/`,
   });
 }
 
