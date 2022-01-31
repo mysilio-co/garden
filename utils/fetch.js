@@ -4,6 +4,7 @@ import {
   createSolidDataset,
   saveSolidDatasetAt,
 } from "@inrupt/solid-client";
+import { DefaultPodDomain } from '../model/flags';
 
 export async function postFormData(uri, body) {
   const formBody = [];
@@ -22,10 +23,8 @@ export async function postFormData(uri, body) {
   });
 }
 
-const SolidServerURI = "https://mysilio.me";
-
 export async function sendMagicLink(username, email, password) {
-  const magicLinkURI = SolidServerURI + "/magic-link/generate";
+  const magicLinkURI = `https://${DefaultPodDomain}/magic-link/generate`;
   console.log("Sending magic link to " + email);
   return postFormData(magicLinkURI, {
     username,

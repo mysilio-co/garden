@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import Nav from '../components/nav'
-
 import { sendMagicLink } from '../utils/fetch'
 
 const SignupSchema = Yup.object().shape({
