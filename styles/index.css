@@ -49,7 +49,7 @@ strong {
 }
 
 .btn-emphasis {
-  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset blur-2xl hover:bg-opacity-20 hover:shadow-btn;
+  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset backdrop-blur-2xl hover:bg-opacity-20 hover:shadow-btn;
 }
 
 .btn-notification {
