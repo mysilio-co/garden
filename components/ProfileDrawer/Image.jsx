@@ -23,7 +23,7 @@ export default function ProfileImage({ profile, saveProfile, ...props }) {
   return (
     <div {...props}>
       <div className="relative cursor-pointer group" onClick={onEdit}>
-        {profileImage && <Avatar className="rounded-full h-36 w-36 object-cover mr-12" src={profileImage} />}
+        {profileImage && <Avatar className="rounded-full h-32 w-32 object-cover mr-12" src={profileImage} />}
         <div className="absolute inset-0 justify-center items-center hidden group-hover:flex group-hover:bg-white opacity-50">
           <EditIcon className="text-gray-900 w-10 h-10" />
         </div>
