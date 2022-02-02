@@ -23,14 +23,14 @@ export default function Name({ profile, saveProfile, ...props }) {
   return (
     <div {...props}>
       {editingName ? (
-        <div className="flex flex-row justify-center">
-          <input className="text-xl input-text mr-3"
+        <div className="flex flex-row">
+          <input className="ipt-with-btn"
             value={newName}
             autoFocus
             onChange={e => setNewName(e.target.value)} type="text"
             placeholder="New Name" />
-          <button className="btn" onClick={saveName}>
-            Set Name
+          <button className="btn-md btn-on-ipt" onClick={saveName}>
+            Save
           </button>
         </div>
       ) : (

@@ -124,7 +124,7 @@ export default function Header({
 
         <Avatar
           src={avatarImgSrc}
-          className="mx-12 w-12 h-12 cursor-pointer"
+          className="mx-12 w-12 h-12 cursor-pointer object-cover"
           onClick={() => setDrawerOpen(!drawerOpen)}
         />
 

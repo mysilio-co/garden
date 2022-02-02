@@ -82,30 +82,41 @@ export const ToolbarButtonsList = () => {
 
 export const ToolbarButtonsBasicMarks = () => {
   const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
-
+  const tooltip = {
+    arrow: true,
+    delay: 0,
+    duration: [200, 0],
+    hideOnClick: false,
+    offset: [0, 17],
+    placement: 'top',
+  };
   return (
     <>
-      <P.MarkToolbarButton
-        type={P.getPluginType(editor, P.MARK_BOLD)}
-        icon={<FormatBold />}
-      />
-      <P.MarkToolbarButton
-        type={P.getPluginType(editor, P.MARK_ITALIC)}
-        icon={<FormatItalic />}
-      />
-      <P.MarkToolbarButton
-        type={P.getPluginType(editor, P.MARK_UNDERLINE)}
-        icon={<FormatUnderlined />}
-      />
-      <P.MarkToolbarButton
-        type={P.getPluginType(editor, P.MARK_CODE)}
-        icon={<CodeAlt />}
-      />
-      <P.MarkToolbarButton
-        type={P.getPluginType(editor, P.MARK_HIGHLIGHT)}
-        icon={<Highlight />}
-        tooltip={{ content: 'Highlight', ...tooltip }}
-      />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_BOLD)}
+          icon={<FormatBold />}
+          tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_ITALIC)}
+          icon={<FormatItalic />}
+          tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_UNDERLINE)}
+          icon={<FormatUnderlined />}
+          tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_CODE)}
+          icon={<CodeAlt />}
+          tooltip={{ content: 'Code', ...tooltip }}
+        />
+        <P.MarkToolbarButton
+          type={P.getPluginType(editor, P.MARK_HIGHLIGHT)}
+          icon={<Highlight />}
+          tooltip={{ content: 'Highlight', ...tooltip }}
+        />
     </>
   );
 };
