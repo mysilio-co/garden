@@ -315,12 +315,14 @@ export function useFilteredGarden(
 ) {
   const { garden } = useGarden(webId, workspaceSlug);
   const { fuse } = useFuse(garden);
-  if (search) {
-    const result = fuse.search(search);
-    return { garden: result.map(({ item }) => item.thing) };
-  } else {
-    return { garden };
-  }
+  return useMemo(() => {
+    if (search) {
+      const result = fuse.search(search);
+      return { garden: result.map(({ item }) => item.thing) };
+    } else {
+      return { garden };
+    }
+  }, [garden, search]);
 }
 
 export function useNote(concept) {
