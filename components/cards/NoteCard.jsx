@@ -22,7 +22,7 @@ export default function NoteCard({ concept, workspaceSlug, webId }) {
           <div>
             <div className="h-40 border-b-4 border-gray-300 overflow-hidden">
               {coverImage ? (
-                <img src={coverImage} className="object-cover h-full" />
+                <img src={coverImage} className="object-cover" />
               ) : (
                 <div className="bg-gradient-to-b from-my-green to-my-dark-green">
                   <Image className="transform scale-150 -translate-x-16 translate-y-6 sm:translate-y-9 xl:-translate-y-2" src="/note-card-splash.png" width="640" height="472" />
