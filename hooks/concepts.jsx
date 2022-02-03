@@ -296,7 +296,11 @@ function fuseFromGarden(garden) {
 }
 
 export function useFuse(garden) {
-  const options = { includeScore: true, keys: ['name'] };
+  const options = {
+    includeScore: true,
+    threshold: 0.3,
+    keys: ['name']
+  };
   const [fuse] = useState(new Fuse([], options));
   return useMemo(() => {
     fuse.setCollection(fuseFromGarden(garden) || []);
