@@ -15,9 +15,9 @@ import NewBookmarkModal from './modals/NewBookmark';
 import NewImageModal from './modals/NewImage';
 import NewFileModal from './modals/NewFile';
 import NewNewsletterModal from './modals/NewNewsletter';
-import { isPreviewEnv } from '../model/flags';
+import { IsPreviewEnv } from '../model/flags';
 
-const ActiveModalTitles = isPreviewEnv()
+const ActiveModalTitles = IsPreviewEnv
   ? ['Note', 'Bookmark', 'Image', 'File', 'Newsletter']
   : ['Note', 'Bookmark', 'Image', 'File'];
 

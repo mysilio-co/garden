@@ -2,23 +2,24 @@ import { useState } from 'react'
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import Nav from '../components/nav'
-
 import { sendMagicLink } from '../utils/fetch'
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, 'Too Short!')
     .max(50, 'Too Long!')
+    .matches(/^[a-z0-9]+$/, "Your username should only contain lowercase letters a-z and numbers 0-9 and without periods or spaces.")
     .required('username is required'),
   email: Yup.string()
     .email('invalid email')
     .required('email is required'),
+  password: Yup.string()
 });
 
 export default function RegistrationPage(){
   const [success, setSuccess] = useState()
-  const onSubmit = async ({username, email}) => {
-    const result = await sendMagicLink(username, email)
+  const onSubmit = async ({username, email, password}) => {
+    const result = await sendMagicLink(username, email, password)
     if (result && (result.status == 200)) {
       setSuccess(true)
     } else {
@@ -65,6 +66,7 @@ export default function RegistrationPage(){
         initialValues={{
           username: '',
           email: '',
+          password: '',
         }}
         validationSchema={SignupSchema}
         onSubmit={onSubmit}
@@ -80,13 +82,22 @@ export default function RegistrationPage(){
             {errors.username && touched.username ? <div className="text-red-500">{errors.username}</div> : null}
 
             <Field
-              className="rounded text-2xl text-gray-800"
+              className="rounded text-2xl mb-3 text-gray-800"
               id="email"
               name="email"
               placeholder="what's your email"
               type="email"
             />
             {errors.email && touched.email ? <div className="text-red-500">{errors.email}</div> : null}
+
+            <Field
+              className="rounded text-2xl text-gray-800"
+              id="password"
+              name="password"
+              placeholder="choose a password"
+              type="password"
+            />
+            {errors.password && touched.password ? <div className="text-red-500">{errors.password}</div> : null}
 
             <button className="btn btn-lg btn-emphasis btn-square mt-12 text-4xl py-6" type="submit">
               send me a magic login link

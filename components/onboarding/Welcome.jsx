@@ -3,13 +3,14 @@ import { useResource, useAuthentication, useLoggedIn, useMyProfile, useProfile, 
 import { Logo } from '../logo'
 import { Loader } from '../elements'
 import { handleToIdp } from '../../utils/uris'
+import { DefaultPodDomain } from '../../model/flags';
 
 export default function Welcome() {
   const [username, setUsername] = useState("")
   const [badHandle, setBadHandle] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
   const { login } = useAuthentication()
-  const handle = username.includes(".") ? username : `${username}.mysilio.me`
+  const handle = username.includes(".") ? username : `${username}.${DefaultPodDomain}`
   async function logIn() {
     setBadHandle(false)
     setLoggingIn(true)
