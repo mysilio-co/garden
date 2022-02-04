@@ -296,7 +296,11 @@ function fuseFromGarden(garden) {
 }
 
 export function useFuse(garden) {
-  const options = { includeScore: true, keys: ['name'] };
+  const options = {
+    includeScore: true,
+    threshold: 0.3,
+    keys: ['name']
+  };
   const [fuse] = useState(new Fuse([], options));
   return useMemo(() => {
     fuse.setCollection(fuseFromGarden(garden) || []);
@@ -311,12 +315,14 @@ export function useFilteredGarden(
 ) {
   const { garden } = useGarden(webId, workspaceSlug);
   const { fuse } = useFuse(garden);
-  if (search) {
-    const result = fuse.search(search);
-    return { garden: result.map(({ item }) => item.thing) };
-  } else {
-    return { garden };
-  }
+  return useMemo(() => {
+    if (search) {
+      const result = fuse.search(search);
+      return { garden: result.map(({ item }) => item.thing) };
+    } else {
+      return { garden };
+    }
+  }, [garden, search]);
 }
 
 export function useNote(concept) {
