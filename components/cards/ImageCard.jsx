@@ -12,7 +12,7 @@ export default function ImageCard({ image }) {
   return (
     <li className="col-span-1 bg-white rounded-lg overflow-hidden shadow-label list-none">
       <Link href={url}>
-        <a>
+        <a target="_blank" rel="noopener noreferrer">
           <div>
             <div className="h-40 border-b-4 border-gray-300 overflow-hidden">
               <img src={url} className="object-cover h-full " />
