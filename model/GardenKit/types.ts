@@ -12,9 +12,9 @@ export type GardenFilter = {
   search: string
 };
 
-export type GardenEntry = Thing;
-export type Concept = GardenEntry;
-export type Collection = GardenEntry;
+export type GardenItem = Thing;
+export type Concept = GardenItem;
+export type Collection = GardenItem;
 export type Note = Concept;
 export type NoteBody = SolidDataset;
 export type Image = Concept;
