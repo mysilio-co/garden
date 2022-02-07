@@ -304,6 +304,7 @@ const defaultPlugins = [
       ],
     }
   }),
+  P.createInsertDataPlugin(),
   P.createSelectOnBackspacePlugin({ options: { query: { allow: P.ELEMENT_IMAGE } } }),
 ];
 
