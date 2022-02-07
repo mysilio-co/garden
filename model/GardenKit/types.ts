@@ -2,7 +2,14 @@ import {
   Thing,
   SolidDataset,
   Iri,
+  IriString,
 } from '@inrupt/solid-client';
+
+export type Urn = Iri;
+export type UUID = Urn;
+
+export type UrnString = IriString;
+export type UUIDString = UrnString;
 
 export type Garden = SolidDataset;
 export type GardenIndex = Iri;
@@ -12,13 +19,21 @@ export type GardenFilter = {
   search: string
 };
 
+export type OGTags = {
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: {
+    url: string;
+  };
+  ogUrl: string;
+};
+
 export type GardenItem = Thing;
 export type Concept = GardenItem;
 export type Collection = GardenItem;
-export type Note = Concept;
+// prefixed with Garden to avoid type conflicts with default TS types for File, etc
+export type GardenNote = Concept;
+export type GardenImage = Concept;
+export type GardenFile = Concept;
+export type GardenBookmark = Concept;
 export type NoteBody = SolidDataset;
-export type Image = Concept;
-export type File = Concept;
-export type Bookmark = Concept;
-
-export type UUID = string; // 'urn:uuid:...'
