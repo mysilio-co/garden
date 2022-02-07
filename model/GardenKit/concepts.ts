@@ -4,9 +4,15 @@ import {
   GardenFile,
   GardenBookmark,
   GardenNote,
+  OGTags,
 } from './types';
-import { hasRDFType } from './rdf';
+import {
+  buildThing, ThingBuilder, Url, UrlString,
+} from '@inrupt/solid-client';
+import { SKOS, RDF, FOAF, DCTERMS, SCHEMA_INRUPT } from '@inrupt/vocab-common-rdf';
+
 import { MY } from './vocab';
+import { hasRDFType, createThingWithUUID } from './rdf';
 
 export function isImage(concept: Concept): boolean {
   return hasRDFType(concept, MY.Garden.Image);
@@ -56,16 +62,55 @@ export function asNote(concept: Concept): GardenNote | undefined {
   }
 }
 
-export function createImage(): GardenImage {
+function buildConcept(url: UrlString): ThingBuilder {
   return buildThing(createThingWithUUID())
-    .addUrl(RDF.type, SIOC.Container)
-    .addUrl(RDF.type, MY.News.Newsletter)
-    .addStringNoLocale(DCTERMS.title, title)
+    .addUrl(SCHEMA_INRUPT.url, url)
+    .addUrl(RDF.type, SKOS.Concept)
+    .addUrl(RDF.type, MY.Garden.Concept)
+    .addDatetime(DCTERMS.created, new Date())
+    .addDatetime(DCTERMS.modified, new Date())
+}
+
+function buildConceptForUpload(url: UrlString, fileData: File): ThingBuilder {
+  return buildThing(createThingWithUUID())
+    .addUrl(SCHEMA_INRUPT.url, url)
+    .addUrl(RDF.type, SKOS.Concept)
+    .addUrl(RDF.type, MY.Garden.Concept)
+    .addDatetime(DCTERMS.created, new Date(fileData.lastModified))
+    .addDatetime(DCTERMS.modified, new Date())
+    .addStringNoLocale(DCTERMS.title, fileData.name)
+    .addStringNoLocale(DCTERMS.format, fileData.type)
+}
+
+export function createImage(url: UrlString, fileData: File): GardenImage {
+  return buildConceptForUpload(url, fileData)
+    .addUrl(RDF.type, MY.Garden.Image)
     .build();
 }
 
-export function createFile(): GardenFile {}
+export function createFile(url: UrlString, fileData: File): GardenFile {
+  return buildConceptForUpload(url, fileData)
+    .addUrl(RDF.type, MY.Garden.File)
+    .build();
+}
 
-export function createBookmark(): GardenBookmark {}
+export function createBookmark(
+  url: UrlString,
+  og?: OGTags
+): GardenBookmark {
+  const builder = buildConcept(url)
+    .addUrl(RDF.type, MY.Garden.Bookmark)
+  if (og) {
+    builder
+      .addUrl(FOAF.depiction, og && og.ogImage.url)
+      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
+      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
+  }
+  return builder.build();
+}
 
-export function createNote(): GardenNote {}
+export function createNote(url: UrlString): GardenNote {
+    return buildConcept(url)
+      .addUrl(RDF.type, MY.Garden.Note)
+      .build();
+}

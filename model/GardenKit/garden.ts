@@ -15,63 +15,43 @@ import {
   setThing,
   getThing,
   createSolidDataset,
+  UrlString,
+  Url,
 } from '@inrupt/solid-client';
+import { createBookmark, createFile, createImage, createNote } from './concepts';
 
 export function addItem(garden: Garden, item: GardenItem): Garden {
   // TODO: should throw if the item already exists
   return setThing(garden || createSolidDataset(), item);
 }
 
-export function addBookmark(garden: Garden, url: string, og?: OGTags): Garden {
-  // TODO: should use UUIDs 
-  const builder = buildThing(createThing({ url }))
-    .addUrl(RDF.type, MY.Garden.Bookmark)
-    .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date());
-  if (og) {
-    builder
-      .addUrl(FOAF.depiction, og && og.ogImage.url)
-      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
-      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
-  }
-  const bookmark = builder.build();
-  return setThing(garden || createSolidDataset(), bookmark);
+export function addBookmark(
+  garden: Garden,
+  url: UrlString,
+  og?: OGTags
+): Garden {
+  return addItem(garden, createBookmark(url, og));
 }
 
 export function addImage(
   garden: Garden,
-  url: string,
+  url: UrlString,
   fileData: File
 ): Garden {
-  // TODO: should use UUIDs 
-  const image = buildThing(createThing({ url }))
-    .addUrl(RDF.type, MY.Garden.Image)
-    .addUrl(RDF.type, FOAF.Image)
-    .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date(fileData.lastModified))
-    .addStringNoLocale(DCTERMS.title, fileData.name)
-    .addStringNoLocale(DCTERMS.format, fileData.type)
-    .build();
-
-  return setThing(garden || createSolidDataset(), image);
+  return addItem(garden, createImage(url, fileData));
 }
 
 export function addFile(
   garden: Garden,
-  url: string,
+  url: UrlString,
   fileData: File
 ): Garden {
-  // TODO: should use UUIDs 
-  const file = buildThing(createThing({ url }))
-    .addUrl(RDF.type, MY.Garden.File)
-    .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date(fileData.lastModified))
-    .addStringNoLocale(DCTERMS.title, fileData.name)
-    .addStringNoLocale(DCTERMS.format, fileData.type)
-    .build();
-
-  return setThing(garden || createSolidDataset(), file);
+  return addItem(garden, createFile(url, fileData));
 }
+
+export function addNote(garden: Garden, url: UrlString): Garden {
+  return addItem(garden, createNote(url));
+};
 
 function setItem(garden: Garden, item: GardenItem): Garden {
   return setThing(garden || createSolidDataset(), item);
@@ -79,9 +59,11 @@ function setItem(garden: Garden, item: GardenItem): Garden {
 
 function deleteItem(garden: Garden, item: GardenItem): Garden {}
 
-function findItemByUUID(garden: Garden, uuid: UUID): GardenItem {}
+function getItemByUUID(garden: Garden, uuid: UUIDString): GardenItem {
+  return getThing(garden, uuid);
+}
 
-function findItemByName(garden: Garden, name: string): GardenItem {}
+function getItemByName(garden: Garden, name: string): GardenItem {}
 
 function loadGarden(index: GardenIndex): Garden {}
 
