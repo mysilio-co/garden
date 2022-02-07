@@ -274,12 +274,6 @@ const defaultPlugins = [
     options: {
       rules: [
         { hotkey: "shift+enter" },
-        {
-          hotkey: "enter",
-          query: {
-            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TD],
-          },
-        },
       ],
     }
   }),
@@ -299,6 +293,12 @@ const defaultPlugins = [
             start: true,
             end: true,
             allow: P.KEYS_HEADING,
+          },
+        },
+        {
+          hotkey: "enter",
+          query: {
+            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE],
           },
         },
       ],
