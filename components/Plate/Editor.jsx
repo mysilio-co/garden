@@ -37,9 +37,13 @@ const ConceptElement = ({ attributes, element, children }) => {
 };
 
 const TagElement = (m) => {
+  const { slug: workspaceSlug } = useWorkspaceContext();
   const tag = fromMentionable(m);
-
-  return <span className="text-lagoon">#{tag}</span>;
+  return (
+    <Link href={`/tags/${workspaceSlug}/${tag}`}>
+      <a className="text-lagoon">#{tag}</a>
+    </Link>
+  )
 };
 
 const MentionElement = (m) => {

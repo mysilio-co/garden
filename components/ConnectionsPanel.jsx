@@ -12,13 +12,23 @@ import { notePath, urlSafeIdToConceptName } from "../utils/uris";
 import { Close as CloseIcon } from "./icons"
 import ConnectionsTabs from './ConnectionsTabs'
 
-function TagsSection({ concept, tagPrefix }) {
+function TagsSection({ concept, tagPrefix, workspaceSlug }) {
   const tags = getTags(concept)
   return (
     <div className="p-6">
-      {tags && tags.map(tag => (
-        <div>{tagUrlToTagName(tag, tagPrefix)}</div>
-      ))}
+      {tags && tags.map(tag => {
+        const tagName = tagUrlToTagName(tag, tagPrefix)
+        return (
+          <div>
+            <Link href={`/tags/${workspaceSlug}/${tagName}`}>
+              <a className="text-lagoon">
+                #{tagName}
+              </a>
+            </Link>
+          </div>
+        )
+      }
+      )}
     </div>
   )
 }
@@ -79,7 +89,7 @@ function ConnectionsSection({ subSection, concept, conceptName, tagPrefix, conce
       )
     case 'tags':
       return (
-        <TagsSection concept={concept} conceptName={conceptName} tagPrefix={tagPrefix}>
+        <TagsSection concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} workspaceSlug={workspaceSlug}>
           Tags
         </TagsSection>
       )

@@ -48,12 +48,14 @@ export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, 
   return (
     <div className={`shadow-label transform top-0 right-0 w-96 px-6 pt-24 bg-white fixed z-10 h-full overflow-auto ease-in-out transition-all duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex justify-between mb-12">
-        <div className="">
-          <ProfileImage
-            profile={profile}
-            saveProfile={saveProfile}
-          />
-        </div>
+        {profile && (
+          <div className="">
+            <ProfileImage
+              profile={profile}
+              saveProfile={saveProfile}
+            />
+          </div>
+        )}
         <div className="flex justify-end">
           <EllipsesMenu loggedIn={loggedIn} logout={logout} />
           <button className="rounded-full border h-8 w-8 ml-2" onClick={() => setIsOpen(false)}>
@@ -61,13 +63,15 @@ export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, 
           </button>
         </div>
       </div>
-      <Link href={`${profilePath(asUrl(profile))}`}>
-        <a className="text-purple-300">
-          public profile <ExternalLinkIcon className="w-4 h-4 inline"/>
-        </a>
-      </Link>
-      <Name profile={profile} saveProfile={saveProfile} className="my-2"/>
-      <WebMonetizationPointer profile={profile} saveProfile={saveProfile} className="my-2"/>
+      {profile && (
+        <Link href={`${profilePath(asUrl(profile))}`}>
+          <a className="text-purple-300">
+            public profile <ExternalLinkIcon className="w-4 h-4 inline" />
+          </a>
+        </Link>
+      )}
+      <Name profile={profile} saveProfile={saveProfile} className="my-2" />
+      <WebMonetizationPointer profile={profile} saveProfile={saveProfile} className="my-2" />
     </div>
   )
 }
