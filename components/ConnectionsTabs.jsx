@@ -28,7 +28,7 @@ export default function ConnectionsTabs({ onChange, active }) {
         </select>
       </div>
       <div className="hidden sm:block">
-        <nav className="flex space-x-4 bg-gray-200 p-1" aria-label="Tabs">
+        <nav className="flex space-x-4 bg-gray-300 p-1" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
               key={tab.name}
