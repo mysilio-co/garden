@@ -16,26 +16,25 @@ import { EmptySlateJSON } from "../../utils/slate";
 import Modal from '../Modal';
 
 
-export const NewNote = ({ onClose, isPublic = false }) => {
-  const [pub, setPublic] = useState(isPublic)
-  const privacy = pub ? 'public' : 'private'
+export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
+  const [pub, setPublic] = useState(isPublic);
+  const privacy = pub ? 'public' : 'private';
   const [value, setNoteValue] = useState(EmptySlateJSON);
 
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
-  const editorId = "create-modal";
+  const editorId = 'create-modal';
   const { value: setValue, resetEditor } = getPlateActions(editorId);
 
   const webId = useWebId();
   const { workspace, slug: workspaceSlug } = useCurrentWorkspace(privacy);
-  const [name, setName] = useState("");
 
   const {
     concept,
     index: conceptIndex,
     saveIndex: saveConceptIndex,
   } = useConcept(webId, workspaceSlug, name, privacy);
-  const conceptNames = useConceptNames(webId)
+  const conceptNames = useConceptNames(webId);
   const conceptExists = concept && !isThingLocal(concept);
   const save = async function save() {
     const newNote = createOrUpdateSlateJSON(value);
@@ -51,7 +50,7 @@ export const NewNote = ({ onClose, isPublic = false }) => {
       await saveConceptIndex(newConceptIndex);
       await saveNote(newNote, concept);
     } catch (e) {
-      console.log("error saving note", e);
+      console.log('error saving note', e);
     } finally {
       setSaving(false);
     }
@@ -60,38 +59,51 @@ export const NewNote = ({ onClose, isPublic = false }) => {
   const reset = () => {
     resetEditor();
     setValue(EmptySlateJSON);
-    setName("");
+    setName('');
   };
 
-  const close = () => {
+  const clear = () => {
     reset();
+  };
+
+  const cancel = () => {
     onClose();
   };
 
   const onSubmit = () => {
     save();
-    if (createAnother) {
-      reset();
-    } else {
-      close();
+    reset();
+    if (!createAnother) {
+      onClose();
     }
   };
 
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
-      <div className={`flex flex-row justify-between self-stretch h-18 p-6 ${pub ? 'bg-my-green' : 'bg-gray-500'}`}>
+      <div
+        className={`flex flex-row justify-between self-stretch h-18 p-6 ${
+          pub ? 'bg-my-green' : 'bg-gray-500'
+        }`}
+      >
         <div className="flex flex-row justify-start items-start gap-4">
-          <h2 className="text-white font-bold text-xl">New {pub ? 'Public' : 'Private'} Note</h2>
+          <h2 className="text-white font-bold text-xl">
+            New {pub ? 'Public' : 'Private'} Note
+          </h2>
           <PrivacyToggle enabled={pub} setEnabled={setPublic} />
         </div>
-        <CloseIcon className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
-          onClick={onClose} />
+        <CloseIcon
+          className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
+          onClick={cancel}
+        />
       </div>
       <div className="divide-1 divide-gray-100">
         <Formik>
           <>
             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
-              <label htmlFor="name" className="text-sm font-medium text-gray-900">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-900"
+              >
                 Note Name
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
@@ -111,29 +123,54 @@ export const NewNote = ({ onClose, isPublic = false }) => {
               </div>
             </div>
             <div className="px-6 py-5 h-96">
-              <NoteEditor editorId={editorId} onNoteBodyChange={setNoteValue} conceptNames={conceptNames}
-                editableProps={{ className: "overflow-auto h-5/6" }} />
+              <NoteEditor
+                editorId={editorId}
+                onNoteBodyChange={setNoteValue}
+                conceptNames={conceptNames}
+                editableProps={{ className: 'overflow-auto h-5/6' }}
+              />
             </div>
           </>
         </Formik>
       </div>
       <div className="h-20 bg-gray-50 flex flex-row justify-end items-center px-6">
-        <button onClick={close} className="btn-md btn-filled btn-square h-10 mr-1">Cancel</button>
-        <button type="submit" onClick={onSubmit}
-          className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center" disabled={conceptExists}>
+        <button
+          onClick={clear}
+          className="btn-md btn-filled btn-square h-10 mr-1"
+        >
+          Clear
+        </button>
+        <button
+          onClick={cancel}
+          className="btn-md btn-filled btn-square h-10 mr-1"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          onClick={onSubmit}
+          className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
+          disabled={conceptExists}
+        >
           Create
           <TickCircle className="ml-1 text-my-green h-4 w-4" />
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 
-export default function NewNoteModal({ isPublic = false, conceptNames, open, onClose }) {
+export default function NewNoteModal({
+  isPublic = false,
+  open,
+  onClose,
+  name,
+  setName,
+}) {
   return (
     <Modal open={open} onClose={onClose}>
-      <NewNote onClose={onClose} conceptNames={conceptNames} />
+      <NewNote onClose={onClose} name={name} setName={setName} />
     </Modal>
   );
 }
