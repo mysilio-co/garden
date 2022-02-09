@@ -21,14 +21,16 @@ const ActiveModalTitles = IsPreviewEnv
   ? ['Note', 'Bookmark', 'Image', 'File', 'Newsletter']
   : ['Note', 'Bookmark', 'Image', 'File'];
 
-function ActiveModal({ title, open, onClose, conceptNames }) {
+function ActiveModal({ title, open, onClose }) {
+  const [name, setName] = useState('');
   switch (title) {
     case 'Note':
       return (
         <NewNoteModal
           open={open}
           onClose={onClose}
-          conceptNames={conceptNames}
+          name={name}
+          setName={setName}
         />
       );
     case 'Bookmark':
@@ -119,7 +121,6 @@ export default function Header({
           title={activeModal}
           open={!!activeModal}
           onClose={() => setActiveModal(undefined)}
-          conceptNames={conceptNames}
         />
 
         <Avatar
