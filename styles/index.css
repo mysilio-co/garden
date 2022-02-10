@@ -49,7 +49,7 @@ strong {
 }
 
 .btn-emphasis {
-  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset blur-2xl hover:bg-opacity-20 hover:shadow-btn;
+  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset backdrop-blur-2xl hover:bg-opacity-20 hover:shadow-btn;
 }
 
 .btn-notification {
@@ -58,6 +58,14 @@ strong {
 
 .btn-filled {
   @apply bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 hover:shadow-btn;
+}
+
+.btn-on-ipt {
+  @apply bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 rounded-r;
+}
+
+.ipt-with-btn {
+  @apply border-gray-300 focus:border-gray-300 rounded-l py-0 border-r-0 leading-3 focus:ring-0;
 }
 
 .btn-transparent {

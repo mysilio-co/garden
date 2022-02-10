@@ -2,7 +2,7 @@ import * as base58 from "micro-base58";
 import { v1 as uuid } from 'uuid';
 
 export const appPrefix =
-  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/env/dev";
+  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/garden"
 
 export function handleToWebId(handle) {
   if (handle) {

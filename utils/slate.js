@@ -17,7 +17,7 @@ export function getConceptNameFromNode(node) {
 
 export function getTagNodes(node) {
   return Array.from(Node.nodes(node)).filter(([n]) => {
-    return n.type === "ELEMENT_TAG";
+    return n.type === ELEMENT_TAG;
   });
 }
 

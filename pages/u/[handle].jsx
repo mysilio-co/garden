@@ -1,14 +1,15 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { FOAF } from '@inrupt/vocab-common-rdf'
 import { sioc as SIOC } from 'rdf-namespaces'
 import { getStringNoLocale, addUrl, removeUrl, getUrl } from '@inrupt/solid-client'
 import { useProfile, useMyProfile, useWebId } from 'swrlit'
-import Link from 'next/link'
 
 import { handleToWebId, profilePath } from "../../utils/uris"
 import Cards from '../../components/Cards'
-import Nav from '../../components/nav'
 import WebMonetization from '../../components/WebMonetization'
+import HeaderWithData from '../../components/HeaderWithData'
+import ProfileDrawerWithData from '../../components/ProfileDrawerWithData'
 import { WorkspaceProvider } from '../../contexts/WorkspaceContext'
 import { useFollows } from '../../hooks/people'
 import { useGarden } from '../../hooks/concepts'
@@ -36,10 +37,14 @@ export default function ProfilePage() {
   const isMyProfile = (myWebId === webId)
   const follows = useFollows()
   const alreadyFollowing = follows && follows.includes(webId)
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
   return (
     <div className="page">
       <WebMonetization webId={webId} />
-      <Nav />
+      <HeaderWithData
+        setDrawerOpen={setProfileDrawerOpen}
+        drawerOpen={profileDrawerOpen}
+      />
       <div className="px-18">
         <div className="flex flex-row mt-6 mb-6 justify-between items-start">
           <div className="flex flex-row">
@@ -73,6 +78,7 @@ export default function ProfilePage() {
         </div>
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
+          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={myWebId}/>
         </WorkspaceProvider>
       </div>
     </div>
