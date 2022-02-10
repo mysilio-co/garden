@@ -1,10 +1,6 @@
 import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
 import { createPluginFactory } from "@udecode/plate";
-import Link from "next/link";
-import { ExternalLinkIcon } from '../../icons'
 
-import { notePath } from "../../../utils/uris";
-import { useWorkspaceContext } from "../../../contexts/WorkspaceContext";
 import { ELEMENT_CONCEPT } from "../../../utils/slate";
 
 const conceptRegex = /\[\[(.*)\]\](.*)/
@@ -82,8 +78,8 @@ export const withConcepts = editor => {
   return editor
 }
 
-const LEAF_CONCEPT_START = 'conceptLeafStart'
-const LEAF_CONCEPT_END = 'conceptLeafEnd'
+export const LEAF_CONCEPT_START = 'conceptLeafStart'
+export const LEAF_CONCEPT_END = 'conceptLeafEnd'
 
 export const createConceptPlugin = createPluginFactory({
   key: ELEMENT_CONCEPT,
@@ -111,38 +107,12 @@ export const createConceptPlugin = createPluginFactory({
   }
 })
 
-function ConceptStartLeaf({ children }) {
-  return (
-    <span className="opacity-50 group-hover:opacity-100">
-      {children}
-    </span>
-  )
-}
-function ConceptEndLeaf({ children, leaf }) {
-  const { webId, slug: workspaceSlug } = useWorkspaceContext();
-  const name = leaf.conceptName
-  const url = notePath(webId, workspaceSlug, name)
-  return (
-    <span className="opacity-50 group-hover:opacity-100 relative">
-      {children}
-      <Link href={url || ""}>
-        <a contentEditable={false} className="hidden group-hover:inline">
-          <ExternalLinkIcon className="h-4 w-4 inline" />
-        </a>
-      </Link>
-    </span>
-
-  )
-}
-
 export const createConceptStartPlugin = createPluginFactory({
   key: LEAF_CONCEPT_START,
-  isLeaf: true,
-  component: ConceptStartLeaf
+  isLeaf: true
 })
 
 export const createConceptEndPlugin = createPluginFactory({
   key: LEAF_CONCEPT_END,
-  isLeaf: true,
-  component: ConceptEndLeaf
+  isLeaf: true
 })

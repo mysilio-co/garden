@@ -10,11 +10,15 @@ import Link from "next/link";
 import Modal from '../Modal';
 import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
+import { notePath } from "../../utils/uris";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
 import { autoformatRules } from './autoformat/autoformatRules'
-import { createConceptPlugin, createConceptStartPlugin, createConceptEndPlugin} from './plugins/concept'
+import {
+   createConceptPlugin, createConceptStartPlugin, createConceptEndPlugin,
+   LEAF_CONCEPT_START, LEAF_CONCEPT_END
+} from './plugins/concept'
 
 import {
   ToolbarButtonsList,
@@ -34,6 +38,31 @@ const ConceptElement = ({ attributes, element, children }) => {
     </span>
   );
 };
+
+function ConceptStartLeaf({ children }) {
+  return (
+    <span className="opacity-50 group-hover:opacity-100">
+      {children}
+    </span>
+  )
+}
+
+function ConceptEndLeaf({ children, leaf }) {
+  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const name = leaf.conceptName
+  const url = notePath(webId, workspaceSlug, name)
+  return (
+    <span className="opacity-50 group-hover:opacity-100 relative">
+      {children}
+      <Link href={url || ""}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline" />
+        </a>
+      </Link>
+    </span>
+
+  )
+}
 
 const TagElement = (m) => {
   const { slug: workspaceSlug } = useWorkspaceContext();
@@ -75,6 +104,8 @@ const components = P.createPlateUI({
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
   [ELEMENT_CONCEPT]: ConceptElement,
+  [LEAF_CONCEPT_START]: ConceptStartLeaf,
+  [LEAF_CONCEPT_END]: ConceptEndLeaf,
   [ELEMENT_TAG]: P.withProps(P.MentionElement, {
     renderLabel: TagElement,
   }),
