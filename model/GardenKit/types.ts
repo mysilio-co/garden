@@ -12,12 +12,8 @@ export type UrnString = IriString;
 export type UUIDString = UrnString;
 
 export type Garden = SolidDataset;
-export type GardenIndex = Iri;
-export type GardenFilter = {
-  // right now, we only support search based filtering,
-  // but leave room for additional filter criteria later.
-  search: string
-};
+export type GardenIndex = IriString;
+export type GardenConfig = Thing;
 
 export type OGTags = {
   ogTitle: string;

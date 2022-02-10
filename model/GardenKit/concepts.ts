@@ -6,13 +6,26 @@ import {
   GardenNote,
   OGTags,
 } from './types';
+import { buildThing, getStringNoLocale, getTime, getUrl, IriString, ThingBuilder, Url, UrlString, WebId } from '@inrupt/solid-client';
 import {
-  buildThing, ThingBuilder, Url, UrlString,
-} from '@inrupt/solid-client';
-import { SKOS, RDF, FOAF, DCTERMS, SCHEMA_INRUPT } from '@inrupt/vocab-common-rdf';
+  SKOS,
+  RDF,
+  FOAF,
+  DCTERMS,
+  SCHEMA_INRUPT,
+} from '@inrupt/vocab-common-rdf';
 
 import { MY } from './vocab';
 import { hasRDFType, createThingWithUUID } from './rdf';
+import { decorateFindReplace, getTodoListElementStyles } from '@udecode/plate';
+
+type CreateConceptOptions = {
+  rdfTypes?: [string];
+  title?: string;
+  description?: string;
+  depiction?: UrlString;
+  fileData?: File;
+};
 
 export function isImage(concept: Concept): boolean {
   return hasRDFType(concept, MY.Garden.Image);
@@ -30,87 +43,96 @@ export function isNote(concept: Concept): boolean {
   return hasRDFType(concept, MY.Garden.Note);
 }
 
-export function asImage(concept: Concept): GardenImage | undefined {
-  if (isImage(concept)) {
-    return concept;
-  } else {
-    return undefined;
-  }
+export function getTitle(concept: Concept): string | undefined {
+  return getStringNoLocale(concept, DCTERMS.title);
 }
 
-export function asFile(concept: Concept): GardenFile | undefined {
-  if (isFile(concept)) {
-    return concept;
-  } else {
-    return undefined;
-  }
+export function getDescription(concept: Concept): string | undefined {
+  return getStringNoLocale(concept, DCTERMS.description);
 }
 
-export function asBookmark(concept: Concept): GardenBookmark | undefined {
-  if (isBookmark(concept)) {
-    return concept;
-  } else {
-    return undefined;
-  }
+export function getDepiction(concept: Concept): UrlString | undefined {
+  return getUrl(concept, FOAF.depiction);
 }
 
-export function asNote(concept: Concept): GardenNote | undefined {
-  if (isNote(concept)) {
-    return concept;
-  } else {
-    return undefined;
-  }
+export function getCreator(concept: Concept): UrlString | undefined {
+  return getUrl(concept, DCTERMS.creator);
 }
 
-function buildConcept(url: UrlString): ThingBuilder {
-  return buildThing(createThingWithUUID())
+function createConcept(
+  webId: WebId,
+  url: UrlString,
+  options?: CreateConceptOptions
+): Concept {
+  const builder = buildThing(createThingWithUUID())
+    .addUrl(DCTERMS.creator, webId)
     .addUrl(SCHEMA_INRUPT.url, url)
     .addUrl(RDF.type, SKOS.Concept)
     .addUrl(RDF.type, MY.Garden.Concept)
     .addDatetime(DCTERMS.created, new Date())
-    .addDatetime(DCTERMS.modified, new Date())
-}
+    .addDatetime(DCTERMS.modified, new Date());
 
-function buildConceptForUpload(url: UrlString, fileData: File): ThingBuilder {
-  return buildThing(createThingWithUUID())
-    .addUrl(SCHEMA_INRUPT.url, url)
-    .addUrl(RDF.type, SKOS.Concept)
-    .addUrl(RDF.type, MY.Garden.Concept)
-    .addDatetime(DCTERMS.created, new Date(fileData.lastModified))
-    .addDatetime(DCTERMS.modified, new Date())
-    .addStringNoLocale(DCTERMS.title, fileData.name)
-    .addStringNoLocale(DCTERMS.format, fileData.type)
-}
-
-export function createImage(url: UrlString, fileData: File): GardenImage {
-  return buildConceptForUpload(url, fileData)
-    .addUrl(RDF.type, MY.Garden.Image)
-    .build();
-}
-
-export function createFile(url: UrlString, fileData: File): GardenFile {
-  return buildConceptForUpload(url, fileData)
-    .addUrl(RDF.type, MY.Garden.File)
-    .build();
-}
-
-export function createBookmark(
-  url: UrlString,
-  og?: OGTags
-): GardenBookmark {
-  const builder = buildConcept(url)
-    .addUrl(RDF.type, MY.Garden.Bookmark)
-  if (og) {
+  if (options.title) {
+    builder.addStringNoLocale(DCTERMS.title, options.title);
+  } else if (options.fileData) {
     builder
-      .addUrl(FOAF.depiction, og && og.ogImage.url)
-      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
-      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
+      .addStringNoLocale(DCTERMS.title, options.fileData.name)
+      .addStringNoLocale(DCTERMS.format, options.fileData.type);
   }
+  if (options.description) {
+    builder.addStringNoLocale(DCTERMS.description, options.description);
+  }
+  if (options.depiction) {
+    builder.addStringNoLocale(FOAF.depiction, options.depiction);
+  }
+  if (options.rdfTypes) {
+    for (const t of options.rdfTypes) {
+      builder.addStringNoLocale(RDF.type, t);
+    }
+  }
+
   return builder.build();
 }
 
-export function createNote(url: UrlString): GardenNote {
-    return buildConcept(url)
-      .addUrl(RDF.type, MY.Garden.Note)
-      .build();
+export function createImage(
+  webId: WebId,
+  url: UrlString,
+  fileData: File
+): GardenImage {
+  return createConcept(webId, url, { fileData, rdfTypes: [MY.Garden.Image] });
+}
+
+export function createFile(
+  webId: WebId,
+  url: UrlString,
+  fileData: File
+): GardenFile {
+  return createConcept(webId, url, { fileData, rdfTypes: [MY.Garden.File] });
+}
+
+export function createBookmark(
+  webId: WebId,
+  url: UrlString,
+  og?: OGTags
+): GardenBookmark {
+  if (og) {
+    return createConcept(webId, url, {
+      depiction: og.ogImage.url,
+      title: og.ogTitle,
+      description: og.ogDescription,
+      rdfTypes: [MY.Garden.Bookmark],
+    });
+  } else {
+    return createConcept(webId, url, { rdfTypes: [MY.Garden.Bookmark] });
+  }
+}
+
+export function createNote(
+  webId: WebId,
+  url: UrlString,
+  title?: string,
+  description?: string,
+  depiction?: UrlString
+): GardenNote {
+  return createConcept(webId, url, { rdfTypes: [MY.Garden.Note] });
 }

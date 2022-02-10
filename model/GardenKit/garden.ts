@@ -2,74 +2,56 @@ import {
   Garden,
   GardenIndex,
   GardenItem,
-  UUID,
   OGTags,
+  GardenConfig,
 } from './types';
 import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
 import {
-  Thing,
-  SolidDataset,
-  createThing,
-  buildThing,
   setThing,
   getThing,
   createSolidDataset,
   UrlString,
-  Url,
+  getSourceUrl,
+  createThing,
+  saveSolidDatasetAt,
+  buildThing,
+  addUrl,
+  WebId,
 } from '@inrupt/solid-client';
 import { createBookmark, createFile, createImage, createNote } from './concepts';
+import useGarden from './hooks';
 
 export function addItem(garden: Garden, item: GardenItem): Garden {
   // TODO: should throw if the item already exists
   return setThing(garden || createSolidDataset(), item);
 }
-
-export function addBookmark(
-  garden: Garden,
-  url: UrlString,
-  og?: OGTags
-): Garden {
-  return addItem(garden, createBookmark(url, og));
-}
-
-export function addImage(
-  garden: Garden,
-  url: UrlString,
-  fileData: File
-): Garden {
-  return addItem(garden, createImage(url, fileData));
-}
-
-export function addFile(
-  garden: Garden,
-  url: UrlString,
-  fileData: File
-): Garden {
-  return addItem(garden, createFile(url, fileData));
-}
-
-export function addNote(garden: Garden, url: UrlString): Garden {
-  return addItem(garden, createNote(url));
-};
-
-function setItem(garden: Garden, item: GardenItem): Garden {
+export function setItem(garden: Garden, item: GardenItem): Garden {
   return setThing(garden || createSolidDataset(), item);
 }
 
-function deleteItem(garden: Garden, item: GardenItem): Garden {}
+export function deleteItem(garden: Garden, item: GardenItem): Garden {}
 
-function getItemByUUID(garden: Garden, uuid: UUIDString): GardenItem {
+export function getItemByUUID(garden: Garden, uuid: UUIDString): GardenItem {
   return getThing(garden, uuid);
 }
 
-function getItemByName(garden: Garden, name: string): GardenItem {}
+export function getItemByName(garden: Garden, name: string): GardenItem {
 
-function loadGarden(index: GardenIndex): Garden {}
+}
 
-function saveGarden(index: GardenIndex, garden: Garden): Garden {}
+export function loadGarden(index: GardenIndex): Garden {}
 
-function createNewGardenShard(
+export async function saveGarden(index: GardenIndex, garden: Garden): Promise<Garden> {
+  return await saveSolidDatasetAt(index, garden);
+}
+
+export function getGardenConfig(garden: Garden): GardenConfig {
+  const cfg = getThing(garden, getSourceUrl(garden));
+  // test if this is main or shard index
+  return  cfg
+}
+export function createNewGardenShard(
   mainIndex: GardenIndex,
   shardIndex: GardenIndex
 ): Garden {
@@ -77,6 +59,20 @@ function createNewGardenShard(
   // linked to the given main index iri
 }
 
-function createNewGarden(index: GardenIndex): Garden {
-  // setup an empty Garden index at the given iri
+function createGardenConfig(index: GardenIndex): GardenConfig {
+  return buildThing(createThing({ url: index }))
+    .addUrl(RDF.type, MY.Garden.Garden)
+    .addUrl(MY.Garden.mainIndex, index)
+    .build();
+}
+
+export function createNewGarden(index: GardenIndex): Garden {
+  const emptyGarden = createSolidDataset();
+  const config = createGardenConfig(index); 
+  const gardenWithConfig = setThing(emptyGarden, config);
+  return gardenWithConfig;
+}
+
+export async function createAndSaveGarden(index: GardenIndex): Promise<Garden> {
+  return await saveGarden(index, createNewGarden(index));
 }
