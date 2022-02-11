@@ -16,9 +16,10 @@ import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
 import { autoformatRules } from './autoformat/autoformatRules'
 import {
-   createConceptPlugin, createConceptStartPlugin, createConceptEndPlugin,
-   LEAF_CONCEPT_START, LEAF_CONCEPT_END
+  createConceptPlugin, createConceptStartPlugin, createConceptEndPlugin,
+  LEAF_CONCEPT_START, LEAF_CONCEPT_END
 } from './plugins/concept'
+import { createTagPlugin } from './plugins/tag'
 
 import {
   ToolbarButtonsList,
@@ -56,7 +57,7 @@ function ConceptEndLeaf({ children, leaf }) {
       {children}
       <Link href={url || ""}>
         <a contentEditable={false} className="hidden group-hover:inline">
-          <ExternalLinkIcon className="h-4 w-4 inline" />
+          <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
         </a>
       </Link>
     </span>
@@ -64,13 +65,17 @@ function ConceptEndLeaf({ children, leaf }) {
   )
 }
 
-const TagElement = (m) => {
+const TagElement = ({ attributes, element, children }) => {
   const { slug: workspaceSlug } = useWorkspaceContext();
-  const tag = fromMentionable(m);
   return (
-    <Link href={`/tags/${workspaceSlug}/${tag}`}>
-      <a className="text-lagoon">#{tag}</a>
-    </Link>
+    <span className="text-lagoon group" {...attributes}>
+      {children}
+      <Link href={`/tags/${workspaceSlug}/${element.name}`}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
+        </a>
+      </Link>
+    </span>
   )
 };
 
@@ -106,9 +111,7 @@ const components = P.createPlateUI({
   [ELEMENT_CONCEPT]: ConceptElement,
   [LEAF_CONCEPT_START]: ConceptStartLeaf,
   [LEAF_CONCEPT_END]: ConceptEndLeaf,
-  [ELEMENT_TAG]: P.withProps(P.MentionElement, {
-    renderLabel: TagElement,
-  }),
+  [ELEMENT_TAG]: TagElement,
   [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
     renderLabel: MentionElement,
   }),
@@ -163,10 +166,10 @@ const defaultPlugins = [
   // for now we need to support both combobox plugins
   P.createComboboxPlugin(),
   P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
-  P.createMentionPlugin({ key: ELEMENT_TAG, options: { trigger: '#' } }),
   createConceptPlugin(),
   createConceptStartPlugin(),
   createConceptEndPlugin(),
+  createTagPlugin(),
   P.createSoftBreakPlugin({
     options: {
       rules: [

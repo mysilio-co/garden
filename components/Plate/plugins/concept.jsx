@@ -58,7 +58,7 @@ export const withConcepts = editor => {
         }
 
         // make sure a concept doesn't eat the text after it
-        if (extra !== '') {
+        if (extra && extra !== '') {
           const childText = `[[${node.name}]]`
           Transforms.splitNodes(editor, {
             at: { path: [...path, 0], offset: childText.length },
