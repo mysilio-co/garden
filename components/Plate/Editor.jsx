@@ -20,6 +20,7 @@ import {
   LEAF_CONCEPT_START, LEAF_CONCEPT_END
 } from './plugins/concept'
 import { createTagPlugin } from './plugins/tag'
+import { createMentionPlugin } from './plugins/mention'
 
 import {
   ToolbarButtonsList,
@@ -79,9 +80,12 @@ const TagElement = ({ attributes, element, children }) => {
   )
 };
 
-const MentionElement = (m) => {
-  const mention = fromMentionable(m);
-  return <span className="text-lagoon">@{mention}</span>;
+const MentionElement = ({ attributes, element, children }) => {
+  return (
+    <span className="text-lagoon" {...attributes}>
+      {children}
+    </span>
+  )
 };
 
 const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
@@ -112,9 +116,7 @@ const components = P.createPlateUI({
   [LEAF_CONCEPT_START]: ConceptStartLeaf,
   [LEAF_CONCEPT_END]: ConceptEndLeaf,
   [ELEMENT_TAG]: TagElement,
-  [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
-    renderLabel: MentionElement,
-  }),
+  [P.ELEMENT_MENTION]: MentionElement,
   [P.ELEMENT_LINK]: LinkElement
 });
 
@@ -165,7 +167,7 @@ const defaultPlugins = [
   createComboboxPlugin(),
   // for now we need to support both combobox plugins
   P.createComboboxPlugin(),
-  P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
+  createMentionPlugin(),
   createConceptPlugin(),
   createConceptStartPlugin(),
   createConceptEndPlugin(),
@@ -233,36 +235,31 @@ function toMentionable(name) {
   return { key: name, text: name }
 }
 
-function useComboboxItems(store, names) {
-  const currentComboboxText = store.get.text()
-  return useMemo(() => {
-    return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
-  }, [names, currentComboboxText])
-}
-
-function MentionComboboxComponent({ }) {
-  return (
-    <div className="text-sm p-2 font-bold">insert mention</div>
-  )
-}
-
-function TagComboboxComponent({ }) {
-  return (
-    <div className="text-sm p-2 font-bold">insert tag</div>
-  )
-}
-
 function onConceptSelect(editor, item) {
-  Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+  if (item) {
+    Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+  }
+}
+
+function onTagSelect(editor, item) {
+  if (item) {
+    Transforms.insertText(editor, `#${item.text}`, { at: comboboxStore.get.targetRange() })
+  }
+}
+
+function onMentionSelect(editor, item) {
+  if (item) {
+    Transforms.insertText(editor, `@${item.text}`, { at: comboboxStore.get.targetRange() })
+  }
 }
 
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
-  conceptNames,
-  tagNames,
-  mentionNames,
+  conceptNames=[],
+  tagNames=[],
+  mentionNames=[],
   readOnly,
   ...props
 }) {
@@ -282,9 +279,10 @@ export default function Editor({
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
 
-  // use the standard combobox because we're using the mentions stuff
-  const mentionItems = useComboboxItems(P.comboboxStore, mentionNames)
-  const tagItems = useComboboxItems(P.comboboxStore, tagNames)
+  // as of 2/14/22 we aren't passing mentions or tags into Editor, so these don't
+  // do anything. We may want to change this soon, so I'll leave this here for now - TV
+  const mentionItems = useMemo(() => mentionNames.map(toMentionable), [mentionNames])
+  const tagItems = useMemo(() => tagNames.map(toMentionable), [tagNames])
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
 
@@ -326,10 +324,8 @@ export default function Editor({
             </div>
           </Modal>
 
-
-
-          <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
-          <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
+          <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
+          <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
           <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
         </>
       )}
