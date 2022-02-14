@@ -42,18 +42,18 @@ export default function IndexPage() {
         ) : ((appError && (appError.statusCode === 404)) ? (
           <InitPage initApp={initApp} />
         ) : (
-            <LoadingPage />
-          )
-          )
+          <LoadingPage />
+        )
+        )
       ) : (
-          ((loggedIn === false) || (loggedIn === null)) ? (
-            <div className="text-center">
-              <Welcome/>
-            </div>
-          ) : (
-              <Loader className="flex flex-row justify-center mt-36" />
-            )
-        )}
+        ((loggedIn === false) || (loggedIn === null)) ? (
+          <div className="text-center">
+            <Welcome />
+          </div>
+        ) : (
+          <Loader className="flex flex-row justify-center mt-36" />
+        )
+      )}
     </div>
   )
 }

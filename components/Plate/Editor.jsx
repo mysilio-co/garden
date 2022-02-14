@@ -1,5 +1,8 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useCallback, useState, useMemo, useRef, useEffect } from "react";
+import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
 import * as P from "@udecode/plate";
+
+import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
 import { useWebId } from 'swrlit'
 import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
@@ -12,56 +15,38 @@ import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
+import { autoformatRules } from './autoformat/autoformatRules'
 
-import {
-  useCustomMentionPlugin,
-  Patterns,
-  toMentionable,
-  fromMentionable,
-} from "./hooks/useCustomMentionPlugin";
 import {
   ToolbarButtonsList,
   ToolbarButtonsBasicElements,
-  BallonToolbarMarks,
+  ToolbarButtonsBasicMarks,
 } from "./Toolbars";
 import ToolbarImageButton from "./ToolbarImageButton"
 
-const ConceptElement = (m) => {
-  const webId = useWebId();
-  const { slug: workspaceSlug } = useWorkspaceContext();
-  const name = fromMentionable(m);
-  const id = conceptNameToUrlSafeId(name);
-  const url = notePath(webId, workspaceSlug, name)
+export const fromMentionable = (m) => {
+  return m.value;
+};
 
+const ConceptElement = ({ attributes, element, children }) => {
   return (
-    <Link href={url}>
-      <a className="text-lagoon">[[{name}]]</a>
-    </Link>
+    <span {...attributes} className="text-lagoon group">
+      {children}
+    </span>
   );
 };
 
 const TagElement = (m) => {
+  const { slug: workspaceSlug } = useWorkspaceContext();
   const tag = fromMentionable(m);
-
-  return <span className="text-lagoon">#{tag}</span>;
+  return (
+    <Link href={`/tags/${workspaceSlug}/${tag}`}>
+      <a className="text-lagoon">#{tag}</a>
+    </Link>
+  )
 };
 
 const MentionElement = (m) => {
-  const mention = fromMentionable(m);
-  return <span className="text-lagoon">@{mention}</span>;
-};
-
-const ConceptSelectLabel = (m) => {
-  const name = fromMentionable(m);
-  return <span className="text-lagoon">[[{name}]]</span>;
-};
-
-const TagSelectLabel = (m) => {
-  const tag = fromMentionable(m);
-  return <span className="text-lagoon">#{tag}</span>;
-};
-
-const MentionSelectLabel = (m) => {
   const mention = fromMentionable(m);
   return <span className="text-lagoon">@{mention}</span>;
 };
@@ -85,14 +70,12 @@ function LinkElement({ attributes, children, element, nodeProps }) {
   )
 }
 
-const components = P.createPlateComponents({
+const components = P.createPlateUI({
   [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
   [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
-  [ELEMENT_CONCEPT]: P.withProps(P.MentionElement, {
-    renderLabel: ConceptElement,
-  }),
+  [ELEMENT_CONCEPT]: ConceptElement,
   [ELEMENT_TAG]: P.withProps(P.MentionElement, {
     renderLabel: TagElement,
   }),
@@ -102,122 +85,8 @@ const components = P.createPlateComponents({
   [P.ELEMENT_LINK]: LinkElement
 });
 
-const defaultOptions = P.createPlateOptions();
-
-const preFormat = (editor) => P.unwrapList(editor);
-
 const optionsAutoformat = {
-  rules: [
-    {
-      type: P.ELEMENT_H1,
-      markup: "#",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H2,
-      markup: "##",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_H3,
-      markup: "###",
-      preFormat,
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["*", "-"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_UL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_LI,
-      markup: ["1.", "1)"],
-      preFormat,
-      format: (editor) => {
-        if (editor.selection) {
-          const parentEntry = P.getParent(editor, editor.selection);
-          if (!parentEntry) return;
-          const [node] = parentEntry;
-          if (
-            P.isElement(node) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_BLOCK) &&
-            !P.isType(editor, node, P.ELEMENT_CODE_LINE)
-          ) {
-            P.toggleList(editor, {
-              type: P.ELEMENT_OL,
-            });
-          }
-        }
-      },
-    },
-    {
-      type: P.ELEMENT_TODO_LI,
-      markup: ["[]"],
-    },
-    {
-      type: P.ELEMENT_BLOCKQUOTE,
-      markup: [">"],
-      preFormat,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["**", "**"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_BOLD,
-      between: ["__", "__"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["*", "*"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_ITALIC,
-      between: ["_", "_"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.MARK_CODE,
-      between: ["`", "`"],
-      mode: "inline",
-      insertTrigger: true,
-    },
-    {
-      type: P.ELEMENT_CODE_BLOCK,
-      markup: "``",
-      trigger: "`",
-      triggerAtBlockStart: false,
-      preFormat,
-      format: (editor) => {
-        P.insertEmptyCodeBlock(editor, {
-          defaultType: P.getPlatePluginType(editor, P.ELEMENT_DEFAULT),
-          insertNodesOptions: { select: true },
-        });
-      },
-    },
-  ],
+  rules: autoformatRules
 };
 
 const resetBlockTypesCommonRule = {
@@ -240,12 +109,147 @@ const optionsResetBlockTypePlugin = {
   ],
 };
 
-/* TODO:" add mentionables for Concepts, and friends */
+const conceptRegex = /\[\[(.*)\]\](.*)/
+
+function hasConceptParent(editor, path) {
+  const parent = Node.get(editor, path.slice(0, -1))
+  if (parent.type === ELEMENT_CONCEPT) {
+    return true
+  } else {
+    return false
+  }
+}
+
+export const withConcepts = editor => {
+  const { normalizeNode } = editor
+
+  editor.normalizeNode = entry => {
+    const [node, path] = entry
+    if (Text.isText(node) && !hasConceptParent(editor, path)) {
+      const conceptMatch = node.text.match(conceptRegex)
+      if (conceptMatch) {
+        const { index, 0: match, 1: name } = conceptMatch
+        const at = { anchor: { path, offset: index }, focus: { path, offset: index + match.length } }
+        Transforms.wrapNodes(editor, { type: ELEMENT_CONCEPT, children: [] }, { at, split: true })
+        return
+      }
+    } else if (node.type === ELEMENT_CONCEPT) {
+
+      // Migrate from old to new concept format
+      if (node.value) {
+        Transforms.setNodes(editor, {
+          name: node.value
+        }, { at: path })
+        const childText = `[[${node.value}]]`
+        if (node.children[0].text != childText) {
+          const childTextStart = { path: [...path, 0], offset: 0 }
+          const lastChildIndex = (node.children.length - 1)
+          const lastTextPositionIndex = node.children[lastChildIndex].text.length
+          const childTextEnd = { path: [...path, lastChildIndex], offset: lastTextPositionIndex }
+          const childTextRange = { anchor: childTextStart, focus: childTextEnd }
+          Transforms.insertText(editor, childText, { at: childTextRange })
+        }
+        Transforms.unsetNodes(editor, 'value', { at: path })
+        return
+      }
+
+      const conceptMatch = Node.string(node).match(conceptRegex)
+      if (conceptMatch) {
+        const [_, name, extra] = conceptMatch
+
+        // make sure name always matches text
+        if (node.name !== name) {
+          Transforms.setNodes(editor, { name }, { at: path })
+          return
+        }
+
+        // make sure a concept doesn't eat the text after it
+        if (extra !== '') {
+          const childText = `[[${node.name}]]`
+          Transforms.splitNodes(editor, {
+            at: { path: [...path, 0], offset: childText.length },
+            match: n => (n.type === ELEMENT_CONCEPT)
+          })
+          return
+        }
+      } else {
+        Transforms.unwrapNodes(editor, { match: n => n.type === ELEMENT_CONCEPT })
+        return
+      }
+    }
+
+    normalizeNode(entry)
+  }
+
+  return editor
+}
+
+const LEAF_CONCEPT_START = 'conceptLeafStart'
+const LEAF_CONCEPT_END = 'conceptLeafEnd'
+
+const createConceptPlugin = P.createPluginFactory({
+  key: ELEMENT_CONCEPT,
+  isElement: true,
+  isInline: true,
+  withOverrides: withConcepts,
+  decorate: (editor, options) => ([node, path]) => {
+    if (node.type === 'concept') {
+      const textPath = [...path, 0]
+      const textLength = node.children[0].text.length
+      return [
+        {
+          anchor: { path: textPath, offset: 0 },
+          focus: { path: textPath, offset: 2 },
+          [LEAF_CONCEPT_START]: true
+        },
+        {
+          anchor: { path: textPath, offset: textLength - 2 },
+          focus: { path: textPath, offset: textLength },
+          [LEAF_CONCEPT_END]: true,
+          conceptName: node.name
+        }
+      ]
+    }
+  }
+})
+
+function ConceptStartLeaf({ children }) {
+  return (
+    <span className="opacity-50 group-hover:opacity-100">
+      {children}
+    </span>
+  )
+}
+function ConceptEndLeaf({ children, leaf }) {
+  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const name = leaf.conceptName
+  const url = notePath(webId, workspaceSlug, name)
+  return (
+    <span className="opacity-50 group-hover:opacity-100 relative">
+      {children}
+      <Link href={url || ""}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline" />
+        </a>
+      </Link>
+    </span>
+
+  )
+}
+
+const createConceptStartPlugin = P.createPluginFactory({
+  key: LEAF_CONCEPT_START,
+  isLeaf: true,
+  component: ConceptStartLeaf
+})
+const createConceptEndPlugin = P.createPluginFactory({
+  key: LEAF_CONCEPT_END,
+  isLeaf: true,
+  component: ConceptEndLeaf
+})
 
 const defaultPlugins = [
-  P.createReactPlugin(),
-  P.createHistoryPlugin(),
-  P.createHeadingPlugin({ levels: 3 }),
+  P.createHeadingPlugin({ options: { levels: 3 } }),
   P.createParagraphPlugin(),
   P.createBoldPlugin(),
   P.createItalicPlugin(),
@@ -257,42 +261,55 @@ const defaultPlugins = [
   P.createListPlugin(),
   P.createTodoListPlugin(),
   P.createImagePlugin(),
-  P.createLinkPlugin(),
+  P.createLinkPlugin({ options: { rangeBeforeOptions: { multiPaths: false } } }),
   P.createKbdPlugin(),
   P.createNodeIdPlugin(),
-  P.createAutoformatPlugin(optionsAutoformat),
-  P.createResetNodePlugin(optionsResetBlockTypePlugin),
+  P.createAutoformatPlugin({ options: optionsAutoformat }),
+  P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
+  createComboboxPlugin(),
+  // for now we need to support both combobox plugins
+  P.createComboboxPlugin(),
+  P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
+  P.createMentionPlugin({ key: ELEMENT_TAG, options: { trigger: '#' } }),
+  createConceptPlugin(),
+  createConceptStartPlugin(),
+  createConceptEndPlugin(),
   P.createSoftBreakPlugin({
-    rules: [
-      { hotkey: "shift+enter" },
-      {
-        hotkey: "enter",
-        query: {
-          allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TD],
-        },
-      },
-    ],
+    options: {
+      rules: [
+        { hotkey: "shift+enter" },
+      ],
+    }
   }),
   P.createExitBreakPlugin({
-    rules: [
-      {
-        hotkey: "mod+enter",
-      },
-      {
-        hotkey: "mod+shift+enter",
-        before: true,
-      },
-      {
-        hotkey: "enter",
-        query: {
-          start: true,
-          end: true,
-          allow: P.KEYS_HEADING,
+    options: {
+      rules: [
+        {
+          hotkey: "mod+enter",
         },
-      },
-    ],
+        {
+          hotkey: "mod+shift+enter",
+          before: true,
+        },
+        {
+          hotkey: "enter",
+          query: {
+            start: true,
+            end: true,
+            allow: P.KEYS_HEADING,
+          },
+        },
+        {
+          hotkey: "enter",
+          query: {
+            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE],
+          },
+        },
+      ],
+    }
   }),
-  P.createSelectOnBackspacePlugin({ allow: P.ELEMENT_IMAGE }),
+  P.createInsertDataPlugin(),
+  P.createSelectOnBackspacePlugin({ options: { query: { allow: P.ELEMENT_IMAGE } } }),
 ];
 
 function useImageUrlGetterAndSaveCallback() {
@@ -304,7 +321,7 @@ function useImageUrlGetterAndSaveCallback() {
   })
   const webId = useWebId()
   const imageUploadUri = useImageUploadUri(webId)
-  function imageUploaderOnSave(url) {
+  function imageUploaderOnSave(url, file) {
     imageGetterResolveRef.current(url)
     setImageUploaderOpen(false)
   }
@@ -316,11 +333,40 @@ function useImageUrlGetterAndSaveCallback() {
   }
 }
 
+function toMentionable(name) {
+  return { key: name, text: name }
+}
+
+function useComboboxItems(store, names) {
+  const currentComboboxText = store.get.text()
+  return useMemo(() => {
+    return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
+  }, [names, currentComboboxText])
+}
+
+function MentionComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert mention</div>
+  )
+}
+
+function TagComboboxComponent({ }) {
+  return (
+    <div className="text-sm p-2 font-bold">insert tag</div>
+  )
+}
+
+function onConceptSelect(editor, item) {
+  Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+}
+
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
   conceptNames,
+  tagNames,
+  mentionNames,
   readOnly,
   ...props
 }) {
@@ -330,53 +376,35 @@ export default function Editor({
     readOnly
   };
 
-  const { getMentionSelectProps: getConceptProps, plugin: conceptPlugin } =
-    useCustomMentionPlugin({
-      mentionables: conceptNames ? conceptNames.map(toMentionable) : [],
-      pluginKey: ELEMENT_CONCEPT,
-      pattern: Patterns.Concept,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const { getMentionSelectProps: getTagProps, plugin: tagPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: ELEMENT_TAG,
-      pattern: Patterns.Tag,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const { getMentionSelectProps: getMentionProps, plugin: mentionPlugin } =
-    useCustomMentionPlugin({
-      mentionables: [],
-      pluginKey: P.ELEMENT_MENTION,
-      pattern: Patterns.Mention,
-      newMentionable: (s) => {
-        return toMentionable(s);
-      },
-    });
-
-  const plugins = useMemo(
-    () => [...defaultPlugins, conceptPlugin, tagPlugin, mentionPlugin],
-    [conceptPlugin, tagPlugin, mentionPlugin]
-  );
-
+  const plugins = P.createPlugins(defaultPlugins, {
+    components
+  })
 
   const {
     imageUploaderOpen, setImageUploaderOpen,
     imageUploadUri, imageUploaderOnSave,
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
+
+  // use the standard combobox because we're using the mentions stuff
+  const mentionItems = useComboboxItems(P.comboboxStore, mentionNames)
+  const tagItems = useComboboxItems(P.comboboxStore, tagNames)
+
+  const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
+
+  const plateEditor = P.usePlateEditorRef()
+  useEffect(function () {
+    if (plateEditor) {
+      // normalize the whole editor at load to ensure the data is properly formatted
+      // this is how we migrate data from one format to another
+      SlateEditor.normalize(plateEditor, { force: true })
+    }
+  }, [plateEditor])
+
   return (
     <P.Plate
       id={editorId}
       plugins={plugins}
-      components={components}
-      options={defaultOptions}
       editableProps={editableProps}
       initialValue={initialValue}
       onChange={onChange}
@@ -384,11 +412,12 @@ export default function Editor({
     >
       {!readOnly && (
         <>
-          <div className="flex flex-row border-b pb-1 mb-1 border-grey-700">
+          <div className="flex flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
             <ToolbarButtonsBasicElements />
             <ToolbarButtonsList />
-            <P.ToolbarLink icon={<LinkIcon />} />
+            <P.LinkToolbarButton icon={<LinkIcon />} />
             <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+            <ToolbarButtonsBasicMarks />
           </div>
 
           <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
@@ -401,19 +430,11 @@ export default function Editor({
             </div>
           </Modal>
 
-          <BallonToolbarMarks />
 
 
-
-          <P.MentionSelect
-            {...getConceptProps()}
-            renderLabel={ConceptSelectLabel}
-          />
-          <P.MentionSelect {...getTagProps()} renderLabel={TagSelectLabel} />
-          <P.MentionSelect
-            {...getMentionProps()}
-            renderLabel={MentionSelectLabel}
-          />
+          <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
+          <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
+          <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
         </>
       )}
     </P.Plate>

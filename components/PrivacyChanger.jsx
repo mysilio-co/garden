@@ -16,7 +16,7 @@ import {
 import { useWorkspaceContext } from "../contexts/WorkspaceContext";
 
 import {
-  useConceptIndex,
+  useWorkspaceIndex,
   useConcept,
 } from "../hooks/concepts";
 import { useWorkspace } from "../hooks/app";
@@ -50,12 +50,12 @@ export default function PrivacyChanger({ name, changeTo, onFinished, ...rest }) 
   const webId = useWebId();
   const { slug: workspaceSlug } = useWorkspaceContext();
   const { concept } = useConcept(webId, workspaceSlug, name);
-  const { index: privateIndex, save: savePrivateIndex } = useConceptIndex(
+  const { index: privateIndex, save: savePrivateIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "private"
   );
-  const { index: publicIndex, save: savePublicIndex } = useConceptIndex(
+  const { index: publicIndex, save: savePublicIndex } = useWorkspaceIndex(
     webId,
     workspaceSlug,
     "public"

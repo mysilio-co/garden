@@ -12,12 +12,12 @@ export function getConceptNodes(node) {
 }
 
 export function getConceptNameFromNode(node) {
-  return node.value;
+  return node.name;
 }
 
 export function getTagNodes(node) {
   return Array.from(Node.nodes(node)).filter(([n]) => {
-    return n.type === "ELEMENT_TAG";
+    return n.type === ELEMENT_TAG;
   });
 }
 

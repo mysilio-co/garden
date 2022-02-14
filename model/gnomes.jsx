@@ -8,8 +8,9 @@ export const GnomeType = {
 }
 
 export const GateTemplate = {
-  SinglePageGate: "single-page-gate"
-}
+  ConceptPage: 'concept-page',
+  LinkInBio: 'link-in-bio',
+};
 
 export const GnomeStatus = {
   Deployed: 'deployed',
@@ -29,7 +30,11 @@ export function randomReadableId() {
 export function newSinglePageGateThing(webId, conceptPrefix, index, concept, css) {
   let thing = createThing()
   thing = setStringNoLocale(thing, US.hasGnomeType, GnomeType.Gate)
-  thing = setStringNoLocale(thing, US.usesGateTemplate, GateTemplate.SinglePageGate)
+  thing = setStringNoLocale(
+    thing,
+    US.usesGateTemplate,
+    GateTemplate.ConceptPage
+  );
   thing = setStringNoLocale(thing, US.conceptPrefix, conceptPrefix)
   thing = setStringNoLocale(thing, US.usesCSS, css)
   thing = setUrl(thing, US.monetizedFor, webId)

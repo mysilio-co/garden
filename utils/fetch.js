@@ -1,9 +1,10 @@
-import { fetch } from "solid-auth-fetcher";
+import { fetch } from "@inrupt/solid-client-authn-browser";
 import {
   setThing,
   createSolidDataset,
   saveSolidDatasetAt,
 } from "@inrupt/solid-client";
+import { DefaultPodDomain } from '../model/flags';
 
 export async function postFormData(uri, body) {
   const formBody = [];
@@ -22,15 +23,14 @@ export async function postFormData(uri, body) {
   });
 }
 
-const SolidServerURI = "https://myunderstory.com";
-
-export async function sendMagicLink(username, email) {
-  const magicLinkURI = SolidServerURI + "/magic-link/generate";
+export async function sendMagicLink(username, email, password) {
+  const magicLinkURI = `https://${DefaultPodDomain}/magic-link/generate`;
   console.log("Sending magic link to " + email);
   return postFormData(magicLinkURI, {
     username,
     email,
-    returnToUrl: `https://mysilio.garden/login/${username}.myunderstory.com`,
+    password,
+    returnToUrl: `https://${window.location.origin}/`,
   });
 }
 

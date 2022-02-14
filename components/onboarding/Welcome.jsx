@@ -2,18 +2,20 @@ import { useState, useCallback } from 'react'
 import { useResource, useAuthentication, useLoggedIn, useMyProfile, useProfile, useWebId, useEnsured } from 'swrlit'
 import { Logo } from '../logo'
 import { Loader } from '../elements'
+import { handleToIdp } from '../../utils/uris'
+import { DefaultPodDomain } from '../../model/flags';
 
 export default function Welcome() {
   const [username, setUsername] = useState("")
   const [badHandle, setBadHandle] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
-  const { loginHandle, logout } = useAuthentication()
-  const handle = username.includes(".") ? username : `${username}.myunderstory.com`
+  const { login } = useAuthentication()
+  const handle = username.includes(".") ? username : `${username}.${DefaultPodDomain}`
   async function logIn() {
     setBadHandle(false)
     setLoggingIn(true)
     try {
-      await loginHandle(handle);
+      await login({oidcIssuer: handleToIdp(handle), redirectUrl: window.location.href, clientName: "Mysilio Garden"});
     } catch (e) {
       console.log("error:", e)
       setBadHandle(true)
@@ -30,7 +32,7 @@ export default function Welcome() {
     }
   }
   return (
-    <div className="relative h-screen bg-gradient-to-br from-my-green via-ocean to-my-purple pt-12 px-12 text-left">
+    <div className="relative h-screen bg-login-gradient pt-12 px-12 text-left">
       <Logo className="absolute top-0 -left-32 h-screen opacity-10 pointer-events-none" />
       <div className="mb-12 text-white" >
         <h2 className="text-3xl sm:text-2xl md:text-6xl lg:text-7xl font-bold">

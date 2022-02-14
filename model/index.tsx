@@ -10,7 +10,7 @@ import {
   createSolidDataset,
 } from "@inrupt/solid-client";
 import { MY, MIME } from "../vocab";
-import { SKOS, RDF, FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
+import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
 import * as base58 from "micro-base58";
 
 /*
@@ -26,7 +26,7 @@ For now, the Index file will still be serialized to
 
 I am going to try something a bit experimental here, using existing ontologies
 as much as possible rather than inventing our own.  This model file will try
-storing and indexing data using the SKOS, DCTERMS, and FOAF ontologies.  
+storing and indexing data using the SKOS, DCTERMS, and FOAF ontologies.
 
 An Image will be stored as a url with the FOAF.Image type.
 A File will be stored as a url with the MY.FOAF.File type from the MY.FOAF extension.
@@ -44,14 +44,6 @@ specify that they can (and should) be used for all content, including Images.
 Please rememember to add additional format information using DCTERMS.format.  As
 reccomended by the DCTERMS documentation, we use mime types:
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types</DCTERMS>
-
-Tags and Mentions will be implemented as SKOS_XL.Label (with the appropriate
-'@' or '#' included in the label string).  Mentions should also be linked to an
-FOAF:Person record, as they include additional semantices beyong just labeling.
-This allows us to maintain Label Things to represent Tags and Mentions
-independanlty of Concepts and Bookmarks.  Mutiple Labels can be set on a Concept, and
-SKOS_XL.Label can be easily reset on mutiple Concepts. Neither a Tag nor a
-Mention shoudl be set at the prefLabel for a particular Concept.
 */
 
 // This is a temporary hack. We create a DatasetCore from a SolidDataset, and
@@ -59,66 +51,74 @@ Mention shoudl be set at the prefLabel for a particular Concept.
 // the TS happy. But this is a brittle assumption that may break later.
 type SolidDatasetCore = SolidDataset & DatasetCore;
 
-export function getAllLinks(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(FOAF.Link))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
+type OGTags = {
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: {
+    url: string;
+  };
+  ogUrl: string;
+};
 
-export function getAllImages(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(FOAF.Image))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
-export function getAllFiles(index: SolidDatasetCore): Thing[] {
-  return Array.from(
-    index
-      .match(null, namedNode(RDF.type), namedNode(MY.SKOS.Bookmark))
-      .match(null, namedNode(RDF.type), namedNode(MY.FOAF.File))
-  ).map(({ subject }) => getThing(index, subject.value));
-}
-
-export function addLinkToIndex(index: SolidDataset, url: string): SolidDataset {
-  const LinkThing = buildThing(createThing({ url }))
+export function addLinkToIndex(
+  index: SolidDataset,
+  url: string,
+  og?: OGTags
+): SolidDataset {
+  const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
-    .addStringNoLocale(DCTERMS.format, MIME.html)
-    .build();
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date());
+  if (og) {
+    builder
+      .addUrl(FOAF.depiction, og && og.ogImage.url)
+      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
+      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
+    }
+  const LinkThing = builder.build();
   return setThing(index || createSolidDataset(), LinkThing);
 }
 
 export function addImageToIndex(
   index: SolidDataset,
-  url: string
+  url: string,
+  file: File
 ): SolidDataset {
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
-    // TODO:     .addStringNoLocale(DCTERMS.format, ...)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date(file.lastModified))
+    .addStringNoLocale(DCTERMS.title, file.name)
+    .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
   return setThing(index || createSolidDataset(), ImageThing);
 }
 
-export function addFileToIndex(index: SolidDataset, url: string): SolidDataset {
+export function addFileToIndex(
+  index: SolidDataset,
+  url: string,
+  file: File
+): SolidDataset {
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.File)
-    // TODO:     .addStringNoLocale(DCTERMS.format, ...)
+    .addDatetime(DCTERMS.modified, new Date())
+    .addDatetime(DCTERMS.created, new Date(file.lastModified))
+    .addStringNoLocale(DCTERMS.title, file.name)
+    .addStringNoLocale(DCTERMS.format, file.type)
     .build();
 
   return setThing(index || createSolidDataset(), FileThing);
 }
 
-export function addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
+export function _addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
   const TagThing = buildThing(
     createThing({ name: `TAG:base58:${base58.encode(tag)}` })
   )
-    .addUrl(RDF.type, SKOS.Label)
+    //.addUrl(RDF.type, SKOS.Label)
     .addUrl(RDF.type, MY.SKOS.Tag)
     .addStringNoLocale(SKOS.prefLabel, tag)
     // TODO:     .addStringNoLocale(DCTERMS.format, ...)
@@ -127,14 +127,14 @@ export function addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
   return setThing(index || createSolidDataset(), TagThing);
 }
 
-export function addMentionToIndex(
+export function _addMentionToIndex(
   index: SolidDataset,
   handle: string
 ): SolidDataset {
   const MentionThing = buildThing(
     createThing({ name: `MENTION:base58:${base58.encode(handle)}` })
   )
-    .addUrl(RDF.type, SKOS.Label)
+    //.addUrl(RDF.type, SKOS.Label)
     .addUrl(RDF.type, MY.SKOS.Mention)
     .addStringNoLocale(SKOS.prefLabel, handle)
     .build();
@@ -164,7 +164,7 @@ function _addPersonToIndex(
 function _addConceptToIndex(index: SolidDataset, name: string) {
   const ConceptThing = buildThing(
     // NOTE: This will not work if we move the concept.
-    createThing({ name: `COCNEPT:base58:${base58.encode(name)}` })
+    createThing({ name: `CONCEPT:base58:${base58.encode(name)}` })
   )
     .addUrl(RDF.type, SKOS.Concept)
     .addStringNoLocale(SKOS.prefLabel, name)

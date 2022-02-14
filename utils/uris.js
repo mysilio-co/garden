@@ -1,7 +1,8 @@
 import * as base58 from "micro-base58";
+import { v1 as uuid } from 'uuid';
 
 export const appPrefix =
-  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/env/dev";
+  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/garden"
 
 export function handleToWebId(handle) {
   if (handle) {
@@ -62,7 +63,7 @@ export function noteUriToWebId(noteUri) {
 }
 
 export const conceptNameToUrlSafeId = (name) =>
-  base58.encode(name.toLowerCase());
+  name && base58.encode(name.toLowerCase());
 
 export const urlSafeIdToConceptName = (id) =>
   new TextDecoder().decode(base58.decode(id));
@@ -75,4 +76,18 @@ export const conceptUriToName = (conceptUri) =>
 
 export function tagNameToUrlSafeId(tagName) {
   return encodeURIComponent(tagName);
+}
+
+export function handleToIdp(handle) {
+  try {
+    new URL(handle);
+    // if this doesn't throw, it's a valid URL
+    return handle
+  } catch (_) {
+    return `https://${handle}`
+  }
+}
+
+export function uuidUrn() {
+  return `urn:uuid:${uuid()}`;
 }

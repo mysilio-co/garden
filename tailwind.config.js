@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
+  content: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       minWidth: {
@@ -135,7 +135,8 @@ module.exports = {
     extend: {
       borderWidth: ['hover'],
       ringWidth: ['hover'],
-      ringColor: ['hover']
+      ringColor: ['hover'],
+      display: ['group-hover']
     }
   },
   plugins: [

@@ -1,35 +1,23 @@
+
 @tailwind base;
 /* Write your own custom base styles here */
-/*
-TODO: do we need these?
-a {
-  @apply text-ocean;
+
+.link {
+  @apply text-gray-300;
 }
 
-a:hover {
-  @apply underline bg-mist;
+.link:hover {
+  @apply underline;
 }
 
-a:visited {
-  @apply text-passionflower;
+.link:visited {
+  @apply text-gray-100;
 }
 
-a:active {
-  @apply text-passionflower;
+.link:active {
+  @apply text-gray-100;
 }
 
-.a {
-  @apply text-ocean bg-transparent;
-}
-
-.a:hover {
-  @apply underline bg-mist;
-}
-
-.a:active {
-  @apply text-passionflower;
-}
-*/
 blockquote {
   @apply m-2 p-2 bg-gray-100 border-l-2 border-gray-400 text-gray-600;
 }
@@ -61,7 +49,7 @@ strong {
 }
 
 .btn-emphasis {
-  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset blur-2xl hover:bg-opacity-20 hover:shadow-btn;
+  @apply bg-white text-white bg-opacity-10 ring-1 ring-white ring-inset backdrop-blur-2xl hover:bg-opacity-20 hover:shadow-btn;
 }
 
 .btn-notification {
@@ -70,6 +58,14 @@ strong {
 
 .btn-filled {
   @apply bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 hover:shadow-btn;
+}
+
+.btn-on-ipt {
+  @apply bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 rounded-r;
+}
+
+.ipt-with-btn {
+  @apply border-gray-300 focus:border-gray-300 rounded-l py-0 border-r-0 leading-3 focus:ring-0;
 }
 
 .btn-transparent {
@@ -201,6 +197,10 @@ h2.font-logo {
   @apply z-50 !important;
 }
 
+.slate-ToolbarButton-active {
+  @apply text-ocean;
+}
+
 /* hex grid inspired by https://github.com/web-tiki/responsive-grid-of-hexagons/blob/css-grid/hexagons.css */
 
 .grid.hex {
@@ -306,6 +306,10 @@ h2.font-logo {
     /* first hexagon of even rows */
     grid-column-start: 2;
   }
+}
+
+.bg-login-gradient {
+  @apply bg-gradient-to-br from-my-green via-ocean to-my-purple;
 }
 
 .bg-header-gradient {

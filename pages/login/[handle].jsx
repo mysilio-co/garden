@@ -1,25 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useAuthentication } from 'swrlit'
 import { useRouter } from 'next/router'
+import { handleToIdp } from '../../utils/uris'
 
-export default function Login(){
+export default function Login() {
   const router = useRouter()
   const { handle } = router.query
-  console.log("HANDLE", handle)
-  const { session, loginHandle } = useAuthentication()
+  const { info, login } = useAuthentication()
   const [loggingIn, setLoggingIn] = useState(false)
-  useEffect(function logUserIn(){
-    if (handle && !loggingIn && session){
-      console.log(session)
-      if (session.loggedIn) {
+  useEffect(function logUserIn() {
+    if (handle && !loggingIn && info) {
+      if (info.isLoggedIn) {
         router.replace("/")
-      } else if (session) {
+      } else {
         setLoggingIn(true)
-        console.log("LOGGING IN", handle)
-        loginHandle(handle)
+        login({oidcIssuer: handleToIdp(handle), redirectUrl: window.location.href, clientName: "Mysilio Garden"})
       }
     }
-  }, [loginHandle, session, handle])
+  }, [login, info, handle])
   return (
     <div></div>
   )

@@ -7,7 +7,7 @@ import {
   saveSolidDatasetInContainer, createSolidDataset
 } from '@inrupt/solid-client'
 import { LDP, FOAF, RDFS, DCTERMS } from '@inrupt/vocab-common-rdf'
-import { fetch } from 'solid-auth-fetcher'
+import { fetch } from '@inrupt/solid-client-authn-browser'
 
 import Nav from '../../../components/nav'
 import { handleToWebId } from "../../../utils/uris"

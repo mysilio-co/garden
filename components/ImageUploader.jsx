@@ -4,7 +4,7 @@ import { Transforms } from 'slate';
 
 import { useSlateStatic } from 'slate-react';
 
-import { fetch } from 'solid-auth-fetcher'
+import { fetch } from '@inrupt/solid-client-authn-browser'
 import { v1 as uuid } from 'uuid';
 import Cropper from 'react-cropper';
 import newBlobReducer from 'image-blob-reduce'
@@ -125,7 +125,7 @@ const uploadToContainerFromCanvas = (canvas, containerUri, type, { fetch: passed
 
 })
 
-const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
+export const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
   const reader = new FileReader()
   const myFetch = passedFetch || fetch
   reader.onload = async f => {
@@ -202,12 +202,9 @@ export default function ImageUploader({ element, onClose, onUpload, uploadDirect
     }
   }, [file])
 
-  const onFileChanged = event => {
-    if (event.target.files) {
-      const file = event.target.files[0]
-      setFile(file)
-    }
-  }
+  const onFileChanged = (file) => {
+    setFile(file);
+  };
 
   return (
     <>
@@ -263,7 +260,10 @@ function UploadFileButton({ onFileChanged, ...rest }) {
         accept="image/*"
         style={{ display: 'none' }}
         type="file"
-        onChange={onFileChanged}
+        onChange={(e) => {
+          const f = e.target.files && e.target.files[0];
+          onFileChanged(f);
+        }}
       />
     </>
   )
@@ -276,12 +276,9 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
   const [croppedCanvas, setCroppedCanvas] = useState()
 
   const [file, setFile] = useState()
-  const onFileChanged = event => {
-    if (event.target.files) {
-      const file = event.target.files[0]
-      setFile(file)
-    }
-  }
+  const onFileChanged = (file) => {
+    setFile(file);
+  };
 
   useEffect(() => {
     let objectUrl;
@@ -303,7 +300,7 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
     const newImagePath = response.headers.get("location")
 
     const newImageUrl = new URL(newImagePath, response.url)
-    onSave && onSave(newImageUrl.toString())
+    onSave && onSave(newImageUrl.toString(), file);
   }
 
   return (
