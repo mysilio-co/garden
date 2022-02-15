@@ -114,7 +114,7 @@ export const ArrowSquareLeft = ({ className = "" }) => (
   </svg>
 )
 export const ArrowCircleRight = ({ className = "" }) => (
-  <svg className={`${className}`} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg className={`${className}`} viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M8.5 15.167a7.173 7.173 0 0 1-7.167-7.166A7.173 7.173 0 0 1 8.5.834a7.173 7.173 0 0 1 7.167 7.167A7.173 7.173 0 0 1 8.5 15.167zm0-13.333a6.174 6.174 0 0 0-6.167 6.167c0 3.4 2.767 6.166 6.167 6.166s6.167-2.766 6.167-6.166c0-3.4-2.767-6.167-6.167-6.167z" fill="#0E90A3"/>
     <path d="M7.66 10.853a.494.494 0 0 1-.353-.146.503.503 0 0 1 0-.707l2-2-2-2a.503.503 0 0 1 0-.707.503.503 0 0 1 .706 0l2.354 2.354a.503.503 0 0 1 0 .706l-2.354 2.354c-.1.1-.226.146-.353.146z" fill="#0E90A3"/>
   </svg>

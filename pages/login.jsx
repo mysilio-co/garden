@@ -10,7 +10,7 @@ const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(3, 'Too Short!')
     .max(50, 'Too Long!')
-    .required('username is equired'),
+    .required('username is required'),
   email: Yup.string()
     .email('invalid email')
     .required('email is required'),

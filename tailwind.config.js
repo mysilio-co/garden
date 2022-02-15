@@ -123,10 +123,11 @@ module.exports = {
         'white-a20': 'rgba(255, 255, 255, 0.2)'
       },
       backgroundImage: {
-        'forest-image': 'url("/img/forest-landscape.png")',
+        'forest-landscape': 'url("/img/forest-landscape.png")',
       },
     },
     fontFamily: {
+      wordmark: ['Catamaran', 'sans-serif'],
       sans: ['Inter', 'sans-serif'],
       mono: ['fira-mono', 'monospace']
     },

@@ -1,14 +1,13 @@
 import { useField, Form, FormikProps, Formik } from 'formik';
 
 
-export function Input({ className = '', inputClassName = '', ...props }) {
+export function Input({ className = '', inputClassName = '', errorClassName='', ...props }) {
   const [field, meta, helpers] = useField(props);
-
   const validationClassName = meta.touched ? (meta.error ? 'error' : 'success') : ('')
   return (
     <div className={`flex flex-col ${className}`}>
-      <input className={`ipt ${validationClassName} ${inputClassName}`} {...props} />
-      {meta.error && (<span className="ipt-error-message">{meta.error.toString()}</span>)}
+      <input className={`ipt ${validationClassName} ${inputClassName}`} {...field} {...props} />
+      {meta.error && (<span className={`ipt-error-message ${errorClassName}`}>{meta.error.toString()}</span>)}
     </div>
   )
 }
