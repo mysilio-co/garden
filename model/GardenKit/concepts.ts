@@ -17,7 +17,6 @@ import {
 
 import { MY } from './vocab';
 import { hasRDFType, createThingWithUUID } from './rdf';
-import { decorateFindReplace, getTodoListElementStyles } from '@udecode/plate';
 
 type CreateConceptOptions = {
   rdfTypes?: [string];

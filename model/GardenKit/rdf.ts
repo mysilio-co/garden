@@ -3,21 +3,33 @@ import {
   createThing,
   asUrl,
   getUrlAll,
+  getUrl,
+  setUrl,
   Thing,
   IriString,
+  UrlString,
 } from '@inrupt/solid-client';
 import { FOAF, RDF, OWL } from '@inrupt/vocab-common-rdf';
 import * as uuid from 'uuid';
-import { UUIDString } from "./types";
+import * as base58 from "micro-base58";
+import { UrnString, UUIDString } from "./types";
 
-export function uuidString(): UUIDString {
+export function uuidUrn(): UUIDString {
   // https://stackoverflow.com/questions/20342058/which-uuid-version-to-use
   return `urn:uuid:${uuid.v4()}`;
 }
 
+export function base58Urn(s: string): UrnString {
+  return `urn:base58:${base58.encode(s)}`;
+}
+
 export function isUUID(iri: IriString): boolean {
   const url = new URL(iri);
-  return url.protocol == 'urn:' && url.pathname.indexOf('uuid:') == 0;
+  return (
+    url.protocol == 'urn:' &&
+    url.pathname.indexOf('uuid:') == 0 &&
+    uuid.validate(url.pathname.substring(5))
+  );
 }
 
 export function getUUID(thing: Thing): UUIDString {
@@ -30,7 +42,7 @@ export function getUUID(thing: Thing): UUIDString {
 }
 
 export function createThingWithUUID(): Thing {
-  return createThing({ url: uuidString() });
+  return createThing({ url: uuidUrn() });
 }
 
 export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
@@ -44,4 +56,16 @@ export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
 
 export function hasRDFType(thing: Thing, t: IriString): boolean {
   return hasRDFTypes(thing, [t]);
+}
+
+export function ensureUrl(
+  thing: Thing,
+  url: UrlString,
+  value: UrlString
+): Thing {
+  if (!thing || !url || !value || getUrl(thing, url)) {
+    return thing;
+  } else {
+    return setUrl(thing, url, value);
+  }
 }

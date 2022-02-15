@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
-import { Garden, GardenIndex, GardenItem, UUIDString } from './types';
-import { getItemByName, getItemByUUID } from './garden';
+import { Garden, GardenIndex, GardenConfig, GardenItem, UUIDString } from './types';
+import { createNewGarden, getItemByName, getItemByUUID } from './garden';
 import { asUrl } from '@inrupt/solid-client';
 import { useResource, useThing } from 'swrlit';
 
 export type GardenResult = { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
 export type GardenItemResult = { item: GardenItem; saveToGarden: any };
+export type GardenConfigResult = { config: GardenConfig; saveConfig: any };
 export type GardenFilter = {
-  // right now, we only support search based filtering,
+  // right now, we only support search based filtering
   // but leave room for additional filter criteria later.
   search: string;
 };
@@ -77,6 +78,7 @@ function useFuse(garden: Garden) {
   };
   const [fuse] = useState(new Fuse([], options));
   return useMemo(() => {
+    
     fuse.setCollection(fuseFromGarden(garden) || []);
     return { fuse };
   }, [garden]);
@@ -97,9 +99,17 @@ export function useFilteredGarden(
 export default function useGarden(index: GardenIndex): GardenResult {
   // Fetch main index
   // fetch subindexdes
-  const { resource, saveResource } = useResource(index)
-  return {
-    garden: resource,
-    saveGarden: saveResource,
-  };
+  const { resource, saveResource, error } = useResource(index);
+  if (error && error.statusCode === 404) {
+    const newGarden = createNewGarden(index);
+    return {
+      garden: newGarden,
+      saveGarden: saveResource,
+    };
+  } else {
+    return {
+      garden: resource,
+      saveGarden: saveResource,
+    };
+  }
 }

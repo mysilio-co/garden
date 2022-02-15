@@ -4,6 +4,7 @@ import {
   Iri,
   IriString,
 } from '@inrupt/solid-client';
+import { DatasetCore } from 'rdf-js';
 
 export type Urn = Iri;
 export type UUID = Urn;
@@ -13,7 +14,15 @@ export type UUIDString = UrnString;
 
 export type Garden = SolidDataset;
 export type GardenIndex = IriString;
+export type GardenContainer = IriString;
 export type GardenConfig = Thing;
+export type Workspace = {
+  gardens: [Garden];
+  rootStorage: GardenContainer;
+  imageStorage?: GardenContainer;
+  fileStorage?: GardenContainer;
+  noteStorage?: GardenContainer;
+};
 
 export type OGTags = {
   ogTitle: string;
