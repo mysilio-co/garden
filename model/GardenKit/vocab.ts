@@ -8,13 +8,13 @@ export const MY = {
   // We manually list all expected Garden vocab termns as a (very) basic error check against typoes
   // and to give others a quick and easy place to see all existing terms before creating a new one.
   Garden: {
-    hostsWorkspace: g`hostsWorkspace`,
+    holdsSpace: g`holdsSpace`,
     
-    Workspace: g`Workspace`,
+    Space: g`Space`,
     hasGarden: g`hasGarden`,
 
     Garden: g`Garden`,
-    inWorkspace: g`inWorkspace`,
+    inSpace: g`inSpace`,
 
     rootStorage: g`rootStorage`,
     imageStorage: g`imageStorage`,

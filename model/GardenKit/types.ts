@@ -16,7 +16,7 @@ export type Garden = SolidDataset;
 export type GardenIndex = IriString;
 export type GardenContainer = IriString;
 export type GardenConfig = Thing;
-export type Workspace = {
+export type Space = {
   gardens: [Garden];
   rootStorage: GardenContainer;
   imageStorage?: GardenContainer;
