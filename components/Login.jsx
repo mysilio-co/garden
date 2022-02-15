@@ -72,7 +72,7 @@ export default function Login({ }) {
         </div>
         <Logo className='absolute top-0 left-0 -ml-44 -mt-16 transform scale-105 opacity-5 w-4/5 pointer-events-none' />
       </div>
-      <div className="relative grow h-full md:block hidden w-1/2 overflow-hidden bg-forest-landscape bg-center bg-cover">
+      <div className="relative grow h-full lg:block hidden w-1/2 overflow-hidden bg-forest-landscape bg-center bg-cover">
         <div className="h-full w-full bg-gradient-to-b from-my-green via-ocean to-passionflower opacity-100 mix-blend-color"></div>
       </div>
       {/*
