@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useAuthentication } from 'swrlit'
 import Link from 'next/link';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import { handleToIdp } from '../utils/uris'
@@ -75,11 +75,6 @@ export default function Login({ }) {
       <div className="relative grow h-full lg:block hidden w-1/2 overflow-hidden bg-forest-landscape bg-center bg-cover">
         <div className="h-full w-full bg-gradient-to-b from-my-green via-ocean to-passionflower opacity-100 mix-blend-color"></div>
       </div>
-      {/*
-      <div className="relative grow h-full md:block hidden w-1/2 overflow-hidden bg-gradient-to-b from-my-green via-ocean to-passionflower">
-      <Image className="opacity-100 h-full" src={forestImage} alt="forest" layout="fill" objectFit="cover"/>
-      </div>
-      */}
-    </div>
+     </div>
   )
 }
