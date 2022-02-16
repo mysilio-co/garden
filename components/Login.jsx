@@ -50,7 +50,7 @@ export default function Login({ }) {
           validationSchema={HandleSchema}
           onSubmit={logIn}>
           <Form className="flex md:w-96">
-            <Input type="text" name="username" className="flex-grow pr-3 text-gray-900" errorClassName="text-sm font-bold text-red-300" />
+            <Input type="text" name="username" className="flex-grow pr-3 text-gray-900" />
             {loggingIn ? (
               <Loader className="flex flex-row justify-center" />
             ) : (
