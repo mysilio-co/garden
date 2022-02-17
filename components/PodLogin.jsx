@@ -13,15 +13,15 @@ function classNames(...classes) {
 export default function PodLogin({ avatarImgSrc }) {
   return (
     <div className="flex flex-row items-stretch relative h-screen overflow-hidden">
-      <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-passionflower p-14 text-white text-sm h-full md:w-1/2 w-full">
+      <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-my-purple p-14 text-white text-sm h-full md:w-1/2 w-full">
         <div className="relative w-4/5">
           <Logo className='z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5' />
         </div>
         <div className="text-2xl md:mt-36">
-         Please login to your 
-        </div> 
+         Please login to your
+        </div>
         <div class="md:text-8xl text-4xl font-black">solid pod</div>
-      </div> 
+      </div>
       <div className="flex flex-row z-10 w-full mt-36 md:mt-0 md:w-1/2 absolute md:relative">
         <div className="flex flex-col md:mt-36 px-20 flex-grow">
           <Formik>
@@ -69,8 +69,8 @@ export default function PodLogin({ avatarImgSrc }) {
           </button>
         </div>
       </div>
-      <div className="flex flex-row z-0 items-stretch bg-gradient-to-br from-my-green via-ocean to-passionflower absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden"> 
-        <Image className="z-0 object-cover mix-blend-soft-light opacity-90 filter blur-md" src={forestImage} alt="forest" layout="fill" /> 
+      <div className="flex flex-row z-0 items-stretch bg-gradient-to-br from-my-green via-ocean to-my-purple absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden">
+        <Image className="z-0 object-cover mix-blend-soft-light opacity-90 filter blur-md" src={forestImage} alt="forest" layout="fill" />
       </div>
     </div>
   )

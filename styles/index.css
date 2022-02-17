@@ -26,7 +26,7 @@ p {
 }
 
 body {
-  @apply font-normal text-lg text-night;
+  @apply font-normal text-lg text-zinc-900;
 }
 
 b,
@@ -125,7 +125,7 @@ strong {
 }
 
 .page {
-  @apply bg-snow text-night h-screen overflow-y-scroll w-screen;
+  @apply bg-white text-zinc-900 h-screen overflow-y-scroll w-screen;
 }
 
 /* Start purging... */
@@ -133,39 +133,6 @@ strong {
 @tailwind utilities;
 /* Stop purging. */
 
-/* Your own custom utilities */
-
-.gradient-passionflower {
-  @apply bg-gradient-to-tr from-lagoon via-passionflower to-passionflower;
-}
-
-.gradient-echeveria {
-  @apply bg-gradient-to-tr from-aloe via-echeveria to-echeveria;
-}
-
-.gradient-lagoon {
-  @apply bg-gradient-to-tr from-echeveria via-lagoon to-lagoon;
-}
-
-.gradient-chanterelle {
-  @apply bg-gradient-to-tr from-echeveria via-chanterelle to-chanterelle;
-}
-
-.gradient-ember {
-  @apply bg-gradient-to-tr from-chanterelle via-ember to-ember;
-}
-
-.gradient-salmon {
-  @apply bg-gradient-to-tr from-passionflower via-salmon to-salmon;
-}
-
-h1.font-logo {
-  @apply text-passionflower drop-shadow-lg;
-}
-
-h2.font-logo {
-  @apply text-echeveria drop-shadow-lg;
-}
 
 /* slate editor -- classes assigned automatically by Plate */
 .slate-h1 {

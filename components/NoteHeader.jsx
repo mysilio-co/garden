@@ -106,7 +106,7 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
               </>
             )}
             {/*
-          <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white-a10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
+          <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white/10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
             <span>
               Share
             </span>

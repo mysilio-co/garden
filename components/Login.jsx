@@ -35,7 +35,7 @@ export default function Login({ }) {
   }
   return (
     <div className="flex flex-row items-stretch relative h-screen w-screen overflow-hidden">
-      <div className="grow relative text-left bg-gradient-to-br from-my-green via-ocean to-passionflower p-14 text-white text-sm h-full w-1/2">
+      <div className="grow relative text-left bg-gradient-to-br from-my-green via-ocean to-my-purple p-14 text-white text-sm h-full w-1/2">
         <div className="text-xl md:text-2xl mt-36">
           Welcome to
         </div>
@@ -73,7 +73,7 @@ export default function Login({ }) {
         <Logo className='absolute top-0 left-0 -ml-44 -mt-16 transform scale-105 opacity-5 w-4/5 pointer-events-none' />
       </div>
       <div className="relative grow h-full lg:block hidden w-1/2 overflow-hidden bg-forest-landscape bg-center bg-cover">
-        <div className="h-full w-full bg-gradient-to-b from-my-green via-ocean to-passionflower opacity-100 mix-blend-color"></div>
+        <div className="h-full w-full bg-gradient-to-b from-my-green via-ocean to-my-purple opacity-100 mix-blend-color"></div>
       </div>
      </div>
   )
