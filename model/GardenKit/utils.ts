@@ -23,6 +23,10 @@ export function base58Urn(s: string): UrnString {
   return `urn:base58:${base58.encode(s)}`;
 }
 
+export function wellKnownGardenUrn(wellKnownString: string): UrnString {
+  return `urn:mysilio:garden:${wellKnownString}`;
+};
+
 export function isUUID(iri: IriString): boolean {
   const url = new URL(iri);
   return (

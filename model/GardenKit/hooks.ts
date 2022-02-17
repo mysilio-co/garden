@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import { Garden, GardenIndex, GardenConfig, GardenItem, UUIDString } from './types';
-import { createNewGarden, getItemByName, getItemByUUID } from './garden';
-import { asUrl } from '@inrupt/solid-client';
-import { useResource, useThing } from 'swrlit';
+import { Garden, GardenIri, GardenItem, Space, UUIDString , SpaceIri} from './types';
+import { getItemByName, getItemByUUID, createNewGarden } from './garden';
+import { asUrl, WebId } from '@inrupt/solid-client';
+import { useResource, useThing, useWebId } from 'swrlit';
 
 export type GardenResult = { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
 export type GardenItemResult = { item: GardenItem; saveToGarden: any };
-export type GardenConfigResult = { config: GardenConfig; saveConfig: any };
+export type SpaceResult = { space: Space; saveToGarden: any };
 export type GardenFilter = {
   // right now, we only support search based filtering
   // but leave room for additional filter criteria later.
@@ -37,55 +37,8 @@ export function useNamedGardenIten(
   };
 }
 
-function fuseEntryFromGardenEntry(thing) {
-  if (isConcept(thing)) {
-    return {
-      thing: thing,
-      type: 'note',
-      name: urlSafeIdToConceptName(conceptIdFromUri(asUrl(thing))),
-    };
-  } else if (isBookmarkedImage(thing)) {
-    return {
-      thing: thing,
-      type: 'image',
-      name: thing && getStringNoLocale(thing, DCTERMS.title),
-    };
-  } else if (isBookmarkedFile(thing)) {
-    return {
-      thing: thing,
-      type: 'file',
-      name: thing && getStringNoLocale(thing, DCTERMS.title),
-    };
-  } else if (isBookmarkedLink(thing)) {
-    return {
-      thing: thing,
-      type: 'link',
-      name: asUrl(thing),
-    };
-  }
-  return {};
-}
-
-function fuseFromGarden(garden) {
-  return garden && garden.map(fuseEntryFromGardenEntry);
-}
-
-function useFuse(garden: Garden) {
-  const options = {
-    includeScore: true,
-    threshold: 0.3,
-    keys: ['name']
-  };
-  const [fuse] = useState(new Fuse([], options));
-  return useMemo(() => {
-    
-    fuse.setCollection(fuseFromGarden(garden) || []);
-    return { fuse };
-  }, [garden]);
-}
-
 export function useFilteredGarden(
-  index: GardenIndex,
+  index: GardenIri,
   filter: GardenFilter
 ): FilteredGardenResult {
   // call use garden
@@ -96,12 +49,22 @@ export function useFilteredGarden(
   };
 }
 
-export default function useGarden(index: GardenIndex): GardenResult {
-  // Fetch main index
-  // fetch subindexdes
+export function useSpace(iri: SpaceIri) {
+
+};
+
+export function useSpaces(webId: WebId) {
+
+}
+
+export function useSettings(appName: string) {
+
+}
+
+export function useGarden(index: GardenIri): GardenResult {
   const { resource, saveResource, error } = useResource(index);
   if (error && error.statusCode === 404) {
-    const newGarden = createNewGarden(index);
+    const newGarden = createNewGarden();
     return {
       garden: newGarden,
       saveGarden: saveResource,

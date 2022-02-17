@@ -6,7 +6,13 @@ import {
   GardenNote,
   OGTags,
 } from './types';
-import { buildThing, getStringNoLocale, getTime, getUrl, IriString, ThingBuilder, Url, UrlString, WebId } from '@inrupt/solid-client';
+import {
+  buildThing,
+  getStringNoLocale,
+  getUrl,
+  UrlString,
+  WebId,
+} from '@inrupt/solid-client';
 import {
   SKOS,
   RDF,
@@ -16,7 +22,7 @@ import {
 } from '@inrupt/vocab-common-rdf';
 
 import { MY } from './vocab';
-import { hasRDFType, createThingWithUUID } from './rdf';
+import { hasRDFType, createThingWithUUID } from './utils';
 
 type CreateConceptOptions = {
   rdfTypes?: [string];
