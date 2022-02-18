@@ -78,8 +78,25 @@ export const withConcepts = editor => {
   return editor
 }
 
+// We'll use these to define decorators that render the
+// special styling for square brackets and links.
+// the algorithm for figuring out where the decorators
+// are applied is specified in the concept plugin below, but we
+// need to register two additional plugins to tell Plate that
+// these decorators are leaves. Kind of confusing but apparently how Plate
+// works for now.
 export const LEAF_CONCEPT_START = 'conceptLeafStart'
 export const LEAF_CONCEPT_END = 'conceptLeafEnd'
+
+export const createConceptStartPlugin = createPluginFactory({
+  key: LEAF_CONCEPT_START,
+  isLeaf: true
+})
+
+export const createConceptEndPlugin = createPluginFactory({
+  key: LEAF_CONCEPT_END,
+  isLeaf: true
+})
 
 export const createConceptPlugin = createPluginFactory({
   key: ELEMENT_CONCEPT,
@@ -105,14 +122,4 @@ export const createConceptPlugin = createPluginFactory({
       ]
     }
   }
-})
-
-export const createConceptStartPlugin = createPluginFactory({
-  key: LEAF_CONCEPT_START,
-  isLeaf: true
-})
-
-export const createConceptEndPlugin = createPluginFactory({
-  key: LEAF_CONCEPT_END,
-  isLeaf: true
 })
