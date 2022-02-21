@@ -35,7 +35,7 @@ export const fromMentionable = (m) => {
 
 const ConceptElement = ({ attributes, element, children }) => {
   return (
-    <span {...attributes} className="text-lagoon group">
+    <span {...attributes} className="text-my-green group">
       {children}
     </span>
   );
@@ -69,7 +69,7 @@ function ConceptEndLeaf({ children, leaf }) {
 const TagElement = ({ attributes, element, children }) => {
   const { slug: workspaceSlug } = useWorkspaceContext();
   return (
-    <span className="text-lagoon group" {...attributes}>
+    <span className="text-my-green group" {...attributes}>
       {children}
       <Link href={`/tags/${workspaceSlug}/${element.name}`}>
         <a contentEditable={false} className="hidden group-hover:inline">
@@ -82,7 +82,7 @@ const TagElement = ({ attributes, element, children }) => {
 
 const MentionElement = ({ attributes, element, children }) => {
   return (
-    <span className="text-lagoon" {...attributes}>
+    <span className="text-my-green" {...attributes}>
       {children}
     </span>
   )

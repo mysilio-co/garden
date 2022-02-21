@@ -69,7 +69,7 @@ export default function Header({
       <div className="flex flex-row items-center">
         <div className="w-18 flex flex-col justify-center items-center">
           <Link href="/">
-            <a className="flex items-center p-2 rounded hover:bg-lagoon-dark hover:no-underline">
+            <a className="flex items-center p-2 rounded hover:bg-my-green-dark hover:no-underline">
               <Logo className="w-7 transform scale-105" />
             </a>
           </Link>

@@ -6,6 +6,7 @@ import { Loader } from '../components/elements'
 import { useApp } from '../hooks/app'
 
 import Welcome from '../components/onboarding/Welcome'
+import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
 
 function InitPage({ initApp }) {
@@ -48,7 +49,7 @@ export default function IndexPage() {
       ) : (
         ((loggedIn === false) || (loggedIn === null)) ? (
           <div className="text-center">
-            <Welcome />
+            <Login />
           </div>
         ) : (
           <Loader className="flex flex-row justify-center mt-36" />

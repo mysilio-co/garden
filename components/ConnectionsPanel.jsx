@@ -21,7 +21,7 @@ function TagsSection({ concept, tagPrefix, workspaceSlug }) {
         return (
           <div>
             <Link href={`/tags/${workspaceSlug}/${tagName}`}>
-              <a className="text-lagoon">
+              <a className="text-my-green">
                 #{tagName}
               </a>
             </Link>
