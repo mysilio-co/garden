@@ -72,7 +72,7 @@ export default function NotePicker({ onSubmit, initialSelectedName = "" }) {
           value={displayedName}
           onChange={(e) => setDisplayedName(e.target.value)}
           onKeyDown={onKeyDown}
-          className="rounded-xl focus:outline-none focus:border-lagoon focus:ring-2 focus:ring-lagoon mr-3 max-h-8"
+          className="rounded-xl focus:outline-none focus:border-my-green focus:ring-2 focus:ring-my-green mr-3 max-h-8"
           type="text"
           placeholder="Search"
         />
