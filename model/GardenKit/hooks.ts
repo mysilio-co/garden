@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Garden, GardenIri, GardenItem, Space, UUIDString , SpaceIri} from './types';
-import { getItemByName, getItemByUUID, createNewGarden } from './garden';
+import { getItemByTitle, getItemByUUID, createNewGarden } from './garden';
 import { asUrl, WebId } from '@inrupt/solid-client';
 import { useResource, useThing, useWebId } from 'swrlit';
 
@@ -13,28 +13,27 @@ export type GardenFilter = {
   // but leave room for additional filter criteria later.
   search: string;
 };
+
 export function useGardenItem(
   garden: Garden,
   uuid: UUIDString
 ): GardenItemResult {
   const item = getItemByUUID(garden, uuid);
-  const { thing, saveThing } = useThing(asUrl(item))
-  return {
-    item: thing,
-    saveToGarden: saveThing,
-  };
+  const res = useThing(asUrl(item))
+  res.itme = res.thing;
+  res.saveToGarden = res.saveThing;
+  return res;
 }
 
-export function useNamedGardenIten(
+export function useTitleGardenIten(
   garden: Garden,
   name: string
 ): GardenItemResult {
-  const item = getItemByName(garden, name);
-  const { thing, saveThing } = useThing(asUrl(item))
-  return {
-    item: thing,
-    saveToGarden: thing,
-  };
+  const item = getItemByTitle(garden, name);
+  const res = useThing(asUrl(item))
+  res.item = res.thing
+  res.saveToGarden = res.saveThing
+  return res;
 }
 
 export function useFilteredGarden(

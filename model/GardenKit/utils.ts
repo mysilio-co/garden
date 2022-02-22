@@ -5,6 +5,8 @@ import {
   getUrlAll,
   getUrl,
   setUrl,
+  addStringNoLocale,
+  buildThing,
   Thing,
   IriString,
   UrlString,
@@ -22,10 +24,6 @@ export function uuidUrn(): UUIDString {
 export function base58Urn(s: string): UrnString {
   return `urn:base58:${base58.encode(s)}`;
 }
-
-export function wellKnownGardenUrn(wellKnownString: string): UrnString {
-  return `urn:mysilio:garden:${wellKnownString}`;
-};
 
 export function isUUID(iri: IriString): boolean {
   const url = new URL(iri);
@@ -49,6 +47,12 @@ export function createThingWithUUID(): Thing {
   return createThing({ url: uuidUrn() });
 }
 
+export function createPtr(slug: string, uuid: UUIDString) {
+  return buildThing(createThing({ name: slug }))
+    .addUrl(OWL.sameAs, uuid)
+    .build();
+}
+
 export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
   const types = getUrlAll(thing, RDF.type);
   let hasAllTypes = true;
@@ -61,6 +65,17 @@ export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
 export function hasRDFType(thing: Thing, t: IriString): boolean {
   return hasRDFTypes(thing, [t]);
 }
+
+export function addRDFTypes(thing: Thing, ts: IriString[]) {
+  for (const t of ts) {
+    thing = addRDFType(thing, t);
+  }
+  return thing;
+};
+
+export function addRDFType(thing: Thing, t: IriString[]) {
+  return addStringNoLocale(thing, RDF.type, t);
+};
 
 export function ensureUrl(
   thing: Thing,

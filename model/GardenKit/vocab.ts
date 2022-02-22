@@ -23,6 +23,7 @@ export const MY = {
     fileStorage: g`fileStorage`,
     noteStorage: g`noteStorage`,
 
+    Item: g`Item`,
     Concept: g`Concept`,
     mentions: g`mentions`,
     tagged: g`tagged`,
@@ -37,4 +38,29 @@ export const MY = {
 
     Collection: g`Collection`,
   },
+};
+
+const sioc = namespace('http://rdfs.org/sioc/ns#');
+export const SIOC = {
+  Community: sioc`Community`,
+  Site: sioc`Site`,
+
+  Forum: sioc`Forum`,
+  Container: sioc`Container`,
+  has_subscriber: sioc`has_subscriber`,
+  has_moderator: sioc`has_moderator`,
+  container_of: sioc`container_of`,
+  about: sioc`about`,
+
+  Post: sioc`Post`,
+  Item: sioc`Item`,
+  has_creator: sioc`has_creator`,
+  has_container: sioc`has_container`,
+
+  User: sioc`User`,
+  account_of: sioc`account_of`, // webId
+  subscriber_of: sioc`subscriber_of`, // Container
+  moderator_of: sioc`moderator_of`, // Container
+  creator_of: sioc`creatpr_of`, // Item
+  email: sioc`email`,
 };

@@ -15,18 +15,9 @@ export type Space = Thing;
 export type SpaceIri = IriString;
 
 export type Garden = SolidDataset;
-export type GardenConfig= Thing;
+export type GardenConfig = Thing;
 export type GardenIri = IriString;
 export type GardenContainer = IriString;
-
-export type OGTags = {
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: {
-    url: string;
-  };
-  ogUrl: string;
-};
 
 export type GardenItem = Thing;
 export type Concept = GardenItem;
