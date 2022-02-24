@@ -7,6 +7,7 @@ import { isThingLocal } from "@inrupt/solid-client";
 import { PrivacyToggle } from '../toggles'
 import { Close as CloseIcon, TickCircle } from '../icons'
 import { Input } from '../inputs'
+import { deserialize } from '../../utils/html'
 import { createOrUpdateSlateJSON, saveNote } from "../../model/note";
 import { createOrUpdateConceptIndex } from "../../model/concept";
 import { useCurrentWorkspace } from "../../hooks/app";
@@ -14,7 +15,7 @@ import { useConcept, useConceptNames } from "../../hooks/concepts";
 import NoteEditor from "../NoteEditor"
 import { EmptySlateJSON } from "../../utils/slate";
 import Modal from '../Modal';
-
+import * as flags from '../../model/flags'
 
 export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   const [pub, setPublic] = useState(isPublic);
@@ -77,13 +78,19 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
       onClose();
     }
   };
+  async function onImportFileChanged(file) {
+    const html = await file.text()
+    const document = new DOMParser().parseFromString(html, 'text/html')
+    const noteBody = deserialize(document.body)
+    setValue(noteBody)
+    resetEditor()
+  }
 
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
       <div
-        className={`flex flex-row justify-between self-stretch h-18 p-6 ${
-          pub ? 'bg-my-green' : 'bg-gray-500'
-        }`}
+        className={`flex flex-row justify-between self-stretch h-18 p-6 ${pub ? 'bg-my-green' : 'bg-gray-500'
+          }`}
       >
         <div className="flex flex-row justify-start items-start gap-4">
           <h2 className="text-white font-bold text-xl">
@@ -121,6 +128,29 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
                   </span>
                 )}
               </div>
+              {flags.ImportHtmlNoteBody && (
+                <>
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-gray-900"
+                  >
+                    Import from file
+                  </label>
+                  <input
+                    id="file"
+                    name="file"
+                    type="file"
+                    className="block text-sm text-slate-500 file:mr-4 file:py-2 file:px-4
+                           file:rounded-full file:border-0 file:text-sm file:font-semibold
+                           file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100
+                           focus:outline-none focus:border-none focus:shadow-none focus:ring-0"
+                    onChange={(e) => {
+                      const f = e.target.files && e.target.files[0];
+                      onImportFileChanged(f);
+                    }}
+                  />
+                </>
+              )}
             </div>
             <div className="px-6 py-5 h-96">
               <NoteEditor

@@ -6,3 +6,5 @@ export const IsPreviewEnv = VercelEnv !== 'production';
 export const DefaultPodDomain = IsPreviewEnv
   ? 'staging.mysilio.me'
   : 'mysilio.me';
+
+export const ImportHtmlNoteBody = false
