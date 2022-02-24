@@ -65,16 +65,22 @@ export function addLinkToIndex(
   url: string,
   og?: OGTags
 ): SolidDataset {
+  url = (og && og.ogUrl) || url;
   const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
     .addDatetime(DCTERMS.modified, new Date())
     .addDatetime(DCTERMS.created, new Date());
   if (og) {
-    builder
-      .addUrl(FOAF.depiction, og && og.ogImage.url)
-      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
-      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
+    if (og.ogImage && og.ogImage.url) {
+      builder.addUrl(FOAF.depiction, og.ogImage.url)
+    }
+    if (og.ogTitle) {
+      builder.addStringNoLocale(DCTERMS.title, og.ogTitle);
+    }
+    if (og.ogDescription) {
+      builder.addStringNoLocale(DCTERMS.description, og.ogDescription);
+    }
     }
   const LinkThing = builder.build();
   return setThing(index || createSolidDataset(), LinkThing);
