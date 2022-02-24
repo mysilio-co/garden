@@ -11,13 +11,16 @@ export type UUID = Urn;
 export type UrnString = IriString;
 export type UUIDString = UrnString;
 
+export type Profile = Thing; // The Thing stored at a WebId
+
 export type Space = Thing;
-export type SpaceIri = IriString;
+export type SpacePreferences = SolidDataset;
+export type SpacePreferencesFile = IriString;
+export type Container = IriString;
 
 export type Garden = SolidDataset;
 export type GardenConfig = Thing;
-export type GardenIri = IriString;
-export type GardenContainer = IriString;
+export type GardenFile = IriString;
 
 export type GardenItem = Thing;
 export type Concept = GardenItem;

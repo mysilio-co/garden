@@ -48,13 +48,19 @@ export function useFilteredGarden(
   };
 }
 
-export function useSpace(iri: SpaceIri) {
+export function useSpace(iri: SpaceIri): Space {
 
 };
 
-export function useSpaces(webId: WebId) {
+export function useMetaSpace(iri: SpaceIri) {
 
-}
+};
+
+export function usePodSpace(iri: SpaceIri) {
+
+};
+
+export function useSpaces(webId: WebId): SpaceFile {}
 
 export function useSettings(appName: string) {
 

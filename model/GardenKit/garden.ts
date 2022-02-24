@@ -4,51 +4,57 @@ import {
   createThing,
   getThing,
   setThing,
+  setUrl,
 } from '@inrupt/solid-client';
-import { getUUID, base58Urn, createPtr } from './utils';
+import { OWL } from '@inrupt/vocab-common-rdf';
+import { getUUID, base58Urn, createPtr, uuidUrn } from './utils';
 
-export function getItemByUUID(garden: Garden, uuid: UUIDString): GardenItem {
+export function getItemWithUUID(garden: Garden, uuid: UUIDString): GardenItem {
   return getThing(garden, uuid);
 }
 
-export function getItemBySlug(garden: Garden, slug: string): GardenItem {
+export function getItemWithSlug(garden: Garden, slug: string): GardenItem {
   const ptr = getThing(garden, slug);
   const uuid = getUUID(ptr);
-  return getItemByUUID(garden, uuid);
+  return getItemWithUUID(garden, uuid);
 }
 
-export function getItemByTitle(garden: Garden, title: string): GardenItem {
+export function getItemWithTitle(garden: Garden, title: string): GardenItem {
   const slug = base58Urn(title);
-  return getItemBySlug(garden, slug);
+  return getItemWithSlug(garden, slug);
 }
 
-export function setItem(garden: Garden, item: GardenItem): Garden {
+export function setItemWithUUID(garden: Garden, item: GardenItem): Garden {
+  if (!getUUID(item)) {
+    item = setUrl(item, OWL.sameAs, uuidUrn());
+  }
+  
   return setThing(garden, item);
 }
 
-export function setItemBySlug(
+export function setItemWithSlug(
   garden: Garden,
   slug: string,
   item: GardenItem
 ): Garden {
   const uuid = getUUID(item);
-  garden = setItem(garden, item);
+  garden = setItemWithUUID(garden, item);
   garden = setThing(garden, createPtr(slug, uuid));
   return garden;
 }
 
-export function setItemByTitle(
+export function setItemWithTitle(
   garden: Garden,
   title: string,
   item: GardenItem
 ): Garden {
   const slug = base58Urn(title);
-  return setItemBySlug(garden, slug, item);
+  return setItemWithSlug(garden, slug, item);
 }
 
 const ConfigSlug = 'garden';
 export function getConfig(garden: Garden): GardenConfig {
-  return getItemBySlug(garden, ConfigSlug);
+  return getItemWithSlug(garden, ConfigSlug);
 }
 
 export function setConfig(garden: Garden, config: GardenConfig): Garden {
@@ -56,6 +62,7 @@ export function setConfig(garden: Garden, config: GardenConfig): Garden {
 }
 
 export function createConfig(): GardenConfig {
+  // WRONG: not a url
   return createThing({ url: ConfigSlug });
 }
 
