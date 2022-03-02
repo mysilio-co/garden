@@ -29,6 +29,7 @@ export const MY = {
     Concept: g`Concept`,
     mentions: g`mentions`,
     tagged: g`tagged`,
+    emojis: g`emojis`,
     references: g`references`,
 
     Image: g`Image`,
