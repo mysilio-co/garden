@@ -285,7 +285,7 @@ function fuseEntryFromGardenEntry(thing) {
     return {
       thing: thing,
       type: 'link',
-      name: asUrl(thing),
+      name: thing && getStringNoLocale(thing, DCTERMS.title),
     };
   }
   return {};

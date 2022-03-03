@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react';
 import { Formik, Field, Form } from "formik";
 import { Close as CloseIcon, TickCircle } from '../icons'
@@ -12,12 +12,32 @@ export function NewBookmark({ onClose }) {
   const webId = useWebId()
   const { index, save } = useWorkspaceIndex(webId);
   const [url, setUrl] = useState('');
-  const ogTags = useOGTags(url);
-  const { ogTitle, ogDescription } = ogTags || {};
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [img, setImg] = useState('');
+  const og = useOGTags(url);
 
+  useEffect(() => {
+    if (og) {
+      // OG tags were update (i.e. new URL)
+      // set name, description to ogTags
+      if (og && og.ogTitle) {
+        setTitle(og.ogTitle);
+      }
+      if (og && og.ogDescription) {
+        setDesc(og.ogDescription);
+      }
+      if (og && og.ogImage && og.ogImage.url) {
+        setImg(og.ogImage.url);
+      }
+      if (og && og.ogUrl) {
+        setUrl(og.ogUrl);
+      }
+    }
+  }, [og]);
 
   const onSubmit = async () => {
-    const newIndex = addLinkToIndex(index, url, ogTags);
+    const newIndex = addLinkToIndex(index, url, title, desc, img);
     await save(newIndex);
     onClose();
   };
@@ -51,7 +71,14 @@ export function NewBookmark({ onClose }) {
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
           <label className="text-sm font-medium text-gray-900">Title</label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
-            <h3>{ogTitle}</h3>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              className="ipt"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
         </div>
         <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start px-6 py-5">
@@ -59,7 +86,14 @@ export function NewBookmark({ onClose }) {
             Description
           </label>
           <div className="mt-1 sm:mt-0 sm:col-span-2 flex flex-col">
-            <h3>{ogDescription}</h3>
+            <textarea
+              type="text"
+              name="description"
+              id="description"
+              className="ipt"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
           </div>
         </div>
         <div className="h-20 bg-gray-50 flex flex-row justify-end items-center px-6">
