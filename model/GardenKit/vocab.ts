@@ -57,6 +57,7 @@ export const SIOC = {
 
   Post: sioc`Post`,
   Item: sioc`Item`,
+  content: sioc`content`,
   has_creator: sioc`has_creator`,
   has_container: sioc`has_container`,
 
