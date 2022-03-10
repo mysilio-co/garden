@@ -1,5 +1,4 @@
-import { namedNode } from '@rdfjs/data-model';
-import { NamedNode } from '@rdfjs/types';
+import { namedNode } from '@rdf-esm/data-model';
 import {
   createThing,
   asUrl,
