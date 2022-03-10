@@ -1,32 +1,43 @@
-import { MY } from "./vocab";
+import { namedNode } from '@rdfjs/data-model';
+import { NamedNode } from '@rdfjs/types';
 import {
   createThing,
   asUrl,
   getUrlAll,
   getUrl,
   setUrl,
-  addStringNoLocale,
+  addUrl,
   buildThing,
   Thing,
-  IriString,
   UrlString,
+  getSourceUrl,
 } from '@inrupt/solid-client';
-import { FOAF, RDF, OWL } from '@inrupt/vocab-common-rdf';
+import { RDF, OWL } from '@inrupt/vocab-common-rdf';
 import * as uuid from 'uuid';
-import * as base58 from "micro-base58";
-import { UrnString, UUIDString } from "./types";
+import { base58 } from '@scure/base';
+import { UUID, Base58Slug, Slug, MaybeIri } from './types';
+import { Resource } from '@inrupt/solid-client/dist/interfaces';
+import { urlObjectKeys } from 'next/dist/shared/lib/utils';
 
-export function uuidUrn(): UUIDString {
+export function uuidUrn(): UUID {
   // https://stackoverflow.com/questions/20342058/which-uuid-version-to-use
-  return `urn:uuid:${uuid.v4()}`;
+  return namedNode(`urn:uuid:${uuid.v4()}`);
 }
 
-export function base58Urn(s: string): UrnString {
-  return `urn:base58:${base58.encode(s)}`;
+export function encodeBase58Slug(s: string): Base58Slug {
+  return base58.encode(Buffer.from(s));
 }
 
-export function isUUID(iri: IriString): boolean {
-  const url = new URL(iri);
+export function decodeBase58Slug(s: Base58Slug): string {
+  return base58.decode(s).toString();
+}
+
+export function asIriString(iri: MaybeIri): string {
+  return typeof iri === 'string' ? iri : iri.value;
+}
+
+export function isUUID(iri: MaybeIri): boolean {
+  const url = new URL(asIriString(iri));
   return (
     url.protocol == 'urn:' &&
     url.pathname.indexOf('uuid:') == 0 &&
@@ -34,53 +45,58 @@ export function isUUID(iri: IriString): boolean {
   );
 }
 
-export function getUUID(thing: Thing): UUIDString {
+export function getUUID(thing: Thing): UUID {
   const iri = asUrl(thing);
   if (isUUID(asUrl(thing))) {
-    return iri;
+    return namedNode(iri);
   } else {
-    return getUrlAll(thing, OWL.sameAs).find(isUUID);
+    return namedNode(getUrlAll(thing, OWL.sameAs).find(isUUID));
   }
 }
 
 export function createThingWithUUID(): Thing {
-  return createThing({ url: uuidUrn() });
+  return createThing({ url: uuidUrn().value });
 }
 
-export function createPtr(slug: string, uuid: UUIDString) {
+export function slugToUrl(resource: Resource, slug: Slug): UrlString {
+  return new URL(getSourceUrl(resource), `#${slug}`).toString();
+}
+
+export function createPtr(slug: Slug, uuid: UUID) {
   return buildThing(createThing({ name: slug }))
     .addUrl(OWL.sameAs, uuid)
     .build();
 }
 
-export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
+
+export function hasRDFTypes(thing: Thing, ts: MaybeIri[]) {
   const types = getUrlAll(thing, RDF.type);
   let hasAllTypes = true;
   for (let t of ts) {
-    hasAllTypes = hasAllTypes && types.includes(t);
+    hasAllTypes = hasAllTypes && types.includes(asIriString(t));
   }
   return hasAllTypes;
 }
 
-export function hasRDFType(thing: Thing, t: IriString): boolean {
+export function hasRDFType(thing: Thing, t: MaybeIri) {
   return hasRDFTypes(thing, [t]);
 }
 
-export function addRDFTypes(thing: Thing, ts: IriString[]) {
+export function addRDFTypes(thing: Thing, ts: MaybeIri[]) {
   for (const t of ts) {
     thing = addRDFType(thing, t);
   }
   return thing;
 };
 
-export function addRDFType(thing: Thing, t: IriString[]) {
-  return addStringNoLocale(thing, RDF.type, t);
+export function addRDFType(thing: Thing, t: MaybeIri) {
+  return addUrl(thing, RDF.type, t);
 };
 
 export function ensureUrl(
   thing: Thing,
-  url: UrlString,
-  value: UrlString
+  url: MaybeIri,
+  value: MaybeIri
 ): Thing {
   if (!thing || !url || !value || getUrl(thing, url)) {
     return thing;

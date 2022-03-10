@@ -3,6 +3,8 @@ import {
   SolidDataset,
   Iri,
   IriString,
+  Url,
+  UrlString,
 } from '@inrupt/solid-client';
 
 export type Urn = Iri;
@@ -11,7 +13,17 @@ export type UUID = Urn;
 export type UrnString = IriString;
 export type UUIDString = UrnString;
 
+export type MaybeIri = Iri | IriString;
+export type MaybeUrl = Url | UrlString;
+export type MaybeUrn = Urn | UrnString;
+export type MaybeUUID = UUID | UUIDString;
+
+// a web-safe string that can be used in a url hash
+export type Slug = string;
+export type Base58Slug = Slug;
+
 export type Profile = Thing; // The Thing stored at a WebId
+export type AppSettings = Thing;
 
 export type Space = Thing;
 export type SpacePreferences = SolidDataset;

@@ -1,13 +1,31 @@
-import { useMemo, useState } from "react";
-import { Garden, GardenIri, GardenItem, Space, UUIDString , SpaceIri} from './types';
-import { getItemByTitle, getItemByUUID, createNewGarden } from './garden';
+import {
+  Garden,
+  GardenFile,
+  GardenItem,
+  Space,
+  UUID,
+  SpacePreferences,
+  Slug,
+  AppSettings,
+  Profile
+} from './types';
+import { getItemWithTitle, getItemWithUUID, createNewGarden } from './garden';
 import { asUrl, WebId } from '@inrupt/solid-client';
-import { useResource, useThing, useWebId } from 'swrlit';
+import { useProfile, useResource, useThing } from 'swrlit';
+import { createNewSpacePreferences, getMetaSpace, getRootContainer, getSpace, getSpacePreferencesFile } from "./spaces";
 
 export type GardenResult = { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
 export type GardenItemResult = { item: GardenItem; saveToGarden: any };
-export type SpaceResult = { space: Space; saveToGarden: any };
+export type SpaceResult = { space: Space; saveSpace: any };
+export type SpacePreferencesResult = {
+  spaces: SpacePreferences;
+  saveSpaces: any;
+};
+export type AppSettingsResult = {
+  settings: AppSettings;
+  saveSettings: any;
+};
 export type GardenFilter = {
   // right now, we only support search based filtering
   // but leave room for additional filter criteria later.
@@ -16,20 +34,20 @@ export type GardenFilter = {
 
 export function useGardenItem(
   garden: Garden,
-  uuid: UUIDString
+  uuid: UUID
 ): GardenItemResult {
-  const item = getItemByUUID(garden, uuid);
+  const item = getItemWithUUID(garden, uuid);
   const res = useThing(asUrl(item))
-  res.itme = res.thing;
+  res.item = res.thing;
   res.saveToGarden = res.saveThing;
   return res;
 }
 
-export function useTitleGardenIten(
+export function useTitledGardenIten(
   garden: Garden,
   name: string
 ): GardenItemResult {
-  const item = getItemByTitle(garden, name);
+  const item = getItemWithTitle(garden, name);
   const res = useThing(asUrl(item))
   res.item = res.thing
   res.saveToGarden = res.saveThing
@@ -37,7 +55,7 @@ export function useTitleGardenIten(
 }
 
 export function useFilteredGarden(
-  index: GardenIri,
+  index: GardenFile,
   filter: GardenFilter
 ): FilteredGardenResult {
   // call use garden
@@ -48,36 +66,63 @@ export function useFilteredGarden(
   };
 }
 
-export function useSpace(iri: SpaceIri): Space {
-
+export function useSpace(spaces: SpacePreferences, slug: Slug): SpaceResult {
+  const space = getSpace(spaces, slug);
+  const res = useThing(asUrl(space));
+  res.space = res.thing;
+  res.saveSpace = res.saveThing;
+  return res;
 };
 
-export function useMetaSpace(iri: SpaceIri) {
-
+export function useMetaSpace(spaces: SpacePreferences): SpaceResult {
+  const meta = getMetaSpace(spaces);
+  const res = useThing(asUrl(meta));
+  res.space = res.thing;
+  res.saveSpace = res.saveThing;
+  return res;
 };
 
-export function usePodSpace(iri: SpaceIri) {
-
-};
-
-export function useSpaces(webId: WebId): SpaceFile {}
-
-export function useSettings(appName: string) {
-
+export function useSpaces(webId: WebId): SpacePreferencesResult {
+  const { profile } = useProfile(webId);
+  const res = useResource(getSpacePreferencesFile(profile));
+  if (res.error && res.error.statusCode === 404) {
+    const newSpaces = createNewSpacePreferences();
+    res.spaces = newSpaces;
+    res.resource = newSpaces;
+  } else {
+    res.spaces = res.resource;
+  }
+  res.saveSpaces = res.saveResource;
+  return res;
 }
 
-export function useGarden(index: GardenIri): GardenResult {
-  const { resource, saveResource, error } = useResource(index);
-  if (error && error.statusCode === 404) {
+function appSettingsUrl(profile: Profile, namespace: Slug, name: Slug) {
+  const base = getRootContainer(profile);
+  const path = `/settings/${namespace}.ttl#${name}`;
+  return new URL(base, path).toString();
+}
+
+export function useAppSettings(
+  webId: WebId,
+  appNamespace: Slug,
+  appName: Slug
+): AppSettingsResult {
+  const { profile } = useProfile(webId);
+  const res = useThing(appSettingsUrl(profile, appNamespace, appName));
+  res.settings = res.thing
+  res.saveSettings = res.saveThing
+  return res;
+}
+
+export function useGarden(index: GardenFile): GardenResult {
+  const res = useResource(index);
+  if (res.error && res.error.statusCode === 404) {
     const newGarden = createNewGarden();
-    return {
-      garden: newGarden,
-      saveGarden: saveResource,
-    };
+    res.garden = newGarden;
+    res.resource = newGarden;
   } else {
-    return {
-      garden: resource,
-      saveGarden: saveResource,
-    };
+    res.garden = res.resource;
   }
+  res.saveGarden = res.saveResource;
+  return res;
 }
