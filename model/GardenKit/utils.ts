@@ -16,7 +16,6 @@ import * as uuid from 'uuid';
 import { base58 } from '@scure/base';
 import { UUID, Base58Slug, Slug, MaybeIri } from './types';
 import { Resource } from '@inrupt/solid-client/dist/interfaces';
-import { urlObjectKeys } from 'next/dist/shared/lib/utils';
 
 export function uuidUrn(): UUID {
   // https://stackoverflow.com/questions/20342058/which-uuid-version-to-use

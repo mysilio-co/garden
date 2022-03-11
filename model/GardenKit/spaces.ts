@@ -1,12 +1,10 @@
 import {
   buildThing,
   createThing,
-  getSourceUrl,
   getThing,
   getThingAll,
   getUrl,
   WebId,
-  toRdfJsDataset,
   setThing,
   Thing
 } from '@inrupt/solid-client';
@@ -19,11 +17,9 @@ import {
   Slug,
 } from './types';
 import { WS } from '@inrupt/vocab-solid-common';
-import { encodeBase58Slug, hasRDFType, slugToUrl } from './utils';
+import { hasRDFType, slugToUrl } from './utils';
 import { RDF } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
-import { namedNode } from '@rdfjs/dataset';
-import { assertNumber } from '@scure/base';
 
 export function getRootContainer(profile: Profile): Container {
   return profile && getUrl(profile, WS.storage);
@@ -31,6 +27,10 @@ export function getRootContainer(profile: Profile): Container {
 
 export function getSpacePreferencesFile(profile: Profile): SpacePreferencesFile {
   return profile && getUrl(profile, WS.preferencesFile);
+}
+
+export function getContainer(space: Space): Container {
+  return space && getUrl(space, WS.storage);
 }
 
 export function getSpaceAll(spaces: SpacePreferences): Space[] {
@@ -55,6 +55,7 @@ export function setSpace(
 ): SpacePreferences {
   return spaces && space && setThing(spaces, space);
 }
+
 
 export function createSpace(
   holder: WebId,
@@ -100,6 +101,19 @@ export function createMetaSpace(
   );
 }
 
-export function createNewSpacePreferences() {
-
+const DefaultSpaceName = 'default'
+export function ensureDefaultSpaces(
+  holder: WebId,
+  rootContainer: Container,
+  spaces: SpacePreferences
+): SpacePreferences {
+  if (!getMetaSpace(spaces)) {
+    spaces = setMetaSpace(spaces, createMetaSpace(holder, rootContainer));
+  }
+  if (getSpaceAll(spaces).length === 0) {
+    const metaspace = getContainer(getMetaSpace(spaces));
+    const defaultSpace = createSpace(holder, metaspace, DefaultSpaceName);
+    spaces = setSpace(spaces, defaultSpace);
+  }
+  return spaces;
 }
