@@ -1,14 +1,13 @@
-import { Garden, GardenItem, GardenConfig, UUIDString, UUID, UrnString, Slug} from './types';
-import {
-  createSolidDataset,
-  createThing,
-  getThing,
-  setThing,
-  setUrl,
-  getSourceUrl,
-} from '@inrupt/solid-client';
+import { Garden, GardenItem, GardenConfig, UUID, Slug } from './types';
+import { createThing, getThing, setThing, setUrl } from '@inrupt/solid-client';
 import { OWL } from '@inrupt/vocab-common-rdf';
-import { getUUID, encodeBase58Slug, createPtr, uuidUrn, slugToUrl} from './utils';
+import {
+  getUUID,
+  encodeBase58Slug,
+  createPtr,
+  uuidUrn,
+  slugToUrl,
+} from './utils';
 
 export function getItemWithUUID(garden: Garden, uuid: UUID): GardenItem {
   return getThing(garden, uuid);
@@ -58,22 +57,12 @@ export function getConfig(garden: Garden): GardenConfig {
   return getItemWithSlug(garden, ConfigSlug);
 }
 
-export function setConfig(garden: Garden, config: GardenConfig): Garden {
+export function ensureGardenConfig(garden: Garden): Garden {
+  let config = getConfig(garden) || createThing({ name: ConfigSlug });
   return setThing(garden, config);
 }
 
-export function createConfig(): GardenConfig {
-  return createThing({ name: ConfigSlug });
-}
-
-export function ensureConfig(garden: Garden): Garden {
-  if (getConfig(garden)) {
-    return garden;
-  } else {
-    return setThing(garden, createConfig());
-  }
-}
-
-export function createNewGarden(): Garden {
-  return ensureConfig(createSolidDataset());
+export function ensureGarden(garden: Garden): Garden {
+  garden = ensureGardenConfig(garden);
+  return garden
 }

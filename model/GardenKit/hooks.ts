@@ -9,10 +9,16 @@ import {
   AppSettings,
   Profile
 } from './types';
-import { getItemWithTitle, getItemWithUUID, createNewGarden } from './garden';
-import { asUrl, WebId } from '@inrupt/solid-client';
+import { getItemWithTitle, getItemWithUUID, ensureGarden } from './garden';
+import { asUrl, WebId, createSolidDataset } from '@inrupt/solid-client';
 import { useProfile, useResource, useThing } from 'swrlit';
-import { createNewSpacePreferences, getMetaSpace, getRootContainer, getSpace, getSpacePreferencesFile } from "./spaces";
+import {
+  ensureDefaultSpaces,
+  getMetaSpace,
+  getRootContainer,
+  getSpace,
+  getSpacePreferencesFile,
+} from './spaces';
 
 export type GardenResult = { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
@@ -86,12 +92,16 @@ export function useSpaces(webId: WebId): SpacePreferencesResult {
   const { profile } = useProfile(webId);
   const res = useResource(getSpacePreferencesFile(profile));
   if (res.error && res.error.statusCode === 404) {
-    const newSpaces = createNewSpacePreferences();
-    res.spaces = newSpaces;
+    const newSpaces = createSolidDataset();
     res.resource = newSpaces;
-  } else {
-    res.spaces = res.resource;
   }
+  const ensured = ensureDefaultSpaces(
+    webId,
+    getRootContainer(profile),
+    res.resource
+  );
+  res.spaces = ensured;
+  res.resource = ensured;
   res.saveSpaces = res.saveResource;
   return res;
 }
@@ -117,12 +127,12 @@ export function useAppSettings(
 export function useGarden(index: GardenFile): GardenResult {
   const res = useResource(index);
   if (res.error && res.error.statusCode === 404) {
-    const newGarden = createNewGarden();
-    res.garden = newGarden;
+    const newGarden = createSolidDataset();
     res.resource = newGarden;
-  } else {
-    res.garden = res.resource;
   }
+  const ensured = ensureGarden(res.resource);
+  res.garden = ensured;
+  res.resource = ensured;
   res.saveGarden = res.saveResource;
   return res;
 }

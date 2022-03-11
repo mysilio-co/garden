@@ -18,6 +18,8 @@ export const MY = {
     holder: g`holdsSpace`, // Space holder WebId. Inverse of holdsSpace
     hasMember: g`hasMember`, // Space hasMember webId. Member of Space. Typically used on the Space to denote the list of members allowed.
     hasGarden: g`hasGarden`, // Space hasGarden Garden. A space may have many Gardens. Not all Gardens have to exist in the same pod.
+    hasNursery: g`hasNursery`, // Space hasNursery Garden. A special kind of Garden, the Nursery, where new ideas go to blossom
+    hasCompost: g`hasCompost`, // Space hasCompost Garden. A special kind of Garden, the Compost, where old ideas go to be composted
 
     Garden: g`Garden`, // A Garden for community content. Contains Concepts,
 
