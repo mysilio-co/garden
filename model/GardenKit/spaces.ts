@@ -95,12 +95,12 @@ function ensureGardens(space: Space): Space {
   const container = getContainer(space);
   space = ensureUrl(
     space,
-    MY.Garden.hasGarden,
+    MY.Garden.hasPrivateGarden,
     new URL(container, 'private.ttl').toString()
   );
   space = ensureUrl(
     space,
-    MY.Garden.hasGarden,
+    MY.Garden.hasPublicGarden,
     new URL(container, 'public.ttl').toString()
   );
   space = ensureUrl(
