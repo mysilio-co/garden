@@ -1,5 +1,4 @@
 import {
-  buildThing,
   createThing,
   getThing,
   getThingAll,
@@ -7,7 +6,6 @@ import {
   WebId,
   setThing,
   Thing,
-  createSolidDataset,
   getUrlAll,
 } from '@inrupt/solid-client';
 import {

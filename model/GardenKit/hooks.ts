@@ -10,7 +10,12 @@ import {
   Profile,
 } from './types';
 import { getItemWithTitle, getItemWithUUID, ensureGarden } from './garden';
-import { asUrl, WebId, createSolidDataset } from '@inrupt/solid-client';
+import {
+  asUrl,
+  WebId,
+  createSolidDataset,
+  UrlString,
+} from '@inrupt/solid-client';
 import {
   useProfile,
   useResource,
@@ -78,6 +83,27 @@ export function useFilteredGarden(
   };
 }
 
+export function useOrCreateResource(url: UrlString): ResourceResult {
+  const response = useResource(url);
+  const { error } = response;
+  if (error && error.statusCode === 404) {
+    const emptyResource = createSolidDataset();
+    response.resource = emptyResource;
+    return response;
+  } else {
+    return response;
+  }
+}
+
+export function useGarden(index: GardenFile): GardenResult {
+  const res = useOrCreateResource(index) as GardenResult;
+  const ensured = ensureGarden(res.resource);
+  res.garden = ensured;
+  res.resource = ensured;
+  res.saveGarden = res.save;
+  return res;
+}
+
 export function useSpace(spaces: SpacePreferences, slug: Slug): SpaceResult {
   const space = getSpace(spaces, slug);
   const res = useThing(asUrl(space)) as SpaceResult;
@@ -96,13 +122,9 @@ export function useMetaSpace(spaces: SpacePreferences): SpaceResult {
 
 export function useSpaces(webId: WebId): SpacePreferencesResult {
   const { profile } = useProfile(webId);
-  const res = useResource(
+  const res = useOrCreateResource(
     getSpacePreferencesFile(profile)
   ) as SpacePreferencesResult;
-  if (res.error && res.error.statusCode === 404) {
-    const newSpaces = createSolidDataset();
-    res.resource = newSpaces;
-  }
   const ensured = ensureDefaultSpaces(
     webId,
     getRootContainer(profile),
@@ -131,18 +153,5 @@ export function useAppSettings(
   ) as AppSettingsResult;
   res.settings = res.thing;
   res.saveSettings = res.save;
-  return res;
-}
-
-export function useGarden(index: GardenFile): GardenResult {
-  const res = useResource(index) as GardenResult;
-  if (res.error && res.error.statusCode === 404) {
-    const newGarden = createSolidDataset();
-    res.resource = newGarden;
-  }
-  const ensured = ensureGarden(res.resource);
-  res.garden = ensured;
-  res.resource = ensured;
-  res.saveGarden = res.save;
   return res;
 }
