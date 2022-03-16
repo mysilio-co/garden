@@ -14,7 +14,7 @@ import {
 import { RDF, OWL } from '@inrupt/vocab-common-rdf';
 import * as uuid from 'uuid';
 import { base58 } from '@scure/base';
-import { UUID, Base58Slug, Slug, MaybeIri } from './types';
+import { UUID, Base58Slug, Slug, MaybeUrl } from './types';
 import { Resource } from '@inrupt/solid-client/dist/interfaces';
 
 export function uuidUrn(): UUID {
@@ -30,12 +30,12 @@ export function decodeBase58Slug(s: Base58Slug): string {
   return base58.decode(s).toString();
 }
 
-export function asIriString(iri: MaybeIri): string {
-  return typeof iri === 'string' ? iri : iri.value;
+export function asUrlString(url: MaybeUrl): string {
+  return typeof url === 'string' ? url : url.value;
 }
 
-export function isUUID(iri: MaybeIri): boolean {
-  const url = new URL(asIriString(iri));
+export function isUUID(maybeUrl: MaybeUrl): boolean {
+  const url = new URL(asUrlString(maybeUrl));
   return (
     url.protocol == 'urn:' &&
     url.pathname.indexOf('uuid:') == 0 &&
@@ -44,9 +44,9 @@ export function isUUID(iri: MaybeIri): boolean {
 }
 
 export function getUUID(thing: Thing): UUID {
-  const iri = asUrl(thing);
+  const url = asUrl(thing);
   if (isUUID(asUrl(thing))) {
-    return namedNode(iri);
+    return namedNode(url);
   } else {
     return namedNode(getUrlAll(thing, OWL.sameAs).find(isUUID));
   }
@@ -57,7 +57,7 @@ export function createThingWithUUID(): Thing {
 }
 
 export function slugToUrl(resource: Resource, slug: Slug): UrlString {
-  return new URL(getSourceUrl(resource), `#${slug}`).toString();
+  return new URL(`#${slug}`, getSourceUrl(resource)).toString();
 }
 
 export function createPtr(slug: Slug, uuid: UUID) {
@@ -66,34 +66,34 @@ export function createPtr(slug: Slug, uuid: UUID) {
     .build();
 }
 
-export function hasRDFTypes(thing: Thing, ts: MaybeIri[]) {
+export function hasRDFTypes(thing: Thing, ts: MaybeUrl[]) {
   const types = getUrlAll(thing, RDF.type);
   let hasAllTypes = true;
   for (let t of ts) {
-    hasAllTypes = hasAllTypes && types.includes(asIriString(t));
+    hasAllTypes = hasAllTypes && types.includes(asUrlString(t));
   }
   return hasAllTypes;
 }
 
-export function hasRDFType(thing: Thing, t: MaybeIri) {
+export function hasRDFType(thing: Thing, t: MaybeUrl) {
   return hasRDFTypes(thing, [t]);
 }
 
-export function addRDFTypes(thing: Thing, ts: MaybeIri[]) {
+export function addRDFTypes(thing: Thing, ts: MaybeUrl[]) {
   for (const t of ts) {
     thing = addRDFType(thing, t);
   }
   return thing;
 };
 
-export function addRDFType(thing: Thing, t: MaybeIri) {
+export function addRDFType(thing: Thing, t: MaybeUrl) {
   return addUrl(thing, RDF.type, t);
 };
 
 export function ensureUrl(
   thing: Thing,
-  url: MaybeIri,
-  value: MaybeIri
+  url: MaybeUrl,
+  value: MaybeUrl
 ): Thing {
   if (!thing || !url || !value || getUrl(thing, url)) {
     return thing;

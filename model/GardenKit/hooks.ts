@@ -7,7 +7,6 @@ import {
   SpacePreferences,
   Slug,
   AppSettings,
-  Profile,
 } from './types';
 import { getItemWithTitle, getItemWithUUID, ensureGarden } from './garden';
 import {
@@ -30,6 +29,7 @@ import {
   getSpace,
   getSpacePreferencesFile,
 } from './spaces';
+import { appSettingsUrl } from './settings';
 
 export type GardenResult = ResourceResult & { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
@@ -134,12 +134,6 @@ export function useSpaces(webId: WebId): SpacePreferencesResult {
   res.resource = ensured;
   res.saveSpaces = res.save;
   return res;
-}
-
-function appSettingsUrl(profile: Profile, namespace: Slug, name: Slug) {
-  const base = getRootContainer(profile);
-  const path = `/settings/${namespace}.ttl#${name}`;
-  return new URL(base, path).toString();
 }
 
 export function useAppSettings(

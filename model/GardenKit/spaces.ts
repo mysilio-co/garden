@@ -23,11 +23,14 @@ import { RDF } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
 
 export function getRootContainer(profile: Profile): Container {
-  return profile && getUrl(profile, WS.storage);
+  return (profile && getUrl(profile, WS.storage)) || '/';
 }
 
 export function getSpacePreferencesFile(profile: Profile): SpacePreferencesFile {
-  return profile && getUrl(profile, WS.preferencesFile);
+  return (
+    (profile && getUrl(profile, WS.preferencesFile)) ||
+    new URL('settings/prefs.ttl', getRootContainer(profile)).toString()
+  );
 }
 
 export function getContainer(space: Space): Container {
@@ -78,12 +81,12 @@ function ensureManifests(space: Space): Space {
   space = ensureUrl(
     space,
     MY.Garden.hasPublicationsManifest,
-    new URL(container, 'publications.ttl').toString()
+    new URL('publications.ttl', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.hasGnomesManifest,
-    new URL(container, 'gnomes.ttl').toString()
+    new URL('gnomes.ttl', container).toString()
   );
   return space;
 }
@@ -93,17 +96,17 @@ function ensureStorage(space: Space): Space {
   space = ensureUrl(
     space,
     MY.Garden.imageStorage,
-    new URL(container, 'images/').toString()
+    new URL('images/', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.fileStorage,
-    new URL(container, 'files/').toString()
+    new URL('files/', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.noteStorage,
-    new URL(container, 'notes/').toString()
+    new URL('notes/', container).toString()
   );
   return space;
 }
@@ -113,22 +116,22 @@ function ensureGardens(space: Space): Space {
   space = ensureUrl(
     space,
     MY.Garden.hasPrivateGarden,
-    new URL(container, 'private.ttl').toString()
+    new URL('private.ttl', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.hasPublicGarden,
-    new URL(container, 'public.ttl').toString()
+    new URL('public.ttl', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.hasNursery,
-    new URL(container, 'nursery.ttl').toString()
+    new URL('nursery.ttl', container).toString()
   );
   space = ensureUrl(
     space,
     MY.Garden.hasCompost,
-    new URL(container, 'compost.ttl').toString()
+    new URL('compost.ttl', container).toString()
   );
   return space;
 }
@@ -139,7 +142,7 @@ function ensureSpace(
   parent: Container,
   slug: Slug
 ): SpacePreferences {
-  const container = new URL(parent, `${slug}/`).toString();
+  const container = new URL(`${slug}/`, parent).toString();
   let space = getSpace(spaces, slug) || createThing({ name: slug });
   space = ensureUrl(space, MY.Garden.holder, holder);
   space = ensureUrl(space, RDF.type, WS.Workspace);
@@ -178,7 +181,7 @@ function ensureMetaSpace(
   space = ensureUrl(
     space,
     WS.storage,
-    new URL(rootContainer, 'spaces/').toString()
+    new URL('spaces/', rootContainer).toString()
   );
   return setMetaSpace(spaces, space);
 }
@@ -204,4 +207,8 @@ export function ensureDefaultSpaces(
   spaces = ensureMetaSpace(spaces, holder, rootContainer);
   spaces = ensureHomeSpace(spaces, holder);
   return spaces;
+}
+
+export function hasRequiredSpaces(spaces: SpacePreferences): boolean {
+  return spaces && getMetaSpace(spaces) && getSpaceAll(spaces).length >= 0;
 }
