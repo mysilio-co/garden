@@ -125,13 +125,7 @@ export function useSpaces(webId: WebId): SpacePreferencesResult {
   const res = useOrCreateResource(
     getSpacePreferencesFile(profile)
   ) as SpacePreferencesResult;
-  const ensured = ensureDefaultSpaces(
-    webId,
-    getRootContainer(profile),
-    res.resource
-  );
-  res.spaces = ensured;
-  res.resource = ensured;
+  res.spaces = res.resource;
   res.saveSpaces = res.save;
   return res;
 }

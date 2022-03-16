@@ -23,13 +23,17 @@ import { RDF } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
 
 export function getRootContainer(profile: Profile): Container {
-  return (profile && getUrl(profile, WS.storage)) || '/';
+  // TODO: What should we do if there is no storage set?
+  return profile && getUrl(profile, WS.storage);
 }
 
-export function getSpacePreferencesFile(profile: Profile): SpacePreferencesFile {
+export function getSpacePreferencesFile(
+  profile: Profile
+): SpacePreferencesFile {
   return (
-    (profile && getUrl(profile, WS.preferencesFile)) ||
-    new URL('settings/prefs.ttl', getRootContainer(profile)).toString()
+    profile &&
+    (getUrl(profile, WS.preferencesFile) ||
+      new URL('settings/prefs.ttl', getRootContainer(profile)).toString())
   );
 }
 
@@ -157,7 +161,7 @@ function ensureSpace(
 
 const DefaultMetaSpaceName = 'spaces';
 export function getMetaSpace(spaces: SpacePreferences): Space {
-  return spaces && getThing(spaces, DefaultMetaSpaceName);
+  return spaces && getSpace(spaces, DefaultMetaSpaceName);
 }
 
 export function setMetaSpace(
