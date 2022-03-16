@@ -22,8 +22,11 @@ export const MY = {
     hasPrivateGarden: g`hasPrivateGarden`, // Space hasPrivateGarden Garden. A Garden for the holder to enjoy in Private
     hasNursery: g`hasNursery`, // Space hasNursery Garden. A special kind of Garden, the Nursery, where new ideas go to blossom
     hasCompost: g`hasCompost`, // Space hasCompost Garden. A special kind of Garden, the Compost, where old ideas go to be composted
+    hasGnomesManifest: g`hasGnomesManifest`, // Space hasGnomesManifest Manifest. A machine-readable Manifest for Publications
+    hasPublicationsManifest: g`hasPublicationsManifest`, // Space hasPublicationsManifest Manifest. A machine-readable Manifest for Gnomes
 
-    Garden: g`Garden`, // A Garden for community content. Contains Concepts,
+    Manifest: g`Manifest`, // A Resource for configuration data needed by services and bots, like Gnomes and Publications.
+    Garden: g`Garden`, // A Resource for community content.
 
     imageStorage: g`imageStorage`, // a subclass of WS.storage for image files
     fileStorage: g`fileStorage`, // a subclass of WS.storage for downloadable files

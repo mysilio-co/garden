@@ -34,8 +34,12 @@ export function getContainer(space: Space): Container {
   return space && getUrl(space, WS.storage);
 }
 
-export function getGardenFileAll(space: Space): GardenFile[] {
-  return space && getUrlAll(space, MY.Garden.hasGarden);
+export function getPrivateGardenFileAll(space: Space): GardenFile[] {
+  return space && getUrlAll(space, MY.Garden.hasPrivateGarden);
+}
+
+export function getPublicGardenFileAll(space: Space): GardenFile[] {
+  return space && getUrlAll(space, MY.Garden.hasPublicGarden);
 }
 
 export function getCompostFile(space: Space): GardenFile {
@@ -67,6 +71,21 @@ export function setSpace(
   space: Space
 ): SpacePreferences {
   return spaces && space && setThing(spaces, space);
+}
+
+function ensureManifests(space: Space): Space {
+  const container = getContainer(space);
+  space = ensureUrl(
+    space,
+    MY.Garden.hasPublicationsManifest,
+    new URL(container, 'publications.ttl').toString()
+  );
+  space = ensureUrl(
+    space,
+    MY.Garden.hasGnomesManifest,
+    new URL(container, 'gnomes.ttl').toString()
+  );
+  return space;
 }
 
 function ensureStorage(space: Space): Space {
@@ -129,6 +148,7 @@ function ensureSpace(
   // need to happen after storage is set
   space = ensureStorage(space);
   space = ensureGardens(space);
+  space = ensureManifests(space);
   return setSpace(spaces, space);
 }
 

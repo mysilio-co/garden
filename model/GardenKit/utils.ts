@@ -66,7 +66,6 @@ export function createPtr(slug: Slug, uuid: UUID) {
     .build();
 }
 
-
 export function hasRDFTypes(thing: Thing, ts: MaybeIri[]) {
   const types = getUrlAll(thing, RDF.type);
   let hasAllTypes = true;
