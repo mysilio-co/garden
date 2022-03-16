@@ -1,3 +1,5 @@
+import Head from 'next/head'
+
 import { useProfile, useMyProfile, useWebId } from "swrlit";
 
 import { urlSafeIdToConceptName } from "../utils/uris";
@@ -18,6 +20,9 @@ export default function ConceptPage({ editorId = 'concept-page', webId, workspac
   const myNote = (webId === myWebId)
   return (
     <div>
+      <Head>
+        <title>{conceptName}</title>
+      </Head>
       <WebMonetization webId={webId} />
       <NoteHeader concept={concept} saveConcept={saveConcept} conceptName={conceptName} authorProfile={authorProfile}
         currentUserProfile={currentUserProfile} myNote={myNote} privacy={privacy} deleteConcept={deleteConcept} />

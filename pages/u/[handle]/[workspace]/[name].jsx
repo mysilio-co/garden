@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import { useWebId } from 'swrlit'
 
 import ConceptPageComponent from "../../../../components/ConceptPage"
 import { handleToWebId } from "../../../../utils/uris"
