@@ -7,11 +7,17 @@ import {
   SpacePreferences,
   Slug,
   AppSettings,
-  Profile
+  Profile,
 } from './types';
 import { getItemWithTitle, getItemWithUUID, ensureGarden } from './garden';
 import { asUrl, WebId, createSolidDataset } from '@inrupt/solid-client';
-import { useProfile, useResource, useThing } from 'swrlit';
+import {
+  useProfile,
+  useResource,
+  useThing,
+  ResourceResult,
+  ThingResult,
+} from 'swrlit';
 import {
   ensureDefaultSpaces,
   getMetaSpace,
@@ -20,15 +26,18 @@ import {
   getSpacePreferencesFile,
 } from './spaces';
 
-export type GardenResult = { garden: Garden; saveGarden: any };
+export type GardenResult = ResourceResult & { garden: Garden; saveGarden: any };
 export type FilteredGardenResult = { garden: Garden };
-export type GardenItemResult = { item: GardenItem; saveToGarden: any };
-export type SpaceResult = { space: Space; saveSpace: any };
-export type SpacePreferencesResult = {
+export type GardenItemResult = ThingResult & {
+  item: GardenItem;
+  saveToGarden: any;
+};
+export type SpaceResult = ThingResult & { space: Space; saveSpace: any };
+export type SpacePreferencesResult = ResourceResult & {
   spaces: SpacePreferences;
   saveSpaces: any;
 };
-export type AppSettingsResult = {
+export type AppSettingsResult = ThingResult & {
   settings: AppSettings;
   saveSettings: any;
 };
@@ -38,14 +47,11 @@ export type GardenFilter = {
   search: string;
 };
 
-export function useGardenItem(
-  garden: Garden,
-  uuid: UUID
-): GardenItemResult {
+export function useGardenItem(garden: Garden, uuid: UUID): GardenItemResult {
   const item = getItemWithUUID(garden, uuid);
-  const res = useThing(asUrl(item))
+  const res = useThing(asUrl(item)) as GardenItemResult;
   res.item = res.thing;
-  res.saveToGarden = res.saveThing;
+  res.saveToGarden = res.save;
   return res;
 }
 
@@ -54,9 +60,9 @@ export function useTitledGardenIten(
   name: string
 ): GardenItemResult {
   const item = getItemWithTitle(garden, name);
-  const res = useThing(asUrl(item))
-  res.item = res.thing
-  res.saveToGarden = res.saveThing
+  const res = useThing(asUrl(item)) as GardenItemResult;
+  res.item = res.thing;
+  res.saveToGarden = res.save;
   return res;
 }
 
@@ -74,23 +80,25 @@ export function useFilteredGarden(
 
 export function useSpace(spaces: SpacePreferences, slug: Slug): SpaceResult {
   const space = getSpace(spaces, slug);
-  const res = useThing(asUrl(space));
+  const res = useThing(asUrl(space)) as SpaceResult;
   res.space = res.thing;
-  res.saveSpace = res.saveThing;
+  res.saveSpace = res.save;
   return res;
-};
+}
 
 export function useMetaSpace(spaces: SpacePreferences): SpaceResult {
   const meta = getMetaSpace(spaces);
-  const res = useThing(asUrl(meta));
+  const res = useThing(asUrl(meta)) as SpaceResult;
   res.space = res.thing;
-  res.saveSpace = res.saveThing;
+  res.saveSpace = res.save;
   return res;
-};
+}
 
 export function useSpaces(webId: WebId): SpacePreferencesResult {
   const { profile } = useProfile(webId);
-  const res = useResource(getSpacePreferencesFile(profile));
+  const res = useResource(
+    getSpacePreferencesFile(profile)
+  ) as SpacePreferencesResult;
   if (res.error && res.error.statusCode === 404) {
     const newSpaces = createSolidDataset();
     res.resource = newSpaces;
@@ -102,7 +110,7 @@ export function useSpaces(webId: WebId): SpacePreferencesResult {
   );
   res.spaces = ensured;
   res.resource = ensured;
-  res.saveSpaces = res.saveResource;
+  res.saveSpaces = res.save;
   return res;
 }
 
@@ -118,14 +126,16 @@ export function useAppSettings(
   appName: Slug
 ): AppSettingsResult {
   const { profile } = useProfile(webId);
-  const res = useThing(appSettingsUrl(profile, appNamespace, appName));
-  res.settings = res.thing
-  res.saveSettings = res.saveThing
+  const res = useThing(
+    appSettingsUrl(profile, appNamespace, appName)
+  ) as AppSettingsResult;
+  res.settings = res.thing;
+  res.saveSettings = res.save;
   return res;
 }
 
 export function useGarden(index: GardenFile): GardenResult {
-  const res = useResource(index);
+  const res = useResource(index) as GardenResult;
   if (res.error && res.error.statusCode === 404) {
     const newGarden = createSolidDataset();
     res.resource = newGarden;
@@ -133,6 +143,6 @@ export function useGarden(index: GardenFile): GardenResult {
   const ensured = ensureGarden(res.resource);
   res.garden = ensured;
   res.resource = ensured;
-  res.saveGarden = res.saveResource;
+  res.saveGarden = res.save;
   return res;
 }
