@@ -3,6 +3,7 @@ import { useWebId } from 'swrlit'
 
 import WebMonetization from '../components/WebMonetization'
 import HeaderWithData from '../components/HeaderWithData'
+import LeftNavLayout from '../components/LeftNavLayout'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
 import { useFilteredGarden } from '../hooks/concepts';
 import Cards from '../components/Cards';
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const { garden } = useFilteredGarden(webId, workspaceSlug, search);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
   return (
-    <>
+    <LeftNavLayout>
       <WebMonetization webId={webId} />
       <HeaderWithData
         type="dashboard"
@@ -31,6 +32,6 @@ export default function Dashboard() {
           <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId}/>
         </WorkspaceProvider>
       </div>
-    </>
+    </LeftNavLayout>
   );
 }
