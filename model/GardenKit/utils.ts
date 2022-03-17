@@ -89,15 +89,3 @@ export function addRDFTypes(thing: Thing, ts: MaybeUrl[]) {
 export function addRDFType(thing: Thing, t: MaybeUrl) {
   return addUrl(thing, RDF.type, t);
 };
-
-export function ensureUrl(
-  thing: Thing,
-  url: MaybeUrl,
-  value: MaybeUrl
-): Thing {
-  if (!thing || !url || !value || getUrl(thing, url)) {
-    return thing;
-  } else {
-    return setUrl(thing, url, value);
-  }
-}

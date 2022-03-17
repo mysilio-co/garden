@@ -7,6 +7,8 @@ import {
   setThing,
   Thing,
   getUrlAll,
+  buildThing,
+  UrlString,
 } from '@inrupt/solid-client';
 import {
   Profile,
@@ -16,11 +18,13 @@ import {
   Space,
   Slug,
   GardenFile,
+  MaybeUrl,
 } from './types';
 import { WS } from '@inrupt/vocab-solid-common';
 import { ensureUrl, hasRDFType, slugToUrl } from './utils';
 import { RDF } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
+import { SpaceResult } from './hooks';
 
 export function getRootContainer(profile: Profile): Container {
   // TODO: What should we do if there is no storage set?
@@ -80,88 +84,44 @@ export function setSpace(
   return spaces && space && setThing(spaces, space);
 }
 
-function ensureManifests(space: Space): Space {
-  const container = getContainer(space);
-  space = ensureUrl(
-    space,
-    MY.Garden.hasPublicationsManifest,
-    new URL('publications.ttl', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.hasGnomesManifest,
-    new URL('gnomes.ttl', container).toString()
-  );
-  return space;
-}
-
-function ensureStorage(space: Space): Space {
-  const container = getContainer(space);
-  space = ensureUrl(
-    space,
-    MY.Garden.imageStorage,
-    new URL('images/', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.fileStorage,
-    new URL('files/', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.noteStorage,
-    new URL('notes/', container).toString()
-  );
-  return space;
-}
-
-function ensureGardens(space: Space): Space {
-  const container = getContainer(space);
-  space = ensureUrl(
-    space,
-    MY.Garden.hasPrivateGarden,
-    new URL('private.ttl', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.hasPublicGarden,
-    new URL('public.ttl', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.hasNursery,
-    new URL('nursery.ttl', container).toString()
-  );
-  space = ensureUrl(
-    space,
-    MY.Garden.hasCompost,
-    new URL('compost.ttl', container).toString()
-  );
-  return space;
-}
-
-function ensureSpace(
-  spaces: SpacePreferences,
+export function createSpace(
   holder: WebId,
-  parent: Container,
-  slug: Slug
-): SpacePreferences {
-  const container = new URL(`${slug}/`, parent).toString();
-  let space = getSpace(spaces, slug) || createThing({ name: slug });
-  space = ensureUrl(space, MY.Garden.holder, holder);
-  space = ensureUrl(space, RDF.type, WS.Workspace);
-  space = ensureUrl(space, RDF.type, MY.Garden.Space);
-  space = ensureUrl(space, WS.storage, container);
-  // need to happen after storage is set
-  space = ensureStorage(space);
-  space = ensureGardens(space);
-  space = ensureManifests(space);
-  return setSpace(spaces, space);
+  container: Container,
+  slug: Slug,
+  gardenUrls: {
+    private: UrlString;
+    public: UrlString;
+    nursery: UrlString;
+    compost: UrlString;
+  }
+): Space {
+  return buildThing(createThing({ name: slug }))
+    .addUrl(MY.Garden.holder, holder)
+    .addUrl(RDF.type, WS.Workspace)
+    .addUrl(RDF.type, MY.Garden.Space)
+    .addUrl(WS.storage, container)
+    .addUrl(MY.Garden.imageStorage, new URL('images/', container).toString())
+    .addUrl(MY.Garden.fileStorage, new URL('files/', container).toString())
+    .addUrl(MY.Garden.noteStorage, new URL('notes/', container).toString())
+    .addUrl(MY.Garden.hasGarden, gardenUrls.private)
+    .addUrl(MY.Garden.hasGarden, gardenUrls.public)
+    .addUrl(MY.Garden.hasNursery, gardenUrls.nursery)
+    .addUrl(MY.Garden.hasCompost, gardenUrls.compost)
+    .addUrl(
+      MY.Garden.hasPublicationsManifest,
+      new URL('publications.ttl', container).toString()
+    )
+    .addUrl(
+      MY.Garden.hasGnomesManifest,
+      new URL('gnomes.ttl', container).toString()
+    )
+    .build();
 }
 
-const DefaultMetaSpaceName = 'spaces';
+export const MetaSpaceSlug = 'spaces';
+export const HomeSpaceSlug = 'home'
 export function getMetaSpace(spaces: SpacePreferences): Space {
-  return spaces && getSpace(spaces, DefaultMetaSpaceName);
+  return spaces && getSpace(spaces, MetaSpaceSlug);
 }
 
 export function setMetaSpace(
@@ -172,47 +132,18 @@ export function setMetaSpace(
   return setSpace(spaces, space);
 }
 
-function ensureMetaSpace(
-  spaces: SpacePreferences,
-  holder: WebId,
-  rootContainer: Container
-): SpacePreferences {
-  let space =
-    getMetaSpace(spaces) || createThing({ name: DefaultMetaSpaceName });
-  space = ensureUrl(space, MY.Garden.holder, holder);
-  space = ensureUrl(space, RDF.type, WS.MasterWorkspace);
-  space = ensureUrl(space, RDF.type, MY.Garden.MetaSpace);
-  space = ensureUrl(
-    space,
-    WS.storage,
-    new URL('spaces/', rootContainer).toString()
-  );
-  return setMetaSpace(spaces, space);
-}
-
-const HomeSpaceName = 'home'
-function ensureHomeSpace(
-  spaces: SpacePreferences,
-  holder: WebId
-): SpacePreferences {
-  if (getSpaceAll(spaces).length === 0) {
-    const metaspace = getContainer(getMetaSpace(spaces));
-    spaces = ensureSpace(spaces, holder, metaspace, HomeSpaceName);
-  }
-  return spaces;
-};
-
-export function ensureDefaultSpaces(
-  holder: WebId,
-  rootContainer: Container,
-  spaces: SpacePreferences
-): SpacePreferences {
-  // meta space must come first, other spaces rely on it
-  spaces = ensureMetaSpace(spaces, holder, rootContainer);
-  spaces = ensureHomeSpace(spaces, holder);
-  return spaces;
-}
-
 export function hasRequiredSpaces(spaces: SpacePreferences): boolean {
   return spaces && getMetaSpace(spaces) && getSpaceAll(spaces).length >= 0;
+}
+
+export function createMetaSpace(holder: WebId, profile: Profile) {
+  return buildThing(createThing({ name: MetaSpaceSlug }))
+    .addUrl(MY.Garden.holder, holder)
+    .addUrl(RDF.type, WS.MasterWorkspace)
+    .addUrl(RDF.type, MY.Garden.MetaSpace)
+    .addUrl(
+      WS.storage,
+      new URL('spaces/', getRootContainer(profile)).toString()
+    )
+    .build();
 }

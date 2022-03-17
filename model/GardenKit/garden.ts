@@ -1,5 +1,12 @@
-import { Garden, GardenItem, GardenConfig, UUID, Slug } from './types';
-import { createThing, getThing, setThing, setUrl } from '@inrupt/solid-client';
+import {
+  Garden,
+  GardenItem,
+  GardenConfig,
+  GardenFile,
+  UUID,
+  Slug,
+} from './types';
+import { createThing, getThing, saveSolidDatasetAt, setThing, setUrl } from '@inrupt/solid-client';
 import { OWL } from '@inrupt/vocab-common-rdf';
 import {
   getUUID,
@@ -60,9 +67,4 @@ export function getConfig(garden: Garden): GardenConfig {
 export function ensureGardenConfig(garden: Garden): Garden {
   let config = getConfig(garden) || createThing({ name: ConfigSlug });
   return setThing(garden, config);
-}
-
-export function ensureGarden(garden: Garden): Garden {
-  garden = ensureGardenConfig(garden);
-  return garden
 }
