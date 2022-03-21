@@ -28,7 +28,7 @@ export default function Dashboard() {
       <div className="py-6 px-18">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
-          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId}/>
+          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId} />
         </WorkspaceProvider>
       </div>
     </>
