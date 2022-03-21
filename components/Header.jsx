@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Formik } from 'formik';
-import { getUrl } from '@inrupt/solid-client'
-import { FOAF } from '@inrupt/vocab-common-rdf';
-import Link from 'next/link';
+import {
+  MenuIcon,
+} from '@heroicons/react/outline'
 
 import { classNames } from '../utils/html';
 import { Search as SearchIcon } from './icons';
 import { IconInput } from './inputs';
-import { Logo } from './logo';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import NewNoteModal from './modals/NewNote';
@@ -49,10 +48,10 @@ function ActiveModal({ title, open, onClose }) {
 }
 
 export default function Header({
-  profile,
   loggedIn,
   type,
   onSearch,
+  openSidebar
 }) {
   const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
@@ -61,7 +60,7 @@ export default function Header({
     <nav
       className={`${bg} flex flex-row justify-between h-18 items-center relative z-30 px-4`}
     >
-      <div className="flex flex-row items-center">
+      <div className="flex flex-row items-center gap-2">
         {loggedIn && (
           <Formik>
             <IconInput
@@ -77,8 +76,6 @@ export default function Header({
             />
           </Formik>
         )}
-      </div>
-      <div className="flex flex-row items-center">
         <Dropdown label="New">
           <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
             <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
@@ -110,6 +107,17 @@ export default function Header({
           open={!!activeModal}
           onClose={() => setActiveModal(undefined)}
         />
+      </div>
+      <div className="flex flex-row items-center">
+
+        <button
+          type="button"
+          className="lg:hidden -mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-200 hover:text-white"
+          onClick={openSidebar}
+        >
+          <span className="sr-only">Open sidebar</span>
+          <MenuIcon className="h-6 w-6" aria-hidden="true" />
+        </button>
       </div>
     </nav>
   );

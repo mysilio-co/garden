@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { FOAF } from '@inrupt/vocab-common-rdf'
 import { sioc as SIOC } from 'rdf-namespaces'
@@ -39,14 +39,9 @@ export default function ProfilePage() {
   const isMyProfile = (myWebId === webId)
   const follows = useFollows()
   const alreadyFollowing = follows && follows.includes(webId)
-  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
   return (
-    <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`}>
+    <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`} HeaderComponent={HeaderWithData}>
       <WebMonetization webId={webId} />
-      <HeaderWithData
-        setDrawerOpen={setProfileDrawerOpen}
-        drawerOpen={profileDrawerOpen}
-      />
       <div className="px-18">
         <div className="flex flex-row mt-6 mb-6 justify-between items-start">
           <div className="flex flex-row">

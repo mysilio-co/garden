@@ -1,15 +1,10 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
-  CalendarIcon,
   HomeIcon,
-  MapIcon,
   MenuIcon,
-  SearchCircleIcon,
-  SpeakerphoneIcon,
   UserGroupIcon,
   XIcon,
 } from '@heroicons/react/outline'
@@ -58,15 +53,35 @@ function AvatarSection({ avatarImgSrc, name, profileDrawerOpen, setProfileDrawer
   )
 }
 
+function DefaultHeader({ openSidebar }) {
+  return (
+    <div className="lg:hidden">
+      <div className="flex items-center justify-between bg-header-gradient px-4 py-1.5">
+        <Logo className="mt-2 -ml-2 h-12 w-12" />
+        <div>
+          <button
+            type="button"
+            className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-200 hover:text-white"
+            onClick={openSidebar}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <MenuIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
+const defaultHeaderProps = {}
 
-export default function LeftNavLayout({ pageName, children }) {
+export default function LeftNavLayout({ pageName, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
   const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const name = profile && getStringNoLocale(profile, FOAF.name)
 
   const loggedIn = useLoggedIn()
-  const { logout, webId } = useAuthentication()
+  const { logout } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const navigation = [
@@ -101,7 +116,7 @@ export default function LeftNavLayout({ pageName, children }) {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none">
+              <div className="relative flex-1 flex flex-col max-w-xs w-full bg-gray-500 border-r border-gray-200 focus:outline-none">
                 <Transition.Child
                   as={Fragment}
                   enter="ease-in-out duration-300"
@@ -123,8 +138,9 @@ export default function LeftNavLayout({ pageName, children }) {
                   </div>
                 </Transition.Child>
                 <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                  <div className="flex-shrink-0 flex items-center px-4 h-8">
+                  <div className="flex-shrink-0 px-4 relative w-52">
                     <Image
+                      layout="responsive"
                       src={logoAndName}
                       alt="Mysilio"
                     />
@@ -137,9 +153,9 @@ export default function LeftNavLayout({ pageName, children }) {
                             key={item.name}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-500 text-gray-200'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                              'group flex items-center px-2 py-2 text-base font-medium'
+                                ? 'bg-gray-400 text-gray-200'
+                                : 'text-gray-200 hover:bg-gray-50 hover:text-gray-900',
+                              'group flex items-center px-2 py-2 text-base font-medium rounded-md'
                             )}
                           >
                             <item.icon
@@ -171,16 +187,13 @@ export default function LeftNavLayout({ pageName, children }) {
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="flex-1 flex flex-col min-h-0 bg-gray-500 border-r border-gray-200">
               <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
-                <div className="flex items-center flex-shrink-0 px-4 relative w-52">
+                <div className="flex-shrink-0 px-4 relative w-52">
                   <Link href="/">
-                    <a className="w-full h-full">
-                      <Image
-                        className="h-4 w-auto"
-                        layout="responsive"
-                        src={logoAndName}
-                        alt="Mysilio"
-                      />
-                    </a>
+                    <Image
+                      layout="responsive"
+                      src={logoAndName}
+                      alt="Mysilio"
+                    />
                   </Link>
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
@@ -215,21 +228,8 @@ export default function LeftNavLayout({ pageName, children }) {
           </div>
         </div>
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-          <div className="lg:hidden">
-            <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
-              <Logo />
-              <div>
-                <button
-                  type="button"
-                  className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  <span className="sr-only">Open sidebar</span>
-                  <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          </div>
+          <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} {...headerProps} />
+
           <div className="flex-1 relative z-0 flex overflow-hidden">
             <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last">
               {children}
