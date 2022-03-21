@@ -51,29 +51,17 @@ function ActiveModal({ title, open, onClose }) {
 export default function Header({
   profile,
   loggedIn,
-  logout,
-  conceptNames,
   type,
   onSearch,
-  drawerOpen,
-  setDrawerOpen
 }) {
-  const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
 
   return (
     <nav
-      className={`${bg} flex flex-row justify-between h-18 items-center relative z-30`}
+      className={`${bg} flex flex-row justify-between h-18 items-center relative z-30 px-4`}
     >
       <div className="flex flex-row items-center">
-        <div className="w-18 flex flex-col justify-center items-center">
-          <Link href="/">
-            <a className="flex items-center p-2 rounded hover:bg-my-green-dark hover:no-underline">
-              <Logo className="w-7 transform scale-105" />
-            </a>
-          </Link>
-        </div>
         {loggedIn && (
           <Formik>
             <IconInput
@@ -122,13 +110,6 @@ export default function Header({
           open={!!activeModal}
           onClose={() => setActiveModal(undefined)}
         />
-
-        <Avatar
-          src={avatarImgSrc}
-          className="mx-12 w-12 h-12 cursor-pointer object-cover"
-          onClick={() => setDrawerOpen(!drawerOpen)}
-        />
-
       </div>
     </nav>
   );

@@ -12,7 +12,7 @@ function EllipsesMenu({ loggedIn, logout }) {
   return (
     <Popover>
       <Popover.Button className="outline-none focus:outline-none">
-        <button className="rounded-full border h-8 w-8 text-gray-500">
+        <button className="rounded-full border h-8 w-8 text-gray-200">
           <span className="align-top relative -top-1">...</span>
         </button>
       </Popover.Button>
@@ -44,9 +44,9 @@ function EllipsesMenu({ loggedIn, logout }) {
   )
 }
 
-export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, isOpen, setIsOpen }) {
+export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, setIsOpen }) {
   return (
-    <div className={`shadow-label transform top-0 right-0 w-96 px-6 pt-24 bg-white fixed z-10 h-full overflow-auto ease-in-out transition-all duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className="text-gray-200">
       <div className="flex justify-between mb-12">
         {profile && (
           <div className="">
@@ -59,7 +59,7 @@ export default function ProfileDrawer({ profile, saveProfile, loggedIn, logout, 
         <div className="flex justify-end">
           <EllipsesMenu loggedIn={loggedIn} logout={logout} />
           <button className="rounded-full border h-8 w-8 ml-2" onClick={() => setIsOpen(false)}>
-            <Close className="w-5 h-5 m-auto text-gray-500" />
+            <Close className="w-5 h-5 m-auto" />
           </button>
         </div>
       </div>

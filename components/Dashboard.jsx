@@ -16,7 +16,7 @@ export default function Dashboard() {
   const { garden } = useFilteredGarden(webId, workspaceSlug, search);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
   return (
-    <LeftNavLayout>
+    <LeftNavLayout pageName="Dashboard">
       <WebMonetization webId={webId} />
       <HeaderWithData
         type="dashboard"

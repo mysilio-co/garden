@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   CalendarIcon,
@@ -13,45 +14,70 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 
+import { asUrl } from '@inrupt/solid-client'
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import { getUrl, getStringNoLocale } from '@inrupt/solid-client'
+
 import { useMyProfile, useLoggedIn, useAuthentication } from 'swrlit'
 
+import ProfileDrawer from './ProfileDrawer'
 import Avatar from './Avatar';
+import logoAndName from '../public/img/logo-and-text.png'
+import { Logo } from './logo'
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
-  /*  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-    { name: 'Teams', href: '#', icon: UserGroupIcon, current: false },
-    { name: 'Directory', href: '#', icon: SearchCircleIcon, current: false },
-    { name: 'Announcements', href: '#', icon: SpeakerphoneIcon, current: false },
-    { name: 'Office Map', href: '#', icon: MapIcon, current: false },*/
-]
+import { profilePath } from '../utils/uris'
+
+const dashboardNavItem = { name: 'Dashboard', href: '/', icon: HomeIcon }
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function LeftNavLayout({ children }) {
-  const { profile } = useMyProfile()
+function AvatarSection({ avatarImgSrc, name, profileDrawerOpen, setProfileDrawerOpen }) {
+  return (
+    <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+      <button type="button"
+        className="flex-shrink-0 w-full group block"
+        onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
+        <div className="flex items-center">
+          <div>
+            <Avatar
+              src={avatarImgSrc}
+              className="w-12 h-12 cursor-pointer object-cover"
+            />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-gray-300 group-hover:text-gray-100 ">{name}</p>
+            <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
+              {profileDrawerOpen ? 'Hide' : 'View'} profile
+            </p>
+          </div>
+        </div>
+      </button>
+    </div>
+  )
+}
+
+
+
+export default function LeftNavLayout({ pageName, children }) {
+  const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const name = profile && getStringNoLocale(profile, FOAF.name)
 
   const loggedIn = useLoggedIn()
-  const { logout } = useAuthentication()
+  const { logout, webId } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-
+  const navigation = [
+    dashboardNavItem,
+    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
+  ].map((i) => {
+    i.current = (pageName == i.name)
+    return i
+  })
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full overflow-hidden">
-        ```
-      */}
       <div className="h-full flex">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="fixed inset-0 flex z-40 lg:hidden" onClose={setSidebarOpen}>
@@ -97,11 +123,10 @@ export default function LeftNavLayout({ children }) {
                   </div>
                 </Transition.Child>
                 <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                  <div className="flex-shrink-0 flex items-center px-4">
-                    <img
-                      className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg"
-                      alt="Workflow"
+                  <div className="flex-shrink-0 flex items-center px-4 h-8">
+                    <Image
+                      src={logoAndName}
+                      alt="Mysilio"
                     />
                   </div>
                   <nav aria-label="Sidebar" className="mt-5">
@@ -112,9 +137,9 @@ export default function LeftNavLayout({ children }) {
                             key={item.name}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-100 text-gray-900'
+                                ? 'bg-gray-500 text-gray-200'
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                              'group flex items-center px-2 py-2 text-base font-medium rounded-md'
+                              'group flex items-center px-2 py-2 text-base font-medium'
                             )}
                           >
                             <item.icon
@@ -131,24 +156,7 @@ export default function LeftNavLayout({ children }) {
                     </div>
                   </nav>
                 </div>
-                <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-                  <button type="button"
-                    href="#" className="flex-shrink-0 group block"
-                    onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
-                    <div className="flex items-center">
-                      <div>
-                        <Avatar
-                          src={avatarImgSrc}
-                          className="w-12 h-12 cursor-pointer object-cover"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{name}</p>
-                        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
-                      </div>
-                    </div>
-                  </button>
-                </div>
+                <AvatarSection name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
               </div>
             </Transition.Child>
             <div className="flex-shrink-0 w-14" aria-hidden="true">
@@ -161,72 +169,55 @@ export default function LeftNavLayout({ children }) {
         <div className="hidden lg:flex lg:flex-shrink-0">
           <div className="flex flex-col w-64">
             {/* Sidebar component, swap this element with another sidebar if you like */}
-            <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-100">
-              <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                <div className="flex items-center flex-shrink-0 px-4">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg"
-                    alt="Workflow"
-                  />
+            <div className="flex-1 flex flex-col min-h-0 bg-gray-500 border-r border-gray-200">
+              <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
+                <div className="flex items-center flex-shrink-0 px-4 relative w-52">
+                  <Link href="/">
+                    <a className="w-full h-full">
+                      <Image
+                        className="h-4 w-auto"
+                        layout="responsive"
+                        src={logoAndName}
+                        alt="Mysilio"
+                      />
+                    </a>
+                  </Link>
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
                   <div className="px-2 space-y-1">
                     {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? 'bg-gray-200 text-gray-900'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                          'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
-                        )}
-                      >
-                        <item.icon
+                      <Link href={item.href}>
+                        <a
+                          key={item.name}
                           className={classNames(
-                            item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                            'mr-3 h-6 w-6'
+                            item.current
+                              ? 'bg-gray-400 text-gray-200'
+                              : 'text-gray-200 hover:bg-gray-50 hover:text-gray-900',
+                            'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
                           )}
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </a>
+                        >
+                          <item.icon
+                            className={classNames(
+                              item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
+                              'mr-3 h-6 w-6'
+                            )}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </a>
+                      </Link>
                     ))}
                   </div>
                 </nav>
               </div>
-              <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-                <button type="button"
-                  className="flex-shrink-0 w-full group block"
-                  onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
-                  <div className="flex items-center">
-                    <div>
-                      <Avatar
-                        src={avatarImgSrc}
-                        className="w-12 h-12 cursor-pointer object-cover"
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{name}</p>
-                      <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
-                    </div>
-                  </div>
-                </button>
-              </div>
+              <AvatarSection name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
             </div>
           </div>
         </div>
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
           <div className="lg:hidden">
             <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
-              <div>
-                <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                  alt="Workflow"
-                />
-              </div>
+              <Logo />
               <div>
                 <button
                   type="button"
@@ -241,24 +232,18 @@ export default function LeftNavLayout({ children }) {
           </div>
           <div className="flex-1 relative z-0 flex overflow-hidden">
             <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last">
-              {/* Start main area*/}
               {children}
-              {/* End main area */}
             </main>
             <Transition show={profileDrawerOpen} as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0">
-
-              <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200 overflow-y-auto">
-                {/* Start secondary column (hidden on smaller screens) */}
-                <div className="absolute inset-0 py-6 px-4 sm:px-6 lg:px-8">
-                  <div className="h-full border-2 border-gray-200 border-dashed rounded-lg" />
-                </div>
-                {/* End secondary column */}
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="-translate-x-full"
+              enterTo="translate-x-0"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0"
+              leaveTo="-translate-x-full"
+            >
+              <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 p-4 w-96 border-r border-gray-200 bg-gray-500 overflow-y-auto">
+                <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
               </aside>
             </Transition>
           </div>

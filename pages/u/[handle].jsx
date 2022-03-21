@@ -10,6 +10,8 @@ import Cards from '../../components/Cards'
 import WebMonetization from '../../components/WebMonetization'
 import HeaderWithData from '../../components/HeaderWithData'
 import ProfileDrawerWithData from '../../components/ProfileDrawerWithData'
+import LeftNavLayout from '../../components/LeftNavLayout'
+
 import { WorkspaceProvider } from '../../contexts/WorkspaceContext'
 import { useFollows } from '../../hooks/people'
 import { useGarden } from '../../hooks/concepts'
@@ -39,7 +41,7 @@ export default function ProfilePage() {
   const alreadyFollowing = follows && follows.includes(webId)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
   return (
-    <div className="page">
+    <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`}>
       <WebMonetization webId={webId} />
       <HeaderWithData
         setDrawerOpen={setProfileDrawerOpen}
@@ -78,9 +80,8 @@ export default function ProfilePage() {
         </div>
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
-          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={myWebId}/>
         </WorkspaceProvider>
       </div>
-    </div>
+    </LeftNavLayout>
   );
 }
