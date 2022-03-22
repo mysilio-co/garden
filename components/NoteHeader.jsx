@@ -4,8 +4,10 @@ import { getStringNoLocale, getDatetime, getUrl, setUrl, asUrl } from "@inrupt/s
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
+import {
+  MenuIcon,
+} from '@heroicons/react/outline'
 
-import { Logo } from './logo';
 import Avatar from './Avatar';
 import { getRelativeTime } from '../utils/time';
 import { profilePath } from '../utils/uris';
@@ -16,15 +18,13 @@ import { Tooltip } from './elements'
 import ImageUploadModal from './modals/ImageUpload'
 import { useImageUploadUri } from "../hooks/uris";
 
-export default function NoteHeader({ concept, saveConcept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy }) {
+export default function NoteHeader({ concept, saveConcept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, openSidebar }) {
   const router = useRouter()
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
 
   const noteCreatedAt = concept && getDatetime(concept, DCTERMS.created);
   const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
-
-  const currentUserAvatarImgSrc = currentUserProfile && getUrl(currentUserProfile, FOAF.img)
 
   const [privacyUpdatingTo, setPrivacyUpdatingTo] = useState(false)
   function setNoteVisibilityEnabled(isEnabled) {
@@ -52,18 +52,9 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
   }
   return (
     <div className="flex flex-col">
-      <nav className={`${bg} b-2xl flex flex-row justify-between h-32`}>
+      <nav className={`${bg} b-2xl flex flex-row justify-between h-32 px-4`}>
         <div className="flex flex-row">
-          <div className="flex flex-row items-center">
-            <div className="w-18">
-              <Link href="/">
-                <a>
-                  <Logo className='w-12 -ml-2.5 transform scale-150 opacity-20' />
-                </a>
-              </Link>
-            </div>
-          </div>
-          <div className="flex flex-row flex-col items-left">
+          <div className="flex flex-col items-left">
             <div className="mt-6 text-white text-4xl font-black">{conceptName}</div>
             <div className="flex flex-row mt-3 h-3 text-sm text-white items-center">
               {authorProfilePath && (
@@ -90,7 +81,7 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
           </div>
         </div>
         <div className="flex flex-row mt-6">
-          <div className="flex flex-row h-10 mr-4">
+          <div className="flex flex-row h-10">
             {myNote && (
               <>
                 <button onClick={deleteAndRedirect} className="mx-4">
@@ -113,7 +104,14 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
             <SendIcon className="w-4 h-4" />
           </button>
           */}
-            <Avatar src={currentUserAvatarImgSrc} className="h-10 w-10 ml-8" />
+            <button
+              type="button"
+              className="lg:hidden -mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-200 hover:text-white"
+              onClick={openSidebar}
+            >
+              <span className="sr-only">Open sidebar</span>
+              <MenuIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
           </div>
         </div>
       </nav>

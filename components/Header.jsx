@@ -58,7 +58,7 @@ export default function Header({
 
   return (
     <nav
-      className={`${bg} flex flex-row justify-between h-18 items-center relative z-30 px-4`}
+      className={`${bg} flex flex-row justify-between h-18 items-center relative z-30 p-4`}
     >
       <div className="flex flex-row items-center gap-2">
         {loggedIn && (

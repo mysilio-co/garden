@@ -20,7 +20,7 @@ export default function Dashboard() {
   return (
     <LeftNavLayout pageName="Dashboard" HeaderComponent={HeaderWithData} headerProps={headerProps} >
       <WebMonetization webId={webId} />
-      <div className="py-6 px-18">
+      <div className="p-6">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={garden} workspaceSlug={workspaceSlug} />
         </WorkspaceProvider>

@@ -42,7 +42,7 @@ export default function ProfilePage() {
   return (
     <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`} HeaderComponent={HeaderWithData}>
       <WebMonetization webId={webId} />
-      <div className="px-18">
+      <div className="px-6">
         <div className="flex flex-row mt-6 mb-6 justify-between items-start">
           <div className="flex flex-row">
             {profileImage && (
