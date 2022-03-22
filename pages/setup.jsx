@@ -1,13 +1,14 @@
 import { useLoggedIn, useWebId } from 'swrlit'
 import Header from '../components/Header'
 import { Loader } from '../components/elements'
-import { useAppSettings, useSpaces } from '../model/GardenKit/hooks';
+import { useAppSettings, useSpaces, useSpacesWithSetup } from '../model/GardenKit/hooks';
 import { useApp } from '../hooks/app'
 import Welcome from '../components/onboarding/Welcome'
 import { hasRequiredSpaces } from '../model/GardenKit/spaces';
 
 function Setup({ webId }) {
   const { app, initApp, error: appError } = useApp(webId);
+  const { spaces, setupDefaultSpaces } = useSpacesWithSetup(webId);
 
   return (
     <>
@@ -19,7 +20,10 @@ function Setup({ webId }) {
               Welcome to Mysilio! It looks like you don't have any Spaces set up
               yet.
             </h3>
-            <button className="btn-md btn-filled btn-square h-10 mr-1">
+            <button
+              className="btn-md btn-filled btn-square h-10 mr-1"
+              onClick={setupDefaultSpaces}
+            >
               Create your Home Space
             </button>
           </>
@@ -28,7 +32,10 @@ function Setup({ webId }) {
             <h3 className="text-xl pb-6">
               We've upgraded our data format! Click below to import your data.
             </h3>
-            <button className="btn-md btn-filled btn-square h-10 mr-1">
+            <button
+              className="btn-md btn-filled btn-square h-10 mr-1"
+              onClick={setupDefaultSpaces}
+            >
               Migrate your data
             </button>
           </>
@@ -51,7 +58,7 @@ function LoadingPage() {
 export default function SetupPage() {
   const loggedIn = useLoggedIn();
   const webId = useWebId();
-  const { spaces } = useSpaces(webId);
+  const { spaces } = useSpacesWithSetup(webId);
 
   return (
     <div className="page" id="page">

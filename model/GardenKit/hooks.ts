@@ -10,17 +10,15 @@ import {
   GardenConfig,
 } from './types';
 import {
-  getItemWithTitle,
-  getItemWithUUID,
   ensureGardenConfig,
   getConfig,
 } from './garden';
 import {
-  asUrl,
   WebId,
   createSolidDataset,
   UrlString,
   access,
+  Thing,
   getSourceUrl,
 } from '@inrupt/solid-client';
 import {
@@ -30,6 +28,7 @@ import {
   ResourceResult,
   ThingResult,
   usePublicAccess,
+  useThingInResource,
 } from 'swrlit';
 import {
   createMetaSpace,
@@ -43,9 +42,17 @@ import {
   hasRequiredSpaces,
   HomeSpaceSlug,
   setMetaSpace,
-  setSpace,
 } from './spaces';
 import { appSettingsUrl } from './settings';
+import {
+  asUrlString,
+  createPtr,
+  encodeBase58Slug,
+  getUUID,
+  slugToUrl,
+  uuidUrn,
+} from './utils';
+import { useCallback } from 'react';
 
 export type GardenResult = ResourceResult & {
   garden: Garden;
@@ -85,23 +92,33 @@ export type GardenFilter = {
   search: string;
 };
 
-export function useGardenItem(garden: Garden, uuid: UUID): GardenItemResult {
-  const item = getItemWithUUID(garden, uuid);
-  const res = useThing(asUrl(item)) as GardenItemResult;
+export function useGardenItem(index: GardenFile, uuid: UUID): GardenItemResult {
+  const res = useThingInResource(index, asUrlString(uuid)) as GardenItemResult;
   res.item = res.thing;
   res.saveToGarden = res.save;
   return res;
 }
 
 export function useTitledGardenIten(
-  garden: Garden,
-  name: string
+  index: GardenFile,
+  title: string
 ): GardenItemResult {
-  const item = getItemWithTitle(garden, name);
-  const res = useThing(asUrl(item)) as GardenItemResult;
-  res.item = res.thing;
-  res.saveToGarden = res.save;
-  return res;
+  const slug = encodeBase58Slug(title);
+  const ptr = useThing(slugToUrl(index, slug));
+  const uuid = (index && getUUID(ptr.thing)) || uuidUrn();
+  const res = useGardenItem(index, uuid);
+  res.saveToGarden = async (newThing: Thing) => {
+    res.mutate(newThing, false);
+    if (getUUID(ptr.thing) === uuid) {
+      // ptr doesn't need updating
+      await res.saveToGarden(newThing);
+    } else {
+      await ptr.save(createPtr(slug, uuid));
+      await res.saveToGarden(newThing);
+    }
+    res.mutate(newThing);
+  };
+  return res
 }
 
 export function useFilteredGarden(
@@ -166,8 +183,7 @@ export function useGardenWithSetup(
 }
 
 export function useSpace(spaces: SpacePreferences, slug: Slug): SpaceResult {
-  const space = getSpace(spaces, slug);
-  const res = useThing(asUrl(space)) as SpaceResult;
+  const res = useThing(slugToUrl(spaces, slug)) as SpaceResult;
   res.space = res.thing;
   res.saveSpace = res.save;
   return res;
@@ -180,32 +196,40 @@ export function useSpaceWithSetup(
 ): SpaceWithSetupResult {
   const res = useSpace(spaces, slug) as SpaceWithSetupResult;
   const metaspace = getContainer(getMetaSpace(spaces));
-  const container = new URL(`${slug}/`, metaspace).toString();
-  const publicGardenUrl = new URL('private.ttl', container).toString()
-  const privateGardenUrl = new URL('public.ttl', container).toString()
-  const nurseryUrl = new URL('nursery.ttl', container).toString()
-  const compostUrl = new URL('compost.ttl', container).toString()
+  const container = metaspace && new URL(`${slug}/`, metaspace).toString();
+  const publicGardenUrl =
+    metaspace && new URL('private.ttl', container).toString();
+  const privateGardenUrl =
+    metaspace && new URL('public.ttl', container).toString();
+  const nurseryUrl = metaspace && new URL('nursery.ttl', container).toString()
+  const compostUrl = metaspace && new URL('compost.ttl', container).toString()
   const publicGarden = useGardenWithSetup(publicGardenUrl);
   const privateGarden = useGardenWithSetup(privateGardenUrl, true);
   const nursery = useGardenWithSetup(nurseryUrl);
   const compost = useGardenWithSetup(compostUrl);
-  const setup = getSpace(spaces, slug)
-    ? undefined
-    : async () => {
-      await publicGarden.setupGarden()
-      await privateGarden.setupGarden()
-      await compost.setupGarden()
-      await nursery.setupGarden()
-        await res.saveSpace(
-          spaces,
-          createSpace(webId, container, HomeSpaceSlug, {
-            compost: compostUrl,
-            nursery: nurseryUrl,
-            private: privateGardenUrl,
-            public: publicGardenUrl,
-          })
-        );
-      };
+  const setup = useCallback(async () => {
+    if (getSpace(spaces, slug)) {
+      await publicGarden.setupGarden();
+      await privateGarden.setupGarden();
+      await compost.setupGarden();
+      await nursery.setupGarden();
+      await res.saveSpace(
+        spaces,
+        createSpace(webId, container, HomeSpaceSlug, {
+          compost: compostUrl,
+          nursery: nurseryUrl,
+          private: privateGardenUrl,
+          public: publicGardenUrl,
+        })
+      );
+    } else {
+      throw new Error(
+        `Space with slug ${slug} already exists in resource with URL ${
+          spaces && getSourceUrl(spaces)
+        }`
+      );
+    }
+  }, [spaces, slug, webId]);
   res.setupSpace = setup;
   return res;
 }
@@ -223,6 +247,8 @@ export function useMetaSpaceWithSetup(
   const setup = getMetaSpace(spaces)
     ? undefined
     : async () => {
+        console.log('spaces', spaces);
+        console.log('setupSpace', res);
         await res.saveSpace(
           setMetaSpace(spaces, createMetaSpace(webId, profile))
         );

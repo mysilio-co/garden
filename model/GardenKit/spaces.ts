@@ -18,13 +18,11 @@ import {
   Space,
   Slug,
   GardenFile,
-  MaybeUrl,
 } from './types';
 import { WS } from '@inrupt/vocab-solid-common';
-import { ensureUrl, hasRDFType, slugToUrl } from './utils';
+import { hasRDFType, slugToUrl } from './utils';
 import { RDF } from '@inrupt/vocab-common-rdf';
 import { MY } from './vocab';
-import { SpaceResult } from './hooks';
 
 export function getRootContainer(profile: Profile): Container {
   // TODO: What should we do if there is no storage set?
@@ -128,8 +126,8 @@ export function setMetaSpace(
   spaces: SpacePreferences,
   space: Space
 ): SpacePreferences {
-  console.assert(isMetaSpace(space));
-  return setSpace(spaces, space);
+  spaces && spaces && console.assert(isMetaSpace(space));
+  return spaces && space && setSpace(spaces, space);
 }
 
 export function hasRequiredSpaces(spaces: SpacePreferences): boolean {

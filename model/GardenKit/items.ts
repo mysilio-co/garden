@@ -81,7 +81,7 @@ export function getCreator(concept: Concept): UrlString | undefined {
 }
 
 export function getAbout(concept: Concept): UrlString | undefined {
-  return getUrl(concept, SIOC.about) 
+  return getUrl(concept, SIOC.about)
 }
 
 export function setTitle(concept: Concept, title: string): Concept {
@@ -97,14 +97,14 @@ export function setDepiction(concept: Concept, depiction: UrlString): Concept {
 }
 
 export function setCreator(concept: Concept, webId: WebId): Concept {
-  return setUrl(concept, DCTERMS.creator, webId); 
+  return setUrl(concept, DCTERMS.creator, webId);
 }
 
 export function setAbout(concept: Concept, about: UrlString): Concept {
   return setUrl(concept, SIOC.about, about);
 }
 
-function createItem(webId: WebId) {
+function createItem(webId: WebId, uuid?: UUID) {
   return buildThing(createThingWithUUID())
     .addUrl(DCTERMS.creator, webId)
     .addDatetime(DCTERMS.created, new Date())

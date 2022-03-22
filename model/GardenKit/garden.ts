@@ -17,26 +17,25 @@ import {
 } from './utils';
 
 export function getItemWithUUID(garden: Garden, uuid: UUID): GardenItem {
-  return getThing(garden, uuid);
+  return garden && getThing(garden, uuid);
 }
 
 export function getItemWithSlug(garden: Garden, slug: Slug): GardenItem {
-  const ptr = getThing(garden, slugToUrl(garden, slug));
-  const uuid = getUUID(ptr);
-  return getItemWithUUID(garden, uuid);
+  const ptr = garden && getThing(garden, slugToUrl(garden, slug));
+  const uuid = garden && getUUID(ptr);
+  return garden && getItemWithUUID(garden, uuid);
 }
 
 export function getItemWithTitle(garden: Garden, title: string): GardenItem {
   const slug = encodeBase58Slug(title);
-  return getItemWithSlug(garden, slug);
+  return garden && getItemWithSlug(garden, slug);
 }
 
 export function setItemWithUUID(garden: Garden, item: GardenItem): Garden {
   if (!getUUID(item)) {
-    item = setUrl(item, OWL.sameAs, uuidUrn());
+    item = item && setUrl(item, OWL.sameAs, uuidUrn());
   }
-
-  return setThing(garden, item);
+  return garden && setThing(garden, item);
 }
 
 export function setItemWithSlug(
@@ -44,9 +43,9 @@ export function setItemWithSlug(
   slug: Slug,
   item: GardenItem
 ): Garden {
-  const uuid = getUUID(item);
-  garden = setItemWithUUID(garden, item);
-  garden = setThing(garden, createPtr(slug, uuid));
+  const uuid = item && getUUID(item);
+  garden = garden && setItemWithUUID(garden, item);
+  garden = garden && setThing(garden, createPtr(slug, uuid));
   return garden;
 }
 
@@ -56,15 +55,16 @@ export function setItemWithTitle(
   item: GardenItem
 ): Garden {
   const slug = encodeBase58Slug(title);
-  return setItemWithSlug(garden, slug, item);
+  return garden && setItemWithSlug(garden, slug, item);
 }
 
 const ConfigSlug = 'garden';
 export function getConfig(garden: Garden): GardenConfig {
-  return getItemWithSlug(garden, ConfigSlug);
+  return garden && getItemWithSlug(garden, ConfigSlug);
 }
 
 export function ensureGardenConfig(garden: Garden): Garden {
-  let config = getConfig(garden) || createThing({ name: ConfigSlug });
-  return setThing(garden, config);
+  let config =
+    garden && (getConfig(garden) || createThing({ name: ConfigSlug }));
+  return garden && setThing(garden, config);
 }

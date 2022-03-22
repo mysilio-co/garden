@@ -16,6 +16,7 @@ import * as uuid from 'uuid';
 import { base58 } from '@scure/base';
 import { UUID, Base58Slug, Slug, MaybeUrl } from './types';
 import { Resource } from '@inrupt/solid-client/dist/interfaces';
+import { urlSafeIdToConceptName } from '../../utils/uris';
 
 export function uuidUrn(): UUID {
   // https://stackoverflow.com/questions/20342058/which-uuid-version-to-use
@@ -44,8 +45,10 @@ export function isUUID(maybeUrl: MaybeUrl): boolean {
 }
 
 export function getUUID(thing: Thing): UUID {
-  const url = asUrl(thing);
-  if (isUUID(asUrl(thing))) {
+  const url = thing && asUrl(thing);
+  if (!url) {
+    return undefined;
+  } else if (isUUID(url)) {
     return namedNode(url);
   } else {
     return namedNode(getUrlAll(thing, OWL.sameAs).find(isUUID));
@@ -56,8 +59,9 @@ export function createThingWithUUID(): Thing {
   return createThing({ url: uuidUrn().value });
 }
 
-export function slugToUrl(resource: Resource, slug: Slug): UrlString {
-  return new URL(`#${slug}`, getSourceUrl(resource)).toString();
+export function slugToUrl(resourceOrUrl: Resource | UrlString, slug: Slug): UrlString {
+  const url = typeof resourceOrUrl === "string" ? resourceOrUrl : getSourceUrl(resourceOrUrl)
+  return url && new URL(`#${slug}`, url).toString();
 }
 
 export function createPtr(slug: Slug, uuid: UUID) {
