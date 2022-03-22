@@ -21,7 +21,7 @@ import NotePicker from '../components/NotePicker'
 import { Loader, InlineLoader } from '../components/elements'
 import { deleteResource } from '../utils/fetch';
 import HeaderWithData from '../components/HeaderWithData'
-import ProfileDrawerWithData from '../components/ProfileDrawerWithData'
+import LeftNavLayout from '../components/LeftNavLayout'
 
 const SinglePageGateSchema = Yup.object().shape({
   css: Yup.string()
@@ -84,17 +84,17 @@ function GnomeThingEntry({ thing }) {
   return (
     <div>
       <h5 className="font-bold">{type}</h5>
-        deployed using the
+      deployed using the
       <h5 className="font-bold">{template}</h5>
-        template and
+      template and
       <h5 className="font-bold">{conceptName}</h5>
-        to
+      to
       {deployedAt ? (
         <h5 className="font-bold">
           <a href={deployedAt} target='_blank' rel='noopener noreferrer'>{deployedAt}</a>
         </h5>
       ) : (
-        <InlineLoader/>
+        <InlineLoader />
       )}
     </div>
   )
@@ -300,24 +300,18 @@ export default function Settings() {
   function onChange(newSettings) {
     save(newSettings)
   }
-  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
-
   return (
-    <div className="page">
+    <LeftNavLayout pageName="Settings" HeaderComponent={HeaderWithData} >
       <WebMonetization webId={webId} />
-      <HeaderWithData
-        setDrawerOpen={setProfileDrawerOpen}
-        drawerOpen={profileDrawerOpen}
-      />
-      <h1 className="text-5xl text-center mb-12">Settings</h1>
-      <div className="mx-36">
+      <h1 className="text-3xl text-center mt-8 mb-12">Settings</h1>
+      <div className="mx-8">
         <SectionHeader title="Gates"
           description={(<>
             Gates are customizable websites that serve as gateways to your garden.
             Right now we only support deploying a single note to a simple one page website,
             but expect richer templates soon. Custom domains are available to paid members
             only. Reach out at <a href="mailto:hello@understory.coop">hello@understory.coop</a> to purchase a plan.
-            </>)} />
+          </>)} />
 
         <GnomesResourceEditor webId={webId} />
         <SectionHeader title="Zines"
@@ -336,7 +330,6 @@ export default function Settings() {
           />
         )}
       </div>
-      <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId}/>
-    </div>
+    </LeftNavLayout>
   )
 }

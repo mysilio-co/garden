@@ -1,9 +1,9 @@
-import Nav from '../components/nav'
+import LeftNavLayout from '../components/LeftNavLayout'
 
 export default function TosPage() {
   return (
-    <div className="page text-white bg-login-gradient px-16">
-      <div className="body">
+    <LeftNavLayout>
+      <div className="body p-8 bg-my-green text-white">
         <div>
           <div>
             <div><a name="_2cipo4yr3w5d"></a>
@@ -247,6 +247,6 @@ export default function TosPage() {
           </div>
         </div>
       </div>
-    </div>
+    </LeftNavLayout>
   )
 }

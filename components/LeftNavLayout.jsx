@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react'
+import { Fragment, useMemo, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog, Popover, Transition } from '@headlessui/react'
@@ -22,7 +22,7 @@ import { Logo } from './logo'
 
 import { profilePath } from '../utils/uris'
 
-const dashboardNavItem = { name: 'Dashboard', href: '/', icon: HomeIcon }
+const defaultNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -30,25 +30,29 @@ function classNames(...classes) {
 
 function EllipsesMenu({ loggedIn, logout, className = "" }) {
   return (
-    <Popover className={className}>
+    <Popover className={`relative ${className}`}>
       <Popover.Button className="outline-none focus:outline-none">
         <button className="rounded-full border h-8 w-8 text-gray-200">
           <span className="align-top relative -top-1">...</span>
         </button>
       </Popover.Button>
 
-      <Popover.Panel className="absolute origin-top-right right-4 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+      <Popover.Panel className="absolute w-36 bottom-8 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
         {loggedIn && (
           <Link href="/settings">
             <a className="menu-item">settings</a>
           </Link>
         )}
-        <a href="/privacy" className="menu-item" role="menuitem">
-          privacy
-        </a>
-        <a href="/tos" className="menu-item" role="menuitem">
-          terms of service
-        </a>
+        <Link href="/privacy">
+          <a className="menu-item" role="menuitem">
+            privacy
+          </a>
+        </Link>
+        <Link href="/tos">
+          <a className="menu-item" role="menuitem">
+            terms of service
+          </a>
+        </Link>
         {loggedIn && (
           <button
             type="submit"
@@ -64,27 +68,29 @@ function EllipsesMenu({ loggedIn, logout, className = "" }) {
   )
 }
 
-function AvatarSection({ className="", avatarImgSrc, name, profileDrawerOpen, setProfileDrawerOpen, loggedIn, logout }) {
+function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, setProfileDrawerOpen, loggedIn, logout }) {
   return (
     <div className={`flex-shrink-0 flex border-t bg-gray-500 border-gray-200 p-4 ${className}`}>
-      <button type="button"
-        className="flex-1 group block"
-        onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
-        <div className="flex items-center">
-          <div>
-            <Avatar
-              src={avatarImgSrc}
-              className="w-12 h-12 cursor-pointer object-cover"
-            />
+      {loggedIn && (
+        <button type="button"
+          className="flex-1 group block"
+          onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
+          <div className="flex items-center">
+            <div>
+              <Avatar
+                src={avatarImgSrc}
+                className="w-12 h-12 cursor-pointer object-cover"
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-300 group-hover:text-gray-100 ">{name}</p>
+              <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
+                {profileDrawerOpen ? 'Hide' : 'View'} profile
+              </p>
+            </div>
           </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-300 group-hover:text-gray-100 ">{name}</p>
-            <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
-              {profileDrawerOpen ? 'Hide' : 'View'} profile
-            </p>
-          </div>
-        </div>
-      </button>
+        </button>
+      )}
       <EllipsesMenu loggedIn={loggedIn} logout={logout} className="self-center" />
     </div>
   )
@@ -112,6 +118,19 @@ function DefaultHeader({ openSidebar }) {
 
 const defaultHeaderProps = {}
 
+function navigationItems(pageName, profile) {
+  const profileItems = profile ? [
+    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
+  ] : []
+  return [
+    ...defaultNavItems,
+    ...profileItems
+  ].map((i) => {
+    i.current = (pageName == i.name)
+    return i
+  })
+}
+
 export default function LeftNavLayout({ pageName, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
   const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
@@ -121,13 +140,7 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
   const { logout } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const navigation = [
-    dashboardNavItem,
-    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
-  ].map((i) => {
-    i.current = (pageName == i.name)
-    return i
-  })
+  const navigation = useMemo(() => navigationItems(pageName, profile), [pageName, profile])
   return (
     <>
       <div className="h-screen flex relative">
@@ -180,9 +193,9 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
                   enter="transition ease-in-out duration-300 transform"
                   enterFrom="translate-y-full"
                   enterTo="translate-y-0"
-//                  leave="transition ease-in-out duration-300 transform"
-//                  leaveFrom="translate-y-0"
-//                  leaveTo="-translate-y-full"
+                //                  leave="transition ease-in-out duration-300 transform"
+                //                  leaveFrom="translate-y-0"
+                //                  leaveTo="-translate-y-full"
                 >
                   <div className="flex-1 p-4">
                     <ProfileDrawer profile={profile} saveProfile={saveProfile} setIsOpen={setProfileDrawerOpen} />
@@ -193,9 +206,9 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
                   enter="transition ease-in-out duration-300 transform"
                   enterFrom="translate-y-full"
                   enterTo="translate-y-0"
-//                  leave="transition ease-in-out duration-300 transform"
-//                  leaveFrom="translate-y-0"
-//                  leaveTo="-translate-y-full"
+                //                  leave="transition ease-in-out duration-300 transform"
+                //                  leaveFrom="translate-y-0"
+                //                  leaveTo="-translate-y-full"
                 >
                   <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                     <div className="flex-shrink-0 px-4 relative w-52">
@@ -284,7 +297,7 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
                   </div>
                 </nav>
               </div>
-              <AvatarSection name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
+              <AvatarSection loggedIn={loggedIn} logout={logout} name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
             </div>
           </div>
         </div>
