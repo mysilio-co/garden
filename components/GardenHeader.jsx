@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import {
   MenuIcon,
 } from '@heroicons/react/outline'
+import { useLoggedIn } from 'swrlit'
 
 import { classNames } from '../utils/html';
 import { Search as SearchIcon } from './icons';
@@ -48,11 +49,11 @@ function ActiveModal({ title, open, onClose }) {
 }
 
 export default function Header({
-  loggedIn,
   type,
   onSearch,
   openSidebar
 }) {
+  const loggedIn = useLoggedIn()
   const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
 

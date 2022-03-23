@@ -8,7 +8,7 @@ import { useProfile, useMyProfile, useWebId } from 'swrlit'
 import { handleToWebId, profilePath } from "../../utils/uris"
 import Cards from '../../components/Cards'
 import WebMonetization from '../../components/WebMonetization'
-import HeaderWithData from '../../components/HeaderWithData'
+import GardenHeader from '../../components/GardenHeader'
 import ProfileDrawerWithData from '../../components/ProfileDrawerWithData'
 import LeftNavLayout from '../../components/LeftNavLayout'
 
@@ -40,7 +40,7 @@ export default function ProfilePage() {
   const follows = useFollows()
   const alreadyFollowing = follows && follows.includes(webId)
   return (
-    <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`} HeaderComponent={HeaderWithData}>
+    <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`} HeaderComponent={GardenHeader}>
       <WebMonetization webId={webId} />
       <div className="px-6">
         <div className="flex flex-row mt-6 mb-6 justify-between items-start">

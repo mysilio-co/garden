@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useWebId } from 'swrlit'
 
 import WebMonetization from '../components/WebMonetization'
-import HeaderWithData from '../components/HeaderWithData'
+import GardenHeader from './GardenHeader'
 import LeftNavLayout from '../components/LeftNavLayout'
 import { WorkspaceProvider } from '../contexts/WorkspaceContext'
 import { useFilteredGarden } from '../hooks/concepts';
@@ -18,7 +18,7 @@ export default function Dashboard() {
     type: 'dashboard'
   }), [setSearch])
   return (
-    <LeftNavLayout pageName="Dashboard" HeaderComponent={HeaderWithData} headerProps={headerProps} >
+    <LeftNavLayout pageName="Dashboard" HeaderComponent={GardenHeader} headerProps={headerProps} >
       <WebMonetization webId={webId} />
       <div className="p-6">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>

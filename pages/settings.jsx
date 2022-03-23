@@ -9,7 +9,6 @@ import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { FG, trackGoal } from '../model/fathom';
 
-import Nav from '../components/nav'
 import WebMonetization from '../components/WebMonetization'
 import { US } from '../vocab'
 import { useAppSettings, useDevMode } from '../hooks/app'
@@ -20,7 +19,6 @@ import { newSinglePageGateThing, updateSinglePageGateThing, setupGnome, updateDe
 import NotePicker from '../components/NotePicker'
 import { Loader, InlineLoader } from '../components/elements'
 import { deleteResource } from '../utils/fetch';
-import HeaderWithData from '../components/HeaderWithData'
 import LeftNavLayout from '../components/LeftNavLayout'
 
 const SinglePageGateSchema = Yup.object().shape({
@@ -301,7 +299,7 @@ export default function Settings() {
     save(newSettings)
   }
   return (
-    <LeftNavLayout pageName="Settings" HeaderComponent={HeaderWithData} >
+    <LeftNavLayout pageName="Settings" >
       <WebMonetization webId={webId} />
       <h1 className="text-3xl text-center mt-8 mb-12">Settings</h1>
       <div className="mx-8">

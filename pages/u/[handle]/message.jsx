@@ -9,10 +9,7 @@ import {
 import { LDP, FOAF, RDFS, DCTERMS } from '@inrupt/vocab-common-rdf'
 import { fetch } from '@inrupt/solid-client-authn-browser'
 
-import Nav from '../../../components/nav'
 import { handleToWebId } from "../../../utils/uris"
-
-
 
 export default function MessagePage () {
   const router = useRouter()
