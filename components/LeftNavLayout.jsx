@@ -98,9 +98,8 @@ function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, 
 
 function DefaultHeader({ openSidebar }) {
   return (
-    <div className="lg:hidden">
-      <div className="flex items-center justify-between bg-header-gradient px-4 py-1.5">
-        <Logo className="mt-2 -ml-2 h-12 w-12" />
+    <div>
+      <div className="flex items-center justify-end bg-header-gradient px-4 py-1.5">
         <div>
           <button
             type="button"
