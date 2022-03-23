@@ -52,35 +52,45 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
   }
   return (
     <div className="flex flex-col">
-      <nav className={`${bg} b-2xl flex flex-row justify-between h-32 px-4`}>
-        <div className="flex flex-row">
-          <div className="flex flex-col items-left">
-            <div className="mt-6 text-white text-4xl font-black">{conceptName}</div>
-            <div className="flex flex-row mt-3 h-3 text-sm text-white items-center">
-              {authorProfilePath && (
-                <>
-                  <Link href={authorProfilePath}>
-                    <a>
-                      <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
-                    </a>
-                  </Link>
-                  <Link href={authorProfilePath}>
-                    <a>
-                      <div className="ml-2 font-bold text-my-yellow">{authorName}</div>
-                    </a>
-                  </Link>
-                </>
-              )}
-              <div className="ml-2 opacity-50">
-                <b>Created</b> {noteCreatedAt && getRelativeTime(noteCreatedAt)}
+      <nav className={`${bg} b-2xl flex flex-col gap-4 md:flex-row justify-between min-h-32 p-4`}>
+        <div className="flex flex-col items-left">
+          <div className="flex justify-between">
+            <div className="text-white text-4xl font-black">
+              {conceptName}
+            </div>
+            <button
+              type="button"
+              className="inline-flex md:hidden flex-shrink-0 h-12 w-12 items-center justify-center rounded-md text-gray-200 hover:text-white"
+              onClick={openSidebar}
+            >
+              <span className="sr-only">Open sidebar</span>
+              <MenuIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="flex mt-3 h-3 text-sm text-white items-center">
+            {authorProfilePath && (
+              <div className="flex flex-col sm:flex-row sm:gap-2">
+                <Link href={authorProfilePath}>
+                  <a>
+                    <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
+                  </a>
+                </Link>
+                <Link href={authorProfilePath}>
+                  <a>
+                    <div className="font-bold text-my-yellow">{authorName}</div>
+                  </a>
+                </Link>
               </div>
-              <div className="ml-2 opacity-50">
-                <b>Last Edit</b> {noteLastEdit && getRelativeTime(noteLastEdit)}
-              </div>
+            )}
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+              <b>Created</b><span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
+            </div>
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+              <b>Last Edit</b><span> {noteLastEdit && getRelativeTime(noteLastEdit)}</span>
             </div>
           </div>
         </div>
-        <div className="flex flex-row mt-6">
+        <div className="flex flex-row">
           <div className="flex flex-row h-10">
             {myNote && (
               <>
@@ -106,7 +116,7 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
           */}
             <button
               type="button"
-              className="lg:hidden -mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-200 hover:text-white"
+              className="hidden md:inline-flex lg:hidden -mr-3 h-12 w-12 items-center justify-center rounded-md text-gray-200 hover:text-white"
               onClick={openSidebar}
             >
               <span className="sr-only">Open sidebar</span>

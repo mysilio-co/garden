@@ -18,7 +18,6 @@ import { useMyProfile, useLoggedIn, useAuthentication } from 'swrlit'
 import ProfileDrawer from './ProfileDrawer'
 import Avatar from './Avatar';
 import logoAndName from '../public/img/logo-and-text.png'
-import { Logo } from './logo'
 
 import { profilePath } from '../utils/uris'
 
