@@ -4,6 +4,9 @@ import Image from 'next/image'
 import { Dialog, Popover, Transition } from '@headlessui/react'
 import {
   HomeIcon,
+  LoginIcon,
+  GlobeIcon,
+  BookOpenIcon,
   MenuIcon,
   UserGroupIcon,
   XIcon,
@@ -21,7 +24,13 @@ import logoAndName from '../public/img/logo-and-text.png'
 
 import { profilePath } from '../utils/uris'
 
-const defaultNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
+const defaultLoggedInNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
+const defaultLoggedOutNavItems = [
+  { name: 'Home', href: '/', icon: HomeIcon },
+  { name: 'Log In', href: '/login', icon: LoginIcon },
+  { name: 'Sign Up', href: '/register', icon: BookOpenIcon }
+
+]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -116,12 +125,13 @@ function DefaultHeader({ openSidebar }) {
 
 const defaultHeaderProps = {}
 
-function navigationItems(pageName, profile) {
+function navigationItems({loggedIn, pageName, profile}) {
   const profileItems = profile ? [
     { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
   ] : []
+  const basicNavItems = loggedIn ? defaultLoggedInNavItems : defaultLoggedOutNavItems
   return [
-    ...defaultNavItems,
+    ...basicNavItems,
     ...profileItems
   ].map((i) => {
     i.current = (pageName == i.name)
@@ -138,7 +148,7 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
   const { logout } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const navigation = useMemo(() => navigationItems(pageName, profile), [pageName, profile])
+  const navigation = useMemo(() => navigationItems({loggedIn, pageName, profile}), [pageName, profile])
   return (
     <>
       <div className="h-screen flex relative">
