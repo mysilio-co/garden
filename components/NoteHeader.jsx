@@ -13,12 +13,9 @@ import { getRelativeTime } from '../utils/time';
 import { profilePath } from '../utils/uris';
 import { NoteVisibilityToggle } from './toggles'
 import PrivacyChanger from './PrivacyChanger'
-import { UploadImage, Trashcan } from './icons'
-import { Tooltip } from './elements'
-import ImageUploadModal from './modals/ImageUpload'
-import { useImageUploadUri } from "../hooks/uris";
+import { Trashcan } from './icons'
 
-export default function NoteHeader({ concept, saveConcept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, openSidebar }) {
+export default function NoteHeader({ concept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, openSidebar }) {
   const router = useRouter()
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
@@ -32,16 +29,8 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
   }
 
   const authorWebId = authorProfile && asUrl(authorProfile)
-  const coverImage = concept && getUrl(concept, FOAF.img)
   const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
 
-  const webId = useWebId()
-  const imageUploadUri = useImageUploadUri(webId)
-  const [coverImageUploaderOpen, setCoverImageUploaderOpen] = useState(false)
-  async function setCoverImage(url) {
-    await saveConcept(setUrl(concept, FOAF.img, url))
-    setCoverImageUploaderOpen(false)
-  }
   const authorProfilePath = authorWebId && profilePath(authorWebId)
   async function deleteAndRedirect() {
     const confirmed = confirm(`Are you sure you want to delete ${conceptName}?`)
@@ -91,10 +80,10 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
           </div>
         </div>
         <div className="flex flex-row">
-          <div className="flex flex-row h-10">
+          <div className="flex flex-row h-10 gap-4">
             {myNote && (
               <>
-                <button onClick={deleteAndRedirect} className="mx-4">
+                <button onClick={deleteAndRedirect} className="">
                   <Trashcan className="h-6 w-6 text-white" />
                 </button>
                 {privacyUpdatingTo ? (
@@ -125,22 +114,6 @@ export default function NoteHeader({ concept, saveConcept, deleteConcept, concep
           </div>
         </div>
       </nav>
-      <div className={`relative flex flex-row justify-center group overflow-hidden ${coverImage ? 'h-40' : ''}`}>
-        {coverImage && (
-          <img className="absolute top-0 left-0 w-full overflow-hidden" src={coverImage} alt={conceptName} />
-        )}
-        {myNote && (
-          <>
-            <Tooltip content={<span>Upload Cover Image</span>}>
-              <button className="hover:shadow-menu" onClick={() => setCoverImageUploaderOpen(true)}>
-                <UploadImage className="w-6 h-6 text-gray-700 mt-4 opacity-10 group-hover:opacity-90" />
-              </button>
-            </Tooltip>
-            <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
-              onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
-          </>
-        )}
-      </div>
     </div>
   )
 }

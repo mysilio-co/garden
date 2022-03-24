@@ -257,9 +257,9 @@ export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
-  conceptNames=[],
-  tagNames=[],
-  mentionNames=[],
+  conceptNames = [],
+  tagNames = [],
+  mentionNames = [],
   readOnly,
   ...props
 }) {
@@ -306,12 +306,16 @@ export default function Editor({
     >
       {!readOnly && (
         <>
-          <div className="flex flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
-            <ToolbarButtonsBasicElements />
-            <ToolbarButtonsList />
-            <P.LinkToolbarButton icon={<LinkIcon />} />
-            <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
-            <ToolbarButtonsBasicMarks />
+          <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
+            <div className="flex">
+              <ToolbarButtonsBasicElements />
+              <ToolbarButtonsList />
+              <P.LinkToolbarButton icon={<LinkIcon />} />
+              <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+            </div>
+            <div className="flex">
+              <ToolbarButtonsBasicMarks />
+            </div>
           </div>
 
           <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
