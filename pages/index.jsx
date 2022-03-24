@@ -1,11 +1,10 @@
 import { useLoggedIn, useWebId } from 'swrlit'
 
-import Header from '../components/Header'
+import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
 
 import { useApp } from '../hooks/app'
 
-import Welcome from '../components/onboarding/Welcome'
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
 

@@ -43,6 +43,10 @@ strong {
 
 /* start components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
+.btn-sm {
+  @apply text-xs px-2.5 py-1;
+}
+
 .btn-md {
   @apply text-sm px-6 py-2.5;
 }
