@@ -121,7 +121,7 @@ export default function GardenHeader({
   const [activeModal, setActiveModal] = useState(undefined);
   const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
-  const gardenName = (type == 'dashboard') ? 'Dashboard' : `${authorName}'s garden`;
+  const gardenName = (type == 'dashboard') ? 'Dashboard' : authorName ? `${authorName}'s garden` : '';
 
 
 
