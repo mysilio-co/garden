@@ -1,7 +1,7 @@
 import { useState, useMemo, Fragment } from 'react';
 import { Transition } from '@headlessui/react'
-import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
-import {  getUrl, setUrl, asUrl } from "@inrupt/solid-client";
+import { FOAF } from "@inrupt/vocab-common-rdf";
+import { getUrl, setUrl, isThingLocal } from "@inrupt/solid-client";
 
 import NoteEditor from "./NoteEditor";
 import ConnectionsPanel from "./ConnectionsPanel";
@@ -41,25 +41,28 @@ export default function ConceptBody({
     await saveConcept(setUrl(concept, FOAF.img, url))
     setCoverImageUploaderOpen(false)
   }
+  const isSavedConcept = concept && !isThingLocal(concept)
   return (
 
     <div className="relative">
-      <Transition
-        show={!panelOpen} as={Fragment}
-        enter="transform transition ease-in-out duration-500 sm:duration-700"
-        enterFrom="translate-x-full"
-        enterTo="translate-x-0"
-        leave="transform transition ease-in-out duration-500 sm:duration-700"
-        leaveFrom="translate-x-0"
-        leaveTo="translate-x-full"
-      >
-        <button onClick={() => setPanelOpen(true)}
-          className="absolute top-0 right-0 w-18 h-18 text-gray-500 hover:text-gray-400 bg-gray-100 rounded-bl-lg flex flex-row py-6 pl-2 pr-4 z-40"
+      {isSavedConcept && (
+        <Transition
+          show={!panelOpen} as={Fragment}
+          enter="transform transition ease-in-out duration-500 sm:duration-700"
+          enterFrom="translate-x-full"
+          enterTo="translate-x-0"
+          leave="transform transition ease-in-out duration-500 sm:duration-700"
+          leaveFrom="translate-x-0"
+          leaveTo="translate-x-full"
         >
-          <ArrowSquareLeftIcon className="w-6 h-6 pointer-events-none" />
-          <ShareIcon className="w-6 h-6 pointer-events-none" />
-        </button>
-      </Transition>
+          <button onClick={() => setPanelOpen(true)}
+            className="absolute top-0 right-0 w-18 h-18 text-gray-500 hover:text-gray-400 bg-gray-100 rounded-bl-lg flex flex-row py-6 pl-2 pr-4 z-40"
+          >
+            <ArrowSquareLeftIcon className="w-6 h-6 pointer-events-none" />
+            <ShareIcon className="w-6 h-6 pointer-events-none" />
+          </button>
+        </Transition>
+      )}
 
       <div className="flex flex-row w-full">
         <div className={`flex-grow py-6 bg-white pl-6 sm:pl-12 md:pl-18 ${panelOpen ? 'pr-12 hidden md:block' : 'pr-6 sm:pr-12 md:pr-18'}`}>
@@ -97,20 +100,22 @@ export default function ConceptBody({
           ))}
 
         </div>
-        <Transition
-          show={panelOpen} as={Fragment}
-          enter="transform transition ease-in-out duration-500 sm:duration-700"
-          enterFrom="translate-x-full"
-          enterTo="translate-x-0"
-          leave="transform transition ease-in-out duration-500 sm:duration-700"
-          leaveFrom="translate-x-0"
-          leaveTo="translate-x-full"
-        >
-          <ConnectionsPanel className="w-full md:w-auto"
-            concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
-            webId={authorWebId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
-            onClose={() => setPanelOpen(false)} />
-        </Transition>
+        {isSavedConcept && (
+          <Transition
+            show={panelOpen} as={Fragment}
+            enter="transform transition ease-in-out duration-500 sm:duration-700"
+            enterFrom="translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in-out duration-500 sm:duration-700"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-full"
+          >
+            <ConnectionsPanel className="w-full md:w-auto"
+              concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
+              webId={authorWebId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
+              onClose={() => setPanelOpen(false)} />
+          </Transition>
+        )}
       </div>
     </div>
   )
