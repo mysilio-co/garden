@@ -1,6 +1,12 @@
 import { useState, forwardRef, Suspense } from 'react'
 import { asUrl } from '@inrupt/solid-client'
 import Link from 'next/link'
+import {
+  HomeIcon,
+  MenuIcon,
+  UserGroupIcon,
+  XIcon,
+} from '@heroicons/react/outline'
 
 import {
   getTags, getLinks, tagUrlToTagName,
@@ -11,6 +17,7 @@ import Label from './Label'
 import { notePath, urlSafeIdToConceptName } from "../utils/uris";
 import { Close as CloseIcon } from "./icons"
 import ConnectionsTabs from './ConnectionsTabs'
+
 
 function TagsSection({ concept, tagPrefix, workspaceSlug }) {
   const tags = getTags(concept)
@@ -100,9 +107,16 @@ const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix,
   const [activeTab, setActiveTab] = useState('links')
   return (
     <div className={`flex flex-col ${className}`} ref={ref}>
-      <div className="flex flex-row justify-between p-6 bg-gray-100">
+      <div className="flex flex-row gap-4 justify-between items-center p-4 bg-gray-100">
         <h3 className="font-bold text-gray-500 leading-7 text-2xl">Connections</h3>
-        <CloseIcon className="w-6 h-6 text-gray-700 cursor-pointer" onClick={onClose} />
+        <button
+          type="button"
+          className="ml-1 flex items-center justify-center h-6 w-6 rounded-full focus:outline-none ring-1 ring-inset ring-gray-500 hover:ring-gray-400 text-gray-500 hover:text-gray-400"
+          onClick={onClose}
+        >
+          <span className="sr-only">Close connections panel</span>
+          <XIcon className="h-4 w-4" aria-hidden="true" />
+        </button>
       </div>
       <ConnectionsTabs active={activeTab} onChange={setActiveTab} />
       <ConnectionsSection subSection={activeTab} concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix}

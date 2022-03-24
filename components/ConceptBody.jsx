@@ -54,7 +54,7 @@ export default function ConceptBody({
         leaveTo="translate-x-full"
       >
         <button onClick={() => setPanelOpen(true)}
-          className="absolute top-0 right-0 w-18 h-18 bg-gray-100 rounded-bl-lg flex flex-row py-6 pl-2 pr-4 z-40"
+          className="absolute top-0 right-0 w-18 h-18 text-gray-500 hover:text-gray-400 bg-gray-100 rounded-bl-lg flex flex-row py-6 pl-2 pr-4 z-40"
         >
           <ArrowSquareLeftIcon className="w-6 h-6 pointer-events-none" />
           <ShareIcon className="w-6 h-6 pointer-events-none" />
@@ -62,7 +62,7 @@ export default function ConceptBody({
       </Transition>
 
       <div className="flex flex-row w-full">
-        <div className={`flex-grow py-6 bg-white pl-6 sm:pl-12 md:pl-18 ${panelOpen ? 'pr-12' : 'pr-6 sm:pr-12 md:pr-18'}`}>
+        <div className={`flex-grow py-6 bg-white pl-6 sm:pl-12 md:pl-18 ${panelOpen ? 'pr-12 hidden md:block' : 'pr-6 sm:pr-12 md:pr-18'}`}>
           {note ? (
             <div className="flex-col">
               <div className={`relative flex flex-row justify-center group overflow-hidden ${coverImage ? 'h-40' : ''}`}>
@@ -106,7 +106,7 @@ export default function ConceptBody({
           leaveFrom="translate-x-0"
           leaveTo="translate-x-full"
         >
-          <ConnectionsPanel
+          <ConnectionsPanel className="w-full md:w-auto"
             concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} tagPrefix={tagPrefix}
             webId={authorWebId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}
             onClose={() => setPanelOpen(false)} />
