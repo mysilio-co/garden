@@ -6,7 +6,7 @@ import {
   UUID,
   Slug,
 } from './types';
-import { createThing, getThing, saveSolidDatasetAt, setThing, setUrl } from '@inrupt/solid-client';
+import { createSolidDataset, createThing, getThing, setThing, setUrl } from '@inrupt/solid-client';
 import { OWL } from '@inrupt/vocab-common-rdf';
 import {
   getUUID,
@@ -15,6 +15,7 @@ import {
   uuidUrn,
   slugToUrl,
 } from './utils';
+import { getSolidDatasetWithAccessDatasets } from '@inrupt/solid-client/dist/acp/acp';
 
 export function getItemWithUUID(garden: Garden, uuid: UUID): GardenItem {
   return garden && getThing(garden, uuid);
@@ -63,8 +64,7 @@ export function getConfig(garden: Garden): GardenConfig {
   return garden && getItemWithSlug(garden, ConfigSlug);
 }
 
-export function ensureGardenConfig(garden: Garden): Garden {
-  let config =
-    garden && (getConfig(garden) || createThing({ name: ConfigSlug }));
-  return garden && setThing(garden, config);
+export function createGarden(): Garden {
+  const config = createThing({ name: ConfigSlug });
+  return setThing(createSolidDataset(), config);
 }

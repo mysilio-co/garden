@@ -8,13 +8,13 @@ import { hasRequiredSpaces } from '../model/GardenKit/spaces';
 
 function Setup({ webId }) {
   const { app, initApp, error: appError } = useApp(webId);
-  const { spaces, setupDefaultSpaces } = useSpacesWithSetup(webId);
-
+  const { setupDefaultSpaces } = useSpacesWithSetup(webId);
+  const noLegacyData = app && appError && appError.statusCode === 404;
   return (
     <>
       <Header />
       <div className="text-center pt-12">
-        {app && appError && appError.statusCode === 404 ? (
+        {noLegacyData ? (
           <>
             <h3 className="text-xl pb-6">
               Welcome to Mysilio! It looks like you don't have any Spaces set up
@@ -62,7 +62,7 @@ export default function SetupPage() {
 
   return (
     <div className="page" id="page">
-      {loggedIn === true ? (
+      {(loggedIn === true) ? (
         hasRequiredSpaces(spaces) ? (
           'Everything is set up'
         ) : spaces ? (

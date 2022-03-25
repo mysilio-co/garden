@@ -131,7 +131,7 @@ export function setMetaSpace(
 }
 
 export function hasRequiredSpaces(spaces: SpacePreferences): boolean {
-  return spaces && getMetaSpace(spaces) && getSpaceAll(spaces).length >= 0;
+  return spaces && getMetaSpace(spaces) && getSpaceAll(spaces).length > 0;
 }
 
 export function createMetaSpace(holder: WebId, profile: Profile) {

@@ -13,15 +13,14 @@ export const MY = {
     holdsSpace: g`holdsSpace`, // webId holdsSpace Space. Admin of Space. Typically the owner of the webid where the gardens are stored.
     memberOf: g`memberOf`, // webId memberOf Space. Member of Space. Typically used on the profile card to indicate Spaces they wish to be a member of.
 
-    MetaSpace: g`Space`, // A Space for community gardening on the web. May contain Gardens, and members (webids). Related: https://www.w3.org/ns/pim/space#
+    MetaSpace: g`MetaSpace`, // A Space for community gardening on the web. May contain Gardens, and members (webids). Related: https://www.w3.org/ns/pim/space#
     Space: g`Space`, // A Space for community gardening on the web. May contain Gardens, and members (webids). Related: https://www.w3.org/ns/pim/space#
-    holder: g`holdsSpace`, // Space holder WebId. Inverse of holdsSpace
+    holder: g`holder`, // Space holder WebId. Inverse of holdsSpace
     hasMember: g`hasMember`, // Space hasMember webId. Member of Space. Typically used on the Space to denote the list of members allowed.
     hasGarden: g`hasGarden`, // Space hasGarden Garden. A space may have many Gardens. Not all Gardens have to exist in the same pod.
-    hasPublicGarden: g`hasPublicGarden`, // Space hasPublicGarden Garden. A Garden open to the general Public
-    hasPrivateGarden: g`hasPrivateGarden`, // Space hasPrivateGarden Garden. A Garden for the holder to enjoy in Private
     hasNursery: g`hasNursery`, // Space hasNursery Garden. A special kind of Garden, the Nursery, where new ideas go to blossom
     hasCompost: g`hasCompost`, // Space hasCompost Garden. A special kind of Garden, the Compost, where old ideas go to be composted
+    hasManifest: g`hasManifest`, // Space hasManifest Manifest. A Manifest is a Resrouce that stores configuration data meant to be used by a machine.
     hasGnomesManifest: g`hasGnomesManifest`, // Space hasGnomesManifest Manifest. A machine-readable Manifest for Publications
     hasPublicationsManifest: g`hasPublicationsManifest`, // Space hasPublicationsManifest Manifest. A machine-readable Manifest for Gnomes
 
