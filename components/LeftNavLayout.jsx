@@ -104,10 +104,14 @@ function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, 
   )
 }
 
-function DefaultHeader({ openSidebar }) {
+function DefaultHeader({ openSidebar, pageTitle = "" }) {
+
   return (
     <div>
-      <div className="min-h-12 flex items-center justify-end bg-header-gradient px-4 py-1.5">
+      <div className="min-h-12 flex justify-between bg-header-gradient px-4 py-1.5">
+        <div className="text-white text-2xl font-black">
+          {pageTitle}
+        </div>
         <div>
           <button
             type="button"
@@ -125,7 +129,7 @@ function DefaultHeader({ openSidebar }) {
 
 const defaultHeaderProps = {}
 
-function navigationItems({loggedIn, pageName, profile}) {
+function navigationItems({ loggedIn, pageName, profile }) {
   const profileItems = profile ? [
     { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
   ] : []
@@ -139,7 +143,7 @@ function navigationItems({loggedIn, pageName, profile}) {
   })
 }
 
-export default function LeftNavLayout({ pageName, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
+export default function LeftNavLayout({ pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
   const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const name = profile && getStringNoLocale(profile, FOAF.name)
@@ -148,7 +152,7 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
   const { logout } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const navigation = useMemo(() => navigationItems({loggedIn, pageName, profile}), [pageName, profile])
+  const navigation = useMemo(() => navigationItems({ loggedIn, pageName, profile }), [pageName, profile])
   return (
     <>
       <div className="h-screen flex relative">
@@ -322,7 +326,7 @@ export default function LeftNavLayout({ pageName, children, HeaderComponent = De
           </aside>
         </Transition>
         <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
-          <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} {...headerProps} />
+          <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
 
           <div className="h-full flex-1 relative z-0 flex">
             <main className="h-full flex-1 relative z-0 focus:outline-none xl:order-last">

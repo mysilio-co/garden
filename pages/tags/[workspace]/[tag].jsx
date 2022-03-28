@@ -9,7 +9,6 @@ import { WorkspaceProvider } from "../../../contexts/WorkspaceContext"
 import { US } from '../../../vocab'
 import { tagNameToUrlSafeId } from '../../../utils/uris'
 import LeftNavLayout from '../../../components/LeftNavLayout'
-import ProfileDrawerWithData from '../../../components/ProfileDrawerWithData'
 import Cards from '../../../components/Cards'
 
 export default function TagPage() {
@@ -29,14 +28,10 @@ export default function TagPage() {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
 
   return (
-    <LeftNavLayout>
-      <div className="py-6 px-18">
+    <LeftNavLayout pageTitle={`notes tagged with ${tag}`}>
+      <div className="p-6">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
-          <div className="text-center">
-            <h1 className="text-2xl mb-4">notes tagged with #{tag}</h1>
-            <Cards webId={webId} garden={tagged} workspaceSlug={workspaceSlug} />
-          </div>
-          <ProfileDrawerWithData isOpen={profileDrawerOpen} setIsOpen={setProfileDrawerOpen} webId={webId} />
+          <Cards webId={webId} garden={tagged} workspaceSlug={workspaceSlug} />
         </WorkspaceProvider>
       </div>
     </LeftNavLayout>
