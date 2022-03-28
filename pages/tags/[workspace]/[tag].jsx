@@ -28,7 +28,7 @@ export default function TagPage() {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
 
   return (
-    <LeftNavLayout pageTitle={`notes tagged with ${tag}`}>
+    <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
       <div className="p-6">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
           <Cards webId={webId} garden={tagged} workspaceSlug={workspaceSlug} />

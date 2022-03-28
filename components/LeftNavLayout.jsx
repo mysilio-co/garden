@@ -108,7 +108,7 @@ function DefaultHeader({ openSidebar, pageTitle = "" }) {
 
   return (
     <div>
-      <div className="min-h-12 flex justify-between bg-header-gradient px-4 py-1.5">
+      <div className="min-h-12 flex justify-between bg-header-gradient px-6 py-1.5">
         <div className="text-white text-2xl font-black">
           {pageTitle}
         </div>

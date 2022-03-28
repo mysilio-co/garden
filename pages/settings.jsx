@@ -299,9 +299,8 @@ export default function Settings() {
     save(newSettings)
   }
   return (
-    <LeftNavLayout pageName="Settings" >
+    <LeftNavLayout pageName="Settings" pageTitle="Settings">
       <WebMonetization webId={webId} />
-      <h1 className="text-3xl text-center mt-8 mb-12">Settings</h1>
       <div className="mx-8">
         <SectionHeader title="Gates"
           description={(<>
