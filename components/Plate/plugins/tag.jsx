@@ -4,7 +4,7 @@ import { createPluginFactory } from "@udecode/plate";
 import { ELEMENT_TAG } from "../../../utils/slate";
 
 // inspired by https://stackoverflow.com/a/60972027
-const tagRegex = /#(\w{1,100})(.*)/
+const tagRegex = /#([\w\-]{1,100})(.*)/
 
 function hasTagParent(editor, path) {
   const parent = Node.get(editor, path.slice(0, -1))
