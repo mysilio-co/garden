@@ -22,7 +22,7 @@ export function getTagNodes(node) {
 }
 
 export function getTagNameFromNode(node) {
-  return node.value;
+  return node.name;
 }
 
 const newElementType = {

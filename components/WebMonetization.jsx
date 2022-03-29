@@ -4,7 +4,7 @@ import { getStringNoLocale } from '@inrupt/solid-client'
 import { US } from '../vocab'
 import { getPaymentPointer } from '../model/profile'
 
-// itme's uphold USD payment pointer
+// mysilio's uphold USD payment pointer
 const defaultPaymentPointer = "$ilp.uphold.com/DYPhbXPmDa2P"
 
 export default function WebMonetization({webId}){
@@ -13,7 +13,7 @@ export default function WebMonetization({webId}){
 
   return (
     <Head>
-      <meta name="monetization" content={paymentPointer || defaultPaymentPointer} />
+      <meta name="monetization" content={paymentPointer || defaultPaymentPointer} key="monetization" />
     </Head>
   )
 }

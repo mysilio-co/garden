@@ -22,7 +22,6 @@ import { getThing, getSolidDataset, getStringNoLocale } from '@inrupt/solid-clie
 import * as octokit from '@octokit/request'
 import { US } from '../../vocab'
 import fetch from 'node-fetch'
-import emptyGitHubCommit from 'make-empty-github-commit'
 import { createClient } from '@supabase/supabase-js'
 import { encodeGnomeUrl, randomReadableId, GnomeStatus } from '../../model/gnomes.jsx'
 

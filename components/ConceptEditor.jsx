@@ -39,7 +39,7 @@ function useAutosave(note, save) {
   return { onChange: setUpdatedValue }
 }
 
-export default function ConceptEditor({ webId, authorWebId, workspaceSlug, concept, conceptName, conceptIndex, note, noteError, maybeSaveNoteBody, editorId, myNote }) {
+export default function ConceptEditor({ webId, authorWebId, workspaceSlug, concept, saveConcept, conceptName, conceptIndex, note, noteError, maybeSaveNoteBody, editorId, myNote }) {
   const { workspace } = useWorkspace(authorWebId, workspaceSlug)
   const conceptPrefix = workspace && getUrl(workspace, US.conceptPrefix);
   const tagPrefix = workspace && getUrl(workspace, US.tagPrefix);
@@ -48,7 +48,8 @@ export default function ConceptEditor({ webId, authorWebId, workspaceSlug, conce
   const conceptNames = useConceptNames(authorWebId)
   return (
     <ConceptBody editorId={editorId} myNote={myNote}
-      concept={concept} conceptName={conceptName} authorWebId={authorWebId}
+      concept={concept} conceptName={conceptName}
+      saveConcept={saveConcept} authorWebId={authorWebId}
       note={note} noteError={noteError}
       saveNoteBody={maybeSaveNoteBody}
       tagPrefix={tagPrefix} conceptPrefix={conceptPrefix}

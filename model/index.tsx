@@ -63,19 +63,24 @@ type OGTags = {
 export function addLinkToIndex(
   index: SolidDataset,
   url: string,
-  og?: OGTags
+  title?: string,
+  desc?: string,
+  img?: string
 ): SolidDataset {
   const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
     .addDatetime(DCTERMS.modified, new Date())
     .addDatetime(DCTERMS.created, new Date());
-  if (og) {
-    builder
-      .addUrl(FOAF.depiction, og && og.ogImage.url)
-      .addStringNoLocale(DCTERMS.title, og && og.ogTitle)
-      .addStringNoLocale(DCTERMS.description, og && og.ogDescription);
-    }
+  if (img) {
+    builder.addUrl(FOAF.depiction, img);
+  }
+  if (title) {
+    builder.addStringNoLocale(DCTERMS.title, title);
+  }
+  if (desc) {
+    builder.addStringNoLocale(DCTERMS.description, desc);
+  }
   const LinkThing = builder.build();
   return setThing(index || createSolidDataset(), LinkThing);
 }

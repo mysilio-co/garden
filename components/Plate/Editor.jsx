@@ -1,21 +1,26 @@
-import React, { useCallback, useState, useMemo, useRef, useEffect } from "react";
-import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { Transforms, Editor as SlateEditor } from 'slate';
 import * as P from "@udecode/plate";
 
 import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
 import { useWebId } from 'swrlit'
-import { Image as ImageIcon } from "@styled-icons/material/Image";
 import { Link as LinkIcon } from "@styled-icons/material/Link";
 import Link from "next/link";
 
 import Modal from '../Modal';
 import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
-import { notePath, conceptNameToUrlSafeId } from "../../utils/uris";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
+import { notePath } from "../../utils/uris";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
 import { autoformatRules } from './autoformat/autoformatRules'
+import {
+  createConceptPlugin, createConceptStartPlugin, createConceptEndPlugin,
+  LEAF_CONCEPT_START, LEAF_CONCEPT_END
+} from './plugins/concept'
+import { createTagPlugin } from './plugins/tag'
+import { createMentionPlugin } from './plugins/mention'
 
 import {
   ToolbarButtonsList,
@@ -30,25 +35,57 @@ export const fromMentionable = (m) => {
 
 const ConceptElement = ({ attributes, element, children }) => {
   return (
-    <span {...attributes} className="text-lagoon group">
+    <span {...attributes} className="text-my-green group">
       {children}
     </span>
   );
 };
 
-const TagElement = (m) => {
-  const { slug: workspaceSlug } = useWorkspaceContext();
-  const tag = fromMentionable(m);
+function ConceptStartLeaf({ children }) {
   return (
-    <Link href={`/tags/${workspaceSlug}/${tag}`}>
-      <a className="text-lagoon">#{tag}</a>
-    </Link>
+    <span className="opacity-50 group-hover:opacity-100">
+      {children}
+    </span>
+  )
+}
+
+function ConceptEndLeaf({ children, leaf }) {
+  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const name = leaf.conceptName
+  const url = notePath(webId, workspaceSlug, name)
+  return (
+    <span className="opacity-50 group-hover:opacity-100 relative">
+      {children}
+      <Link href={url || ""}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
+        </a>
+      </Link>
+    </span>
+
+  )
+}
+
+const TagElement = ({ attributes, element, children }) => {
+  const { slug: workspaceSlug } = useWorkspaceContext();
+  return (
+    <span className="text-my-green group" {...attributes}>
+      {children}
+      <Link href={`/tags/${workspaceSlug}/${element.name}`}>
+        <a contentEditable={false} className="hidden group-hover:inline">
+          <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
+        </a>
+      </Link>
+    </span>
   )
 };
 
-const MentionElement = (m) => {
-  const mention = fromMentionable(m);
-  return <span className="text-lagoon">@{mention}</span>;
+const MentionElement = ({ attributes, element, children }) => {
+  return (
+    <span className="text-my-green" {...attributes}>
+      {children}
+    </span>
+  )
 };
 
 const CodeBlockElement = ({ attributes, children, element, nodeProps }) => {
@@ -76,12 +113,10 @@ const components = P.createPlateUI({
   [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
   [ELEMENT_CONCEPT]: ConceptElement,
-  [ELEMENT_TAG]: P.withProps(P.MentionElement, {
-    renderLabel: TagElement,
-  }),
-  [P.ELEMENT_MENTION]: P.withProps(P.MentionElement, {
-    renderLabel: MentionElement,
-  }),
+  [LEAF_CONCEPT_START]: ConceptStartLeaf,
+  [LEAF_CONCEPT_END]: ConceptEndLeaf,
+  [ELEMENT_TAG]: TagElement,
+  [P.ELEMENT_MENTION]: MentionElement,
   [P.ELEMENT_LINK]: LinkElement
 });
 
@@ -109,144 +144,7 @@ const optionsResetBlockTypePlugin = {
   ],
 };
 
-const conceptRegex = /\[\[(.*)\]\](.*)/
 
-function hasConceptParent(editor, path) {
-  const parent = Node.get(editor, path.slice(0, -1))
-  if (parent.type === ELEMENT_CONCEPT) {
-    return true
-  } else {
-    return false
-  }
-}
-
-export const withConcepts = editor => {
-  const { normalizeNode } = editor
-
-  editor.normalizeNode = entry => {
-    const [node, path] = entry
-    if (Text.isText(node) && !hasConceptParent(editor, path)) {
-      const conceptMatch = node.text.match(conceptRegex)
-      if (conceptMatch) {
-        const { index, 0: match, 1: name } = conceptMatch
-        const at = { anchor: { path, offset: index }, focus: { path, offset: index + match.length } }
-        Transforms.wrapNodes(editor, { type: ELEMENT_CONCEPT, children: [] }, { at, split: true })
-        return
-      }
-    } else if (node.type === ELEMENT_CONCEPT) {
-
-      // Migrate from old to new concept format
-      if (node.value) {
-        Transforms.setNodes(editor, {
-          name: node.value
-        }, { at: path })
-        const childText = `[[${node.value}]]`
-        if (node.children[0].text != childText) {
-          const childTextStart = { path: [...path, 0], offset: 0 }
-          const lastChildIndex = (node.children.length - 1)
-          const lastTextPositionIndex = node.children[lastChildIndex].text.length
-          const childTextEnd = { path: [...path, lastChildIndex], offset: lastTextPositionIndex }
-          const childTextRange = { anchor: childTextStart, focus: childTextEnd }
-          Transforms.insertText(editor, childText, { at: childTextRange })
-        }
-        Transforms.unsetNodes(editor, 'value', { at: path })
-        return
-      }
-
-      const conceptMatch = Node.string(node).match(conceptRegex)
-      if (conceptMatch) {
-        const [_, name, extra] = conceptMatch
-
-        // make sure name always matches text
-        if (node.name !== name) {
-          Transforms.setNodes(editor, { name }, { at: path })
-          return
-        }
-
-        // make sure a concept doesn't eat the text after it
-        if (extra !== '') {
-          const childText = `[[${node.name}]]`
-          Transforms.splitNodes(editor, {
-            at: { path: [...path, 0], offset: childText.length },
-            match: n => (n.type === ELEMENT_CONCEPT)
-          })
-          return
-        }
-      } else {
-        Transforms.unwrapNodes(editor, { match: n => n.type === ELEMENT_CONCEPT })
-        return
-      }
-    }
-
-    normalizeNode(entry)
-  }
-
-  return editor
-}
-
-const LEAF_CONCEPT_START = 'conceptLeafStart'
-const LEAF_CONCEPT_END = 'conceptLeafEnd'
-
-const createConceptPlugin = P.createPluginFactory({
-  key: ELEMENT_CONCEPT,
-  isElement: true,
-  isInline: true,
-  withOverrides: withConcepts,
-  decorate: (editor, options) => ([node, path]) => {
-    if (node.type === 'concept') {
-      const textPath = [...path, 0]
-      const textLength = node.children[0].text.length
-      return [
-        {
-          anchor: { path: textPath, offset: 0 },
-          focus: { path: textPath, offset: 2 },
-          [LEAF_CONCEPT_START]: true
-        },
-        {
-          anchor: { path: textPath, offset: textLength - 2 },
-          focus: { path: textPath, offset: textLength },
-          [LEAF_CONCEPT_END]: true,
-          conceptName: node.name
-        }
-      ]
-    }
-  }
-})
-
-function ConceptStartLeaf({ children }) {
-  return (
-    <span className="opacity-50 group-hover:opacity-100">
-      {children}
-    </span>
-  )
-}
-function ConceptEndLeaf({ children, leaf }) {
-  const { webId, slug: workspaceSlug } = useWorkspaceContext();
-  const name = leaf.conceptName
-  const url = notePath(webId, workspaceSlug, name)
-  return (
-    <span className="opacity-50 group-hover:opacity-100 relative">
-      {children}
-      <Link href={url || ""}>
-        <a contentEditable={false} className="hidden group-hover:inline">
-          <ExternalLinkIcon className="h-4 w-4 inline" />
-        </a>
-      </Link>
-    </span>
-
-  )
-}
-
-const createConceptStartPlugin = P.createPluginFactory({
-  key: LEAF_CONCEPT_START,
-  isLeaf: true,
-  component: ConceptStartLeaf
-})
-const createConceptEndPlugin = P.createPluginFactory({
-  key: LEAF_CONCEPT_END,
-  isLeaf: true,
-  component: ConceptEndLeaf
-})
 
 const defaultPlugins = [
   P.createHeadingPlugin({ options: { levels: 3 } }),
@@ -269,11 +167,11 @@ const defaultPlugins = [
   createComboboxPlugin(),
   // for now we need to support both combobox plugins
   P.createComboboxPlugin(),
-  P.createMentionPlugin({ key: P.ELEMENT_MENTION, options: { trigger: '@' } }),
-  P.createMentionPlugin({ key: ELEMENT_TAG, options: { trigger: '#' } }),
+  createMentionPlugin(),
   createConceptPlugin(),
   createConceptStartPlugin(),
   createConceptEndPlugin(),
+  createTagPlugin(),
   P.createSoftBreakPlugin({
     options: {
       rules: [
@@ -337,36 +235,31 @@ function toMentionable(name) {
   return { key: name, text: name }
 }
 
-function useComboboxItems(store, names) {
-  const currentComboboxText = store.get.text()
-  return useMemo(() => {
-    return (names ? Array.from(new Set([...names, currentComboboxText])) : [currentComboboxText]).map(toMentionable)
-  }, [names, currentComboboxText])
-}
-
-function MentionComboboxComponent({ }) {
-  return (
-    <div className="text-sm p-2 font-bold">insert mention</div>
-  )
-}
-
-function TagComboboxComponent({ }) {
-  return (
-    <div className="text-sm p-2 font-bold">insert tag</div>
-  )
-}
-
 function onConceptSelect(editor, item) {
-  Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+  if (item) {
+    Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+  }
+}
+
+function onTagSelect(editor, item) {
+  if (item) {
+    Transforms.insertText(editor, `#${item.text}`, { at: comboboxStore.get.targetRange() })
+  }
+}
+
+function onMentionSelect(editor, item) {
+  if (item) {
+    Transforms.insertText(editor, `@${item.text}`, { at: comboboxStore.get.targetRange() })
+  }
 }
 
 export default function Editor({
   editorId = "default-plate-editor",
   initialValue = "",
   onChange,
-  conceptNames,
-  tagNames,
-  mentionNames,
+  conceptNames = [],
+  tagNames = [],
+  mentionNames = [],
   readOnly,
   ...props
 }) {
@@ -386,9 +279,10 @@ export default function Editor({
     imageUrlGetter
   } = useImageUrlGetterAndSaveCallback()
 
-  // use the standard combobox because we're using the mentions stuff
-  const mentionItems = useComboboxItems(P.comboboxStore, mentionNames)
-  const tagItems = useComboboxItems(P.comboboxStore, tagNames)
+  // as of 2/14/22 we aren't passing mentions or tags into Editor, so these don't
+  // do anything. We may want to change this soon, so I'll leave this here for now - TV
+  const mentionItems = useMemo(() => mentionNames.map(toMentionable), [mentionNames])
+  const tagItems = useMemo(() => tagNames.map(toMentionable), [tagNames])
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
 
@@ -412,12 +306,16 @@ export default function Editor({
     >
       {!readOnly && (
         <>
-          <div className="flex flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
-            <ToolbarButtonsBasicElements />
-            <ToolbarButtonsList />
-            <P.LinkToolbarButton icon={<LinkIcon />} />
-            <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
-            <ToolbarButtonsBasicMarks />
+          <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
+            <div className="flex">
+              <ToolbarButtonsBasicElements />
+              <ToolbarButtonsList />
+              <P.LinkToolbarButton icon={<LinkIcon />} />
+              <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+            </div>
+            <div className="flex">
+              <ToolbarButtonsBasicMarks />
+            </div>
           </div>
 
           <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
@@ -430,10 +328,8 @@ export default function Editor({
             </div>
           </Modal>
 
-
-
-          <P.MentionCombobox items={mentionItems} pluginKey="mention" component={MentionComboboxComponent} />
-          <P.MentionCombobox items={tagItems} pluginKey="tag" component={TagComboboxComponent} />
+          <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
+          <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
           <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
         </>
       )}
