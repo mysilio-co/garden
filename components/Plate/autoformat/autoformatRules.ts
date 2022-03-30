@@ -2,7 +2,7 @@ import {
   autoformatArrow,
   autoformatPunctuation,
   autoformatSmartQuotes,
-} from '@udecode/plate';
+} from '@udecode/plate-headless';
 import { autoformatBlocks } from './autoformatBlocks';
 import { autoformatLists } from './autoformatLists';
 import { autoformatMarks } from './autoformatMarks';

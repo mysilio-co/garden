@@ -1,4 +1,4 @@
-import { usePlateEditorRef, insertImage  } from '@udecode/plate';
+import { usePlateEditorRef, insertImage  } from '@udecode/plate-headless';
 
 import { UploadImage as UploadImageIcon } from '../icons'
 

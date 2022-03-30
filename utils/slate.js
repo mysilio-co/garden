@@ -1,5 +1,5 @@
 import { Node } from "slate";
-import * as P from "@udecode/plate";
+import * as P from "@udecode/plate-headless";
 
 export const EmptySlateJSON = [{children: [{ text: "" }]}];
 export const ELEMENT_CONCEPT = "concept";

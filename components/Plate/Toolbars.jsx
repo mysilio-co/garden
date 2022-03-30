@@ -1,5 +1,5 @@
 import { TippyProps } from '@tippyjs/react';
-import * as P from '@udecode/plate'
+import * as P from '@udecode/plate-headless'
 
 import { CodeAlt } from '@styled-icons/boxicons-regular/CodeAlt';
 import { CodeBlock } from '@styled-icons/boxicons-regular/CodeBlock';

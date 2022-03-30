@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Editor as SlateEditor } from 'slate';
-import * as P from "@udecode/plate";
+import * as P from "@udecode/plate-headless";
 
 import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
 import { useWebId } from 'swrlit'

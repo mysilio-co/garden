@@ -1,5 +1,5 @@
-import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
-import { createPluginFactory, ELEMENT_MENTION } from "@udecode/plate";
+import { Transforms, Text } from 'slate';
+import { createPluginFactory, ELEMENT_MENTION } from "@udecode/plate-headless";
 
 // inspired by https://stackoverflow.com/a/60972027
 const mentionRegex = /@(\w{1,100})(.*)/
