@@ -4,7 +4,7 @@ import * as P from "@udecode/plate-headless";
 
 import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
 import { useWebId } from 'swrlit'
-import { Link as LinkIcon } from "@styled-icons/material/Link";
+import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 
 import Modal from '../Modal';
