@@ -11,7 +11,6 @@ import {
 } from './types';
 import {
   createGarden,
-  ensureGardenConfig,
   getConfig,
 } from './garden';
 import {

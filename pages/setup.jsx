@@ -1,5 +1,5 @@
 import { useLoggedIn, useWebId } from 'swrlit'
-import Header from '../components/Header'
+import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
 import { useAppSettings, useSpaces, useSpacesWithSetup } from '../model/GardenKit/hooks';
 import { useApp } from '../hooks/app'

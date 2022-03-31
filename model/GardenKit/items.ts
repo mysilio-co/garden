@@ -7,6 +7,7 @@ import {
   PersonConcept,
   Collection,
   GardenItem,
+  UUID
 } from './types';
 import {
   buildThing,

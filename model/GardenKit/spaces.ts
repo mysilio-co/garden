@@ -43,12 +43,8 @@ export function getContainer(space: Space): Container {
   return space && getUrl(space, WS.storage);
 }
 
-export function getPrivateGardenFileAll(space: Space): GardenFile[] {
-  return space && getUrlAll(space, MY.Garden.hasPrivateGarden);
-}
-
-export function getPublicGardenFileAll(space: Space): GardenFile[] {
-  return space && getUrlAll(space, MY.Garden.hasPublicGarden);
+export function getGardenFileAll(space: Space): GardenFile[] {
+  return space && getUrlAll(space, MY.Garden.hasGarden);
 }
 
 export function getCompostFile(space: Space): GardenFile {
