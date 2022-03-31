@@ -1,4 +1,4 @@
-import { Transforms, Text } from 'slate';
+import { Transforms, Text, Node } from 'slate';
 import { createPluginFactory, ELEMENT_MENTION } from "@udecode/plate-headless";
 
 // inspired by https://stackoverflow.com/a/60972027

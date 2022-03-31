@@ -1,8 +1,12 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Editor as SlateEditor } from 'slate';
 import * as P from "@udecode/plate-headless";
+import { LinkToolbarButton } from '@udecode/plate-ui-link'
+import { ImageElement } from '@udecode/plate-ui-image'
+import { Combobox } from '@udecode/plate-ui-combobox'
+import { MediaEmbedElement } from '@udecode/plate-ui-media-embed';
 
-import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
+
 import { useWebId } from 'swrlit'
 import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
@@ -107,18 +111,137 @@ function LinkElement({ attributes, children, element, nodeProps }) {
   )
 }
 
-const components = P.createPlateUI({
-  [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
-  [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
-  [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
+function BlockquoteElement({ attributes, children, nodeProps }) {
+  return (
+    <blockquote {...attributes} {...nodeProps}>
+      {children}
+    </blockquote>
+  )
+}
+
+function H1Element({ className="", attributes, children, nodeProps }) {
+  return (
+    <h1 className={`text-3xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h1>
+  )
+}
+
+function H2Element({ className="", attributes, children, nodeProps }) {
+  return (
+    <h2 className={`text-2xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h2>
+  )
+}
+
+function H3Element({ className="", attributes, children, nodeProps }) {
+  return (
+    <h3 className={`text-xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h3>
+  )
+}
+
+function LiElement({ attributes, children, nodeProps }) {
+  return (
+    <li {...attributes} {...nodeProps}>
+      {children}
+    </li>
+  )
+}
+
+function UlElement({ attributes, children, nodeProps }) {
+  return (
+    <ul {...attributes} {...nodeProps}>
+      {children}
+    </ul>
+  )
+}
+
+function OlElement({ attributes, children, nodeProps }) {
+  return (
+    <ol {...attributes} {...nodeProps}>
+      {children}
+    </ol>
+  )
+}
+
+function ParagraphElement({ attributes, children, nodeProps }) {
+  return (
+    <p {...attributes} {...nodeProps}>
+      {children}
+    </p>
+  )
+}
+
+function BoldMark({ className="", attributes, children, nodeProps }) {
+  return (
+    <span className={`font-bold ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function CodeMark({ className="", attributes, children, nodeProps }) {
+  return (
+    <span className={`font-mono bg-gray-200 ${className}`} {...attributes} {...nodeProps}>
+      {children}just
+    </span>
+  )
+}
+
+function UnderlineMark({ className="", attributes, children, nodeProps }) {
+  return (
+    <span className={`underline ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function ItalicMark({ className="", attributes, children, nodeProps }) {
+  return (
+    <span className={`italic ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function HighlightMark({ className="", attributes, children, nodeProps }) {
+  return (
+    <span className={`bg-yellow-200 ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+const components = {
+  [P.ELEMENT_BLOCKQUOTE]: BlockquoteElement,
   [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
+  [P.ELEMENT_H1]: H1Element,
+  [P.ELEMENT_H2]: H2Element,
+  [P.ELEMENT_H3]: H3Element,
+
+  [P.ELEMENT_IMAGE]: ImageElement,
+  [P.ELEMENT_LI]: LiElement,
+  [P.ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+  [P.ELEMENT_UL]: UlElement,
+  [P.ELEMENT_OL]: OlElement,
+  [P.ELEMENT_PARAGRAPH]: ParagraphElement,
+
+  [P.MARK_BOLD]: BoldMark,
+  [P.MARK_CODE]: CodeMark,
+  [P.MARK_HIGHLIGHT]: HighlightMark,
+  [P.MARK_ITALIC]: ItalicMark,
+  [P.MARK_UNDERLINE]: UnderlineMark,
+
   [ELEMENT_CONCEPT]: ConceptElement,
   [LEAF_CONCEPT_START]: ConceptStartLeaf,
   [LEAF_CONCEPT_END]: ConceptEndLeaf,
   [ELEMENT_TAG]: TagElement,
   [P.ELEMENT_MENTION]: MentionElement,
   [P.ELEMENT_LINK]: LinkElement
-});
+};
 
 const optionsAutoformat = {
   rules: autoformatRules
@@ -164,7 +287,7 @@ const defaultPlugins = [
   P.createNodeIdPlugin(),
   P.createAutoformatPlugin({ options: optionsAutoformat }),
   P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
-  createComboboxPlugin(),
+  //createComboboxPlugin(),
   // for now we need to support both combobox plugins
   P.createComboboxPlugin(),
   createMentionPlugin(),
@@ -237,19 +360,19 @@ function toMentionable(name) {
 
 function onConceptSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `[[${item.text}]]`, { at: P.comboboxStore.get.targetRange() })
   }
 }
 
 function onTagSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `#${item.text}`, { at: comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `#${item.text}`, { at: P.comboboxStore.get.targetRange() })
   }
 }
 
 function onMentionSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `@${item.text}`, { at: comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `@${item.text}`, { at: P.comboboxStore.get.targetRange() })
   }
 }
 
@@ -310,7 +433,7 @@ export default function Editor({
             <div className="flex">
               <ToolbarButtonsBasicElements />
               <ToolbarButtonsList />
-              <P.LinkToolbarButton icon={<LinkIcon />} />
+              <LinkToolbarButton icon={<LinkIcon />} />
               <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
             </div>
             <div className="flex">
