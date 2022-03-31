@@ -1,6 +1,6 @@
 import LeftNavLayout from '../components/LeftNavLayout'
 
-export default function TosPage() {
+export default function WithSwrlitPage() {
   return (
     <LeftNavLayout pageTitle="Terms of Use">
       <div className="p-6 bg-my-green text-white">
