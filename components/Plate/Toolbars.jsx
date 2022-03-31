@@ -2,22 +2,20 @@ import * as P from '@udecode/plate-headless'
 import { MarkToolbarButton, BlockToolbarButton } from '@udecode/plate-ui-toolbar'
 import { ListToolbarButton } from '@udecode/plate-ui-list'
 
-import { CodeAlt } from '@styled-icons/boxicons-regular/CodeAlt';
-import { CodeBlock } from '@styled-icons/boxicons-regular/CodeBlock';
-import { Highlight } from '@styled-icons/boxicons-regular/Highlight';
-
-import { FormatBold } from '@styled-icons/material/FormatBold';
-import { FormatItalic } from '@styled-icons/material/FormatItalic';
-import { FormatListBulleted } from '@styled-icons/material/FormatListBulleted';
-import { FormatListNumbered } from '@styled-icons/material/FormatListNumbered';
-import { FormatQuote } from '@styled-icons/material/FormatQuote';
-
-import { FormatUnderlined } from '@styled-icons/material/FormatUnderlined';
-
-import { Looks3 } from '@styled-icons/material/Looks3';
-
-import { LooksOne } from '@styled-icons/material/LooksOne';
-import { LooksTwo } from '@styled-icons/material/LooksTwo';
+import { CodeIcon } from '@heroicons/react/outline';
+import {
+  CodeBlock,
+  Highlight,
+  FormatBold,
+  FormatItalic,
+  FormatUnderlined,
+  FormatListBulleted,
+  FormatListNumbered,
+  FormatQuote,
+  HeadingOne,
+  HeadingTwo,
+  HeadingThree
+} from '../icons';
 
 export const ToolbarButtonsBasicElements = () => {
   const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
@@ -26,15 +24,15 @@ export const ToolbarButtonsBasicElements = () => {
     <>
       <BlockToolbarButton
         type={P.getPluginType(editor, P.ELEMENT_H1)}
-        icon={<LooksOne />}
+        icon={<HeadingOne />}
       />
       <BlockToolbarButton
         type={P.getPluginType(editor, P.ELEMENT_H2)}
-        icon={<LooksTwo />}
+        icon={<HeadingTwo />}
       />
       <BlockToolbarButton
         type={P.getPluginType(editor, P.ELEMENT_H3)}
-        icon={<Looks3 />}
+        icon={<HeadingThree />}
       />
       <BlockToolbarButton
         type={P.getPluginType(editor, P.ELEMENT_BLOCKQUOTE)}
@@ -97,7 +95,7 @@ export const ToolbarButtonsBasicMarks = () => {
       />
       <MarkToolbarButton
         type={P.getPluginType(editor, P.MARK_CODE)}
-        icon={<CodeAlt />}
+        icon={<CodeIcon />}
         tooltip={{ content: 'Code', ...tooltip }}
       />
       <MarkToolbarButton
