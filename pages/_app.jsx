@@ -1,29 +1,21 @@
-import { useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import 'tippy.js/dist/tippy.css';
 import "cropperjs/dist/cropper.css";
 import '../styles/index.css'
-import { AuthenticationProvider, useAuthentication } from 'swrlit'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { SWRConfig } from 'swr'
 import { useFathom } from '../hooks/fathom'
-import LoginVerifier from '../components/LoginVerifier'
 
-function RenderAfterAuthed({ children }) {
-  const { info } = useAuthentication()
-
-  return info ? (
-    <>
-      {children}
-    </>
-  ) : (<></>)
-}
-
+const LoginVerifier = dynamic(
+  () => import('../components/LoginVerifier'),
+  {ssr: false}
+)
+const AuthenticatedSolidApp = dynamic(
+  () => import('../components/AuthenticatedSolidApp'))
 
 function MyApp({ Component, pageProps }) {
-  const router = useRouter()
   // disable to debug issues in staging
   useFathom()
 
@@ -48,20 +40,18 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-function AuthedApp({ pageProps, ...rest }) {
+
+
+function AuthedApp(props) {
+  const { pageProps, ...rest } = props
   const { statusCode } = pageProps
-  const router = useRouter()
   // if we try to render auth around the 404 it triggers an infinite redirect loop,
   // I think because the 404 is a special static page in Next.js? to avoid this, don't render
   // auth around the 404 page
   return (statusCode == 404) ? (
     <MyApp pageProps={pageProps} {...rest} />
   ) : (
-    <AuthenticationProvider onSessionRestore={url => router.replace(url)}>
-      <RenderAfterAuthed>
-        <MyApp pageProps={pageProps} {...rest} />
-      </RenderAfterAuthed>
-    </AuthenticationProvider >
+    <AuthenticatedSolidApp AppComponent={MyApp} appProps={props} />
   )
 }
 
