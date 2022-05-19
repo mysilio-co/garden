@@ -78,13 +78,13 @@ export function tagNameToUrlSafeId(tagName) {
   return encodeURIComponent(tagName);
 }
 
-export function handleToIdp(handle) {
+export function urlFromHost(hostOrUrl) {
   try {
-    new URL(handle);
+    new URL(hostOrUrl);
     // if this doesn't throw, it's a valid URL
-    return handle
+    return hostOrUrl
   } catch (_) {
-    return `https://${handle}`
+    return `https://${hostOrUrl}`
   }
 }
 

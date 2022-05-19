@@ -11,7 +11,7 @@
     "chromatic": "npx chromatic --project-token=9ce71b1f5982"
   },
   "dependencies": {
-    "@headlessui/react": "^1.2.0",
+    "@headlessui/react": "^1.6.2",
     "@heroicons/react": "^1.0.6",
     "@inrupt/lit-generated-vocab-solid-common": "^0.3.9",
     "@inrupt/solid-client": "^1.13.0",
@@ -61,11 +61,11 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@rdfjs/types": "^1.1.0",
     "@tailwindcss/forms": "^0.5.0",
     "@tailwindcss/typography": "^0.5.2",
     "prettier": "2.3.2",
     "tailwindcss": "^3.0.0",
-    "typescript": "^4.6.3",
-    "@rdfjs/types": "^1.1.0"
+    "typescript": "^4.6.3"
   }
 }
