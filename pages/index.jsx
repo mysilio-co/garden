@@ -7,6 +7,7 @@ import { useApp } from '../hooks/app'
 
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
+import { useEffect } from 'react'
 
 function InitPage({ initApp }) {
   return (
@@ -34,6 +35,10 @@ export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
   const { app, initApp, error: appError } = useApp(webId)
+  useEffect(() => {
+    console.log(`loggedIn? ${loggedIn} as webId ${webId}`);
+    console.log(`app ${app} / ${appError}`);
+  }, [loggedIn, webId, app, appError]);
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (

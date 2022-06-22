@@ -8,7 +8,7 @@ const IDPList = IsPreviewEnv
   ? [
       { name: 'Mysilio Staging', host: 'https://staging.mysilio.me' },
       { name: 'Mysilio Production', host: 'https://mysilio.me' },
-      { name: 'Grassmud Horse', host: 'https://css.grassmud.horse' },
+      { name: 'Grassmud Horse', host: 'https://css-custom.grassmud.horse' },
     ]
   : [{ name: 'Mysilio', host: 'https://mysilio.me' }];
 
