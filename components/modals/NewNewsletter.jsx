@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { parse as parseCSV } from 'papaparse';
 
 import { useWebId } from 'swrlit';
-import { isThingLocal } from '@inrupt/solid-client';
+import { isThingLocal } from '@inrupt/solid-client/thing/thing';
 import { Close as CloseIcon, TickCircle } from '../icons';
 import { useCurrentWorkspace } from '../../hooks/app';
 import Modal from '../Modal';
@@ -39,7 +39,7 @@ export const NewNewsletter = ({ onClose }) => {
         complete: function (results) {
           setSubscribers(
             results.data.map((row) => {
-              // array of row values 
+              // array of row values
               return { email: row.find(validEmail) };
             }).filter((subscriber) => {
               // throw out all rows without an email (includign header row)

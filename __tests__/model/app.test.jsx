@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getUrl, removeUrl } from '@inrupt/solid-client';
+import { getUrl, removeUrl } from '@inrupt/solid-client/thing/get';
 
 import { US, MY } from '../../vocab';
 import { ensureWorkspace } from '../../model/app';

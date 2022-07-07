@@ -1,12 +1,12 @@
 import { namedNode, dataset } from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
+import type { SolidDataset } from "@inrupt/solid-client";
 import {
-  Thing,
-  SolidDataset,
   createThing,
   buildThing,
   setThing,
-  getThing,
+} from "@inrupt/solid-client";
+import {
   createSolidDataset,
 } from "@inrupt/solid-client";
 import { MY, MIME } from "../vocab";

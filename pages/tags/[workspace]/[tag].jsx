@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWebId } from 'swrlit'
-import { getUrl, getUrlAll, getThing } from '@inrupt/solid-client'
+import { getUrl, getUrlAll } from '@inrupt/solid-client/thing/get'
 
 import { useWorkspace } from '../../../hooks/app'
 import { useGarden } from '../../../hooks/concepts'

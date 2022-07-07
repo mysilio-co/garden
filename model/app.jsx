@@ -1,11 +1,8 @@
 
-import {
-  createSolidDataset,
-  createThing,
-  getUrl,
-  setUrl,
-  setThing,
-} from '@inrupt/solid-client';
+import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset';
+import { createThing, setThing } from '@inrupt/solid-client/thing/thing';
+import { getUrl } from '@inrupt/solid-client/thing/get';
+import { setUrl } from '@inrupt/solid-client/thing/set';
 
 import { US, MY } from '../vocab';
 

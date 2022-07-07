@@ -20,10 +20,10 @@
 
 import { getThing, getSolidDataset, getStringNoLocale } from '@inrupt/solid-client'
 import * as octokit from '@octokit/request'
-import { US } from '../../vocab'
 import fetch from 'node-fetch'
 import { createClient } from '@supabase/supabase-js'
 import { encodeGnomeUrl, randomReadableId, GnomeStatus } from '../../model/gnomes.jsx'
+import { US } from '../../vocab'
 
 const MainBranchName = "main"
 const TemplateOrg = process.env.GITHUB_TEMPLATE_ORG

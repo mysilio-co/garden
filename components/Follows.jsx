@@ -1,5 +1,5 @@
 import { useProfile } from 'swrlit'
-import { getStringNoLocale } from '@inrupt/solid-client'
+import { getStringNoLocale } from '@inrupt/solid-client/thing/get'
 import { FOAF } from '@inrupt/vocab-common-rdf'
 import Link from 'next/link'
 

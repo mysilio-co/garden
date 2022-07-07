@@ -1,4 +1,6 @@
-import { createThing, setUrl, setStringNoLocale, asUrl, getSourceUrl } from '@inrupt/solid-client'
+import { createThing, asUrl } from '@inrupt/solid-client/thing/thing'
+import { setUrl, setStringNoLocale } from '@inrupt/solid-client/thing/set'
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { US } from '../vocab'
 import greg from 'greg'
 import * as base58 from 'micro-base58'

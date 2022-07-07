@@ -1,6 +1,6 @@
 import { useUnderstoryContainerUri } from './uris'
 import { useResource, useWebId } from 'swrlit'
-import { createSolidDataset, asUrl, getThingAll } from '@inrupt/solid-client'
+import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset'
 
 export function useGnomesResource(webId) {
   // use   const concepts = index && getThingAll(index) to get all the gnome things from a resource

@@ -1,4 +1,5 @@
-import { asUrl, getUrl, getDatetime, getStringNoLocale } from "@inrupt/solid-client";
+import { asUrl } from "@inrupt/solid-client/thing/thing";
+import { getUrl, getDatetime, getStringNoLocale } from "@inrupt/solid-client/thing/get";
 import Image from "next/image";
 import { DCTERMS, FOAF } from "@inrupt/vocab-common-rdf";
 

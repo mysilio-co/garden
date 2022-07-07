@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { useDebounce } from "use-debounce";
-import { getUrl } from '@inrupt/solid-client';
+import { getUrl } from '@inrupt/solid-client/thing/get';
 
 import { useWorkspace } from '../hooks/app';
 import { useConcept, useConceptNames } from '../hooks/concepts';

@@ -2,16 +2,9 @@ import { useState, useEffect } from 'react';
 import equal from 'fast-deep-equal/es6';
 
 import { useThing, useWebId } from 'swrlit';
-import {
-  createSolidDataset,
-  createThing,
-  getUrl,
-  setUrl,
-  setThing,
-  getThing,
-  getBoolean,
-  removeThing,
-} from '@inrupt/solid-client';
+import { createThing, removeThing, getThing, setThing } from '@inrupt/solid-client/thing/thing';
+import { getUrl, getBoolean } from '@inrupt/solid-client/thing/get';
+import { setUrl } from '@inrupt/solid-client/thing/set';
 import { dequal } from 'dequal';
 
 import { useUnderstoryContainerUri, useStorageContainer } from './uris';

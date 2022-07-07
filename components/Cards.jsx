@@ -1,4 +1,4 @@
-import { asUrl } from "@inrupt/solid-client";
+import { asUrl } from "@inrupt/solid-client/thing/thing";
 import { useWebId } from "swrlit";
 import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"

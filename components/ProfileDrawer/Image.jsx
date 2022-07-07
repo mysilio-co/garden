@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useWebId } from 'swrlit';
-import { getUrl, setUrl } from '@inrupt/solid-client';
+import { getUrl } from '@inrupt/solid-client/thing/get';
+import { setUrl } from '@inrupt/solid-client/thing/set';
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import { useImageUploadUri } from '../../hooks/uris';
 import { EditIcon } from '../icons';

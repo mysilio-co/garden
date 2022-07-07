@@ -1,22 +1,27 @@
 import { useMemo, useState } from "react";
 import { dataset } from "@rdfjs/dataset";
+import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset';
 import {
-  createSolidDataset,
   getThingAll,
-  getDatetime,
   asUrl,
-  getUrl,
-  setUrl,
   getThing,
   createThing,
-  toRdfJsDataset,
+} from '@inrupt/solid-client/thing/thing';
+import {
+  getDatetime,
+  getUrl,
   getStringNoLocale,
-} from '@inrupt/solid-client';
+} from '@inrupt/solid-client/thing/get';
+import {
+  setUrl,
+} from '@inrupt/solid-client/thing/set';
+import {
+  toRdfJsDataset,
+} from '@inrupt/solid-client/rdfjs';
 import { DCTERMS } from "@inrupt/vocab-common-rdf";
 import { useResource, useWebId, useThing } from "swrlit";
 import Fuse from "fuse.js";
 
-import { useConceptContainerUri } from "./uris";
 import { useWorkspace } from "./app";
 import { US } from "../vocab";
 import { conceptNameToUrlSafeId, urlSafeIdToConceptName } from "../utils/uris";

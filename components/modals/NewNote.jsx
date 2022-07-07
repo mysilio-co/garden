@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react'
 import { Formik } from 'formik'
 import { getPlateActions } from "@udecode/plate-headless";
 import { useWebId } from "swrlit";
-import { isThingLocal } from "@inrupt/solid-client";
+import { isThingLocal } from "@inrupt/solid-client/thing/thing";
 
 import { PrivacyToggle } from '../toggles'
 import { Close as CloseIcon, TickCircle } from '../icons'

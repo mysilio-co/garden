@@ -1,7 +1,5 @@
 import Head from 'next/head'
 import { useProfile } from 'swrlit'
-import { getStringNoLocale } from '@inrupt/solid-client'
-import { US } from '../vocab'
 import { getPaymentPointer } from '../model/profile'
 
 // mysilio's uphold USD payment pointer
