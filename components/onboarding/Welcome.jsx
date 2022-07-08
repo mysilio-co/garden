@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useResource, useAuthentication, useLoggedIn, useMyProfile, useProfile, useWebId, useEnsured } from 'swrlit'
+import { useAuthentication } from 'swrlit/contexts/authentication'
 import { Logo } from '../logo'
 import { Loader } from '../elements'
 import { handleToIdp } from '../../utils/uris'

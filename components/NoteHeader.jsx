@@ -4,7 +4,7 @@ import { getStringNoLocale, getDatetime, getUrl } from "@inrupt/solid-client/thi
 import { asUrl } from "@inrupt/solid-client/thing/thing";
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useWebId } from 'swrlit'
+
 import {
   MenuIcon,
 } from '@heroicons/react/outline'

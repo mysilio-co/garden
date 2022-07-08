@@ -1,6 +1,6 @@
 import { WS } from '@inrupt/vocab-solid-common'
 import { getUrl } from '@inrupt/solid-client/thing/get'
-import { useProfile } from 'swrlit'
+import { useProfile } from 'swrlit/hooks/things'
 import { appPrefix } from '../utils/uris'
 import useSWR from 'swr'
 

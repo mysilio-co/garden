@@ -5,13 +5,10 @@ import {
 } from '@heroicons/react/outline'
 import { FOAF } from "@inrupt/vocab-common-rdf";
 import { sioc as SIOC } from 'rdf-namespaces'
-import { asUrl } from '@inrupt/solid-client/thing/thing'
-import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get'
-import { addUrl } from '@inrupt/solid-client/thing/add'
-import { removeUrl } from '@inrupt/solid-client/thing/remove'
-
+import { asUrl, getUrl, getStringNoLocale, addUrl, removeUrl } from '@inrupt/solid-client'
 import Link from 'next/link'
-import { useLoggedIn, useWebId, useMyProfile } from 'swrlit'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useMyProfile } from 'swrlit/hooks/things'
 
 import { classNames } from '../utils/html';
 import { profilePath } from '../utils/uris';

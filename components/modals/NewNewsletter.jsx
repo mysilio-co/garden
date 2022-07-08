@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { parse as parseCSV } from 'papaparse';
 
-import { useWebId } from 'swrlit';
+import { useWebId } from 'swrlit/contexts/authentication';
 import { isThingLocal } from '@inrupt/solid-client/thing/thing';
 import { Close as CloseIcon, TickCircle } from '../icons';
 import { useCurrentWorkspace } from '../../hooks/app';

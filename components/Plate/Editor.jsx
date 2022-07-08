@@ -7,7 +7,7 @@ import { Combobox } from '@udecode/plate-ui-combobox'
 import { MediaEmbedElement } from '@udecode/plate-ui-media-embed';
 
 
-import { useWebId } from 'swrlit'
+import { useWebId } from 'swrlit/contexts/authentication'
 import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 

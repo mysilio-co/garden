@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useWebId } from 'swrlit'
+import { useWebId } from 'swrlit/contexts/authentication'
 import { getUrl, getUrlAll } from '@inrupt/solid-client/thing/get'
 
 import { useWorkspace } from '../../../hooks/app'

@@ -3,7 +3,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import { Formik, Field, Form } from "formik";
 import { Close as CloseIcon, TickCircle } from '../icons'
 import { useWorkspaceIndex } from '../../hooks/concepts';
-import { useWebId } from 'swrlit';
+import { useWebId } from 'swrlit/contexts/authentication';
 import { addLinkToIndex } from '../../model/index';
 import Modal from '../Modal';
 import { useOGTags } from '../../hooks/uris';

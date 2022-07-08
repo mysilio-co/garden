@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useWebId } from 'swrlit'
+import { useWebId } from 'swrlit/contexts/authentication'
 import {
   getBoolean,
   getUrl,

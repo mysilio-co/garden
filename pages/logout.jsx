@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useAuthentication } from 'swrlit'
+import { useAuthentication } from 'swrlit/contexts/authentication'
 
 import { Loader } from '../components/elements'
 

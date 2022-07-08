@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useProfile } from 'swrlit'
+import { useProfile } from 'swrlit/hooks/things'
 import { getPaymentPointer } from '../model/profile'
 
 // mysilio's uphold USD payment pointer

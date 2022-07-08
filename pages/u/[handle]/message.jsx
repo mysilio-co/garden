@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
 import { useRouter } from 'next/router'
-import { useMyProfile, useProfile, useContainer, useEnsured, useWebId } from 'swrlit'
+import { useProfile } from 'swrlit/hooks/things'
+import { useWebId } from 'swrlit/contexts/authentication'
+
 import {
   setUrl, setStringNoLocale,
 } from '@inrupt/solid-client/thing/set'

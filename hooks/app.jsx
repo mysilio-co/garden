@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import equal from 'fast-deep-equal/es6';
 
-import { useThing, useWebId } from 'swrlit';
+import { useWebId } from 'swrlit/contexts/authentication';
+import { useThing } from 'swrlit/hooks/things';
+
 import { createThing, removeThing, getThing, setThing } from '@inrupt/solid-client/thing/thing';
 import { getUrl, getBoolean } from '@inrupt/solid-client/thing/get';
 import { setUrl } from '@inrupt/solid-client/thing/set';

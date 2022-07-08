@@ -1,5 +1,5 @@
 import { useUnderstoryContainerUri } from './uris'
-import { useResource, useWebId } from 'swrlit'
+import { useResource } from 'swrlit/hooks/things'
 import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset'
 
 export function useGnomesResource(webId) {
