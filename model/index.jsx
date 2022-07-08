@@ -1,14 +1,15 @@
-import { namedNode, dataset } from "@rdfjs/dataset";
-import type { DatasetCore } from "@rdfjs/types";
-import type { SolidDataset } from "@inrupt/solid-client";
+//TSimport type { DatasetCore } from "@rdfjs/types";
+//TSimport type { SolidDataset } from "@inrupt/solid-client";
 import {
   createThing,
-  buildThing,
   setThing,
-} from "@inrupt/solid-client";
+} from "@inrupt/solid-client/thing/thing";
+import {
+  buildThing,
+} from "@inrupt/solid-client/thing/build";
 import {
   createSolidDataset,
-} from "@inrupt/solid-client";
+} from "@inrupt/solid-client/resource/solidDataset";
 import { MY, MIME } from "../vocab";
 import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
 import * as base58 from "micro-base58";
@@ -49,6 +50,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Comm
 // This is a temporary hack. We create a DatasetCore from a SolidDataset, and
 // the Inrupt libraries seems to know what to do with it. So define this type to
 // the TS happy. But this is a brittle assumption that may break later.
+/*TS
 type SolidDatasetCore = SolidDataset & DatasetCore;
 
 type OGTags = {
@@ -59,14 +61,14 @@ type OGTags = {
   };
   ogUrl: string;
 };
-
+*/
 export function addLinkToIndex(
-  index: SolidDataset,
-  url: string,
-  title?: string,
-  desc?: string,
-  img?: string
-): SolidDataset {
+  index,
+  url,
+  title,
+  desc,
+  img,
+) {
   const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
@@ -86,10 +88,10 @@ export function addLinkToIndex(
 }
 
 export function addImageToIndex(
-  index: SolidDataset,
-  url: string,
-  file: File
-): SolidDataset {
+  index,
+  url,
+  file,
+) {
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
@@ -103,10 +105,10 @@ export function addImageToIndex(
 }
 
 export function addFileToIndex(
-  index: SolidDataset,
-  url: string,
-  file: File
-): SolidDataset {
+  index,
+  url,
+  file,
+) {
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.File)
@@ -119,7 +121,7 @@ export function addFileToIndex(
   return setThing(index || createSolidDataset(), FileThing);
 }
 
-export function _addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
+export function _addTagToIndex(index, tag) {
   const TagThing = buildThing(
     createThing({ name: `TAG:base58:${base58.encode(tag)}` })
   )
@@ -133,9 +135,9 @@ export function _addTagToIndex(index: SolidDataset, tag: string): SolidDataset {
 }
 
 export function _addMentionToIndex(
-  index: SolidDataset,
-  handle: string
-): SolidDataset {
+  index,
+  handle,
+) {
   const MentionThing = buildThing(
     createThing({ name: `MENTION:base58:${base58.encode(handle)}` })
   )
@@ -149,10 +151,10 @@ export function _addMentionToIndex(
 
 // DO NOT USE -- only a prototype for how we might store Contacts
 function _addPersonToIndex(
-  index: SolidDataset,
-  handle: string,
-  name: string
-): SolidDataset {
+  index,
+  handle,
+  name,
+) {
   const PersonThing = buildThing(
     createThing({ name: `PERSON:base58:${base58.encode(handle)}` })
   )
@@ -166,7 +168,7 @@ function _addPersonToIndex(
 }
 
 // DO NOT USE -- only a prototype for how we might use SKOS for collections
-function _addConceptToIndex(index: SolidDataset, name: string) {
+function _addConceptToIndex(index, name) {
   const ConceptThing = buildThing(
     // NOTE: This will not work if we move the concept.
     createThing({ name: `CONCEPT:base58:${base58.encode(name)}` })
@@ -180,7 +182,7 @@ function _addConceptToIndex(index: SolidDataset, name: string) {
 }
 
 // DO NOT USE -- only a prototype for how we might uaw SKOS for Collections
-function _addCollectionToIndex(index: SolidDataset, name: string) {
+function _addCollectionToIndex(index, name) {
   const ConceptThing = buildThing(
     // NOTE: This will not work if we move the concept.
     createThing({ name: `COCNEPT:base58:${base58.encode(name)}` })
