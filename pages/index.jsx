@@ -1,4 +1,4 @@
-import { useLoggedIn, useWebId } from 'swrlit'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
 
 import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'

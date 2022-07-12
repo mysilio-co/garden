@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { getStringNoLocale, setStringNoLocale } from '@inrupt/solid-client'
+import { getStringNoLocale } from '@inrupt/solid-client/thing/get'
+import { setStringNoLocale } from '@inrupt/solid-client/thing/set'
 import { FOAF } from '@inrupt/vocab-common-rdf';
 
 import { EditIcon } from '../icons';

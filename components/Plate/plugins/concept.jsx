@@ -1,5 +1,5 @@
 import { Transforms, Text, Node, Editor as SlateEditor } from 'slate';
-import { createPluginFactory } from "@udecode/plate";
+import { createPluginFactory } from "@udecode/plate-headless";
 
 import { ELEMENT_CONCEPT } from "../../../utils/slate";
 

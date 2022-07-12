@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { asUrl, isThingLocal } from '@inrupt/solid-client'
+import { asUrl, isThingLocal } from '@inrupt/solid-client/thing/thing'
 
 import Editor from "./Plate/Editor";
 import { getAndParseNoteBody } from '../model/note'

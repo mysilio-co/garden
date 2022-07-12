@@ -1,6 +1,4 @@
 import { createContext, useContext, useMemo } from 'react'
-import { useWorkspace } from '../hooks/app'
-import { asUrl } from '@inrupt/solid-client'
 
 const WorkspaceContext = createContext({slug: 'default', workspace: null})
 

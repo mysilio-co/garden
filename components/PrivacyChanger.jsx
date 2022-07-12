@@ -3,15 +3,10 @@ import {
   useEffect,
 } from "react";
 import { useWebId, useThing } from "swrlit";
-import {
-  setStringNoLocale,
-  getStringNoLocale,
-  setThing,
-  createSolidDataset,
-  removeThing,
-  getUrl,
-  setUrl,
-} from "@inrupt/solid-client";
+import { setStringNoLocale, setUrl } from "@inrupt/solid-client/thing/set";
+import { getUrl } from "@inrupt/solid-client/thing/get";
+import { setThing, removeThing } from "@inrupt/solid-client/thing/thing";
+import { createSolidDataset } from "@inrupt/solid-client/resource/solidDataset";
 
 import { useWorkspaceContext } from "../contexts/WorkspaceContext";
 

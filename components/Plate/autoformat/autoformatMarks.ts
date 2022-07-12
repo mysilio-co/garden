@@ -8,7 +8,7 @@ import {
   MARK_SUBSCRIPT,
   MARK_SUPERSCRIPT,
   MARK_UNDERLINE,
-} from '@udecode/plate';
+} from '@udecode/plate-headless';
 
 export const autoformatMarks: AutoformatRule[] = [
   {

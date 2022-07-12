@@ -1,11 +1,23 @@
 import { useState } from 'react'
 
 import { useRouter } from 'next/router'
-import { useMyProfile, useProfile, useContainer, useEnsured, useWebId } from 'swrlit'
+import { useProfile } from 'swrlit/hooks/things'
+import { useWebId } from 'swrlit/contexts/authentication'
+
 import {
-  setUrl, getUrl, getStringNoLocale, setStringNoLocale, createThing, setThing,
-  saveSolidDatasetInContainer, createSolidDataset
-} from '@inrupt/solid-client'
+  setUrl, setStringNoLocale,
+} from '@inrupt/solid-client/thing/set'
+import {
+  getUrl, getStringNoLocale
+} from '@inrupt/solid-client/thing/get'
+import {
+  createThing, setThing,
+} from '@inrupt/solid-client/thing/thing'
+import {
+  createSolidDataset,
+  saveSolidDatasetInContainer
+} from '@inrupt/solid-client/resource/solidDataset'
+
 import { LDP, FOAF, RDFS, DCTERMS } from '@inrupt/vocab-common-rdf'
 import { fetch } from '@inrupt/solid-client-authn-browser'
 

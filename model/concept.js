@@ -1,16 +1,11 @@
 import { US } from "../vocab";
 import { namedNode } from "@rdfjs/dataset";
-import {
-  createThing,
-  addUrl,
-  setThing,
-  createSolidDataset,
-  setDatetime,
-  getDatetime,
-  getUrl,
-  setUrl,
-  getUrlAll
-} from "@inrupt/solid-client";
+import { createThing, setThing } from "@inrupt/solid-client/thing/thing";
+import { addUrl } from "@inrupt/solid-client/thing/add";
+import { createSolidDataset } from "@inrupt/solid-client/resource/solidDataset";
+import { setDatetime, setUrl } from "@inrupt/solid-client/thing/set";
+import { getDatetime, getUrl, getUrlAll } from "@inrupt/solid-client/thing/get";
+
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
 import {
   getConceptNodes,

@@ -1,9 +1,6 @@
 import { fetch } from "@inrupt/solid-client-authn-browser";
-import {
-  setThing,
-  createSolidDataset,
-  saveSolidDatasetAt,
-} from "@inrupt/solid-client";
+import { setThing } from "@inrupt/solid-client/thing/thing";
+import { createSolidDataset, saveSolidDatasetAt } from "@inrupt/solid-client/resource/solidDataset";
 import { DefaultPodDomain } from '../model/flags';
 
 export async function postFormData(uri, body) {

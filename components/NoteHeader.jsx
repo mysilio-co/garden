@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
-import { getStringNoLocale, getDatetime, getUrl, setUrl, asUrl } from "@inrupt/solid-client";
+import { getStringNoLocale, getDatetime, getUrl } from "@inrupt/solid-client/thing/get";
+import { asUrl } from "@inrupt/solid-client/thing/thing";
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useWebId } from 'swrlit'
+
 import {
   MenuIcon,
 } from '@heroicons/react/outline'

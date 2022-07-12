@@ -1,32 +1,26 @@
 import { US, MY } from "../vocab";
 import {
-  createThing,
-  addUrl,
-  setThing,
-  createSolidDataset,
-  setDatetime,
-  getDatetime,
   getUrl,
-  asUrl,
-  setUrl,
   getUrlAll,
-  Thing,
-  IriString,
-  Iri,
-} from '@inrupt/solid-client';
+} from '@inrupt/solid-client/thing/get';
+import {
+  createThing,
+  asUrl,
+} from '@inrupt/solid-client/thing/thing';
 import { uuidUrn } from '../utils/uris';
 import { FOAF, DCTERMS, RDF, OWL } from '@inrupt/vocab-common-rdf';
 
-export type IRI = string;
+/*export type IRI = string;
 export type URN = IRI;
 export type UUID = URN;
+*/
 
-export function isUUID(iri: IRI): boolean {
+export function isUUID(iri) {
   const url = new URL(iri);
   return url.protocol == 'urn:' && url.pathname.indexOf('uuid:') == 0;
 }
 
-export function getUUID(thing: Thing): UUID {
+export function getUUID(thing) {
   const iri = asUrl(thing);
   if (isUUID(asUrl(thing))) {
     return iri;
@@ -35,19 +29,19 @@ export function getUUID(thing: Thing): UUID {
   }
 }
 
-export function createThingWithUUID(): Thing {
+export function createThingWithUUID() {
   return createThing({ url: uuidUrn() });
 }
 
-export function hasUSNote(thing: Thing): boolean {
+export function hasUSNote(thing) {
   return !!getUrl(thing, US.storedAt);
 }
 
-export function isConcept(thing: Thing): boolean {
+export function isConcept(thing) {
   return hasUSNote(thing);
 }
 
-export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
+export function hasRDFTypes(thing, ts) {
   const types = getUrlAll(thing, RDF.type);
   let hasAllTypes = true;
   for (let t of ts) {
@@ -56,22 +50,22 @@ export function hasRDFTypes(thing: Thing, ts: IriString[]): boolean {
   return hasAllTypes;
 }
 
-export function hasRDFType(thing: Thing, t: IriString): boolean {
+export function hasRDFType(thing, t) {
   return hasRDFTypes(thing, [t]);
 }
 
-export function isBookmark(thing: Thing): boolean {
+export function isBookmark(thing) {
   return hasRDFType(thing, MY.SKOS.Bookmark);
 }
 
-export function isBookmarkedImage(thing: Thing): boolean {
+export function isBookmarkedImage(thing) {
   return hasRDFTypes(thing, [MY.SKOS.Bookmark, FOAF.Image]);
 }
 
-export function isBookmarkedLink(thing: Thing): boolean {
+export function isBookmarkedLink(thing) {
   return hasRDFTypes(thing, [MY.SKOS.Bookmark, MY.FOAF.Link]);
 }
 
-export function isBookmarkedFile(thing: Thing): boolean {
+export function isBookmarkedFile(thing) {
   return hasRDFTypes(thing, [MY.SKOS.Bookmark, MY.FOAF.File]);
 }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { useProfile, useWebId } from 'swrlit'
+import { useProfile } from 'swrlit/hooks/things'
+import { useWebId } from 'swrlit/contexts/authentication'
 
 import { handleToWebId, profilePath } from "../../utils/uris"
 import Cards from '../../components/Cards'
