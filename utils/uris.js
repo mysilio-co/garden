@@ -4,25 +4,11 @@ import { v1 as uuid } from 'uuid';
 export const appPrefix =
   process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/garden"
 
-export function handleToWebId(handle) {
-  if (handle) {
-    try {
-      new URL(handle);
-      // if this doesn't throw, it's a valid URL
-      return handle;
-    } catch (_) {
-      return `https://${handle}/profile/card#me`;
-    }
-  }
-}
+export const handleToWebId = (handle) =>
+  new TextDecoder().decode(base58.decode(handle));
 
-export function webIdToHandle(webId) {
-  try {
-    return new URL(webId).hostname;
-  } catch (e) {
-    return webId;
-  }
-}
+export const webIdToHandle = (webId) =>
+  webId && base58.encode(webId);
 
 export function profilePath(webId) {
   return `/u/${webIdToHandle(webId)}`;
