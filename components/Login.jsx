@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuthentication } from 'swrlit'
+import { useAuthentication } from 'swrlit/contexts/authentication'
 import Link from 'next/link';
 
 import { urlFromHost} from '../utils/uris';

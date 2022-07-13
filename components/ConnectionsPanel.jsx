@@ -1,5 +1,5 @@
 import { useState, forwardRef, Suspense } from 'react'
-import { asUrl } from '@inrupt/solid-client'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
 import Link from 'next/link'
 import {
   HomeIcon,

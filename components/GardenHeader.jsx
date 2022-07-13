@@ -7,7 +7,8 @@ import { FOAF } from "@inrupt/vocab-common-rdf";
 import { sioc as SIOC } from 'rdf-namespaces'
 import { asUrl, getUrl, getStringNoLocale, addUrl, removeUrl } from '@inrupt/solid-client'
 import Link from 'next/link'
-import { useLoggedIn, useWebId, useMyProfile } from 'swrlit'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useMyProfile } from 'swrlit/hooks/things'
 
 import { classNames } from '../utils/html';
 import { profilePath } from '../utils/uris';

@@ -7,7 +7,7 @@ import {
   setNodes,
   TElement,
   TodoListItemNodeData,
-} from '@udecode/plate';
+} from '@udecode/plate-headless';
 import { Editor } from 'slate';
 import { clearBlockFormat, formatList } from './autoformatUtils';
 

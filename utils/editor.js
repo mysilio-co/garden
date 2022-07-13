@@ -1,7 +1,6 @@
 import { Editor, Transforms, Range, Point, Element, Text, Path, Node } from 'slate';
 import { ReactEditor} from 'slate-react';
 
-import imageExtensions from 'image-extensions'
 import isUrl from 'is-url'
 
 
@@ -130,13 +129,6 @@ export const removeColumn = (editor, table) => {
       at: [...firstRowPath.slice(0, -1), i, firstRow.children.length - 1]
     })
   }
-}
-
-const isImageUrl = url => {
-  if (!url) return false
-  if (!isUrl(url)) return false
-  const ext = new URL(url).pathname.split('.').pop()
-  return imageExtensions.includes(ext)
 }
 
 export const withImages = editor => {

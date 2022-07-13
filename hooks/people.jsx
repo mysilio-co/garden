@@ -1,5 +1,5 @@
-import { useMyProfile } from 'swrlit'
-import { getUrlAll } from '@inrupt/solid-client'
+import { useMyProfile } from 'swrlit/hooks/things'
+import { getUrlAll } from '@inrupt/solid-client/thing/get'
 import { sioc as SIOC } from 'rdf-namespaces'
 
 export function useFollows(){

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useWebId } from 'swrlit'
+import { useWebId } from 'swrlit/contexts/authentication'
 
 import WebMonetization from '../components/WebMonetization'
 import GardenHeader from './GardenHeader'

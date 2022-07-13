@@ -115,8 +115,8 @@ export const ArrowSquareLeft = ({ className = "" }) => (
 )
 export const ArrowCircleRight = ({ className = "" }) => (
   <svg className={`${className}`} viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8.5 15.167a7.173 7.173 0 0 1-7.167-7.166A7.173 7.173 0 0 1 8.5.834a7.173 7.173 0 0 1 7.167 7.167A7.173 7.173 0 0 1 8.5 15.167zm0-13.333a6.174 6.174 0 0 0-6.167 6.167c0 3.4 2.767 6.166 6.167 6.166s6.167-2.766 6.167-6.166c0-3.4-2.767-6.167-6.167-6.167z" fill="#0E90A3"/>
-    <path d="M7.66 10.853a.494.494 0 0 1-.353-.146.503.503 0 0 1 0-.707l2-2-2-2a.503.503 0 0 1 0-.707.503.503 0 0 1 .706 0l2.354 2.354a.503.503 0 0 1 0 .706l-2.354 2.354c-.1.1-.226.146-.353.146z" fill="#0E90A3"/>
+    <path d="M8.5 15.167a7.173 7.173 0 0 1-7.167-7.166A7.173 7.173 0 0 1 8.5.834a7.173 7.173 0 0 1 7.167 7.167A7.173 7.173 0 0 1 8.5 15.167zm0-13.333a6.174 6.174 0 0 0-6.167 6.167c0 3.4 2.767 6.166 6.167 6.166s6.167-2.766 6.167-6.166c0-3.4-2.767-6.167-6.167-6.167z" fill="#0E90A3" />
+    <path d="M7.66 10.853a.494.494 0 0 1-.353-.146.503.503 0 0 1 0-.707l2-2-2-2a.503.503 0 0 1 0-.707.503.503 0 0 1 .706 0l2.354 2.354a.503.503 0 0 1 0 .706l-2.354 2.354c-.1.1-.226.146-.353.146z" fill="#0E90A3" />
   </svg>
 )
 export const Share = ({ className = "" }) => (
@@ -149,5 +149,65 @@ export const UploadImage = (props) => (
 export const Trashcan = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+  </svg>
+)
+
+
+// from Box Icons https://boxicons.com/
+export const CodeBlock = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M20 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 19V7h16l.002 12H4z"></path><path d="M9.293 9.293 5.586 13l3.707 3.707 1.414-1.414L8.414 13l2.293-2.293zm5.414 0-1.414 1.414L15.586 13l-2.293 2.293 1.414 1.414L18.414 13z" />
+  </svg>
+)
+
+// from Box Icons https://boxicons.com/
+export const Highlight = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="m20.707 5.826-3.535-3.533a.999.999 0 0 0-1.408-.006L7.096 10.82a1.01 1.01 0 0 0-.273.488l-1.024 4.437L4 18h2.828l1.142-1.129 3.588-.828c.18-.042.345-.133.477-.262l8.667-8.535a1 1 0 0 0 .005-1.42zm-9.369 7.833-2.121-2.12 7.243-7.131 2.12 2.12-7.242 7.131zM4 20h16v2H4z" />
+  </svg>
+)
+
+// from Box Icons https://boxicons.com/
+export const FormatListBulleted = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8.023v2H18.8zM8 11h12v2H8zm0 5h12v2H8z" />
+  </svg>
+)
+
+// from Box Icons https://boxicons.com/
+export const FormatListNumbered = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M5.282 12.064c-.428.328-.72.609-.875.851-.155.24-.249.498-.279.768h2.679v-.748H5.413c.081-.081.152-.151.212-.201.062-.05.182-.142.361-.27.303-.218.511-.42.626-.604.116-.186.173-.375.173-.578a.898.898 0 0 0-.151-.512.892.892 0 0 0-.412-.341c-.174-.076-.419-.111-.733-.111-.3 0-.537.038-.706.114a.889.889 0 0 0-.396.338c-.094.143-.159.346-.194.604l.894.076c.025-.188.074-.317.147-.394a.375.375 0 0 1 .279-.108c.11 0 .2.035.272.108a.344.344 0 0 1 .108.258.55.55 0 0 1-.108.297c-.074.102-.241.254-.503.453zm.055 6.386a.398.398 0 0 1-.282-.105c-.074-.07-.128-.195-.162-.378L4 18.085c.059.204.142.372.251.506.109.133.248.235.417.306.168.069.399.103.692.103.3 0 .541-.047.725-.14a1 1 0 0 0 .424-.403c.098-.175.146-.354.146-.544a.823.823 0 0 0-.088-.393.708.708 0 0 0-.249-.261 1.015 1.015 0 0 0-.286-.11.943.943 0 0 0 .345-.299.673.673 0 0 0 .113-.383.747.747 0 0 0-.281-.596c-.187-.159-.49-.238-.909-.238-.365 0-.648.072-.847.219-.2.143-.334.353-.404.626l.844.151c.023-.162.067-.274.133-.338s.151-.098.257-.098a.33.33 0 0 1 .241.089c.059.06.087.139.087.238 0 .104-.038.193-.117.27s-.177.112-.293.112a.907.907 0 0 1-.116-.011l-.045.649a1.13 1.13 0 0 1 .289-.056c.132 0 .237.041.313.126.077.082.115.199.115.352 0 .146-.04.266-.119.354a.394.394 0 0 1-.301.134zm.948-10.083V5h-.739a1.47 1.47 0 0 1-.394.523c-.168.142-.404.262-.708.365v.754a2.595 2.595 0 0 0 .937-.48v2.206h.904zM9 6h11v2H9zm0 5h11v2H9zm0 5h11v2H9z"></path>
+  </svg>
+)
+
+// from Box Icons https://boxicons.com/
+export const FormatQuote = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M3.691 6.292C5.094 4.771 7.217 4 10 4h1v2.819l-.804.161c-1.37.274-2.323.813-2.833 1.604A2.902 2.902 0 0 0 6.925 10H10a1 1 0 0 1 1 1v7c0 1.103-.897 2-2 2H3a1 1 0 0 1-1-1v-5l.003-2.919c-.009-.111-.199-2.741 1.688-4.789zM20 20h-6a1 1 0 0 1-1-1v-5l.003-2.919c-.009-.111-.199-2.741 1.688-4.789C16.094 4.771 18.217 4 21 4h1v2.819l-.804.161c-1.37.274-2.323.813-2.833 1.604A2.902 2.902 0 0 0 17.925 10H21a1 1 0 0 1 1 1v7c0 1.103-.897 2-2 2z"></path>
+  </svg>
+)
+
+// from Material Icons: https://fonts.google.com/icons?selected=Material+Icons&icon.query=looks
+export const HeadingOne = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z" />
+  </svg>
+)
+
+// from Material Icons: https://fonts.google.com/icons?selected=Material+Icons&icon.query=looks
+export const HeadingTwo = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 8c0 1.11-.9 2-2 2h-2v2h4v2H9v-4c0-1.11.9-2 2-2h2V9H9V7h4c1.1 0 2 .89 2 2v2z" />
+  </svg>
+)
+
+// from Material Icons: https://fonts.google.com/icons?selected=Material+Icons&icon.query=looks
+export const HeadingThree = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" {...props}>
+    <path d="M.01 0h24v24h-24z" fill="none" />
+    <path d="M19.01 3h-14c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 7.5c0 .83-.67 1.5-1.5 1.5.83 0 1.5.67 1.5 1.5V15c0 1.11-.9 2-2 2h-4v-2h4v-2h-2v-2h2V9h-4V7h4c1.1 0 2 .89 2 2v1.5z" />
   </svg>
 )

@@ -5,7 +5,7 @@ import { Close as CloseIcon, TickCircle } from '../icons'
 import * as Yup from "yup";
 import { useWorkspaceIndex } from '../../hooks/concepts';
 import { useImageUploadUri } from '../../hooks/uris';
-import { useWebId } from 'swrlit';
+import { useWebId } from 'swrlit/contexts/authentication';
 import { addImageToIndex } from '../../model';
 import { ImageUploadAndEditor } from '../../components/ImageUploader';
 import Modal from '../Modal';

@@ -12,11 +12,12 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 
-import { asUrl } from '@inrupt/solid-client'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
 import { FOAF } from '@inrupt/vocab-common-rdf';
-import { getUrl, getStringNoLocale } from '@inrupt/solid-client'
+import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get'
 
-import { useMyProfile, useLoggedIn, useAuthentication } from 'swrlit'
+import { useLoggedIn, useAuthentication } from 'swrlit/contexts/authentication'
+import { useMyProfile } from 'swrlit/hooks/things'
 
 import ProfileDrawer from './ProfileDrawer'
 import Avatar from './Avatar';

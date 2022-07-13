@@ -1,4 +1,4 @@
-import { AuthenticationProvider, useAuthentication } from 'swrlit'
+import { AuthenticationProvider, useAuthentication } from 'swrlit/contexts/authentication'
 import { useRouter } from 'next/router'
 
 function RenderAfterAuthed({ children }) {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { mockThingFrom, setStringNoLocale } from '@inrupt/solid-client';
+import { setStringNoLocale } from '@inrupt/solid-client/thing/set';
+import { mockThingFrom } from '@inrupt/solid-client/thing/mock';
 import { schema } from 'rdf-namespaces';
 /*
 import Note from '../components/Note';

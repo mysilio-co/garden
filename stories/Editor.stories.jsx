@@ -1,5 +1,5 @@
 import React from 'react';
-import { mockThingFrom, setStringNoLocale } from '@inrupt/solid-client';
+
 import { schema } from 'rdf-namespaces';
 /*
 import Editor from '../components/Editor';

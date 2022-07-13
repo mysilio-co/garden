@@ -1,4 +1,6 @@
-import { setUrl, getStringNoLocale, setStringNoLocale, createThing } from '@inrupt/solid-client'
+import { createThing } from '@inrupt/solid-client/thing/thing'
+import { getStringNoLocale } from '@inrupt/solid-client/thing/get'
+import { setUrl, setStringNoLocale } from '@inrupt/solid-client/thing/set'
 import { FOAF } from "@inrupt/vocab-common-rdf";
 
 import { US, PP } from '../vocab'
