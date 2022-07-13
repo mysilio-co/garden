@@ -11,7 +11,7 @@
     "chromatic": "npx chromatic --project-token=9ce71b1f5982"
   },
   "dependencies": {
-    "@headlessui/react": "^1.2.0",
+    "@headlessui/react": "^1.6.2",
     "@heroicons/react": "^1.0.6",
     "@inrupt/solid-client": "^1.23.1",
     "@octokit/request": "^5.6.3",
