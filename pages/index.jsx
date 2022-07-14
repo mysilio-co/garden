@@ -1,13 +1,11 @@
 import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useSpacesWithSetup } from 'garden-kit/hooks'
 
 import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
 
-import { useApp } from '../hooks/app'
-
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
-import { useEffect } from 'react'
 
 function InitPage({ initApp }) {
   return (
@@ -34,18 +32,14 @@ function LoadingPage() {
 export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
-  const { app, initApp, error: appError } = useApp(webId)
-  useEffect(() => {
-    console.log(`loggedIn? ${loggedIn} as webId ${webId}`);
-    console.log(`app ${app} / ${appError}`);
-  }, [loggedIn, webId, app, appError]);
+  const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (
-        app ? (
+        spaces ? (
           <Dashboard />
-        ) : ((appError && (appError.statusCode === 404)) ? (
-          <InitPage initApp={initApp} />
+        ) : ((spacesError && (spacesError.statusCode === 404)) ? (
+          <InitPage initApp={setupDefaultSpaces} />
         ) : (
           <LoadingPage />
         )
