@@ -42,9 +42,9 @@ function EllipsesMenu({ loggedIn, logout, className = "" }) {
   return (
     <Popover className={`relative ${className}`}>
       <Popover.Button className="outline-none focus:outline-none">
-        <button className="rounded-full border h-8 w-8 text-gray-200">
+        <div className="rounded-full border h-8 w-8 text-gray-200">
           <span className="align-top relative -top-1">...</span>
-        </button>
+        </div>
       </Popover.Button>
 
       <Popover.Panel className="absolute w-36 bottom-8 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
@@ -212,9 +212,8 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
                     <nav aria-label="Sidebar" className="mt-5">
                       <div className="px-2 space-y-1">
                         {navigation.map((item) => (
-                          <Link href={item.href}>
+                          <Link href={item.href} key={item.name}>
                             <a
-                              key={item.name}
                               className={classNames(
                                 item.current
                                   ? 'bg-gray-400 text-gray-200'
@@ -254,19 +253,20 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
               <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 px-4 relative w-52">
                   <Link href="/">
-                    <Image
-                      layout="responsive"
-                      src={logoAndName}
-                      alt="Mysilio"
-                    />
+                    <a>
+                      <Image
+                        layout="responsive"
+                        src={logoAndName}
+                        alt="Mysilio"
+                      />
+                    </a>
                   </Link>
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
                   <div className="px-2 space-y-1">
                     {navigation.map((item) => (
-                      <Link href={item.href}>
+                      <Link href={item.href} key={item.name}>
                         <a
-                          key={item.name}
                           className={classNames(
                             item.current
                               ? 'bg-gray-400 text-gray-200'

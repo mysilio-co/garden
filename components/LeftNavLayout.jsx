@@ -27,11 +27,13 @@ function DummyLeftNavLayout({ pageName, pageTitle, children, HeaderComponent = D
               <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 px-4 relative w-52">
                   <Link href="/">
-                    <Image
-                      layout="responsive"
-                      src={logoAndName}
-                      alt="Mysilio"
-                    />
+                    <a>
+                      <Image
+                        layout="responsive"
+                        src={logoAndName}
+                        alt="Mysilio"
+                      />
+                    </a>
                   </Link>
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">

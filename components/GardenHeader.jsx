@@ -171,7 +171,7 @@ export default function GardenHeader({
                 </div>
                 {ActiveModalTitles.map((title) => {
                   return (
-                    <Dropdown.Item>
+                    <Dropdown.Item key={title}>
                       {({ active }) => (
                         <a
                           href="#"
