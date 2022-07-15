@@ -1,5 +1,6 @@
 import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
 import { useSpacesWithSetup } from 'garden-kit/hooks'
+import { hasRequiredSpaces } from 'garden-kit/spaces'
 
 import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
@@ -33,16 +34,19 @@ export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
   const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
+  const spacesConfigDoesntExist = spacesError && (spacesError.statusCode === 404)
+  const setupComplete = spaces && hasRequiredSpaces(spaces)
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (
-        spaces ? (
+        setupComplete ? (
           <Dashboard />
-        ) : ((spacesError && (spacesError.statusCode === 404)) ? (
-          <InitPage initApp={setupDefaultSpaces} />
-        ) : (
-          <LoadingPage />
-        )
+        ) : ( //console.log((spacesConfigDoesntExist || !hasRequiredSpaces(spaces))) ||
+          (spacesConfigDoesntExist || !hasRequiredSpaces(spaces)) ? (
+            <InitPage initApp={setupDefaultSpaces} />
+          ) : (
+            <LoadingPage />
+          )
         )
       ) : (
         ((loggedIn === false) || (loggedIn === null)) ? (
