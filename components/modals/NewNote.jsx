@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, useContext } from 'react'
 import { Formik } from 'formik'
 import { getPlateActions } from "@udecode/plate-headless";
 import { useWebId } from "swrlit";
@@ -16,6 +16,7 @@ import NoteEditor from "../NoteEditor"
 import { EmptySlateJSON } from "../../utils/slate";
 import Modal from '../Modal';
 import * as flags from '../../model/flags'
+import SpaceContext from '../../contexts/SpaceContext';
 
 export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   const [pub, setPublic] = useState(isPublic);
@@ -28,15 +29,17 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   const { value: setValue, resetEditor } = getPlateActions(editorId);
 
   const webId = useWebId();
-  const { workspace, slug: workspaceSlug } = useCurrentWorkspace(privacy);
-
+  const { space } = useContext(SpaceContext);
+  const gardenUrls = space && getGardenFileAll(space)
+  const gardenUrl = gardenUrls && gardenUrls[0]
+  const { garden } = useGarden(gardenUrl);
   const {
-    concept,
-    index: conceptIndex,
-    saveIndex: saveConceptIndex,
-  } = useConcept(webId, workspaceSlug, name, privacy);
+    item,
+    saveToGarden
+  } = useTitledGardenItem(garden, name);
+  const itemExists = item && !isThingLocal(item);
   const conceptNames = useConceptNames(webId);
-  const conceptExists = concept && !isThingLocal(concept);
+
   const save = async function save() {
     const newNote = createOrUpdateSlateJSON(value);
     const newConceptIndex = createOrUpdateConceptIndex(
@@ -122,9 +125,9 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-                {conceptExists && (
+                {itemExists && (
                   <span className="ipt-error-message">
-                    concept already exists
+                    a note with this title already exists
                   </span>
                 )}
               </div>
