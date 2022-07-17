@@ -1,13 +1,11 @@
-import { Fragment, useMemo, useState, useCallback } from 'react'
+import { Fragment, useMemo, useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog, Popover, Transition } from '@headlessui/react'
 import {
   HomeIcon,
   LoginIcon,
-  GlobeIcon,
   BookOpenIcon,
-  MenuIcon,
   UserGroupIcon,
   XIcon,
 } from '@heroicons/react/outline'
@@ -16,7 +14,7 @@ import { asUrl } from '@inrupt/solid-client/thing/thing'
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get'
 
-import { useLoggedIn, useAuthentication } from 'swrlit/contexts/authentication'
+import { useLoggedIn, useAuthentication, useWebId } from 'swrlit/contexts/authentication'
 import { useMyProfile } from 'swrlit/hooks/things'
 
 import ProfileDrawer from './ProfileDrawer'
@@ -25,6 +23,12 @@ import DefaultHeader from './DefaultHeader'
 import logoAndName from '../public/img/logo-and-text.png'
 
 import { profilePath } from '../utils/uris'
+import { SpaceProvider } from '../contexts/SpaceContext'
+import { GardenProvider } from '../contexts/GardenContext'
+
+import { getGardenFileAll } from 'garden-kit/spaces'
+import { useSpace } from 'garden-kit/hooks'
+import { HomeSpaceSlug } from 'garden-kit/spaces'
 
 const defaultLoggedInNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
 const defaultLoggedOutNavItems = [
@@ -123,6 +127,7 @@ function navigationItems({ loggedIn, pageName, profile }) {
 }
 
 export default function LeftNavLayout({ pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
+  const webId = useWebId()
   const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
   const name = profile && getStringNoLocale(profile, FOAF.name)
@@ -132,6 +137,19 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const navigation = useMemo(() => navigationItems({ loggedIn, pageName, profile }), [pageName, profile])
+
+  const spaceSlug = HomeSpaceSlug
+  const r = useSpace(webId, spaceSlug)
+  const { space, error } = r
+  const [selectedGardenUrl, setSelectedGardenUrl] = useState()
+
+  useEffect(() => {
+    // TODO: remove this once a user can select from the left nav
+    if (space) {
+      const urls = getGardenFileAll(space)
+      setSelectedGardenUrl(urls[0])
+    }
+  }, [space])
   return (
     <>
       <div className="h-screen flex relative">
@@ -304,16 +322,18 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
             <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
           </aside>
         </Transition>
-        <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
-          <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
-
-          <div className="h-full flex-1 relative z-0 flex">
-            <main className="h-full flex-1 relative z-0 focus:outline-none xl:order-last">
-              {children}
-            </main>
-
-          </div>
-        </div>
+        <SpaceProvider slug={spaceSlug}>
+          <GardenProvider url={selectedGardenUrl}>
+            <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
+              <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
+              <div className="h-full flex-1 relative z-0 flex">
+                <main className="h-full flex-1 relative z-0 focus:outline-none xl:order-last">
+                  {children}
+                </main>
+              </div>
+            </div>
+          </GardenProvider>
+        </SpaceProvider>
       </div>
     </>
   )
