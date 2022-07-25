@@ -10,9 +10,8 @@ import WebMonetization from '../components/WebMonetization'
 import GardenHeader from './GardenHeader'
 import { Loader } from './elements'
 import LeftNavLayout from '../components/LeftNavLayout'
+import Cards from '../components/Cards'
 
-import { WorkspaceProvider } from '../contexts/WorkspaceContext'
-import Cards from '../components/Cards';
 import SpaceContext from '../contexts/SpaceContext';
 import { getThingAll } from '@inrupt/solid-client';
 
@@ -26,14 +25,11 @@ function GardenCreator({ url }) {
 
 function Garden({ url, search }) {
   const { garden, error } = useFilteredGarden(url, search);
-  console.log("loading garden", url, garden, error)
   const items = garden && getItemAll(garden)
-  console.log("items", items)
-  console.log("things", garden && getThingAll(garden))
   return (
     <div>
-      {garden ? ( //console.log("garden", getItemAll(garden)) ||
-        <div>Garden!</div>
+      {garden ? (console.log("garden", getItemAll(garden)) ||
+        <Cards garden={items} workspaceSlug="default"/>
       ) : (
         (error && (error.statusCode === 404)) ? (
           <GardenCreator url={url} />

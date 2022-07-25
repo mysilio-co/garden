@@ -2,11 +2,12 @@ import { asUrl } from "@inrupt/solid-client/thing/thing";
 import { getUrl, getDatetime, getStringNoLocale } from "@inrupt/solid-client/thing/get";
 import Image from "next/image";
 import { DCTERMS, FOAF } from "@inrupt/vocab-common-rdf";
+import { getAbout } from 'garden-kit/items'
 
 import { getRelativeTime } from '../../utils/time.js';
 
 export default function Bookmark({ link }) {
-  const url = asUrl(link);
+  const url = getAbout(link);
   const lastEdit = link && getDatetime(link, DCTERMS.modified);
   const title = link && getStringNoLocale(link, DCTERMS.title);
   const description = link && getStringNoLocale(link, DCTERMS.description);

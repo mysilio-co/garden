@@ -7,18 +7,19 @@ import FileCard from "./cards/FileCard"
 import BookmarkCard from './cards/BookmarkCard';
 
 import {
-  isConcept,
-  isBookmarkedLink,
-  isBookmarkedImage,
-  isBookmarkedFile,
-} from '../utils/rdf';
+  isNote,
+  isImage,
+  isFile,
+  isBookmark,
+} from 'garden-kit/items';
 
 export function CardsFromGarden({ garden, webId, workspaceSlug }) {
+  console.log("CARDS", garden)
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
       {garden &&
         garden.map((thing) => {
-          if (isConcept(thing)) {
+          if (isNote(thing)) {
             return (
               <NoteCard
                 key={asUrl(thing)}
@@ -27,11 +28,11 @@ export function CardsFromGarden({ garden, webId, workspaceSlug }) {
                 workspaceSlug={workspaceSlug}
               />
             );
-          } else if (isBookmarkedImage(thing)) {
+          } else if (isImage(thing)) {
             return <ImageCard key={asUrl(thing)} image={thing} />;
-          } else if (isBookmarkedFile(thing)) {
+          } else if (isFile(thing)) {
             return <FileCard key={asUrl(thing)} file={thing} />;
-          } else if (isBookmarkedLink(thing))
+          } else if (isBookmark(thing))
             return <BookmarkCard key={asUrl(thing)} link={thing} />;
         })}
     </ul>
