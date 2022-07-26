@@ -20,8 +20,8 @@ export default function TagPage() {
   const namespacedTag = tagPrefix && tag && `${tagPrefix}${tagNameToUrlSafeId(tag)}`
 
   const { garden } = useGarden(webId, workspaceSlug)
-  // TODO: is there a model function for this?
-  const tagged = garden && garden.filter(g => {
+  const items = garden && getItemAll(garden)
+  const tagged = items && items.filter(g => {
     const tags = getUrlAll(g, US.tagged)
     return (tags.indexOf(namespacedTag) >= 0)
   })
@@ -31,7 +31,7 @@ export default function TagPage() {
     <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
       <div className="p-6">
         <WorkspaceProvider webId={webId} slug={workspaceSlug}>
-          <Cards webId={webId} garden={tagged} workspaceSlug={workspaceSlug} />
+          <Cards webId={webId} garden={garden} filteredItems={tagged} workspaceSlug={workspaceSlug} />
         </WorkspaceProvider>
       </div>
     </LeftNavLayout>

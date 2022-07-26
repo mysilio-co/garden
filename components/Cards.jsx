@@ -12,20 +12,21 @@ import {
   isFile,
   isBookmark,
 } from 'garden-kit/items';
+import { getItemAll } from "garden-kit/garden";
 
-export function CardsFromGarden({ garden, webId, workspaceSlug }) {
-  console.log("CARDS", garden)
+export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
+  const items = filteredItems || (garden && getItemAll(garden))
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-      {garden &&
-        garden.map((thing) => {
+      {items &&
+        items.map((thing) => {
           if (isNote(thing)) {
             return (
               <NoteCard
                 key={asUrl(thing)}
                 concept={thing}
                 webId={webId}
-                workspaceSlug={workspaceSlug}
+                workspaceSlug={spaceSlug}
               />
             );
           } else if (isImage(thing)) {
@@ -39,17 +40,17 @@ export function CardsFromGarden({ garden, webId, workspaceSlug }) {
   );
 }
 
-export default function Cards({ workspaceSlug, webId, garden }) {
+export default function Cards({ spaceSlug, webId, garden }) {
   const myWebId = useWebId();
-
+  const hasItems = garden && (getItemAll(garden).length > 0)
   return (
     <>
       {garden ? (
-        garden.length > 0 ? (
+        hasItems ? (
           <CardsFromGarden
             webId={webId}
             garden={garden}
-            workspaceSlug={workspaceSlug}
+            spaceSlug={spaceSlug}
           />
         ) : (
           <div>

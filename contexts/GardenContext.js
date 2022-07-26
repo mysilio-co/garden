@@ -3,11 +3,11 @@ import { HomeSpaceSlug } from 'garden-kit/hooks'
 
 const GardenContext = createContext({ spaceSlug: HomeSpaceSlug, url: null })
 
-export function GardenProvider({ spaceSlug = HomeSpaceSlug, url = null, ...rest }) {
+export function GardenProvider({ url = null, ...rest }) {
   const value = useMemo(() => (
-    { spaceSlug, url }
+    { url }
   ),
-    [spaceSlug, url])
+    [url])
   return (
     <GardenContext.Provider value={value} {...rest} />
   )

@@ -139,8 +139,7 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
   const navigation = useMemo(() => navigationItems({ loggedIn, pageName, profile }), [pageName, profile])
 
   const spaceSlug = HomeSpaceSlug
-  const r = useSpace(webId, spaceSlug)
-  const { space, error } = r
+  const { space } = useSpace(webId, spaceSlug)
   const [selectedGardenUrl, setSelectedGardenUrl] = useState()
 
   useEffect(() => {
