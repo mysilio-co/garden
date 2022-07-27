@@ -20,14 +20,11 @@ import NewNoteModal from './modals/NewNote';
 import NewBookmarkModal from './modals/NewBookmark';
 import NewImageModal from './modals/NewImage';
 import NewFileModal from './modals/NewFile';
-import NewNewsletterModal from './modals/NewNewsletter';
 import { IsPreviewEnv } from '../model/flags';
 import { useFollows } from '../hooks/people'
 
 
-const ActiveModalTitles = IsPreviewEnv
-  ? ['Note', 'Bookmark', 'Image', 'File', 'Newsletter']
-  : ['Note', 'Bookmark', 'Image', 'File'];
+const ActiveModalTitles = ['Note', 'Bookmark', 'Image', 'File'];
 
 function ActiveModal({ title, open, onClose }) {
   const [name, setName] = useState('');
@@ -47,8 +44,6 @@ function ActiveModal({ title, open, onClose }) {
       return <NewFileModal open={open} onClose={onClose} />;
     case 'Image':
       return <NewImageModal open={open} onClose={onClose} />;
-    case 'Newsletter':
-      return <NewNewsletterModal open={open} onClose={onClose} />;
     case undefined:
       return <></>;
     default:

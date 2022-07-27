@@ -22,11 +22,6 @@ describe('ensureWorkspace', () => {
   );
 
   const ensuredWithRemoval = ensureWorkspace(
-    removeUrl(
-      original,
-      MY.News.publicationManifest,
-      getUrl(original, MY.News.publicationManifest)
-    ),
     'https://should-not-use.example/',
     'https://should-not-use.example/',
     'https://example2/'
@@ -44,9 +39,6 @@ describe('ensureWorkspace', () => {
     expect(getUrl(original, US.backupsStorage)).toBe(
       'https://example/backups/'
     );
-    expect(getUrl(original, MY.News.publicationManifest)).toBe(
-      'https://example/publications.ttl'
-    );
   });
   it('does not overwrite existing values', () => {
     expect(ensured).toEqual(original);
@@ -54,9 +46,6 @@ describe('ensureWorkspace', () => {
   it('overwrites values not present', () => {
     expect(getUrl(ensuredWithRemoval, US.conceptIndex)).toBe(
       'https://example/concepts.ttl'
-    );
-    expect(getUrl(ensuredWithRemoval, MY.News.publicationManifest)).toBe(
-      'https://example2/publications.ttl'
     );
   });
 });
