@@ -56,11 +56,6 @@ export function ensureWorkspace(
     );
     workspace = ensureUrl(
       workspace,
-      MY.News.publicationManifest,
-      new URL('publications.ttl', workspacePreferencesFileUri).toString()
-    );
-    workspace = ensureUrl(
-      workspace,
       US.noteStorage,
       new URL('notes/', workspacePreferencesFileUri).toString()
     );
