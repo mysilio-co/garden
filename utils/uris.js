@@ -14,6 +14,10 @@ export function profilePath(webId) {
   return `/u/${webIdToHandle(webId)}`;
 }
 
+export function gardenPath(webId, spaceSlug, gardenUrl){
+  return `/g/${webIdToHandle(webId)}/${spaceSlug}/${base58.encode(gardenUrl)}`
+}
+
 export function understoryGardenConceptPrefix(webId, workspaceSlug) {
   return (
     webId &&
@@ -52,6 +56,9 @@ export const conceptNameToUrlSafeId = (name) =>
   name && base58.encode(name.toLowerCase());
 
 export const urlSafeIdToConceptName = (id) =>
+  new TextDecoder().decode(base58.decode(id));
+
+export const urlSafeIdToGardenUrl = (id) =>
   new TextDecoder().decode(base58.decode(id));
 
 export const conceptUriToId = (conceptUri) =>

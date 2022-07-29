@@ -1,6 +1,7 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import {useRouter} from 'next/router'
 import { Dialog, Popover, Transition } from '@headlessui/react'
 import {
   HomeIcon,
@@ -22,7 +23,7 @@ import Avatar from './Avatar';
 import DefaultHeader from './DefaultHeader'
 import logoAndName from '../public/img/logo-and-text.png'
 
-import { profilePath } from '../utils/uris'
+import { profilePath, gardenPath } from '../utils/uris'
 import { SpaceProvider } from '../contexts/SpaceContext'
 import { GardenProvider } from '../contexts/GardenContext'
 
@@ -117,9 +118,10 @@ function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, 
 
 const defaultHeaderProps = {}
 
-function navigationItems({ loggedIn, pageName, profile, spaces, setSelectedSpaceSlug, setSelectedGardenUrl }) {
+function navigationItems({ router, loggedIn, pageName, profile, spaces, webId, selectedSpaceSlug, selectedGardenUrl }) {
   const allSpaces = spaces && getSpaceAll(spaces)
   const spaceItems = allSpaces ? allSpaces.map((space, i) => {
+    const spaceSlug = getSpaceSlug(space)
     const gardenUrls = [
       getNurseryFile(space),
       getPrivateFile(space),
@@ -133,16 +135,17 @@ function navigationItems({ loggedIn, pageName, profile, spaces, setSelectedSpace
         const garden = getThing(spaces, gardenUrl)
         return ({
           name: getTitle(garden),
+          spaceSlug,
+          gardenUrl,
           onClick: function () {
-            setSelectedSpaceSlug(getSpaceSlug(space))
-            setSelectedGardenUrl(gardenUrl)
+            router.push(gardenPath(webId, spaceSlug, gardenUrl))
           }
         })
       })
     }
   }) : []
   const profileItems = profile ? [
-    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
+    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon }
   ] : []
   const basicNavItems = loggedIn ? defaultLoggedInNavItems : defaultLoggedOutNavItems
   return [
@@ -150,7 +153,14 @@ function navigationItems({ loggedIn, pageName, profile, spaces, setSelectedSpace
     ...spaceItems,
     ...profileItems
   ].map((i) => {
-    i.current = (pageName == i.name)
+    if (
+      selectedSpaceSlug && (selectedSpaceSlug === i.spaceSlug) &&
+      selectedGardenUrl && (selectedGardenUrl === i.gardenUrl)
+    ) {
+      i.current = true
+    } else {
+      i.current = (pageName == i.name)
+    }
     return i
   })
 }
@@ -198,7 +208,11 @@ function NavigationItem({ item, subItem = false }) {
   </>
 }
 
-export default function LeftNavLayout({ pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
+export default function LeftNavLayout({
+  pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps,
+  spaceSlug, gardenUrl
+}) {
+  const router = useRouter()
   const webId = useWebId()
   const { profile, save: saveProfile } = useMyProfile()
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
@@ -210,19 +224,9 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const { spaces } = useSpaces(webId)
 
-  const [selectedSpaceSlug, setSelectedSpaceSlug] = useState(HomeSpaceSlug)
-  const [selectedGardenUrl, setSelectedGardenUrl] = useState()
-  useEffect(function(){
-    const allSpaces = spaces && getSpaceAll(spaces)
-    const firstSpace = allSpaces && allSpaces[0]
-    if (firstSpace){
-      setSelectedGardenUrl(getPrivateFile(firstSpace))
-    }
-  }, [spaces])
-
   const navigation = useMemo(() => navigationItems({
-    loggedIn, pageName, profile, spaces,
-    setSelectedSpaceSlug, setSelectedGardenUrl
+    router, loggedIn, pageName, profile, spaces, webId,
+    selectedSpaceSlug: spaceSlug, selectedGardenUrl: gardenUrl
   }),
     [pageName, profile])
 
@@ -362,8 +366,8 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
             <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
           </aside>
         </Transition>
-        <SpaceProvider slug={selectedSpaceSlug}>
-          <GardenProvider url={selectedGardenUrl}>
+        <SpaceProvider slug={spaceSlug}>
+          <GardenProvider url={gardenUrl}>
             <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
               <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
               <div className="h-full flex-1 relative z-0 flex">
