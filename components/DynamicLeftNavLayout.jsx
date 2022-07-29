@@ -26,9 +26,14 @@ import { profilePath } from '../utils/uris'
 import { SpaceProvider } from '../contexts/SpaceContext'
 import { GardenProvider } from '../contexts/GardenContext'
 
-import { getGardenFileAll } from 'garden-kit/spaces'
-import { useSpace } from 'garden-kit/hooks'
-import { HomeSpaceSlug } from 'garden-kit/spaces'
+import { useSpaces } from 'garden-kit/hooks'
+import {
+  HomeSpaceSlug, getPublicFile, getPrivateFile, getGardenFileAll,
+  getSpaceAll, getCompostFile, getNurseryFile, getSpaceSlug
+} from 'garden-kit/spaces'
+import { getTitle } from 'garden-kit/utils'
+import { getThing } from '@inrupt/solid-client'
+import { } from 'garden-kit'
 
 const defaultLoggedInNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
 const defaultLoggedOutNavItems = [
@@ -112,18 +117,85 @@ function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, 
 
 const defaultHeaderProps = {}
 
-function navigationItems({ loggedIn, pageName, profile }) {
+function navigationItems({ loggedIn, pageName, profile, spaces, setSelectedSpaceSlug, setSelectedGardenUrl }) {
+  const allSpaces = spaces && getSpaceAll(spaces)
+  const spaceItems = allSpaces ? allSpaces.map((space, i) => {
+    const gardenUrls = [
+      getNurseryFile(space),
+      getPublicFile(space),
+      getPrivateFile(space),
+      getCompostFile(space),
+      ...getGardenFileAll(space)
+    ]
+    return {
+      name: getTitle(space) || `Space ${i}`,
+      subItems: gardenUrls && gardenUrls.map(gardenUrl => {
+        const garden = getThing(spaces, gardenUrl)
+        return ({
+          name: getTitle(garden),
+          onClick: function () {
+            setSelectedSpaceSlug(getSpaceSlug(space))
+            setSelectedGardenUrl(gardenUrl)
+          }
+        })
+      })
+    }
+  }) : []
   const profileItems = profile ? [
     { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon, current: false }
   ] : []
   const basicNavItems = loggedIn ? defaultLoggedInNavItems : defaultLoggedOutNavItems
   return [
     ...basicNavItems,
+    ...spaceItems,
     ...profileItems
   ].map((i) => {
     i.current = (pageName == i.name)
     return i
   })
+}
+
+function navItemClasses(item, { hover = false, subItem = false } = {}) {
+  return classNames(
+    item.current
+      ? 'bg-gray-400 text-gray-200'
+      : `text-gray-200 ${hover ? 'hover:bg-gray-50 hover:text-gray-900' : ''}`,
+    `group flex items-center ${subItem ? 'ml-4 px-2 text-sm' : 'px-2 py-2 text-base'} font-medium rounded-md`
+  )
+}
+
+function navItemIconClasses(item, { hover = false, subItem = false } = {}) {
+  return classNames(
+    item.current ? 'text-gray-500' : `text-gray-400 ${hover ? 'group-hover:text-gray-500' : ''}`,
+    'mr-4 h-6 w-6'
+  )
+}
+
+function NavigationItem({ item, subItem = false }) {
+  return <>
+    {
+      item.href ? (
+        <Link href={item.href} key={item.name} >
+          <a className={navItemClasses(item, { hover: true, subItem })} >
+            {item.icon && <item.icon className={navItemIconClasses(item, { hover: true, subItem })} aria-hidden="true" />}
+            {item.name}
+          </a>
+        </Link >
+      ) : (
+        item.onClick ? (
+          <button className={navItemClasses(item, { hover: true, subItem })} onClick={item.onClick}>
+            {item.icon && <item.icon className={navItemIconClasses(item, { hover: true, subItem })} aria-hidden="true" />}
+            {item.name}
+          </button>
+        ) : (
+          <div className={navItemClasses(item, { subItem })} >
+            {item.icon && <item.icon className={navItemIconClasses(item, { subItem })} aria-hidden="true" />}
+            {item.name}
+          </div>
+        ))
+    }
+    {item.subItems && item.subItems.map(item => <NavigationItem item={item} subItem={true} />)}
+  </>
 }
 
 export default function LeftNavLayout({ pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
@@ -136,19 +208,17 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
   const { logout } = useAuthentication()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const navigation = useMemo(() => navigationItems({ loggedIn, pageName, profile }), [pageName, profile])
+  const { spaces } = useSpaces(webId)
 
-  const spaceSlug = HomeSpaceSlug
-  const { space } = useSpace(webId, spaceSlug)
+  const [selectedSpaceSlug, setSelectedSpaceSlug] = useState(HomeSpaceSlug)
   const [selectedGardenUrl, setSelectedGardenUrl] = useState()
 
-  useEffect(() => {
-    // TODO: remove this once a user can select from the left nav
-    if (space) {
-      const urls = getGardenFileAll(space)
-      setSelectedGardenUrl(urls[0])
-    }
-  }, [space])
+  const navigation = useMemo(() => navigationItems({
+    loggedIn, pageName, profile, spaces,
+    setSelectedSpaceSlug, setSelectedGardenUrl
+  }),
+    [pageName, profile])
+
   return (
     <>
       <div className="h-screen flex relative">
@@ -229,25 +299,7 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
                     <nav aria-label="Sidebar" className="mt-5">
                       <div className="px-2 space-y-1">
                         {navigation.map((item) => (
-                          <Link href={item.href} key={item.name}>
-                            <a
-                              className={classNames(
-                                item.current
-                                  ? 'bg-gray-400 text-gray-200'
-                                  : 'text-gray-200 hover:bg-gray-50 hover:text-gray-900',
-                                'group flex items-center px-2 py-2 text-base font-medium rounded-md'
-                              )}
-                            >
-                              <item.icon
-                                className={classNames(
-                                  item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                                  'mr-4 h-6 w-6'
-                                )}
-                                aria-hidden="true"
-                              />
-                              {item.name}
-                            </a>
-                          </Link>
+                          <NavigationItem item={item} />
                         ))}
                       </div>
                     </nav>
@@ -282,25 +334,7 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
                   <div className="px-2 space-y-1">
                     {navigation.map((item) => (
-                      <Link href={item.href} key={item.name}>
-                        <a
-                          className={classNames(
-                            item.current
-                              ? 'bg-gray-400 text-gray-200'
-                              : 'text-gray-200 hover:bg-gray-50 hover:text-gray-900',
-                            'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
-                          )}
-                        >
-                          <item.icon
-                            className={classNames(
-                              item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                              'mr-3 h-6 w-6'
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      </Link>
+                      <NavigationItem item={item} />
                     ))}
                   </div>
                 </nav>
@@ -321,7 +355,7 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
             <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
           </aside>
         </Transition>
-        <SpaceProvider slug={spaceSlug}>
+        <SpaceProvider slug={selectedSpaceSlug}>
           <GardenProvider url={selectedGardenUrl}>
             <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
               <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
