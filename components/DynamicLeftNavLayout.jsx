@@ -122,8 +122,8 @@ function navigationItems({ loggedIn, pageName, profile, spaces, setSelectedSpace
   const spaceItems = allSpaces ? allSpaces.map((space, i) => {
     const gardenUrls = [
       getNurseryFile(space),
-      getPublicFile(space),
       getPrivateFile(space),
+      getPublicFile(space),
       getCompostFile(space),
       ...getGardenFileAll(space)
     ]
@@ -194,7 +194,7 @@ function NavigationItem({ item, subItem = false }) {
           </div>
         ))
     }
-    {item.subItems && item.subItems.map(item => <NavigationItem item={item} subItem={true} />)}
+    {item.subItems && item.subItems.map((item, i) => <NavigationItem key={i} item={item} subItem={true} />)}
   </>
 }
 
@@ -212,6 +212,13 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
 
   const [selectedSpaceSlug, setSelectedSpaceSlug] = useState(HomeSpaceSlug)
   const [selectedGardenUrl, setSelectedGardenUrl] = useState()
+  useEffect(function(){
+    const allSpaces = spaces && getSpaceAll(spaces)
+    const firstSpace = allSpaces && allSpaces[0]
+    if (firstSpace){
+      setSelectedGardenUrl(getPrivateFile(firstSpace))
+    }
+  }, [spaces])
 
   const navigation = useMemo(() => navigationItems({
     loggedIn, pageName, profile, spaces,
@@ -298,8 +305,8 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
                     </div>
                     <nav aria-label="Sidebar" className="mt-5">
                       <div className="px-2 space-y-1">
-                        {navigation.map((item) => (
-                          <NavigationItem item={item} />
+                        {navigation.map((item, i) => (
+                          <NavigationItem key={i} item={item} />
                         ))}
                       </div>
                     </nav>
@@ -333,8 +340,8 @@ export default function LeftNavLayout({ pageName, pageTitle, children, HeaderCom
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
                   <div className="px-2 space-y-1">
-                    {navigation.map((item) => (
-                      <NavigationItem item={item} />
+                    {navigation.map((item, i) => (
+                      <NavigationItem key={i} item={item} />
                     ))}
                   </div>
                 </nav>

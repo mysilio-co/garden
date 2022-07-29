@@ -8,6 +8,9 @@ import { Loader } from '../components/elements'
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
 
+import { getSourceUrl } from '@inrupt/solid-client'
+import { deleteResource } from '../utils/fetch'
+
 function InitPage({ initApp }) {
   return (
     <>
@@ -34,15 +37,15 @@ export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
   const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
-  const spacesConfigDoesntExist = spacesError && (spacesError.statusCode === 404)
+  const spacesConfigDoesntExist = !!(spacesError && (spacesError.statusCode === 404))
   const setupComplete = spaces && hasRequiredSpaces(spaces)
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (
         setupComplete ? (
           <Dashboard />
-        ) : ( //console.log((spacesConfigDoesntExist || !hasRequiredSpaces(spaces))) ||
-          (spacesConfigDoesntExist || !hasRequiredSpaces(spaces)) ? (
+        ) : (
+          (spacesConfigDoesntExist) ? (
             <InitPage initApp={setupDefaultSpaces} />
           ) : (
             <LoadingPage />
