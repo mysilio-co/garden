@@ -44,9 +44,9 @@ function Garden({ webId, search }) {
 export default function GardenPage() {
   const router = useRouter()
   const { query: { handle, space, garden } } = router
-  const webId = handleToWebId(handle)
+  const webId = handle && handleToWebId(handle)
   const spaceSlug = space
-  const gardenUrl = urlSafeIdToGardenUrl(garden)
+  const gardenUrl = garden && urlSafeIdToGardenUrl(garden)
   const [search, setSearch] = useState('');
   const headerProps = useMemo(() => ({
     onSearch: setSearch,
