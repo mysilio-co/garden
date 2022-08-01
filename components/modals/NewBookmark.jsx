@@ -11,8 +11,8 @@ import { useOGTags } from '../../hooks/uris';
 export function NewBookmark({ onClose }) {
   const webId = useWebId()
   const { index, save } = useWorkspaceIndex(webId);
-  const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
+  const [url, setUrl] = useState('');
   const [desc, setDesc] = useState('');
   const [img, setImg] = useState('');
   const og = useOGTags(url);
@@ -20,7 +20,7 @@ export function NewBookmark({ onClose }) {
   useEffect(() => {
     if (og) {
       // OG tags were update (i.e. new URL)
-      // set name, description to ogTags
+      // set title, name, description
       if (og && og.ogTitle) {
         setTitle(og.ogTitle);
       }
@@ -29,9 +29,6 @@ export function NewBookmark({ onClose }) {
       }
       if (og && og.ogImage && og.ogImage.url) {
         setImg(og.ogImage.url);
-      }
-      if (og && og.ogUrl) {
-        setUrl(og.ogUrl);
       }
     }
   }, [og]);
