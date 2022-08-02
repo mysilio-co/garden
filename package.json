@@ -2,7 +2,7 @@
   "name": "mysilio-garden",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next",
+    "dev": "vercel env pull && next dev",
     "test": "",
     "build": "next build",
     "start": "next start",
