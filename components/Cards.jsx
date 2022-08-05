@@ -1,4 +1,5 @@
 import { asUrl } from "@inrupt/solid-client/thing/thing";
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { useWebId } from "swrlit";
 import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"
@@ -24,6 +25,7 @@ export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
             return (
               <NoteCard
                 key={asUrl(thing)}
+                gardenUrl={garden && getSourceUrl(garden)}
                 concept={thing}
                 webId={webId}
                 workspaceSlug={spaceSlug}

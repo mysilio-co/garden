@@ -366,7 +366,7 @@ export default function LeftNavLayout({
             <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
           </aside>
         </Transition>
-        <SpaceProvider slug={spaceSlug}>
+        <SpaceProvider slug={spaceSlug || HomeSpaceSlug}>
           <GardenProvider url={gardenUrl}>
             <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
               <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />

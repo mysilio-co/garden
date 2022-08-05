@@ -3,16 +3,15 @@ import { getDatetime, getUrl } from '@inrupt/solid-client/thing/get';
 import Link from "next/link";
 import Image from "next/image";
 import { DCTERMS, FOAF } from "@inrupt/vocab-common-rdf";
+import {getTitle} from 'garden-kit/utils'
 
 import { conceptIdFromUri } from "../../model/concept";
-import { notePath, urlSafeIdToConceptName } from "../../utils/uris";
-import { getRelativeTime } from '../../utils/time.js';
+import { notePath, itemPath, urlSafeIdToConceptName } from "../../utils/uris";
+import { getRelativeTime } from '../../utils/time';
 
-export default function NoteCard({ concept, workspaceSlug, webId }) {
-  const uri = asUrl(concept);
-  const id = conceptIdFromUri(uri);
-  const name = urlSafeIdToConceptName(id);
-  const url = notePath(webId, workspaceSlug, name)
+export default function NoteCard({ concept, workspaceSlug, gardenUrl, webId }) {
+  const name = getTitle(concept)
+  const url = itemPath(webId, workspaceSlug, gardenUrl, name)
   const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
   const coverImage = concept && getUrl(concept, FOAF.img)
 

@@ -34,6 +34,14 @@ export function notePath(webId, workspaceSlug, name) {
   );
 }
 
+export function itemPath(webId, spaceSlug, gardenUrl, name) {
+  return (
+    webId &&
+    name &&
+    `${gardenPath(webId, spaceSlug, gardenUrl)}/${conceptNameToUrlSafeId(name)}`
+  );
+}
+
 // deprecated
 export function publicNotePath(webId, workspaceSlug, name) {
   return (

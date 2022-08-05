@@ -55,7 +55,7 @@ export default function GardenPage() {
     <LeftNavLayout pageName="Garden" HeaderComponent={GardenHeader} headerProps={headerProps} spaceSlug={spaceSlug} gardenUrl={gardenUrl}>
       <WebMonetization webId={webId} />
       <div className="p-6">
-        <Garden search={search} />
+        <Garden webId={webId} search={search} />
       </div>
     </LeftNavLayout>
   );
