@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Head from 'next/head'
 import equal from 'fast-deep-equal/es6';
 
@@ -15,6 +15,7 @@ import { urlSafeIdToConceptName } from "../utils/uris";
 
 import { useConceptAndNote } from '../hooks/app';
 import { useCombinedWorkspaceIndexDataset } from '../hooks/concepts'
+import { useAutosave } from '../hooks/editor'
 
 import LeftNavLayout from './LeftNavLayout'
 import NoteHeader from './NoteHeader';
@@ -28,33 +29,27 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
   console.log("concept name", slug, conceptName)
   const { item, saveToGarden } = useTitledGardenItem(gardenUrl, conceptName)
 
-  // these two should be in the same resource as of 8/2022
+  // these two should be in the same resource as of 8/2022 - TV
   const { thing: noteBody } = useThing(item && getAbout(item))
   const { thing: valueThing, resource: noteResource, saveResource: saveNoteResource } = useThing(noteBody && getNoteValue(noteBody))
 
-  console.log("note value Thing", valueThing)
-  let value;
-//  try {
-    value = valueThing && noteResource && thingsToArray(valueThing, noteResource, noteThingToSlateObject)
-  /*} catch {
-    value = null
-  }*/
-  console.log("nb", value)
+  const value = valueThing && noteResource && thingsToArray(valueThing, noteResource, noteThingToSlateObject)
 
+  const [saving, setSaving] = useState(false)
+  console.log(saving)
   async function maybeSaveNoteBody(newValue) {
     if (newValue && !equal(newValue, value)) {
       console.log("new", newValue)
       const noteBodyThings = arrayToThings(newValue, createThingFromSlateJSOElement)
       let newNoteResource = noteBodyThings.reduce((m, t) => t ? setThing(m, t) : m, noteResource)
 
-//      setSaving(true);
+      setSaving(true);
       try {
         await saveNoteResource(newNoteResource);
-        console.log("SAVED!!")
       } catch (e) {
         console.log('error saving note', e);
       } finally {
-//        setSaving(false);
+        setSaving(false);
       }
     }
   }
@@ -69,24 +64,28 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
   const myNote = (webId === myWebId)
   const headerProps = useMemo(() => ({
     concept: item, saveConcept: saveToGarden, conceptName, authorProfile,
-    currentUserProfile, myNote, privacy, deleteConcept
+    currentUserProfile, myNote, privacy, deleteConcept, saving
   }), [
     item, saveToGarden, conceptName, authorProfile,
-    currentUserProfile, myNote, privacy, deleteConcept
+    currentUserProfile, myNote, privacy, deleteConcept, saving
   ])
+  const { onChange } = useAutosave(item, maybeSaveNoteBody)
+
   return (
     <LeftNavLayout pageName={conceptName} HeaderComponent={NoteHeader} headerProps={headerProps} >
       <Head>
         <title>{conceptName}</title>
       </Head>
       <WebMonetization webId={webId} />
-      {value && <Editor
-        editorId={editorId}
-        initialValue={value}
-        conceptNames={conceptNames}
-        editableProps={{ className: 'overflow-auto h-5/6' }}
-        onChange={maybeSaveNoteBody}
-      />}
+      <div className="mx-8">
+        {value && <Editor
+          editorId={editorId}
+          initialValue={value}
+          conceptNames={conceptNames}
+          editableProps={{ className: 'overflow-auto h-5/6' }}
+          onChange={onChange}
+        />}
+      </div>
     </LeftNavLayout>
   )
 }

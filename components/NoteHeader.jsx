@@ -16,7 +16,7 @@ import { NoteVisibilityToggle } from './toggles'
 import PrivacyChanger from './PrivacyChanger'
 import { Trashcan } from './icons'
 
-export default function NoteHeader({ concept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, openSidebar }) {
+export default function NoteHeader({ concept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, saving, openSidebar }) {
   const router = useRouter()
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
@@ -81,7 +81,7 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
           </div>
         </div>
         <div className="flex flex-row">
-          <div className="flex flex-row h-10 gap-4">
+          <div className="flex flex-row h-10 gap-4 items-center">
             {myNote && (
               <>
                 <button onClick={deleteAndRedirect} className="">
@@ -96,6 +96,7 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
                 )}
               </>
             )}
+            {saving && <div className="text-white opacity-50 text-sm">saving...</div>}
             {/*
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white/10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
             <span>
