@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
 import { useSpacesWithSetup } from 'garden-kit/hooks'
 import { hasRequiredSpaces } from 'garden-kit/spaces'
@@ -8,16 +9,23 @@ import { Loader } from '../components/elements'
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
 
-import { getSourceUrl } from '@inrupt/solid-client'
-import { deleteResource } from '../utils/fetch'
-
 function InitPage({ initApp }) {
+  const [saving, setSaving] = useState(false)
+  async function onClick(){
+    setSaving(true)
+    await initApp()
+    setSaving(false)
+  }
   return (
     <>
       <Header />
-      <div className="text-center pt-12">
+      <div className="text-center pt-12 flex flex-col items-center">
         <h3 className="text-xl pb-6">looks like this is your first time here!</h3>
-        <button className="btn" onClick={initApp}>get started</button>
+        {saving ? (
+          <Loader />
+        ) : (
+          <button className="btn-filled btn-md btn-square font-bold" onClick={onClick}>get started</button>
+        )}
       </div>
     </>
   )
