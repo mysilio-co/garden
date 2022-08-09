@@ -214,7 +214,7 @@ function LiElement({ attributes, children, nodeProps }) {
 
 function UlElement({ attributes, children, nodeProps }) {
   return (
-    <ul {...attributes} {...nodeProps}>
+    <ul className="pl-5 list-disc" {...attributes} {...nodeProps}>
       {children}
     </ul>
   )
@@ -222,7 +222,7 @@ function UlElement({ attributes, children, nodeProps }) {
 
 function OlElement({ attributes, children, nodeProps }) {
   return (
-    <ol {...attributes} {...nodeProps}>
+    <ol className="pl-5 list-decimal" {...attributes} {...nodeProps}>
       {children}
     </ol>
   )
@@ -472,6 +472,7 @@ export default function Editor({
   const tagItems = useMemo(() => tagNames.map(toMentionable), [tagNames])
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
+  console.log("initial value", initialValue)
   return (
     <PlateProvider id={editorId}>
       <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
