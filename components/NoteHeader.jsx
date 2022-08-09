@@ -24,11 +24,6 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
   const noteCreatedAt = concept && getDatetime(concept, DCTERMS.created);
   const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
 
-  const [privacyUpdatingTo, setPrivacyUpdatingTo] = useState(false)
-  function setNoteVisibilityEnabled(isEnabled) {
-    setPrivacyUpdatingTo(isEnabled ? 'public' : 'private')
-  }
-
   const authorWebId = authorProfile && asUrl(authorProfile)
   const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
 
@@ -87,13 +82,6 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
                 <button onClick={deleteAndRedirect} className="">
                   <Trashcan className="h-6 w-6 text-white" />
                 </button>
-                {privacyUpdatingTo ? (
-                  <PrivacyChanger name={conceptName}
-                    changeTo={privacyUpdatingTo} onFinished={() => setPrivacyUpdatingTo(null)} />
-                ) : (
-                  <NoteVisibilityToggle className="h-6 mr-8 w-20" enabled={privacy == 'public'}
-                    setEnabled={setNoteVisibilityEnabled} />
-                )}
               </>
             )}
             {saving && <div className="text-white opacity-50 text-sm">saving...</div>}
