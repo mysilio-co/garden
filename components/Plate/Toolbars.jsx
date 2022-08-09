@@ -1,6 +1,8 @@
 import * as P from '@udecode/plate-headless'
-import { MarkToolbarButton, BlockToolbarButton } from '@udecode/plate-ui-toolbar'
+import MarkToolbarButton from './MyMarkToolbarButton'
+import BlockToolbarButton from './MyBlockToolbarButton'
 import { ListToolbarButton } from '@udecode/plate-ui-list'
+import { toggleMark } from '@udecode/plate-core'
 
 import { CodeIcon } from '@heroicons/react/outline';
 import {
@@ -66,8 +68,8 @@ export const ToolbarButtonsList = () => {
   );
 };
 
-export const ToolbarButtonsBasicMarks = () => {
-  const editor = P.usePlateEditorRef(P.useEventEditorSelectors.focus());
+export const ToolbarButtonsBasicMarks = ({ }) => {
+  const editor = P.usePlateEditorRef();
   const tooltip = {
     arrow: true,
     delay: 0,

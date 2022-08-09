@@ -26,7 +26,6 @@ import WebMonetization from './WebMonetization';
 export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenUrl }) {
   const myWebId = useWebId()
   const conceptName = slug && urlSafeIdToConceptName(slug);
-  console.log("concept name", slug, conceptName)
   const { item, saveToGarden } = useTitledGardenItem(gardenUrl, conceptName)
 
   // these two should be in the same resource as of 8/2022 - TV
@@ -36,10 +35,9 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
   const value = valueThing && noteResource && thingsToArray(valueThing, noteResource, noteThingToSlateObject)
 
   const [saving, setSaving] = useState(false)
-  console.log(saving)
+
   async function maybeSaveNoteBody(newValue) {
     if (newValue && !equal(newValue, value)) {
-      console.log("new", newValue)
       const noteBodyThings = arrayToThings(newValue, createThingFromSlateJSOElement)
       let newNoteResource = noteBodyThings.reduce((m, t) => t ? setThing(m, t) : m, noteResource)
 
@@ -70,7 +68,6 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
     currentUserProfile, myNote, privacy, deleteConcept, saving
   ])
   const { onChange } = useAutosave(item, maybeSaveNoteBody)
-
   return (
     <LeftNavLayout pageName={conceptName} HeaderComponent={NoteHeader} headerProps={headerProps} >
       <Head>
@@ -78,13 +75,13 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
       </Head>
       <WebMonetization webId={webId} />
       <div className="mx-8">
-        {value && <Editor
-          editorId={editorId}
-          initialValue={value}
-          conceptNames={conceptNames}
-          editableProps={{ className: 'overflow-auto h-5/6' }}
-          onChange={onChange}
-        />}
+          {value && <Editor
+            editorId={editorId}
+            initialValue={value}
+            conceptNames={conceptNames}
+            editableProps={{ className: 'overflow-auto h-5/6' }}
+            onChange={onChange}
+          />}
       </div>
     </LeftNavLayout>
   )

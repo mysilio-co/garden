@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react'
-import { HomeSpaceSlug } from 'garden-kit/hooks'
+import { HomeSpaceSlug } from 'garden-kit/spaces'
 
 const GardenContext = createContext({ spaceSlug: HomeSpaceSlug, url: null })
 

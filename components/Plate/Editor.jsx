@@ -1,7 +1,68 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Editor as SlateEditor } from 'slate';
-import * as P from "@udecode/plate-headless";
-import { LinkToolbarButton } from '@udecode/plate-ui-link'
+import {
+  PlateProvider, Plate,
+
+  KEYS_HEADING,
+
+  MARK_BOLD,
+  MARK_CODE,
+  MARK_HIGHLIGHT,
+  MARK_ITALIC,
+  MARK_UNDERLINE,
+  ELEMENT_MENTION,
+  ELEMENT_LINK,
+  ELEMENT_BLOCKQUOTE,
+  ELEMENT_CODE_BLOCK,
+  ELEMENT_H1,
+  ELEMENT_H2,
+  ELEMENT_H3,
+
+  ELEMENT_IMAGE,
+  ELEMENT_LI,
+  ELEMENT_MEDIA_EMBED,
+  ELEMENT_UL,
+  ELEMENT_OL,
+  ELEMENT_PARAGRAPH,
+  ELEMENT_TODO_LI,
+
+  createListPlugin,
+  createTodoListPlugin,
+  createImagePlugin,
+  createLinkPlugin,
+  createKbdPlugin,
+  createNodeIdPlugin,
+  createAutoformatPlugin,
+  createResetNodePlugin,
+  createComboboxPlugin,
+  createSoftBreakPlugin,
+  createExitBreakPlugin,
+  createInsertDataPlugin,
+  createSelectOnBackspacePlugin,
+  createPlugins,
+
+  isBlockAboveEmpty,
+  isSelectionAtBlockStart,
+} from "@udecode/plate-headless"
+import {
+  createBoldPlugin,
+  createItalicPlugin,
+  createUnderlinePlugin,
+  createCodePlugin,
+} from '@udecode/plate-basic-marks'
+import {
+  createHighlightPlugin,
+} from '@udecode/plate-highlight'
+import {
+  createBlockquotePlugin,
+} from '@udecode/plate-block-quote'
+import {
+  createCodeBlockPlugin,
+} from '@udecode/plate-code-block'
+import { createHeadingPlugin } from '@udecode/plate-heading'
+import { createParagraphPlugin } from '@udecode/plate-paragraph'
+import { LinkToolbarButton, PlateFloatingLink}  from '@udecode/plate-ui-link'
+
 import { ImageElement } from '@udecode/plate-ui-image'
 import { Combobox } from '@udecode/plate-ui-combobox'
 import { MediaEmbedElement } from '@udecode/plate-ui-media-embed';
@@ -119,7 +180,7 @@ function BlockquoteElement({ attributes, children, nodeProps }) {
   )
 }
 
-function H1Element({ className="", attributes, children, nodeProps }) {
+function H1Element({ className = "", attributes, children, nodeProps }) {
   return (
     <h1 className={`text-3xl ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -127,7 +188,7 @@ function H1Element({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function H2Element({ className="", attributes, children, nodeProps }) {
+function H2Element({ className = "", attributes, children, nodeProps }) {
   return (
     <h2 className={`text-2xl ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -135,7 +196,7 @@ function H2Element({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function H3Element({ className="", attributes, children, nodeProps }) {
+function H3Element({ className = "", attributes, children, nodeProps }) {
   return (
     <h3 className={`text-xl ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -175,7 +236,7 @@ function ParagraphElement({ attributes, children, nodeProps }) {
   )
 }
 
-function BoldMark({ className="", attributes, children, nodeProps }) {
+function BoldMark({ className = "", attributes, children, nodeProps }) {
   return (
     <span className={`font-bold ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -183,7 +244,7 @@ function BoldMark({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function CodeMark({ className="", attributes, children, nodeProps }) {
+function CodeMark({ className = "", attributes, children, nodeProps }) {
   return (
     <span className={`font-mono bg-gray-200 ${className}`} {...attributes} {...nodeProps}>
       {children}just
@@ -191,7 +252,7 @@ function CodeMark({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function UnderlineMark({ className="", attributes, children, nodeProps }) {
+function UnderlineMark({ className = "", attributes, children, nodeProps }) {
   return (
     <span className={`underline ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -199,7 +260,7 @@ function UnderlineMark({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function ItalicMark({ className="", attributes, children, nodeProps }) {
+function ItalicMark({ className = "", attributes, children, nodeProps }) {
   return (
     <span className={`italic ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -207,7 +268,7 @@ function ItalicMark({ className="", attributes, children, nodeProps }) {
   )
 }
 
-function HighlightMark({ className="", attributes, children, nodeProps }) {
+function HighlightMark({ className = "", attributes, children, nodeProps }) {
   return (
     <span className={`bg-yellow-200 ${className}`} {...attributes} {...nodeProps}>
       {children}
@@ -216,31 +277,31 @@ function HighlightMark({ className="", attributes, children, nodeProps }) {
 }
 
 const components = {
-  [P.ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-  [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
-  [P.ELEMENT_H1]: H1Element,
-  [P.ELEMENT_H2]: H2Element,
-  [P.ELEMENT_H3]: H3Element,
+  [ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+  [ELEMENT_CODE_BLOCK]: CodeBlockElement,
+  [ELEMENT_H1]: H1Element,
+  [ELEMENT_H2]: H2Element,
+  [ELEMENT_H3]: H3Element,
 
-  [P.ELEMENT_IMAGE]: ImageElement,
-  [P.ELEMENT_LI]: LiElement,
-  [P.ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
-  [P.ELEMENT_UL]: UlElement,
-  [P.ELEMENT_OL]: OlElement,
-  [P.ELEMENT_PARAGRAPH]: ParagraphElement,
+  [ELEMENT_IMAGE]: ImageElement,
+  [ELEMENT_LI]: LiElement,
+  [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+  [ELEMENT_UL]: UlElement,
+  [ELEMENT_OL]: OlElement,
+  [ELEMENT_PARAGRAPH]: ParagraphElement,
 
-  [P.MARK_BOLD]: BoldMark,
-  [P.MARK_CODE]: CodeMark,
-  [P.MARK_HIGHLIGHT]: HighlightMark,
-  [P.MARK_ITALIC]: ItalicMark,
-  [P.MARK_UNDERLINE]: UnderlineMark,
+  [MARK_BOLD]: BoldMark,
+  [MARK_CODE]: CodeMark,
+  [MARK_HIGHLIGHT]: HighlightMark,
+  [MARK_ITALIC]: ItalicMark,
+  [MARK_UNDERLINE]: UnderlineMark,
 
   [ELEMENT_CONCEPT]: ConceptElement,
   [LEAF_CONCEPT_START]: ConceptStartLeaf,
   [LEAF_CONCEPT_END]: ConceptEndLeaf,
   [ELEMENT_TAG]: TagElement,
-  [P.ELEMENT_MENTION]: MentionElement,
-  [P.ELEMENT_LINK]: LinkElement
+  [ELEMENT_MENTION]: MentionElement,
+  [ELEMENT_LINK]: LinkElement
 };
 
 const optionsAutoformat = {
@@ -248,8 +309,8 @@ const optionsAutoformat = {
 };
 
 const resetBlockTypesCommonRule = {
-  types: [P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TODO_LI],
-  defaultType: P.ELEMENT_PARAGRAPH,
+  types: [ELEMENT_BLOCKQUOTE, ELEMENT_TODO_LI],
+  defaultType: ELEMENT_PARAGRAPH,
 };
 
 const optionsResetBlockTypePlugin = {
@@ -257,12 +318,12 @@ const optionsResetBlockTypePlugin = {
     {
       ...resetBlockTypesCommonRule,
       hotkey: "Enter",
-      predicate: P.isBlockAboveEmpty,
+      predicate: isBlockAboveEmpty,
     },
     {
       ...resetBlockTypesCommonRule,
       hotkey: "Backspace",
-      predicate: P.isSelectionAtBlockStart,
+      predicate: isSelectionAtBlockStart,
     },
   ],
 };
@@ -270,39 +331,42 @@ const optionsResetBlockTypePlugin = {
 
 
 const defaultPlugins = [
-  P.createHeadingPlugin({ options: { levels: 3 } }),
-  P.createParagraphPlugin(),
-  P.createBoldPlugin(),
-  P.createItalicPlugin(),
-  P.createUnderlinePlugin(),
-  P.createCodePlugin(),
-  P.createHighlightPlugin(),
-  P.createBlockquotePlugin(),
-  P.createCodeBlockPlugin(),
-  P.createListPlugin(),
-  P.createTodoListPlugin(),
-  P.createImagePlugin(),
-  P.createLinkPlugin({ options: { rangeBeforeOptions: { multiPaths: false } } }),
-  P.createKbdPlugin(),
-  P.createNodeIdPlugin(),
-  P.createAutoformatPlugin({ options: optionsAutoformat }),
-  P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
+  createHeadingPlugin({ options: { levels: 3 } }),
+  createParagraphPlugin(),
+  createUnderlinePlugin(),
+  createCodePlugin(),
+  createBoldPlugin(),
+  createItalicPlugin(),
+  createHighlightPlugin(),
+  createBlockquotePlugin(),
+  createCodeBlockPlugin(),
+  createListPlugin(),
+  createTodoListPlugin(),
+  createImagePlugin(),
+  createLinkPlugin({
+    options: { rangeBeforeOptions: { multiPaths: false } },
+    renderAfterEditable: PlateFloatingLink
+  }),
+  createKbdPlugin(),
+  createNodeIdPlugin(),
+  createAutoformatPlugin({ options: optionsAutoformat }),
+  createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
   //createComboboxPlugin(),
   // for now we need to support both combobox plugins
-  P.createComboboxPlugin(),
+  createComboboxPlugin(),
   createMentionPlugin(),
   createConceptPlugin(),
   createConceptStartPlugin(),
   createConceptEndPlugin(),
   createTagPlugin(),
-  P.createSoftBreakPlugin({
+  createSoftBreakPlugin({
     options: {
       rules: [
         { hotkey: "shift+enter" },
       ],
     }
   }),
-  P.createExitBreakPlugin({
+  createExitBreakPlugin({
     options: {
       rules: [
         {
@@ -317,20 +381,20 @@ const defaultPlugins = [
           query: {
             start: true,
             end: true,
-            allow: P.KEYS_HEADING,
+            allow: KEYS_HEADING,
           },
         },
         {
           hotkey: "enter",
           query: {
-            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE],
+            allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE],
           },
         },
       ],
     }
   }),
-  P.createInsertDataPlugin(),
-  P.createSelectOnBackspacePlugin({ options: { query: { allow: P.ELEMENT_IMAGE } } }),
+  createInsertDataPlugin(),
+  createSelectOnBackspacePlugin({ options: { query: { allow: ELEMENT_IMAGE } } }),
 ];
 
 function useImageUrlGetterAndSaveCallback() {
@@ -360,19 +424,19 @@ function toMentionable(name) {
 
 function onConceptSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `[[${item.text}]]`, { at: P.comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `[[${item.text}]]`, { at: comboboxStore.get.targetRange() })
   }
 }
 
 function onTagSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `#${item.text}`, { at: P.comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `#${item.text}`, { at: comboboxStore.get.targetRange() })
   }
 }
 
 function onMentionSelect(editor, item) {
   if (item) {
-    Transforms.insertText(editor, `@${item.text}`, { at: P.comboboxStore.get.targetRange() })
+    Transforms.insertText(editor, `@${item.text}`, { at: comboboxStore.get.targetRange() })
   }
 }
 
@@ -392,7 +456,7 @@ export default function Editor({
     readOnly
   };
 
-  const plugins = P.createPlugins(defaultPlugins, {
+  const plugins = createPlugins(defaultPlugins, {
     components
   })
 
@@ -408,54 +472,48 @@ export default function Editor({
   const tagItems = useMemo(() => tagNames.map(toMentionable), [tagNames])
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
-
-  const plateEditor = P.usePlateEditorRef()
-  useEffect(function () {
-    if (plateEditor) {
-      // normalize the whole editor at load to ensure the data is properly formatted
-      // this is how we migrate data from one format to another
-      SlateEditor.normalize(plateEditor, { force: true })
-    }
-  }, [plateEditor])
-
   return (
-    <P.Plate
-      id={editorId}
-      plugins={plugins}
-      editableProps={editableProps}
-      initialValue={initialValue}
-      onChange={onChange}
-      {...props}
-    >
-      {!readOnly && (
-        <>
-          <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
-            <div className="flex">
-              <ToolbarButtonsBasicElements />
-              <ToolbarButtonsList />
-              <LinkToolbarButton icon={<LinkIcon />} />
-              <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
-            </div>
-            <div className="flex">
-              <ToolbarButtonsBasicMarks />
-            </div>
-          </div>
+    <PlateProvider id={editorId}>
+      <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
+        <div className="flex">
+          <ToolbarButtonsBasicElements />
+          <ToolbarButtonsList />
+          <LinkToolbarButton icon={<LinkIcon />} />
+          <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+        </div>
+        <div className="flex">
+          <ToolbarButtonsBasicMarks />
+        </div>
+      </div>
 
-          <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
-            <div>
-              <ImageUploadAndEditor
-                onSave={imageUploaderOnSave}
-                onClose={() => { setImageUploaderOpen(false) }}
-                imageUploadContainerUri={imageUploadUri}
-              />
-            </div>
-          </Modal>
+      <Plate
+        id={editorId}
+        plugins={plugins}
+        editableProps={editableProps}
+        initialValue={initialValue}
+        onChange={onChange}
+        normalizeInitialValue={true}
+        {...props}
+      >
+        {false && !readOnly && (
+          <>
 
-          <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
-          <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
-          <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
-        </>
-      )}
-    </P.Plate>
+            <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+              <div>
+                <ImageUploadAndEditor
+                  onSave={imageUploaderOnSave}
+                  onClose={() => { setImageUploaderOpen(false) }}
+                  imageUploadContainerUri={imageUploadUri}
+                />
+              </div>
+            </Modal>
+
+            <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
+            <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
+            <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
+          </>
+        )}
+      </Plate>
+    </PlateProvider>
   );
 }
