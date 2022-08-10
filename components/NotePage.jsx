@@ -8,10 +8,11 @@ import { useThing } from 'swrlit/hooks/things'
 
 import { useTitledGardenItem } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
-import { getAbout } from 'garden-kit/items'
+import { getAbout, updateItemBeforeSave, setTags } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
 
 import { urlSafeIdToConceptName } from "../utils/uris";
+import { getTagsInNote } from '../utils/slate'
 
 import { useConceptAndNote } from '../hooks/app';
 import { useCombinedWorkspaceIndexDataset } from '../hooks/concepts'
@@ -41,9 +42,13 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
       const noteBodyThings = arrayToThings(newValue, createThingFromSlateJSOElement)
       let newNoteResource = noteBodyThings.reduce((m, t) => t ? setThing(m, t) : m, noteResource)
 
+      let newItem = updateItemBeforeSave(item)
+      newItem = setTags(newItem, getTagsInNote(newValue))
+
       setSaving(true);
       try {
         await saveNoteResource(newNoteResource);
+        await saveToGarden(newItem)
       } catch (e) {
         console.log('error saving note', e);
       } finally {
@@ -75,13 +80,13 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
       </Head>
       <WebMonetization webId={webId} />
       <div className="mx-8">
-          {value && <Editor
-            editorId={editorId}
-            initialValue={value}
-            conceptNames={conceptNames}
-            editableProps={{ className: 'overflow-auto h-5/6' }}
-            onChange={onChange}
-          />}
+        {value && <Editor
+          editorId={editorId}
+          initialValue={value}
+          conceptNames={conceptNames}
+          editableProps={{ className: 'overflow-auto h-5/6' }}
+          onChange={onChange}
+        />}
       </div>
     </LeftNavLayout>
   )

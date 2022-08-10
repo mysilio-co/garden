@@ -1,7 +1,7 @@
 import { Node } from "slate";
 import * as P from "@udecode/plate-headless";
 
-export const EmptySlateJSON = [{children: [{ text: "" }]}];
+export const EmptySlateJSON = [{ children: [{ text: "" }] }];
 export const ELEMENT_CONCEPT = "concept";
 export const ELEMENT_TAG = "tag";
 
@@ -23,6 +23,10 @@ export function getTagNodes(node) {
 
 export function getTagNameFromNode(node) {
   return node.name;
+}
+export function getTagsInNote(noteValue) {
+  console.log("T", getTagNodes({children: noteValue}).map(([tag]) => getTagNameFromNode(tag)))
+  return getTagNodes({children: noteValue}).map(([tag]) => getTagNameFromNode(tag));
 }
 
 const newElementType = {
