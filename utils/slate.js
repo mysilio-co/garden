@@ -25,7 +25,6 @@ export function getTagNameFromNode(node) {
   return node.name;
 }
 export function getTagsInNote(noteValue) {
-  console.log("T", getTagNodes({children: noteValue}).map(([tag]) => getTagNameFromNode(tag)))
   return getTagNodes({children: noteValue}).map(([tag]) => getTagNameFromNode(tag));
 }
 
