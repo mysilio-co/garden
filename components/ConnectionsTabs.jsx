@@ -1,7 +1,7 @@
 import { classNames } from '../utils/html'
 
 const tabs = [
-  { name: 'Links', slug: 'links', currentClassName: 'bg-my-green' },
+  //{ name: 'Links', slug: 'links', currentClassName: 'bg-my-green' },
   { name: 'Tags', slug: 'tags', currentClassName: 'bg-my-orange' }
 ]
 

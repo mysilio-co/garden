@@ -1,33 +1,27 @@
 import { useState, forwardRef, Suspense } from 'react'
 import { asUrl } from '@inrupt/solid-client/thing/thing'
 import Link from 'next/link'
-import {
-  HomeIcon,
-  MenuIcon,
-  UserGroupIcon,
-  XIcon,
-} from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/outline'
 
 import {
-  getTags, getLinks, tagUrlToTagName,
+  getLinks, tagUrlToTagName,
   conceptIdFromUri,
   conceptUrisThatReference,
 } from '../model/concept'
+import { getTags } from 'garden-kit/items'
 import Label from './Label'
 import { notePath, urlSafeIdToConceptName } from "../utils/uris";
-import { Close as CloseIcon } from "./icons"
 import ConnectionsTabs from './ConnectionsTabs'
 
 
-function TagsSection({ concept, tagPrefix, workspaceSlug }) {
-  const tags = getTags(concept)
+function TagsSection({ item, spaceSlug }) {
+  const tags = getTags(item)
   return (
     <div className="p-6">
-      {tags && tags.map(tag => {
-        const tagName = tagUrlToTagName(tag, tagPrefix)
+      {tags && tags.map(tagName => {
         return (
           <div>
-            <Link href={`/tags/${workspaceSlug}/${tagName}`}>
+            <Link href={`/tags/${spaceSlug}/${tagName}`}>
               <a className="text-my-green">
                 #{tagName}
               </a>
@@ -84,27 +78,27 @@ function LinksSection({ concept, conceptName, webId, workspaceSlug, conceptIndex
   )
 }
 
-function ConnectionsSection({ subSection, concept, conceptName, tagPrefix, conceptPrefix, webId, workspaceSlug, conceptIndex }) {
+function ConnectionsSection({ subSection, item, itemName, spaceSlug, itemIndex }) {
   switch (subSection) {
-    case 'links':
+    /*case 'links':
       return (
         <Suspense fallback={<div>loading..</div>}>
-          <LinksSection concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}>
+          <LinksSection item={item} itemName={itemName} conceptPrefix={conceptPrefix} webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}>
             Link
           </LinksSection>
         </Suspense>
-      )
+      )*/
     case 'tags':
       return (
-        <TagsSection concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} workspaceSlug={workspaceSlug}>
+        <TagsSection item={item} itemName={itemName} sspaceSlug={spaceSlug}>
           Tags
         </TagsSection>
       )
   }
 }
 
-const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix, conceptPrefix, className, webId, workspaceSlug, conceptIndex }, ref) => {
-  const [activeTab, setActiveTab] = useState('links')
+const ConnectionsPanel = forwardRef(({ onClose, item, itemName, className, webId, spaceSlug, itemIndex }, ref) => {
+  const [activeTab, setActiveTab] = useState('tags')
   return (
     <div className={`flex flex-col ${className}`} ref={ref}>
       <div className="flex flex-row gap-4 justify-between items-center p-4 bg-gray-100">
@@ -119,8 +113,8 @@ const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix,
         </button>
       </div>
       <ConnectionsTabs active={activeTab} onChange={setActiveTab} />
-      <ConnectionsSection subSection={activeTab} concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix}
-        webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex} />
+      <ConnectionsSection subSection={activeTab} item={item} itemName={itemName}
+        webId={webId} spaceSlug={spaceSlug} itemIndex={itemIndex} />
     </div>
   )
 })
