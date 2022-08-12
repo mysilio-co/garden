@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import equal from 'fast-deep-equal/es6';
 
-import { asUrl, setThing, createThing } from "@inrupt/solid-client/thing/thing";
+import { asUrl, setThing, removeThing } from "@inrupt/solid-client/thing/thing";
 import { useProfile, useMyProfile, useWebId } from "swrlit";
 import { useThing } from 'swrlit/hooks/things'
 
@@ -23,15 +24,19 @@ import NoteHeader from './NoteHeader';
 import ConceptEditor from './ConceptEditor';
 import Editor from './Plate/Editor'
 import WebMonetization from './WebMonetization';
+import { deleteResource } from '../utils/fetch';
 
 export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
   const myWebId = useWebId()
+  const router = useRouter()
   const itemName = slug && urlSafeIdToConceptName(slug);
-  const { item, saveToGarden } = useTitledGardenItem(gardenUrl, itemName)
+  const { item, save: saveItem, resource: itemResource, saveResource: saveItemResource } = useTitledGardenItem(gardenUrl, itemName)
 
   // these two should be in the same resource as of 8/2022 - TV
-  const { thing: noteBody } = useThing(item && getAbout(item))
-  const { thing: valueThing, resource: noteResource, saveResource: saveNoteResource } = useThing(noteBody && getNoteValue(noteBody))
+  const noteBodyResourceUrl = item && getAbout(item)
+  const { thing: noteBody } = useThing(noteBodyResourceUrl)
+  const { thing: valueThing, resource: noteResource, saveResource: saveNoteResource } =
+    useThing(noteBody && getNoteValue(noteBody))
 
   const value = valueThing && noteResource && thingsToArray(valueThing, noteResource, noteThingToSlateObject)
 
@@ -48,7 +53,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
       setSaving(true);
       try {
         await saveNoteResource(newNoteResource);
-        await saveToGarden(newItem)
+        await saveItem(newItem)
       } catch (e) {
         console.log('error saving note', e);
       } finally {
@@ -57,8 +62,15 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
     }
   }
 
+  async function deleteItem() {
+    if (noteBody) {
+      await deleteResource(noteBodyResourceUrl)
+    }
+    await saveItemResource(removeThing(itemResource, item))
+    router.push("/")
+  }
+
   const privacy = true
-  const deleteConcept = () => { }
   const conceptNames = []
   const index = null
 
@@ -66,11 +78,11 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
   const { profile: currentUserProfile } = useMyProfile();
   const myNote = (webId === myWebId)
   const headerProps = useMemo(() => ({
-    item, saveConcept: saveToGarden, itemName, authorProfile, gardenUrl,
-    currentUserProfile, myNote, privacy, deleteConcept, saving, spaceSlug
+    item, itemName, authorProfile, gardenUrl,
+    currentUserProfile, myNote, privacy, deleteItem, saving, spaceSlug
   }), [
-    item, saveToGarden, itemName, authorProfile, gardenUrl,
-    currentUserProfile, myNote, privacy, deleteConcept, saving, spaceSlug
+    item, itemName, authorProfile, gardenUrl,
+    currentUserProfile, myNote, privacy, deleteItem, saving, spaceSlug
   ])
   const { onChange } = useAutosave(item, maybeSaveNoteBody)
   return (

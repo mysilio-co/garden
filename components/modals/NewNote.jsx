@@ -50,7 +50,7 @@ const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   const gardenUrl = getNurseryFile(space)
   const {
     item,
-    saveToGarden
+    save: saveItem
   } = useTitledGardenItem(gardenUrl, name);
   const itemExists = !!item
 
@@ -72,7 +72,7 @@ const NewNote = ({ onClose, isPublic = false, name, setName }) => {
     setSaving(true);
     try {
       await saveSolidDatasetAt(newNoteResourceUrl, noteBodyResource, { fetch })
-      await saveToGarden(newItem)
+      await saveItem(newItem)
     } catch (e) {
       console.log('error saving note', e);
     } finally {
