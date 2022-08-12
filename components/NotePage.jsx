@@ -24,10 +24,10 @@ import ConceptEditor from './ConceptEditor';
 import Editor from './Plate/Editor'
 import WebMonetization from './WebMonetization';
 
-export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenUrl }) {
+export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
   const myWebId = useWebId()
-  const conceptName = slug && urlSafeIdToConceptName(slug);
-  const { item, saveToGarden } = useTitledGardenItem(gardenUrl, conceptName)
+  const itemName = slug && urlSafeIdToConceptName(slug);
+  const { item, saveToGarden } = useTitledGardenItem(gardenUrl, itemName)
 
   // these two should be in the same resource as of 8/2022 - TV
   const { thing: noteBody } = useThing(item && getAbout(item))
@@ -66,17 +66,17 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
   const { profile: currentUserProfile } = useMyProfile();
   const myNote = (webId === myWebId)
   const headerProps = useMemo(() => ({
-    concept: item, saveConcept: saveToGarden, conceptName, authorProfile,
-    currentUserProfile, myNote, privacy, deleteConcept, saving
+    item, saveConcept: saveToGarden, itemName, authorProfile, gardenUrl,
+    currentUserProfile, myNote, privacy, deleteConcept, saving, spaceSlug
   }), [
-    item, saveToGarden, conceptName, authorProfile,
-    currentUserProfile, myNote, privacy, deleteConcept, saving
+    item, saveToGarden, itemName, authorProfile, gardenUrl,
+    currentUserProfile, myNote, privacy, deleteConcept, saving, spaceSlug
   ])
   const { onChange } = useAutosave(item, maybeSaveNoteBody)
   return (
-    <LeftNavLayout pageName={conceptName} HeaderComponent={NoteHeader} headerProps={headerProps} >
+    <LeftNavLayout pageName={itemName} HeaderComponent={NoteHeader} headerProps={headerProps} >
       <Head>
-        <title>{conceptName}</title>
+        <title>{itemName}</title>
       </Head>
       <WebMonetization webId={webId} />
       <div className="mx-8">
@@ -86,6 +86,7 @@ export default function NotePage({ editorId, webId, workspaceSlug, slug, gardenU
           conceptNames={conceptNames}
           editableProps={{ className: 'overflow-auto h-5/6' }}
           onChange={onChange}
+          readOnly={myNote === false}
         />}
       </div>
     </LeftNavLayout>

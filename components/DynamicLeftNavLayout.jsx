@@ -29,12 +29,12 @@ import { GardenProvider } from '../contexts/GardenContext'
 
 import { useSpaces } from 'garden-kit/hooks'
 import {
-  HomeSpaceSlug, getPublicFile, getPrivateFile, getGardenFileAll,
-  getSpaceAll, getCompostFile, getNurseryFile, getSpaceSlug
+  HomeSpaceSlug,
+  getSpaceAll, getSpaceSlug,
+  gardenMetadataInSpacePrefs
 } from 'garden-kit/spaces'
 import { getTitle } from 'garden-kit/utils'
-import { getThing } from '@inrupt/solid-client'
-import { } from 'garden-kit'
+
 
 const defaultLoggedInNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
 const defaultLoggedOutNavItems = [
@@ -122,17 +122,11 @@ function navigationItems({ router, loggedIn, pageName, profile, spaces, webId, s
   const allSpaces = spaces && getSpaceAll(spaces)
   const spaceItems = allSpaces ? allSpaces.map((space, i) => {
     const spaceSlug = getSpaceSlug(space)
-    const gardenUrls = [
-      getNurseryFile(space),
-      getPrivateFile(space),
-      getPublicFile(space),
-      getCompostFile(space),
-      ...getGardenFileAll(space)
-    ]
+    const gardens = gardenMetadataInSpacePrefs(space, spaces)
     return {
       name: getTitle(space) || `Space ${i}`,
-      subItems: gardenUrls && gardenUrls.map(gardenUrl => {
-        const garden = getThing(spaces, gardenUrl)
+      subItems: gardens && gardens.map(garden => {
+        const gardenUrl = asUrl(garden)
         return ({
           name: getTitle(garden),
           spaceSlug,

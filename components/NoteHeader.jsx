@@ -1,37 +1,92 @@
-import { useState } from "react"
 import { FOAF, DCTERMS } from "@inrupt/vocab-common-rdf";
 import { getStringNoLocale, getDatetime, getUrl } from "@inrupt/solid-client/thing/get";
 import { asUrl } from "@inrupt/solid-client/thing/thing";
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useAuthentication } from 'swrlit'
+import { getSolidDataset, saveSolidDatasetAt } from '@inrupt/solid-client/resource/solidDataset'
+import { setThing, removeThing, getThing } from '@inrupt/solid-client/thing/thing'
+import { getSolidDatasetWithAcl, getResourceAcl, getFallbackAcl } from '@inrupt/solid-client/acl/acl'
+import { getPublicAccess } from '@inrupt/solid-client/universal'
+
+import { mutate } from 'swr'
+import { getNoteBody } from 'garden-kit/items'
+import { setPublicAccess } from 'garden-kit/acl'
 
 import {
   MenuIcon,
 } from '@heroicons/react/outline'
 
+import { getTitle } from 'garden-kit/utils'
+import { useSpaces } from 'garden-kit/hooks'
+import { gardenMetadataInSpacePrefs, getSpace } from 'garden-kit/spaces'
+
+
 import Avatar from './Avatar';
 import { getRelativeTime } from '../utils/time';
-import { profilePath } from '../utils/uris';
-import { NoteVisibilityToggle } from './toggles'
-import PrivacyChanger from './PrivacyChanger'
+import { profilePath, itemPath } from '../utils/uris';
 import { Trashcan } from './icons'
+import GardenPicker from "./GardenPicker";
 
-export default function NoteHeader({ concept, deleteConcept, conceptName, authorProfile, currentUserProfile, myNote, privacy, saving, openSidebar }) {
+
+async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
+  const [fromGarden, toGarden] = await Promise.all([
+    getSolidDataset(fromGardenUrl, { fetch }),
+    getSolidDatasetWithAcl(toGardenUrl, { fetch })
+  ])
+
+  const newFromGarden = removeThing(fromGarden, item)
+  const newToGarden = setThing(toGarden, item)
+
+  await mutate(toGardenUrl, saveSolidDatasetAt(toGardenUrl, newToGarden, { fetch }))
+  await mutate(fromGardenUrl, saveSolidDatasetAt(fromGardenUrl, newFromGarden, { fetch }))
+
+  // set perms based on garden name for now. custom gardens with custom permissions
+  // will require more sophisticated access checking - the universal access
+  // api may be enough for this but doesn't seem to be working in the current version
+  const publicRead = (getTitle(getThing(toGarden, toGardenUrl)) === 'Public') ? true : false
+  await setPublicAccess(getNoteBody(item),
+    { read: publicRead, append: false, write: false, control: false },
+    { fetch })
+
+  // TODO: set permissions on note body here
+}
+
+function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
+  const router = useRouter()
+  const { spaces } = useSpaces(webId)
+  const space = getSpace(spaces, spaceSlug)
+  const gardens = space && gardenMetadataInSpacePrefs(space, spaces)
+  const currentGarden = gardens && gardens.find(g => (asUrl(g) === currentGardenUrl))
+  const { fetch } = useAuthentication()
+  async function onChange(newGardenUrl) {
+    await moveItem(item, currentGardenUrl, newGardenUrl, { fetch })
+    router.replace(itemPath(webId, spaceSlug, newGardenUrl, getTitle(item)))
+  }
+  return (<GardenPicker gardens={gardens} currentGarden={currentGarden} onChange={onChange} />)
+}
+
+export default function NoteHeader({
+  item, deleteItem, authorProfile,
+  myNote, saving, openSidebar, spaceSlug, gardenUrl
+}) {
   const router = useRouter()
   const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
   const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
 
-  const noteCreatedAt = concept && getDatetime(concept, DCTERMS.created);
-  const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
+  const noteCreatedAt = item && getDatetime(item, DCTERMS.created);
+  const noteLastEdit = item && getDatetime(item, DCTERMS.modified);
 
   const authorWebId = authorProfile && asUrl(authorProfile)
-  const bg = myNote ? ((privacy == 'private') ? "bg-header-gray-gradient" : "bg-header-gradient") : "bg-my-green"
+  const bg = myNote ? "bg-header-gradient" : "bg-my-green"
+
+  const itemName = item && getTitle(item)
 
   const authorProfilePath = authorWebId && profilePath(authorWebId)
   async function deleteAndRedirect() {
-    const confirmed = confirm(`Are you sure you want to delete ${conceptName}?`)
+    const confirmed = confirm(`Are you sure you want to delete ${itemName}?`)
     if (confirmed) {
-      await deleteConcept()
+      await deleteItem()
       router.push("/")
     }
   }
@@ -41,7 +96,7 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
         <div className="flex flex-col items-left">
           <div className="flex justify-between">
             <div className="text-white text-4xl font-black">
-              {conceptName}
+              {itemName}
             </div>
             <button
               type="button"
@@ -84,6 +139,7 @@ export default function NoteHeader({ concept, deleteConcept, conceptName, author
                 </button>
               </>
             )}
+            {item && myNote && (<NoteHeaderGardenPicker webId={authorWebId} spaceSlug={spaceSlug} currentGardenUrl={gardenUrl} item={item} />)}
             {saving && <div className="text-white opacity-50 text-sm">saving...</div>}
             {/*
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white/10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">

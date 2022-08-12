@@ -175,7 +175,7 @@ const NewNote = ({ onClose, isPublic = false, name, setName }) => {
                 initialValue={EmptySlateJSON}
                 conceptNames={conceptNames}
                 editableProps={{ className: 'overflow-auto h-5/6' }}
-                onChange={(newValue) => console.log("SET", newValue) || setValue(newValue)}
+                onChange={(newValue) => setValue(newValue)}
               />
             </div>
           </>
