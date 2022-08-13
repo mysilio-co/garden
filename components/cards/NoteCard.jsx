@@ -9,11 +9,11 @@ import { conceptIdFromUri } from "../../model/concept";
 import { notePath, itemPath, urlSafeIdToConceptName } from "../../utils/uris";
 import { getRelativeTime } from '../../utils/time';
 
-export default function NoteCard({ concept, workspaceSlug, gardenUrl, webId }) {
-  const name = getTitle(concept)
+export default function NoteCard({ item, workspaceSlug, gardenUrl, webId }) {
+  const name = getTitle(item)
   const url = itemPath(webId, workspaceSlug, gardenUrl, name)
-  const noteLastEdit = concept && getDatetime(concept, DCTERMS.modified);
-  const coverImage = concept && getUrl(concept, FOAF.img)
+  const noteLastEdit = item && getDatetime(item, DCTERMS.modified);
+  const coverImage = item && getUrl(item, FOAF.img)
 
   return (
     <li className="col-span-1 bg-white rounded-lg overflow-hidden shadow-label list-none">

@@ -90,7 +90,7 @@ function ConnectionsSection({ subSection, item, itemName, spaceSlug, itemIndex }
       )*/
     case 'tags':
       return (
-        <TagsSection item={item} itemName={itemName} sspaceSlug={spaceSlug}>
+        <TagsSection item={item} itemName={itemName} spaceSlug={spaceSlug}>
           Tags
         </TagsSection>
       )

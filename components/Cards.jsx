@@ -26,7 +26,7 @@ export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
               <NoteCard
                 key={asUrl(thing)}
                 gardenUrl={garden && getSourceUrl(garden)}
-                concept={thing}
+                item={thing}
                 webId={webId}
                 workspaceSlug={spaceSlug}
               />

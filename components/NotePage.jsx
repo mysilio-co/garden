@@ -1,77 +1,33 @@
-import { useMemo, useEffect, useState, Fragment } from 'react'
+import { useMemo, useState, Fragment } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import equal from 'fast-deep-equal/es6';
 import { Transition } from '@headlessui/react'
 
-import { asUrl, setThing, removeThing } from "@inrupt/solid-client/thing/thing";
-import { getSolidDataset } from '@inrupt/solid-client/resource/solidDataset'
-import { toRdfJsDataset } from '@inrupt/solid-client/rdfjs'
+import { setThing, removeThing } from "@inrupt/solid-client/thing/thing";
 import { useProfile, useMyProfile } from "swrlit";
-import { useAuthentication, useWebId } from 'swrlit/contexts/authentication'
+import { useWebId } from 'swrlit/contexts/authentication'
 import { useThing } from 'swrlit/hooks/things'
 
 import { useTitledGardenItem, useSpace } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
 import { getAbout, updateItemBeforeSave, setTags } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
-import { getGardenFileAll } from 'garden-kit/spaces'
 
 import { urlSafeIdToConceptName } from "../utils/uris";
 import { getTagsInNote } from '../utils/slate'
 
-import { useConceptAndNote } from '../hooks/app';
-import { useCombinedWorkspaceIndexDataset } from '../hooks/concepts'
 import { useAutosave } from '../hooks/editor'
 
 import LeftNavLayout from './LeftNavLayout'
 import NoteHeader from './NoteHeader';
-import ConceptEditor from './ConceptEditor';
 import Editor from './Plate/Editor'
 import WebMonetization from './WebMonetization';
 import { deleteResource } from '../utils/fetch';
 import ConnectionsPanel from './ConnectionsPanel'
 import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
+import { useItemIndex } from '../hooks/items'
 
-class GardenIndex {
-  constructor(gardens) {
-    this.datasets = gardens.filter(x => x).map(toRdfJsDataset)
-  }
-
-  match(subject, predicate, object, graph) {
-    const results = []
-    for (let dataset of this.datasets) {
-      const m = dataset.match(subject, predicate, object, graph)
-      for (let q of m) {
-        results.push(q)
-      }
-    }
-    return results
-  }
-}
-
-
-
-function useItemIndex(webId, spaceSlug) {
-  const [lastLoad, setLastLoad] = useState(new Date())
-  const { space } = useSpace(webId, spaceSlug)
-  const gardenUrls = getGardenFileAll(space)
-  const { fetch } = useAuthentication()
-  const [index, setIndex] = useState({})
-  useEffect(async function () {
-    const gardens = await Promise.all(
-      gardenUrls.map(gardenUrl => {
-        try {
-          return getSolidDataset(gardenUrl, { fetch })
-        } catch {
-          return null
-        }
-      })
-    )
-    setIndex(new GardenIndex(gardens))
-  }, [lastLoad, ...gardenUrls])
-  return { index }
-}
 
 export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
   const index = useItemIndex(webId, spaceSlug)
