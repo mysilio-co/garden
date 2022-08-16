@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 import rdfjsDatasetModule from "@rdfjs/dataset";
 
@@ -14,6 +15,7 @@ import { useSpace } from 'garden-kit/hooks';
 import { getGardenFileAll } from 'garden-kit/spaces'
 import { getTitle } from 'garden-kit/utils'
 import { isItem } from 'garden-kit/items'
+import { useSwrld } from 'swrlit';
 
 function* gardensToQuads(gardens) {
   for (let dataset of gardens.filter(x => x).map(toRdfJsDataset)) {
@@ -23,51 +25,43 @@ function* gardensToQuads(gardens) {
   }
 }
 
-export function useItemIndex(webId, spaceSlug) {
-  const [lastLoad, setLastLoad] = useState(new Date())
-  const { space } = useSpace(webId, spaceSlug)
-  const gardenUrls = useMemoCompare(space && getGardenFileAll(space), dequal)
-  const { fetch } = useAuthentication()
-  const [index, setIndex] = useState(null)
-  const [dataset, setDataset] = useState(null)
-  const [solidDataset, setSolidDataset] = useState(null)
-  useEffect(async function () {
-    const gardens = await Promise.all(
-      gardenUrls ? gardenUrls.map(gardenUrl => {
-        try {
-          return getSolidDataset(gardenUrl, { fetch })
-        } catch {
-          return null
+const itemIndexFetcher = (fetch) => async (...gardenUrls) => {
+  const gardens = await Promise.all(
+    gardenUrls ? gardenUrls.map(gardenUrl => {
+      try {
+        return getSolidDataset(gardenUrl, { fetch })
+      } catch {
+        return null
+      }
+    }) : []
+  )
+  const index = { uri: {}, name: {} }
+  for (let g of gardens) {
+    const things = getThingAll(g)
+    for (let t of things) {
+      if (isItem(t)) {
+        index.uri[asUrl(t)] = {
+          garden: g,
+          item: t
         }
-      }) : []
-    )
-    const i = {uri: {}, name: {}}
-    for (let g of gardens) {
-      const things = getThingAll(g)
-      for (let t of things) {
-        if (isItem(t)) {
-          i.uri[asUrl(t)] = {
+        const name = getTitle(t)
+        if (name) {
+          index.name[name] = {
             garden: g,
             item: t
-          }
-          const name = getTitle(t)
-          if (name) {
-            i.name[name] = {
-              garden: g,
-              item: t
-            }
           }
         }
       }
     }
-    setIndex(i)
-
-    const dataset = rdfjsDatasetModule.dataset(gardensToQuads(gardens))
-    setDataset(dataset)
-    setSolidDataset(fromRdfJsDataset(dataset))
-  }, [lastLoad, gardenUrls])
-  function mutate() {
-    setLastLoad(new Date())
   }
-  return { index, dataset, solidDataset, mutate }
+  const dataset = rdfjsDatasetModule.dataset(gardensToQuads(gardens))
+  const solidDataset = fromRdfJsDataset(dataset)
+  return { index, dataset, solidDataset }
+}
+
+export function useItemIndex(webId, spaceSlug) {
+  const { space } = useSpace(webId, spaceSlug)
+  const gardenUrls = useMemoCompare(space && getGardenFileAll(space), dequal)
+  const { fetch } = useAuthentication()
+  return useSWR(gardenUrls, itemIndexFetcher(fetch))
 }

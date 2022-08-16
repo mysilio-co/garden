@@ -26,12 +26,10 @@ import WebMonetization from './WebMonetization';
 import { deleteResource } from '../utils/fetch';
 import ConnectionsPanel from './ConnectionsPanel'
 import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
-import { useItemIndex } from '../hooks/items'
 import { NoteProvider } from '../contexts/NoteContext'
 
 
 export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
-  const index = useItemIndex(webId, spaceSlug)
   const myWebId = useWebId()
   const router = useRouter()
   const itemName = slug && urlSafeIdToConceptName(slug);
@@ -139,7 +137,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
         >
           <ConnectionsPanel className="w-full md:w-auto"
             item={item} itemName={itemName}
-            webId={webId} spaceSlug={spaceSlug} itemIndex={index}
+            webId={webId} spaceSlug={spaceSlug}
             onClose={() => setPanelOpen(false)} />
         </Transition>
       </div>

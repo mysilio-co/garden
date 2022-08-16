@@ -13,8 +13,9 @@ export default function TagPage() {
   const router = useRouter()
   const { query: { tag, workspace: spaceSlug } } = router
   const webId = useWebId()
-  const { index, dataset } = useItemIndex(webId, spaceSlug)
-   const taggedQuads = dataset && Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
+  const { data } = useItemIndex(webId, spaceSlug)
+  const { index, dataset } = data || {}
+  const taggedQuads = dataset && Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
   const itemUrns = taggedQuads && taggedQuads.map(q => q.subject.value)
   const itemsAndGardens = itemUrns && itemUrns.map(u => [index.uri[u].item, index.uri[u].garden])
 

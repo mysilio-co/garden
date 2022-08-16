@@ -76,7 +76,8 @@ function LinkReferencingItem({ uri, webId, spaceSlug, index }) {
 }
 
 function LinksSection({ item, webId, spaceSlug }) {
-  const { index, dataset } = useItemIndex(webId, spaceSlug)
+  const { data } = useItemIndex(webId, spaceSlug)
+  const { index, dataset } = data || {}
   const { space } = useSpace(webId, spaceSlug)
   const defaultGardenUrl = getNurseryFile(space)
   const linkNames = getReferences(item)
@@ -98,7 +99,7 @@ function LinksSection({ item, webId, spaceSlug }) {
       <div className="flex flex-row flex-wrap gap-3">
         {
           referencedBy && (referencedBy.map(uri => (
-            <LinkReferencingItem uri={uri} index={index} webId={webId} spaceSlug={spaceSlug}/>
+            <LinkReferencingItem uri={uri} index={index} webId={webId} spaceSlug={spaceSlug} />
           )))
         }
       </div>
