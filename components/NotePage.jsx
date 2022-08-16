@@ -27,6 +27,7 @@ import { deleteResource } from '../utils/fetch';
 import ConnectionsPanel from './ConnectionsPanel'
 import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
 import { useItemIndex } from '../hooks/items'
+import { NoteProvider } from '../contexts/NoteContext'
 
 
 export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
@@ -116,14 +117,16 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
       </Transition>
       <div className="flex flex-row w-full">
         <div className="mx-8 flex-grow">
-          {value && <Editor
-            editorId={editorId}
-            initialValue={value}
-            conceptNames={conceptNames}
-            editableProps={{ className: 'overflow-auto h-5/6' }}
-            onChange={onChange}
-            readOnly={myNote === false}
-          />}
+          <NoteProvider webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} name={itemName}>
+            {value && <Editor
+              editorId={editorId}
+              initialValue={value}
+              conceptNames={conceptNames}
+              editableProps={{ className: 'overflow-auto h-5/6' }}
+              onChange={onChange}
+              readOnly={myNote === false}
+            />}
+          </NoteProvider>
         </div>
         <Transition
           show={panelOpen} as={Fragment}

@@ -73,9 +73,9 @@ import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 
 import Modal from '../Modal';
-import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
+import { useNoteContext } from "../../contexts/NoteContext";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
-import { notePath } from "../../utils/uris";
+import { itemPath } from "../../utils/uris";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
@@ -115,9 +115,9 @@ function ConceptStartLeaf({ children }) {
 }
 
 function ConceptEndLeaf({ children, leaf }) {
-  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const { webId, spaceSlug, gardenUrl } = useNoteContext();
   const name = leaf.conceptName
-  const url = notePath(webId, workspaceSlug, name)
+  const url = itemPath(webId, spaceSlug, gardenUrl, name)
   return (
     <span className="opacity-50 group-hover:opacity-100 relative">
       {children}
@@ -132,11 +132,11 @@ function ConceptEndLeaf({ children, leaf }) {
 }
 
 const TagElement = ({ attributes, element, children }) => {
-  const { slug: workspaceSlug } = useWorkspaceContext();
+  const { spaceSlug } = useNoteContext();
   return (
     <span className="text-my-green group" {...attributes}>
       {children}
-      <Link href={`/tags/${workspaceSlug}/${element.name}`}>
+      <Link href={`/tags/${spaceSlug}/${element.name}`}>
         <a contentEditable={false} className="hidden group-hover:inline">
           <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
         </a>
