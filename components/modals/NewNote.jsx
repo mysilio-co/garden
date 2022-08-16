@@ -60,7 +60,10 @@ const NewNote = ({ onClose, isPublic = false, name, setName }) => {
     const noteThingUrl = `${newNoteResourceUrl}#${noteThingName}`
     const newItem = createNote(webId, noteThingUrl, { title: name })
 
-    const noteBodyThings = arrayToThings(value, createThingFromSlateJSOElement)
+    const noteBodyThings = arrayToThings(
+      value || EmptySlateJSON,
+      createThingFromSlateJSOElement
+    );
 
     let noteBodyResource = noteBodyThings.reduce((m, t) => t ? setThing(m, t) : m, createSolidDataset())
     let noteThing = createThing({ name: noteThingName })
