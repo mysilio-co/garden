@@ -10,6 +10,7 @@ export default function NotePage() {
   const gardenUrl = garden && urlSafeIdToGardenUrl(garden);
 
   return (
-      <NotePageComponent editorId="note-page-editor" webId={webId} spaceSlug={space} slug={note} gardenUrl={gardenUrl} />
+      <NotePageComponent editorId={`${gardenUrl}#${note}`} webId={webId} spaceSlug={space} slug={note} gardenUrl={gardenUrl} />
+
   )
 }

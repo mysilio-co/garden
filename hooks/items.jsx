@@ -12,6 +12,8 @@ import { useAuthentication } from 'swrlit/contexts/authentication'
 
 import { useSpace } from 'garden-kit/hooks';
 import { getGardenFileAll } from 'garden-kit/spaces'
+import { getTitle } from 'garden-kit/utils'
+import { isItem } from 'garden-kit/items'
 
 function* gardensToQuads(gardens) {
   for (let dataset of gardens.filter(x => x).map(toRdfJsDataset)) {
@@ -39,13 +41,22 @@ export function useItemIndex(webId, spaceSlug) {
         }
       }) : []
     )
-    const i = {}
+    const i = {uri: {}, name: {}}
     for (let g of gardens) {
       const things = getThingAll(g)
       for (let t of things) {
-        i[asUrl(t)] = {
-          garden: g,
-          item: t
+        if (isItem(t)) {
+          i.uri[asUrl(t)] = {
+            garden: g,
+            item: t
+          }
+          const name = getTitle(t)
+          if (name) {
+            i.name[name] = {
+              garden: g,
+              item: t
+            }
+          }
         }
       }
     }

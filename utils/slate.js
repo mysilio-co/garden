@@ -15,6 +15,20 @@ export function getConceptNameFromNode(node) {
   return node.name;
 }
 
+export function getReferenceNodes(node) {
+  return Array.from(Node.nodes(node)).filter(([n]) => {
+    return n.type === ELEMENT_CONCEPT;
+  });
+}
+
+export function getReferenceNameFromNode(node) {
+  return node.name;
+}
+
+export function getReferencesInNote(noteValue){
+  return getReferenceNodes({children: noteValue}).map(([ref]) => getReferenceNameFromNode(ref));
+}
+
 export function getTagNodes(node) {
   return Array.from(Node.nodes(node)).filter(([n]) => {
     return n.type === ELEMENT_TAG;

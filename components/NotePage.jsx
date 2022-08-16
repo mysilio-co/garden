@@ -9,13 +9,13 @@ import { useProfile, useMyProfile } from "swrlit";
 import { useWebId } from 'swrlit/contexts/authentication'
 import { useThing } from 'swrlit/hooks/things'
 
-import { useTitledGardenItem, useSpace } from 'garden-kit/hooks';
+import { useTitledGardenItem } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
-import { getAbout, updateItemBeforeSave, setTags } from 'garden-kit/items'
+import { getAbout, updateItemBeforeSave, setTags, setReferences } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
 
 import { urlSafeIdToConceptName } from "../utils/uris";
-import { getTagsInNote } from '../utils/slate'
+import { getTagsInNote, getReferencesInNote } from '../utils/slate'
 
 import { useAutosave } from '../hooks/editor'
 
@@ -53,6 +53,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
 
       let newItem = updateItemBeforeSave(item)
       newItem = setTags(newItem, getTagsInNote(newValue))
+      newItem = setReferences(newItem, getReferencesInNote(newValue))
 
       setSaving(true);
       try {

@@ -38,9 +38,7 @@ const editorId = 'create-modal';
 
 const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   const [value, setValue] = useState()
-  const [pub, setPublic] = useState(isPublic);
-  const privacy = pub ? 'public' : 'private';
-
+  
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -105,15 +103,9 @@ const NewNote = ({ onClose, isPublic = false, name, setName }) => {
 
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
-      <div
-        className={`flex flex-row justify-between self-stretch h-18 p-6 ${pub ? 'bg-my-green' : 'bg-gray-500'
-          }`}
-      >
+      <div className="flex flex-row justify-between self-stretch h-18 p-6 bg-my-green">
         <div className="flex flex-row justify-start items-start gap-4">
-          <h2 className="text-white font-bold text-xl">
-            New {pub ? 'Public' : 'Private'} Note
-          </h2>
-          <PrivacyToggle enabled={pub} setEnabled={setPublic} />
+          {/* TODO: garden picker here? */}
         </div>
         <CloseIcon
           className="text-white h-6 w-6 flex-grow-0 cursor-pointer"

@@ -16,7 +16,7 @@ export default function TagPage() {
   const { index, dataset } = useItemIndex(webId, spaceSlug)
    const taggedQuads = dataset && Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
   const itemUrns = taggedQuads && taggedQuads.map(q => q.subject.value)
-  const itemsAndGardens = itemUrns && itemUrns.map(u => [index[u].item, index[u].garden])
+  const itemsAndGardens = itemUrns && itemUrns.map(u => [index.uri[u].item, index.uri[u].garden])
 
   return (
     <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
