@@ -21,7 +21,7 @@ const ImageEditingModule = ({ src, onSave, onClose, ...props }) => {
     setSaving(false)
   }
   return (
-    <div className="p-4" onClose={onClose} {...props}>
+    <div className="p-4" {...props}>
       <Cropper
         ref={cropperRef}
         src={src}
@@ -237,7 +237,7 @@ export default function ImageUploader({ element, onClose, onUpload, uploadDirect
                   </button>
                 </>
               }
-              <button onClick={() => onClose && onClose()}>
+              <button onClick={onClose}>
                 cancel
               </button>
             </div>
@@ -336,7 +336,7 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
               </>
             }
             <button className="btn-md btn-transparent btn-square mr-3 text-gray-700"
-              onClick={() => onClose && onClose()}>
+              onClick={onClose}>
               cancel
             </button>
           </div>

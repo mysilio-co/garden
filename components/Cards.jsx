@@ -1,4 +1,5 @@
-import { asUrl } from "@inrupt/solid-client";
+import { asUrl } from "@inrupt/solid-client/thing/thing";
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { useWebId } from "swrlit";
 import { Loader } from './elements'
 import NoteCard from "./cards/NoteCard"
@@ -7,48 +8,51 @@ import FileCard from "./cards/FileCard"
 import BookmarkCard from './cards/BookmarkCard';
 
 import {
-  isConcept,
-  isBookmarkedLink,
-  isBookmarkedImage,
-  isBookmarkedFile,
-} from '../utils/rdf';
+  isNote,
+  isImage,
+  isFile,
+  isBookmark,
+} from 'garden-kit/items';
+import { getItemAll } from "garden-kit/garden";
 
-export function CardsFromGarden({ garden, webId, workspaceSlug }) {
+export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
+  const items = filteredItems || (garden && getItemAll(garden))
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-      {garden &&
-        garden.map((thing) => {
-          if (isConcept(thing)) {
+      {items &&
+        items.map((thing) => {
+          if (isNote(thing)) {
             return (
               <NoteCard
                 key={asUrl(thing)}
-                concept={thing}
+                gardenUrl={garden && getSourceUrl(garden)}
+                item={thing}
                 webId={webId}
-                workspaceSlug={workspaceSlug}
+                workspaceSlug={spaceSlug}
               />
             );
-          } else if (isBookmarkedImage(thing)) {
+          } else if (isImage(thing)) {
             return <ImageCard key={asUrl(thing)} image={thing} />;
-          } else if (isBookmarkedFile(thing)) {
+          } else if (isFile(thing)) {
             return <FileCard key={asUrl(thing)} file={thing} />;
-          } else if (isBookmarkedLink(thing))
+          } else if (isBookmark(thing))
             return <BookmarkCard key={asUrl(thing)} link={thing} />;
         })}
     </ul>
   );
 }
 
-export default function Cards({ workspaceSlug, webId, garden }) {
+export default function Cards({ spaceSlug, webId, garden }) {
   const myWebId = useWebId();
-
+  const hasItems = garden && (getItemAll(garden).length > 0)
   return (
     <>
       {garden ? (
-        garden.length > 0 ? (
+        hasItems ? (
           <CardsFromGarden
             webId={webId}
             garden={garden}
-            workspaceSlug={workspaceSlug}
+            spaceSlug={spaceSlug}
           />
         ) : (
           <div>

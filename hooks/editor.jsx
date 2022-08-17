@@ -1,8 +1,39 @@
-import { useCallback, useState, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import { Editor, Transforms, Range } from 'slate'
+import { useDebounce } from "use-debounce";
 
 import { useConceptNamesMatching } from '../hooks/concepts'
 import { insertConcept } from '../utils/editor'
+
+export function useAutosave(note, save) {
+  const [updatedValue, setUpdatedValue] = useState()
+  const [debouncedUpdatedValue] = useDebounce(updatedValue, 1500);
+
+  // make sure
+  useEffect(function () {
+    if (!note) {
+      setUpdatedValue(null)
+    }
+  }, [note])
+
+
+  // use a ref here to avoid needing to add more dependencies to the useEffect.
+  // we'd like to take advantage of useEffect only running when debouncedUpdatedValue
+  // changes, so we're using a ref to ensure the effect always has access to the latest
+  // save function without adding the function to the dependencies
+  const saveRef = useRef()
+  saveRef.current = save;
+  useEffect(function saveIfValueExists() {
+    if (debouncedUpdatedValue) {
+      saveRef.current(debouncedUpdatedValue)
+    }
+  },
+    // !!! do not add more dependencies - this should only re-run when debouncedUpdatedValue changes !!!
+    [debouncedUpdatedValue]
+  )
+
+  return { onChange: setUpdatedValue }
+}
 
 function searchForOpenConcepts(editor){
   const { selection } = editor

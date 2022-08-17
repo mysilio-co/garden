@@ -1,7 +1,9 @@
 import { useState, useMemo, Fragment } from 'react';
 import { Transition } from '@headlessui/react'
 import { FOAF } from "@inrupt/vocab-common-rdf";
-import { getUrl, setUrl, isThingLocal } from "@inrupt/solid-client";
+import { isThingLocal } from "@inrupt/solid-client/thing/thing";
+import { getUrl } from "@inrupt/solid-client/thing/get";
+import { setUrl } from "@inrupt/solid-client/thing/set";
 
 import NoteEditor from "./NoteEditor";
 import ConnectionsPanel from "./ConnectionsPanel";

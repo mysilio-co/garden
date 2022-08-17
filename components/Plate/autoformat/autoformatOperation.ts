@@ -1,4 +1,4 @@
-import { AutoformatRule, ELEMENT_DEFAULT } from '@udecode/plate';
+import { AutoformatRule, ELEMENT_DEFAULT } from '@udecode/plate-headless';
 import { DIGITS, DIGITS_WITH_SPACE } from './autoformatConstants';
 import { formatText } from './autoformatUtils';
 

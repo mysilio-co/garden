@@ -10,8 +10,6 @@ export default function ConceptPage() {
   const webId = handleToWebId(handle)
 
   return (
-    <WorkspaceProvider webId={webId} slug={workspace}>
       <ConceptPageComponent webId={webId} workspaceSlug={workspace} slug={name} />
-    </WorkspaceProvider>
   )
 }

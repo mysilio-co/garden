@@ -1,16 +1,20 @@
-import { useState, useEffect, Fragment } from 'react'
-import { Transition, Dialog } from '@headlessui/react';
-import { Formik, Field, Form } from "formik";
+import { useState, useEffect } from 'react'
+
+import { createBookmark } from 'garden-kit/items';
+import { useGarden } from 'garden-kit/hooks'
+import { setItemWithUUID } from 'garden-kit/garden'
+
 import { Close as CloseIcon, TickCircle } from '../icons'
-import { useWorkspaceIndex } from '../../hooks/concepts';
-import { useWebId } from 'swrlit';
-import { addLinkToIndex } from '../../model/index';
+import { useWebId } from 'swrlit/contexts/authentication';
 import Modal from '../Modal';
 import { useOGTags } from '../../hooks/uris';
+import { useGardenContext } from '../../contexts/GardenContext'
 
 export function NewBookmark({ onClose }) {
-  const webId = useWebId()
-  const { index, save } = useWorkspaceIndex(webId);
+  const webId = useWebId();
+  const { url: gardenUrl } = useGardenContext()
+  const { garden, save: saveGarden } = useGarden(gardenUrl)
+  console.log("garden", garden, gardenUrl)
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [desc, setDesc] = useState('');
@@ -34,8 +38,13 @@ export function NewBookmark({ onClose }) {
   }, [og]);
 
   const onSubmit = async () => {
-    const newIndex = addLinkToIndex(index, url, title, desc, img);
-    await save(newIndex);
+    const newGarden = setItemWithUUID(garden, createBookmark(webId, url, {
+      title: title,
+      description: desc,
+      depiction: img
+    }))
+
+    await saveGarden(newGarden);
     onClose();
   };
 

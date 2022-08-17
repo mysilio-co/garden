@@ -1,20 +1,31 @@
-import { useLoggedIn, useWebId } from 'swrlit'
+import { useState } from 'react'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useSpacesWithSetup } from 'garden-kit/hooks'
+import { hasRequiredSpaces } from 'garden-kit/spaces'
 
 import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
-
-import { useApp } from '../hooks/app'
 
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
 
 function InitPage({ initApp }) {
+  const [saving, setSaving] = useState(false)
+  async function onClick(){
+    setSaving(true)
+    await initApp()
+    setSaving(false)
+  }
   return (
     <>
       <Header />
-      <div className="text-center pt-12">
+      <div className="text-center pt-12 flex flex-col items-center">
         <h3 className="text-xl pb-6">looks like this is your first time here!</h3>
-        <button className="btn" onClick={initApp}>get started</button>
+        {saving ? (
+          <Loader />
+        ) : (
+          <button className="btn-filled btn-md btn-square font-bold" onClick={onClick}>get started</button>
+        )}
       </div>
     </>
   )
@@ -33,17 +44,20 @@ function LoadingPage() {
 export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
-  const { app, initApp, error: appError } = useApp(webId)
+  const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
+  const spacesConfigDoesntExist = !!(spacesError && (spacesError.statusCode === 404))
+  const setupComplete = spaces && hasRequiredSpaces(spaces)
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (
-        app ? (
+        setupComplete ? (
           <Dashboard />
-        ) : ((appError && (appError.statusCode === 404)) ? (
-          <InitPage initApp={initApp} />
         ) : (
-          <LoadingPage />
-        )
+          (spacesConfigDoesntExist) ? (
+            <InitPage initApp={setupDefaultSpaces} />
+          ) : (
+            <LoadingPage />
+          )
         )
       ) : (
         ((loggedIn === false) || (loggedIn === null)) ? (

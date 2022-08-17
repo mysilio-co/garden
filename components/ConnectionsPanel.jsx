@@ -1,33 +1,32 @@
 import { useState, forwardRef, Suspense } from 'react'
-import { asUrl } from '@inrupt/solid-client'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import Link from 'next/link'
-import {
-  HomeIcon,
-  MenuIcon,
-  UserGroupIcon,
-  XIcon,
-} from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/outline'
+import dataFactory from "@rdfjs/data-model";
 
 import {
-  getTags, getLinks, tagUrlToTagName,
-  conceptIdFromUri,
   conceptUrisThatReference,
 } from '../model/concept'
+import { getTags, getReferences } from 'garden-kit/items'
+import { getTitle } from 'garden-kit/utils'
+import { useSpace } from 'garden-kit/hooks'
+import { getNurseryFile } from 'garden-kit/spaces'
+import { MY } from 'garden-kit/vocab'
+
 import Label from './Label'
-import { notePath, urlSafeIdToConceptName } from "../utils/uris";
-import { Close as CloseIcon } from "./icons"
+import { itemPath } from "../utils/uris";
+import { useItemIndex } from "../hooks/items"
 import ConnectionsTabs from './ConnectionsTabs'
 
-
-function TagsSection({ concept, tagPrefix, workspaceSlug }) {
-  const tags = getTags(concept)
+function TagsSection({ item, spaceSlug }) {
+  const tags = getTags(item)
   return (
     <div className="p-6">
-      {tags && tags.map(tag => {
-        const tagName = tagUrlToTagName(tag, tagPrefix)
+      {tags && tags.map(tagName => {
         return (
-          <div>
-            <Link href={`/tags/${workspaceSlug}/${tagName}`}>
+          <div key={tagName}>
+            <Link href={`/tags/${spaceSlug}/${tagName}`}>
               <a className="text-my-green">
                 #{tagName}
               </a>
@@ -40,43 +39,67 @@ function TagsSection({ concept, tagPrefix, workspaceSlug }) {
   )
 }
 
-function LinkToConcept({ uri, webId, workspaceSlug, ...props }) {
-  const id = conceptIdFromUri(uri);
-  const name = urlSafeIdToConceptName(id);
-  const url = notePath(webId, workspaceSlug, name)
+function LinkToItem({ name, webId, gardenUrl, spaceSlug }) {
+  const url = itemPath(webId, spaceSlug, gardenUrl, name)
   return (
     <Link href={url}>
       <a>
         <Label>{name}</Label>
       </a>
     </Link>
-  );
+  )
 }
 
-function linksToConceptInIndex(concept, conceptIndex) {
-  const conceptUri = asUrl(concept)
-  return conceptUrisThatReference(conceptIndex, conceptUri);
+function referencesItemInDataset(item, dataset) {
+  const references = dataset.match(null, MY.Garden.references, dataFactory.literal(getTitle(item)))
+  return Array.from(references).map(q => q.subject.value)
+
+  //return conceptUrisThatReference(conceptIndex, conceptUri);
 }
 
-function LinksSection({ concept, conceptName, webId, workspaceSlug, conceptIndex }) {
-  const links = getLinks(concept)
-  const linksTo = conceptIndex ? linksToConceptInIndex(concept, conceptIndex) : []
+function gardenUrlForName(name, index, defaultGardenUrl) {
+  const garden = index.name[name] && index.name[name].garden
+  return garden ? getSourceUrl(garden) : defaultGardenUrl
+}
 
+function LinkReferencingItem({ uri, webId, spaceSlug, index }) {
+  const i = index.uri[uri]
+  if (i) {
+    const name = getTitle(i.item)
+    const gardenUrl = getSourceUrl(i.garden)
+    return (
+      <LinkToItem key={uri} name={name} webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} />
+    )
+  } else {
+    return <></>
+  }
+}
+
+function LinksSection({ item, webId, spaceSlug }) {
+  const { data } = useItemIndex(webId, spaceSlug)
+  const { index, dataset } = data || {}
+  const { space } = useSpace(webId, spaceSlug)
+  const defaultGardenUrl = getNurseryFile(space)
+  const linkNames = getReferences(item)
+
+  const referencedBy = dataset ? referencesItemInDataset(item, dataset) : []
+
+  const itemName = getTitle(item)
   return (
     <div className="p-6">
-      <h4 className="text-lg mb-2">links from {conceptName}</h4>
+      <h4 className="text-lg mb-2">links from {itemName}</h4>
       <div className="flex flex-row flex-wrap gap-3">
         {
-          links && (links.map(link => (
-            <LinkToConcept key={link} uri={link} webId={webId} workspaceSlug={workspaceSlug} />
+          index && linkNames && (linkNames.map(name => (
+            <LinkToItem key={name} name={name} webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrlForName(name, index, defaultGardenUrl)} />
           )))
         }
       </div>
-      <h4 className="text-lg mt-4 mb-2">links to {conceptName}</h4>
+      <h4 className="text-lg mt-4 mb-2">links to {itemName}</h4>
       <div className="flex flex-row flex-wrap gap-3">
         {
-          linksTo && (linksTo.map(link => (
-            <LinkToConcept key={link} uri={link} webId={webId} workspaceSlug={workspaceSlug} />
+          referencedBy && (referencedBy.map(uri => (
+            <LinkReferencingItem uri={uri} index={index} webId={webId} spaceSlug={spaceSlug} />
           )))
         }
       </div>
@@ -84,27 +107,27 @@ function LinksSection({ concept, conceptName, webId, workspaceSlug, conceptIndex
   )
 }
 
-function ConnectionsSection({ subSection, concept, conceptName, tagPrefix, conceptPrefix, webId, workspaceSlug, conceptIndex }) {
+function ConnectionsSection({ subSection, webId, item, spaceSlug, itemIndex }) {
   switch (subSection) {
     case 'links':
       return (
         <Suspense fallback={<div>loading..</div>}>
-          <LinksSection concept={concept} conceptName={conceptName} conceptPrefix={conceptPrefix} webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex}>
+          <LinksSection item={item} webId={webId} spaceSlug={spaceSlug} itemIndex={itemIndex}>
             Link
           </LinksSection>
         </Suspense>
       )
     case 'tags':
       return (
-        <TagsSection concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} workspaceSlug={workspaceSlug}>
+        <TagsSection item={item} spaceSlug={spaceSlug}>
           Tags
         </TagsSection>
       )
   }
 }
 
-const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix, conceptPrefix, className, webId, workspaceSlug, conceptIndex }, ref) => {
-  const [activeTab, setActiveTab] = useState('links')
+const ConnectionsPanel = forwardRef(({ onClose, item, itemName, className, webId, spaceSlug, itemIndex }, ref) => {
+  const [activeTab, setActiveTab] = useState('tags')
   return (
     <div className={`flex flex-col ${className}`} ref={ref}>
       <div className="flex flex-row gap-4 justify-between items-center p-4 bg-gray-100">
@@ -119,8 +142,8 @@ const ConnectionsPanel = forwardRef(({ onClose, concept, conceptName, tagPrefix,
         </button>
       </div>
       <ConnectionsTabs active={activeTab} onChange={setActiveTab} />
-      <ConnectionsSection subSection={activeTab} concept={concept} conceptName={conceptName} tagPrefix={tagPrefix} conceptPrefix={conceptPrefix}
-        webId={webId} workspaceSlug={workspaceSlug} conceptIndex={conceptIndex} />
+      <ConnectionsSection subSection={activeTab} item={item} itemName={itemName}
+        webId={webId} spaceSlug={spaceSlug} itemIndex={itemIndex} />
     </div>
   )
 })

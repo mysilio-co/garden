@@ -3,7 +3,7 @@ import { Formik, Field, Form } from "formik";
 import { Transition, Dialog } from '@headlessui/react';
 import { Close as CloseIcon, TickCircle } from '../icons'
 import { useWorkspaceIndex } from '../../hooks/concepts';
-import { useWebId } from 'swrlit';
+import { useWebId } from 'swrlit/contexts/authentication';
 import { addFileToIndex } from '../../model';
 import { uploadFromFile } from '../../components/ImageUploader';
 import { useFileContainerUri } from '../../hooks/uris';

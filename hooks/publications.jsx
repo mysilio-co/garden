@@ -1,10 +1,7 @@
-import {
-  createSolidDataset,
-  getThing,
-  setThing,
-  getUrl,
-} from '@inrupt/solid-client';
-import { useResource, useWebId, useThing } from "swrlit";
+import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset';
+import { setThing } from '@inrupt/solid-client/thing/thing';
+import { getUrl } from '@inrupt/solid-client/thing/get';
+import { useResource } from "swrlit";
 import { useWorkspace } from './app';
 import { getNewsletter } from '../model/publications';
 import { MY } from '../vocab';
@@ -27,7 +24,7 @@ export function usePublicationManifest(webId, workspaceSlug) {
   const res = useOrCreateResource(pub);
   res.manifest = res.resource;
   res.saveManifest = res.save;
-  return res 
+  return res
 }
 
 export function useNewsletter(webId, workspaceSlug, title) {
@@ -40,5 +37,5 @@ export function useNewsletter(webId, workspaceSlug, title) {
     const newManifest = newThing && setThing(res.manifest, thing);
     newManifest && res.saveManifest(newManifest);
   }
-  return res; 
+  return res;
 }

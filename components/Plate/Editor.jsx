@@ -1,16 +1,81 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Transforms, Editor as SlateEditor } from 'slate';
-import * as P from "@udecode/plate";
+import {
+  PlateProvider, Plate,
 
-import { comboboxStore, Combobox, createComboboxPlugin } from '@mysilio/plate-ui-combobox'
-import { useWebId } from 'swrlit'
-import { Link as LinkIcon } from "@styled-icons/material/Link";
+  KEYS_HEADING,
+
+  MARK_BOLD,
+  MARK_CODE,
+  MARK_HIGHLIGHT,
+  MARK_ITALIC,
+  MARK_UNDERLINE,
+  ELEMENT_MENTION,
+  ELEMENT_LINK,
+  ELEMENT_BLOCKQUOTE,
+  ELEMENT_CODE_BLOCK,
+  ELEMENT_H1,
+  ELEMENT_H2,
+  ELEMENT_H3,
+
+  ELEMENT_IMAGE,
+  ELEMENT_LI,
+  ELEMENT_MEDIA_EMBED,
+  ELEMENT_UL,
+  ELEMENT_OL,
+  ELEMENT_PARAGRAPH,
+  ELEMENT_TODO_LI,
+
+  createListPlugin,
+  createTodoListPlugin,
+  createImagePlugin,
+  createLinkPlugin,
+  createKbdPlugin,
+  createNodeIdPlugin,
+  createAutoformatPlugin,
+  createResetNodePlugin,
+  createComboboxPlugin,
+  createSoftBreakPlugin,
+  createExitBreakPlugin,
+  createInsertDataPlugin,
+  createSelectOnBackspacePlugin,
+  createPlugins,
+
+  isBlockAboveEmpty,
+  isSelectionAtBlockStart,
+} from "@udecode/plate-headless"
+import {
+  createBoldPlugin,
+  createItalicPlugin,
+  createUnderlinePlugin,
+  createCodePlugin,
+} from '@udecode/plate-basic-marks'
+import {
+  createHighlightPlugin,
+} from '@udecode/plate-highlight'
+import {
+  createBlockquotePlugin,
+} from '@udecode/plate-block-quote'
+import {
+  createCodeBlockPlugin,
+} from '@udecode/plate-code-block'
+import { createHeadingPlugin } from '@udecode/plate-heading'
+import { createParagraphPlugin } from '@udecode/plate-paragraph'
+import { LinkToolbarButton, PlateFloatingLink}  from '@udecode/plate-ui-link'
+
+import { ImageElement } from '@udecode/plate-ui-image'
+import { Combobox } from '@udecode/plate-ui-combobox'
+import { MediaEmbedElement } from '@udecode/plate-ui-media-embed';
+
+
+import { useWebId } from 'swrlit/contexts/authentication'
+import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 
 import Modal from '../Modal';
-import { useWorkspaceContext } from "../../contexts/WorkspaceContext";
+import { useNoteContext } from "../../contexts/NoteContext";
 import { ELEMENT_CONCEPT, ELEMENT_TAG } from "../../utils/slate";
-import { notePath } from "../../utils/uris";
+import { itemPath } from "../../utils/uris";
 import { useImageUploadUri } from "../../hooks/uris";
 import { ImageUploadAndEditor } from "../ImageUploader";
 import { ExternalLinkIcon } from '../icons'
@@ -50,9 +115,9 @@ function ConceptStartLeaf({ children }) {
 }
 
 function ConceptEndLeaf({ children, leaf }) {
-  const { webId, slug: workspaceSlug } = useWorkspaceContext();
+  const { webId, spaceSlug, gardenUrl } = useNoteContext();
   const name = leaf.conceptName
-  const url = notePath(webId, workspaceSlug, name)
+  const url = itemPath(webId, spaceSlug, gardenUrl, name)
   return (
     <span className="opacity-50 group-hover:opacity-100 relative">
       {children}
@@ -67,11 +132,11 @@ function ConceptEndLeaf({ children, leaf }) {
 }
 
 const TagElement = ({ attributes, element, children }) => {
-  const { slug: workspaceSlug } = useWorkspaceContext();
+  const { spaceSlug } = useNoteContext();
   return (
     <span className="text-my-green group" {...attributes}>
       {children}
-      <Link href={`/tags/${workspaceSlug}/${element.name}`}>
+      <Link href={`/tags/${spaceSlug}/${element.name}`}>
         <a contentEditable={false} className="hidden group-hover:inline">
           <ExternalLinkIcon className="h-4 w-4 inline hover:scale-125" />
         </a>
@@ -107,26 +172,145 @@ function LinkElement({ attributes, children, element, nodeProps }) {
   )
 }
 
-const components = P.createPlateUI({
-  [P.ELEMENT_H1]: P.withProps(P.StyledElement, { as: "h1" }),
-  [P.ELEMENT_H2]: P.withProps(P.StyledElement, { as: "h2" }),
-  [P.ELEMENT_H3]: P.withProps(P.StyledElement, { as: "h3" }),
-  [P.ELEMENT_CODE_BLOCK]: CodeBlockElement,
+function BlockquoteElement({ attributes, children, nodeProps }) {
+  return (
+    <blockquote {...attributes} {...nodeProps}>
+      {children}
+    </blockquote>
+  )
+}
+
+function H1Element({ className = "", attributes, children, nodeProps }) {
+  return (
+    <h1 className={`text-3xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h1>
+  )
+}
+
+function H2Element({ className = "", attributes, children, nodeProps }) {
+  return (
+    <h2 className={`text-2xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h2>
+  )
+}
+
+function H3Element({ className = "", attributes, children, nodeProps }) {
+  return (
+    <h3 className={`text-xl ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </h3>
+  )
+}
+
+function LiElement({ attributes, children, nodeProps }) {
+  return (
+    <li {...attributes} {...nodeProps}>
+      {children}
+    </li>
+  )
+}
+
+function UlElement({ attributes, children, nodeProps }) {
+  return (
+    <ul className="pl-5 list-disc" {...attributes} {...nodeProps}>
+      {children}
+    </ul>
+  )
+}
+
+function OlElement({ attributes, children, nodeProps }) {
+  return (
+    <ol className="pl-5 list-decimal" {...attributes} {...nodeProps}>
+      {children}
+    </ol>
+  )
+}
+
+function ParagraphElement({ attributes, children, nodeProps }) {
+  return (
+    <p {...attributes} {...nodeProps}>
+      {children}
+    </p>
+  )
+}
+
+function BoldMark({ className = "", attributes, children, nodeProps }) {
+  return (
+    <span className={`font-bold ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function CodeMark({ className = "", attributes, children, nodeProps }) {
+  return (
+    <span className={`font-mono bg-gray-200 ${className}`} {...attributes} {...nodeProps}>
+      {children}just
+    </span>
+  )
+}
+
+function UnderlineMark({ className = "", attributes, children, nodeProps }) {
+  return (
+    <span className={`underline ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function ItalicMark({ className = "", attributes, children, nodeProps }) {
+  return (
+    <span className={`italic ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+function HighlightMark({ className = "", attributes, children, nodeProps }) {
+  return (
+    <span className={`bg-yellow-200 ${className}`} {...attributes} {...nodeProps}>
+      {children}
+    </span>
+  )
+}
+
+const components = {
+  [ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+  [ELEMENT_CODE_BLOCK]: CodeBlockElement,
+  [ELEMENT_H1]: H1Element,
+  [ELEMENT_H2]: H2Element,
+  [ELEMENT_H3]: H3Element,
+
+  [ELEMENT_IMAGE]: ImageElement,
+  [ELEMENT_LI]: LiElement,
+  [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+  [ELEMENT_UL]: UlElement,
+  [ELEMENT_OL]: OlElement,
+  [ELEMENT_PARAGRAPH]: ParagraphElement,
+
+  [MARK_BOLD]: BoldMark,
+  [MARK_CODE]: CodeMark,
+  [MARK_HIGHLIGHT]: HighlightMark,
+  [MARK_ITALIC]: ItalicMark,
+  [MARK_UNDERLINE]: UnderlineMark,
+
   [ELEMENT_CONCEPT]: ConceptElement,
   [LEAF_CONCEPT_START]: ConceptStartLeaf,
   [LEAF_CONCEPT_END]: ConceptEndLeaf,
   [ELEMENT_TAG]: TagElement,
-  [P.ELEMENT_MENTION]: MentionElement,
-  [P.ELEMENT_LINK]: LinkElement
-});
+  [ELEMENT_MENTION]: MentionElement,
+  [ELEMENT_LINK]: LinkElement
+};
 
 const optionsAutoformat = {
   rules: autoformatRules
 };
 
 const resetBlockTypesCommonRule = {
-  types: [P.ELEMENT_BLOCKQUOTE, P.ELEMENT_TODO_LI],
-  defaultType: P.ELEMENT_PARAGRAPH,
+  types: [ELEMENT_BLOCKQUOTE, ELEMENT_TODO_LI],
+  defaultType: ELEMENT_PARAGRAPH,
 };
 
 const optionsResetBlockTypePlugin = {
@@ -134,12 +318,12 @@ const optionsResetBlockTypePlugin = {
     {
       ...resetBlockTypesCommonRule,
       hotkey: "Enter",
-      predicate: P.isBlockAboveEmpty,
+      predicate: isBlockAboveEmpty,
     },
     {
       ...resetBlockTypesCommonRule,
       hotkey: "Backspace",
-      predicate: P.isSelectionAtBlockStart,
+      predicate: isSelectionAtBlockStart,
     },
   ],
 };
@@ -147,39 +331,42 @@ const optionsResetBlockTypePlugin = {
 
 
 const defaultPlugins = [
-  P.createHeadingPlugin({ options: { levels: 3 } }),
-  P.createParagraphPlugin(),
-  P.createBoldPlugin(),
-  P.createItalicPlugin(),
-  P.createUnderlinePlugin(),
-  P.createCodePlugin(),
-  P.createHighlightPlugin(),
-  P.createBlockquotePlugin(),
-  P.createCodeBlockPlugin(),
-  P.createListPlugin(),
-  P.createTodoListPlugin(),
-  P.createImagePlugin(),
-  P.createLinkPlugin({ options: { rangeBeforeOptions: { multiPaths: false } } }),
-  P.createKbdPlugin(),
-  P.createNodeIdPlugin(),
-  P.createAutoformatPlugin({ options: optionsAutoformat }),
-  P.createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
-  createComboboxPlugin(),
+  createHeadingPlugin({ options: { levels: 3 } }),
+  createParagraphPlugin(),
+  createUnderlinePlugin(),
+  createCodePlugin(),
+  createBoldPlugin(),
+  createItalicPlugin(),
+  createHighlightPlugin(),
+  createBlockquotePlugin(),
+  createCodeBlockPlugin(),
+  createListPlugin(),
+  createTodoListPlugin(),
+  createImagePlugin(),
+  createLinkPlugin({
+    options: { rangeBeforeOptions: { multiPaths: false } },
+    renderAfterEditable: PlateFloatingLink
+  }),
+  createKbdPlugin(),
+  createNodeIdPlugin(),
+  createAutoformatPlugin({ options: optionsAutoformat }),
+  createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
+  //createComboboxPlugin(),
   // for now we need to support both combobox plugins
-  P.createComboboxPlugin(),
+  createComboboxPlugin(),
   createMentionPlugin(),
   createConceptPlugin(),
   createConceptStartPlugin(),
   createConceptEndPlugin(),
   createTagPlugin(),
-  P.createSoftBreakPlugin({
+  createSoftBreakPlugin({
     options: {
       rules: [
         { hotkey: "shift+enter" },
       ],
     }
   }),
-  P.createExitBreakPlugin({
+  createExitBreakPlugin({
     options: {
       rules: [
         {
@@ -194,20 +381,20 @@ const defaultPlugins = [
           query: {
             start: true,
             end: true,
-            allow: P.KEYS_HEADING,
+            allow: KEYS_HEADING,
           },
         },
         {
           hotkey: "enter",
           query: {
-            allow: [P.ELEMENT_CODE_BLOCK, P.ELEMENT_BLOCKQUOTE],
+            allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE],
           },
         },
       ],
     }
   }),
-  P.createInsertDataPlugin(),
-  P.createSelectOnBackspacePlugin({ options: { query: { allow: P.ELEMENT_IMAGE } } }),
+  createInsertDataPlugin(),
+  createSelectOnBackspacePlugin({ options: { query: { allow: ELEMENT_IMAGE } } }),
 ];
 
 function useImageUrlGetterAndSaveCallback() {
@@ -269,7 +456,7 @@ export default function Editor({
     readOnly
   };
 
-  const plugins = P.createPlugins(defaultPlugins, {
+  const plugins = createPlugins(defaultPlugins, {
     components
   })
 
@@ -285,54 +472,48 @@ export default function Editor({
   const tagItems = useMemo(() => tagNames.map(toMentionable), [tagNames])
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
-
-  const plateEditor = P.usePlateEditorRef()
-  useEffect(function () {
-    if (plateEditor) {
-      // normalize the whole editor at load to ensure the data is properly formatted
-      // this is how we migrate data from one format to another
-      SlateEditor.normalize(plateEditor, { force: true })
-    }
-  }, [plateEditor])
-
   return (
-    <P.Plate
-      id={editorId}
-      plugins={plugins}
-      editableProps={editableProps}
-      initialValue={initialValue}
-      onChange={onChange}
-      {...props}
-    >
-      {!readOnly && (
-        <>
-          <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
-            <div className="flex">
-              <ToolbarButtonsBasicElements />
-              <ToolbarButtonsList />
-              <P.LinkToolbarButton icon={<LinkIcon />} />
-              <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
-            </div>
-            <div className="flex">
-              <ToolbarButtonsBasicMarks />
-            </div>
-          </div>
+    <PlateProvider id={editorId}>
+      <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
+        <div className="flex">
+          <ToolbarButtonsBasicElements />
+          <ToolbarButtonsList />
+          <LinkToolbarButton icon={<LinkIcon />} />
+          <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+        </div>
+        <div className="flex">
+          <ToolbarButtonsBasicMarks />
+        </div>
+      </div>
 
-          <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
-            <div>
-              <ImageUploadAndEditor
-                onSave={imageUploaderOnSave}
-                onClose={() => { setImageUploaderOpen(false) }}
-                imageUploadContainerUri={imageUploadUri}
-              />
-            </div>
-          </Modal>
+      <Plate
+        id={editorId}
+        plugins={plugins}
+        editableProps={editableProps}
+        initialValue={initialValue}
+        onChange={onChange}
+        normalizeInitialValue={true}
+        {...props}
+      >
+        {false && !readOnly && (
+          <>
 
-          <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
-          <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
-          <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
-        </>
-      )}
-    </P.Plate>
+            <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+              <div>
+                <ImageUploadAndEditor
+                  onSave={imageUploaderOnSave}
+                  onClose={() => { setImageUploaderOpen(false) }}
+                  imageUploadContainerUri={imageUploadUri}
+                />
+              </div>
+            </Modal>
+
+            <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
+            <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
+            <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
+          </>
+        )}
+      </Plate>
+    </PlateProvider>
   );
 }

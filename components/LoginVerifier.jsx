@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useWorkspace } from '../hooks/app'
-import { useAuthentication, useWebId, useLoggedIn } from 'swrlit'
+import { useAuthentication, useWebId, useLoggedIn } from 'swrlit/contexts/authentication'
 
 
 function LoggedInStateVerifier(){

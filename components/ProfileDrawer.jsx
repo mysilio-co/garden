@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { asUrl } from '@inrupt/solid-client'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
 import ProfileImage from './ProfileDrawer/Image'
 import Name from './ProfileDrawer/Name'
 import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer'

@@ -2,21 +2,21 @@ import {
   AutoformatBlockRule,
   ELEMENT_CODE_BLOCK,
   ELEMENT_CODE_LINE,
-  getParent,
+  getParentNode,
   isElement,
   isType,
   PlateEditor,
   TEditor,
   toggleList,
   unwrapList,
-} from '@udecode/plate';
+} from '@udecode/plate-headless';
 
 export const clearBlockFormat: AutoformatBlockRule['preFormat'] = (editor) =>
   unwrapList(editor as PlateEditor);
 
 export const format = (editor: TEditor, customFormatting: any) => {
   if (editor.selection) {
-    const parentEntry = getParent(editor, editor.selection);
+    const parentEntry = getParentNode(editor, editor.selection);
     if (!parentEntry) return;
     const [node] = parentEntry;
     if (

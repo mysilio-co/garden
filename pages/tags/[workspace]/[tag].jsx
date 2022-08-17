@@ -1,38 +1,37 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useWebId } from 'swrlit'
-import { getUrl, getUrlAll, getThing } from '@inrupt/solid-client'
+import { useWebId } from 'swrlit/contexts/authentication'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
+import { MY } from 'garden-kit/vocab'
+import dataFactory from "@rdfjs/data-model";
 
-import { useWorkspace } from '../../../hooks/app'
-import { useGarden } from '../../../hooks/concepts'
-import { WorkspaceProvider } from "../../../contexts/WorkspaceContext"
-import { US } from '../../../vocab'
-import { tagNameToUrlSafeId } from '../../../utils/uris'
+import { useItemIndex } from '../../../hooks/items'
 import LeftNavLayout from '../../../components/LeftNavLayout'
-import Cards from '../../../components/Cards'
+import NoteCard from "../../../components/cards/NoteCard"
 
 export default function TagPage() {
   const router = useRouter()
-  const { query: { tag, workspace: workspaceSlug } } = router
+  const { query: { tag, workspace: spaceSlug } } = router
   const webId = useWebId()
-  const { workspace } = useWorkspace(webId, workspaceSlug)
-  const tagPrefix = workspace && getUrl(workspace, US.tagPrefix)
-  const namespacedTag = tagPrefix && tag && `${tagPrefix}${tagNameToUrlSafeId(tag)}`
-
-  const { garden } = useGarden(webId, workspaceSlug)
-  // TODO: is there a model function for this?
-  const tagged = garden && garden.filter(g => {
-    const tags = getUrlAll(g, US.tagged)
-    return (tags.indexOf(namespacedTag) >= 0)
-  })
-  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
+  const { data } = useItemIndex(webId, spaceSlug)
+  const { index, dataset } = data || {}
+  const taggedQuads = dataset && Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
+  const itemUrns = taggedQuads && taggedQuads.map(q => q.subject.value)
+  const itemsAndGardens = itemUrns && itemUrns.map(u => [index.uri[u].item, index.uri[u].garden])
 
   return (
     <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
       <div className="p-6">
-        <WorkspaceProvider webId={webId} slug={workspaceSlug}>
-          <Cards webId={webId} garden={tagged} workspaceSlug={workspaceSlug} />
-        </WorkspaceProvider>
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+
+          {itemsAndGardens && itemsAndGardens.map(([item, garden]) => (
+            <NoteCard key={asUrl(item)}
+              gardenUrl={getSourceUrl(garden)}
+              item={item}
+              webId={webId}
+              workspaceSlug={spaceSlug} />
+          ))}
+        </ul>
       </div>
     </LeftNavLayout>
   );

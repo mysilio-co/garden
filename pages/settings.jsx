@@ -1,10 +1,22 @@
 import { useState, useEffect } from 'react'
-import { useWebId } from 'swrlit'
+import { useWebId } from 'swrlit/contexts/authentication'
 import {
-  getBoolean, setBoolean, getThingAll,
-  getUrl, setThing, getThing,
-  asUrl, getStringNoLocale, getSourceUrl
-} from '@inrupt/solid-client'
+  getBoolean,
+  getUrl,
+  getStringNoLocale
+} from '@inrupt/solid-client/thing/get'
+import {
+  setBoolean
+} from '@inrupt/solid-client/thing/set'
+import {
+  getThingAll,
+  setThing, getThing,
+  asUrl
+} from '@inrupt/solid-client/thing/thing'
+import {
+  getSourceUrl
+} from '@inrupt/solid-client/resource/resource'
+
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import { FG, trackGoal } from '../model/fathom';

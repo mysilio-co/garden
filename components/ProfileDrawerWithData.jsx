@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
-import { useProfile, useLoggedIn, useAuthentication } from 'swrlit'
+import { useProfile, useLoggedIn, useAuthentication } from 'swrlit/contexts/authentication'
+import { useProfile } from 'swrlit/hooks/things'
+
 import { useRouter } from 'next/router'
 
 import { useConceptNames } from '../hooks/concepts'

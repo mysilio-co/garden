@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAuthentication } from 'swrlit'
+import { useAuthentication } from 'swrlit/contexts/authentication'
 import { useRouter } from 'next/router'
 import { handleToIdp } from '../../utils/uris'
 

@@ -1,8 +1,18 @@
-import { useState, Fragment } from 'react'
+import { useState, useContext } from 'react'
 import { Formik } from 'formik'
-import { getPlateActions } from "@udecode/plate";
-import { useWebId } from "swrlit";
-import { isThingLocal } from "@inrupt/solid-client";
+import { getPlateActions, getPlateSelectors } from "@udecode/plate-headless";
+import { useWebId, useAuthentication } from "swrlit/contexts/authentication";
+import { asUrl, setThing, createThing } from "@inrupt/solid-client/thing/thing";
+import { setUrl } from "@inrupt/solid-client/thing/set"
+import { createSolidDataset, solidDatasetAsMarkdown } from "@inrupt/solid-client/resource/solidDataset"
+import { useGarden, useTitledGardenItem, useSpace } from 'garden-kit/hooks'
+import { MY } from 'garden-kit/vocab'
+import { getUUID } from 'garden-kit/utils'
+import { getNurseryFile } from 'garden-kit/spaces'
+import { createNote, newNoteResourceName } from 'garden-kit/items'
+import { arrayToThings } from 'garden-kit/collections';
+import { createThingFromSlateJSOElement } from 'garden-kit/note'
+import { PlateProvider } from '@udecode/plate-headless'
 
 import { PrivacyToggle } from '../toggles'
 import { Close as CloseIcon, TickCircle } from '../icons'
@@ -13,43 +23,57 @@ import { createOrUpdateConceptIndex } from "../../model/concept";
 import { useCurrentWorkspace } from "../../hooks/app";
 import { useConcept, useConceptNames } from "../../hooks/concepts";
 import NoteEditor from "../NoteEditor"
+import Editor from "../Plate/Editor"
 import { EmptySlateJSON } from "../../utils/slate";
 import Modal from '../Modal';
 import * as flags from '../../model/flags'
+import SpaceContext from '../../contexts/SpaceContext';
 
-export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
-  const [pub, setPublic] = useState(isPublic);
-  const privacy = pub ? 'public' : 'private';
-  const [value, setNoteValue] = useState(EmptySlateJSON);
+import { Plate } from '@udecode/plate-core';
+import { saveSolidDatasetAt } from '@inrupt/solid-client';
+import { useContainer, useResource } from 'swrlit';
 
+
+const editorId = 'create-modal';
+
+const NewNote = ({ onClose, isPublic = false, name, setName }) => {
+  const [value, setValue] = useState()
+  
   const [createAnother, setCreateAnother] = useState(false);
   const [saving, setSaving] = useState(false);
-  const editorId = 'create-modal';
-  const { value: setValue, resetEditor } = getPlateActions(editorId);
 
   const webId = useWebId();
-  const { workspace, slug: workspaceSlug } = useCurrentWorkspace(privacy);
-
+  const { slug: spaceSlug } = useContext(SpaceContext);
+  const { space } = useSpace(webId, spaceSlug)
+  const gardenUrl = getNurseryFile(space)
   const {
-    concept,
-    index: conceptIndex,
-    saveIndex: saveConceptIndex,
-  } = useConcept(webId, workspaceSlug, name, privacy);
+    item,
+    save: saveItem
+  } = useTitledGardenItem(gardenUrl, name);
+  const itemExists = !!item
+
   const conceptNames = useConceptNames(webId);
-  const conceptExists = concept && !isThingLocal(concept);
+  const { fetch } = useAuthentication()
   const save = async function save() {
-    const newNote = createOrUpdateSlateJSON(value);
-    const newConceptIndex = createOrUpdateConceptIndex(
-      value,
-      workspace,
-      conceptIndex,
-      concept,
-      name
+    const newNoteResourceUrl = newNoteResourceName(space)
+    const noteThingName = "note"
+    const noteThingUrl = `${newNoteResourceUrl}#${noteThingName}`
+    const newItem = createNote(webId, noteThingUrl, { title: name })
+
+    const noteBodyThings = arrayToThings(
+      value || EmptySlateJSON,
+      createThingFromSlateJSOElement
     );
+
+    let noteBodyResource = noteBodyThings.reduce((m, t) => t ? setThing(m, t) : m, createSolidDataset())
+    let noteThing = createThing({ name: noteThingName })
+    noteThing = setUrl(noteThing, MY.Garden.noteValue, noteBodyThings[0])
+    noteBodyResource = setThing(noteBodyResource, noteThing)
+
     setSaving(true);
     try {
-      await saveConceptIndex(newConceptIndex);
-      await saveNote(newNote, concept);
+      await saveSolidDatasetAt(newNoteResourceUrl, noteBodyResource, { fetch })
+      await saveItem(newItem)
     } catch (e) {
       console.log('error saving note', e);
     } finally {
@@ -58,7 +82,8 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
   };
 
   const reset = () => {
-    resetEditor();
+    const { value: setValue, resetEditor } = getPlateActions(editorId)
+    resetEditor()
     setValue(EmptySlateJSON);
     setName('');
   };
@@ -78,25 +103,12 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
       onClose();
     }
   };
-  async function onImportFileChanged(file) {
-    const html = await file.text()
-    const document = new DOMParser().parseFromString(html, 'text/html')
-    const noteBody = deserialize(document.body)
-    setValue(noteBody)
-    resetEditor()
-  }
 
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
-      <div
-        className={`flex flex-row justify-between self-stretch h-18 p-6 ${pub ? 'bg-my-green' : 'bg-gray-500'
-          }`}
-      >
+      <div className="flex flex-row justify-between self-stretch h-18 p-6 bg-my-green">
         <div className="flex flex-row justify-start items-start gap-4">
-          <h2 className="text-white font-bold text-xl">
-            New {pub ? 'Public' : 'Private'} Note
-          </h2>
-          <PrivacyToggle enabled={pub} setEnabled={setPublic} />
+          {/* TODO: garden picker here? */}
         </div>
         <CloseIcon
           className="text-white h-6 w-6 flex-grow-0 cursor-pointer"
@@ -118,13 +130,13 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
                   type="text"
                   name="name"
                   id="name"
-                  className={`ipt ${conceptExists ? 'error' : ''}`}
+                  className={`ipt ${itemExists ? 'error' : ''}`}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-                {conceptExists && (
+                {itemExists && (
                   <span className="ipt-error-message">
-                    concept already exists
+                    a note with this title already exists
                   </span>
                 )}
               </div>
@@ -153,11 +165,12 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
               )}
             </div>
             <div className="px-6 py-5 h-96">
-              <NoteEditor
+              <Editor
                 editorId={editorId}
-                onNoteBodyChange={setNoteValue}
+                initialValue={EmptySlateJSON}
                 conceptNames={conceptNames}
                 editableProps={{ className: 'overflow-auto h-5/6' }}
+                onChange={(newValue) => setValue(newValue)}
               />
             </div>
           </>
@@ -180,7 +193,7 @@ export const NewNote = ({ onClose, isPublic = false, name, setName }) => {
           type="submit"
           onClick={onSubmit}
           className="btn-md btn-filled btn-square h-10 ring-my-green text-my-green flex flex-row justify-center items-center"
-          disabled={conceptExists}
+          disabled={itemExists}
         >
           Create
           <TickCircle className="ml-1 text-my-green h-4 w-4" />
@@ -200,7 +213,9 @@ export default function NewNoteModal({
 }) {
   return (
     <Modal open={open} onClose={onClose}>
-      <NewNote onClose={onClose} name={name} setName={setName} />
+      <PlateProvider id={editorId}>
+        <NewNote onClose={onClose} name={name} setName={setName} />
+      </PlateProvider>
     </Modal>
   );
 }

@@ -1,9 +1,13 @@
 import {
   createThing,
+} from "@inrupt/solid-client/thing/thing";
+import {
   setStringNoLocale,
+} from "@inrupt/solid-client/thing/set";
+import {
   getUrl,
   getStringNoLocale,
-} from "@inrupt/solid-client";
+} from "@inrupt/solid-client/thing/get";
 
 import { noteBodyToSlateJSON } from "../utils/slate";
 import { conceptNameToUrlSafeId } from "../utils/uris";
