@@ -15,7 +15,6 @@ export function NewBookmark({ onClose }) {
   const { url: gardenUrl } = useGardenContext()
   const { garden, save: saveGarden } = useGarden(gardenUrl)
   console.log("garden", garden, gardenUrl)
-  const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [desc, setDesc] = useState('');
