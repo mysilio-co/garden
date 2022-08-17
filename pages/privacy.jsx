@@ -11,7 +11,7 @@ export default function PrivacyPage() {
           </p>
           <p>
             If you are using our POD hosting service (the default if you signed up with us),
-            we store your data in our servers at <a className="link" href="https://mysilio.me/">https://mysilio.me/</a>.
+            we store your data in our servers at <a className="link" href="https://v0.mysilio.me/">https://v0.mysilio.me/</a>.
             We will not sell or transfer your data without your permission, and you are free to move
             your data to servers hosted by other parties without discontinuing use of Mysilio Garden.
           </p>

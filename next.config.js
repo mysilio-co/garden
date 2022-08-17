@@ -14,7 +14,7 @@ module.exports = {
   },
   //staticPageGenerationTimeout: 180,
   images: {
-    domains: ["ian.mysilio.me"],
+    domains: ["ian.v0.mysilio.me"],
   },
   */
 };
