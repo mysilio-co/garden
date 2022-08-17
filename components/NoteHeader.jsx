@@ -126,7 +126,13 @@ export default function NoteHeader({
               <b>Created</b><span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
             </div>
             <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
-              <b>Last Edit</b><span> {noteLastEdit && getRelativeTime(noteLastEdit)}</span>
+              {saving ? (
+                <b>Saving...</b>
+              ) : (
+                <>
+                  <b>Last Edit</b><span> {noteLastEdit && getRelativeTime(noteLastEdit)}</span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -140,7 +146,6 @@ export default function NoteHeader({
               </>
             )}
             {item && myNote && (<NoteHeaderGardenPicker webId={authorWebId} spaceSlug={spaceSlug} currentGardenUrl={gardenUrl} item={item} />)}
-            {saving && <div className="text-white opacity-50 text-sm">saving...</div>}
             {/*
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white/10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
             <span>
