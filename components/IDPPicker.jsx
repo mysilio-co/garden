@@ -4,12 +4,17 @@ import { Combobox } from "@headlessui/react";
 import { IsPreviewEnv } from '../model/flags';
 import { classNames } from '../utils/html'
 
-const IDPList = IsPreviewEnv
-  ? [
-      { name: 'Mysilio Staging', host: 'https://staging.mysilio.me' },
-      { name: 'Mysilio Production', host: 'https://mysilio.me' },
-    ]
-  : [{ name: 'Mysilio', host: 'https://mysilio.me' }];
+const IDPList = IsPreviewEnv ?
+  [
+    { name: 'Production', host: 'https://mysilio.me' },
+    { name: 'Staging', host: 'https://staging.mysilio.me' },
+    { name: 'Legacy NSS', host: 'https://v0.mysilio.me' }
+  ] : [
+    { name: 'Mysilio', host: 'https://mysilio.me' },
+    { name: 'Inrupt', host: 'https://inrupt.net' },
+    { name: 'Solid Community', host: 'https://solidcommunity.net' },
+    { name: 'Solid Web', host: 'https://solidweb.org' }
+  ];
 
 export default function IDPPicker({ setHost, className}) {
   const [query, setQuery] = useState('');
