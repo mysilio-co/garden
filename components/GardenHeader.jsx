@@ -23,6 +23,7 @@ import NewFileModal from './modals/NewFile';
 import NewNewsletterModal from './modals/NewNewsletter';
 import { IsPreviewEnv } from '../model/flags';
 import { useFollows } from '../hooks/people'
+import { getTitle } from 'garden-kit';
 
 
 const ActiveModalTitles = IsPreviewEnv
@@ -116,23 +117,36 @@ export default function GardenHeader({
   type,
   onSearch,
   openSidebar,
-  authorProfile
+  authorProfile,
+  gardenSettings,
 }) {
-  const loggedIn = useLoggedIn()
+  const loggedIn = useLoggedIn();
   const [activeModal, setActiveModal] = useState(undefined);
-  const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
-  const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
-  const gardenName = (type == 'dashboard') ? 'Dashboard' : authorName ? `${authorName}'s garden` : '';
-
-
+  const bg =
+    type === 'dashboard' || type === 'dweb'
+      ? 'bg-header-gradient'
+      : 'bg-my-green';
+  const authorName =
+    authorProfile && getStringNoLocale(authorProfile, FOAF.name);
+  const gardenTitle = gardenSettings && getTitle(gardenSettings);
+  const headerTitle =
+    type === 'dashboard'
+      ? 'Dashboard'
+      : type === 'dweb'
+      ? 'DWeb Camp Stream'
+      : authorName
+      ? `${authorName}'s profile`
+      : gardenTitle
+      ? gardenTitle
+      : '';
 
   return (
-    <nav className={`${bg} flex flex-col sm:flex-row justify-between relative z-30 p-4 gap-4`}>
+    <nav
+      className={`${bg} flex flex-col sm:flex-row justify-between relative z-30 p-4 gap-4`}
+    >
       <div className="flex flex-col items-left gap-2">
         <div className="flex justify-between">
-          <div className="text-white text-4xl font-black">
-            {gardenName}
-          </div>
+          <div className="text-white text-4xl font-black">{headerTitle}</div>
           <button
             type="button"
             className="inline-flex sm:hidden flex-shrink-0 h-12 w-12 items-center justify-center rounded-md text-gray-200 hover:text-white"

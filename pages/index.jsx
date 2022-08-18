@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
 import { useSpacesWithSetup } from 'garden-kit/hooks'
 import { hasRequiredSpaces } from 'garden-kit/spaces'
-
+import { useRouter } from "next/router";
 import Header from '../components/GardenHeader'
 import { Loader } from '../components/elements'
 
@@ -44,9 +44,13 @@ function LoadingPage() {
 export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
+  const router = useRouter()
   const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
   const spacesConfigDoesntExist = !!(spacesError && (spacesError.statusCode === 404))
   const setupComplete = spaces && hasRequiredSpaces(spaces)
+  useEffect(() => {
+    router.push('/dweb-camp');
+  }, [setupComplete]);
   return (
     <div className="page" id="page">
       {(loggedIn === true) ? (

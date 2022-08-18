@@ -43,10 +43,13 @@ export default function ProfilePage() {
 
   const { profile } = useProfile(webId)
   const myWebId = useWebId()
-  const headerProps = useMemo(() => ({
-    onSearch: setSearch,
-    authorProfile: profile
-  }), [profile])
+  const headerProps = useMemo(
+    () => ({
+      onSearch: setSearch,
+      authorProfile: profile,
+    }),
+    [profile]
+  );
   return (
     <LeftNavLayout pageName={myWebId ? `My Profile` : `${webId} Profile`} HeaderComponent={GardenHeader} headerProps={headerProps}>
       <WebMonetization webId={webId} />
