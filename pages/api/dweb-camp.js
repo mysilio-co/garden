@@ -20,8 +20,9 @@ import {
   setUrl,
   saveSolidDatasetAt,
   setThing,
-  thingBuilder,
+  buildThing,
   getDatetime,
+  getThingAll,
 } from '@inrupt/solid-client';
 import { getTitle, getDescription, getDepiction, getCreator } from 'garden-kit';
 import { RDFS, DCTERMS } from '@inrupt/vocab-common-rdf';
@@ -30,12 +31,12 @@ import { RDFS, DCTERMS } from '@inrupt/vocab-common-rdf';
 // Public: Append only
 const DWC_URL =
   process.env.DWEB_CAMP_RESOURCE_URL ||
-  'https://mysilio.me/ian/public/dweb-camp.ttl';
+  'https://mysilio.me/ian/streams/dweb-camp.ttl';
 
 const pinned = ['urn:uuid:508ca751-0e8f-4b25-a4a2-a15d63166ebe'];
 
 function createPointer(uuidUrn, resourceUrl, href) {
-  return thingBuilder(createThing({ url: uuidUrn }))
+  return buildThing(createThing({ url: uuidUrn }))
     .addUrl(RDFS.seeAlso, resourceUrl)
     .addUrl(DCTERMS.source, href)
     .build();
@@ -43,17 +44,20 @@ function createPointer(uuidUrn, resourceUrl, href) {
 
 async function getDWCIndex() {
   console.log(`Fetching DWeb Camp Index from ${DWC_URL}`);
-  return await getSolidDataset(DWC_URL);
+  const index = await getSolidDataset(DWC_URL);
+  console.log(index);
+  return index;
 }
 
 async function saveDWCIndex(newIndex) {
   console.log(`Saving DWeb Camp Index to ${DWC_URL}`);
-  return await saveSolidDatasetAt(newIndex, DWC_URL);
+  console.log(newIndex);
+  return await saveSolidDatasetAt(DWC_URL, newIndex);
 }
 
-async function addToDWCGarden(uuidUrn, resourceUrl, href) {
+async function addToDWCIndex(uuidUrn, resourceUrl, href) {
   console.log(`Checking DWeb Camp Garden for ${uuidUrn}: ${resourceUrl}`);
-  const index = getDWCIndex();
+  const index = await getDWCIndex();
   let gardenPointer = getThing(index, uuidUrn);
   if (gardenPointer) {
     const existingUrl = getUrl(gardenPointer, RDFS.seeAlso);
@@ -63,19 +67,14 @@ async function addToDWCGarden(uuidUrn, resourceUrl, href) {
   }
 
   console.log(`Try adding pointer for ${uuidUrn}: ${resourceUrl}`);
-  index = setThing(index, createPointer(uuidUrn, resourceUrl));
-  try {
-    index = await saveDWCIndex(index);
-  } catch (error) {
-    console.log(error);
-    throw new Error('Content with that UUID has already been indexed');
-  }
+  let newIndex = setThing(index, createPointer(uuidUrn, resourceUrl, href));
+  newIndex = await saveDWCIndex(newIndex);
 
   console.log(`Added ${uuidUrn}: ${resourceUrl} to DWeb Camp Garden`);
-  return index;
+  return newIndex;
 }
 
-async function getDWCGarden() {
+async function getDWCStream() {
   const index = getDWCIndex();
   const uuidThings = getThingAll(index);
   const fullThings = async () => {
@@ -83,9 +82,13 @@ async function getDWCGarden() {
       uuidThings.map(async (thing) => {
         const uuidUrn = asUrl(thing);
         const resourceUrl = getUrl(thing, RSFS.seeAlso);
+        const href = getUrl(thing, DCTERMS.source);
+        console.log(`Fetching ${uuidUrn} from ${resourceUrl}`);
         const dataset = await getSolidDataset(resourceUrl);
-        const fullThing = getThing(dataset, uuidUrn);
-        return setUrl(fullThing, RDFS.seeAlso, resourceUrl);
+        let fullThing = getThing(dataset, uuidUrn);
+        fullThing = setUrl(fullThing, RDFS.seeAlso, resourceUrl);
+        fullThing = setUrl(fullThing, DCTERMS.source, href);
+        return fullThing;
       })
     );
   };
@@ -98,27 +101,23 @@ async function getDWCGarden() {
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { uuidUrn, resourceUrl } = req.body;
-    try {
-      const gardenIndex = await addToDWCGarden(uuidUrn, resourceUrl);
-      const gardenIndexJSON = getThingAll(gardenIndex).map((thing) => {
-        return {
-          uuid: asUrl(thing),
-          seeAlso: getUrl(thing, RDFS.seeAlso),
-        };
-      });
-      return res.json(gardenIndexJSON);
-    } catch (error) {
-      return res.status(409).json({
-        message: error.message,
-      });
-    }
+    const body = JSON.parse(req.body);
+    const { uuidUrn, resourceUrl, href } = body;
+    const newIndex = await addToDWCIndex(uuidUrn, resourceUrl, href);
+    const newIndexJSON = getThingAll(newIndex).map((thing) => {
+      return {
+        uuid: asUrl(thing),
+        seeAlso: getUrl(thing, RDFS.seeAlso),
+        href: getUrl(thing, DCTERMS.source),
+      };
+    });
+    return res.json(newIndexJSON);
   } else if (req.method === 'GET') {
     // From Vercel docs: "[This] tells our CDN: serve from cache, but update it, if requested after 1 minute."
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
-    const garden = getDWCGarden();
-    const gardenJSON = getThingAll(garden).map((thing) => {
+    const stream = getDWCStream();
+    const streamJSON = getThingAll(stream).map((thing) => {
       return {
         uuid: asUrl(thing),
         seeAlso: getUrl(thing, RDFJS.seeAlso),
@@ -130,7 +129,7 @@ export default async function handler(req, res) {
         href: getUrl(thing, DCTERMS.source),
       };
     });
-    return res.json(gardenJSON);
+    return res.json(streamJSON);
   } else {
     return res.status(405).json({ message: 'Only supports GET and POST' });
   }

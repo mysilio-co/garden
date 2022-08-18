@@ -29,6 +29,7 @@ import { profilePath, itemPath } from '../utils/uris';
 import { Trashcan } from './icons'
 import useDWCStream from "../model/dweb-camp";
 import GardenPicker from "./GardenPicker";
+import { getUUID, useGarden } from 'garden-kit';
 
 async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   const [fromGarden, toGarden] = await Promise.all([
@@ -53,8 +54,13 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   // TODO: set permissions on note body here
 }
 
-function NoteHeaderPublishDropdown({}) {
+function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
+  const { settings } = useGarden(currentGardenUrl);
+  const isPublic = settings && getTitle(settings) === 'Public';
+  console.log(settings && getTitle(settings));
   const { addToStream } = useDWCStream();
+  const uuidUrn = getUUID(item);
+
   return (
     <Dropdown label="Publish">
       <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
@@ -69,7 +75,13 @@ function NoteHeaderPublishDropdown({}) {
                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                 'menu-item'
               )}
-              onClick={() => addToStream()}
+              onClick={() => {
+                if (isPublic) {
+                  addToStream(currentGardenUrl, uuidUrn, window.location.href);
+                } else {
+                  alert("You can only publish Notes from your Public Garden")
+                }
+              }}
             >
               DWeb Camp
             </a>
@@ -181,7 +193,12 @@ export default function NoteHeader({
                 item={item}
               />
             )}
-            {item && myNote && <NoteHeaderPublishDropdown item={item} />}
+            {item && myNote && (
+              <NoteHeaderPublishDropdown
+                item={item}
+                currentGardenUrl={gardenUrl}
+              />
+            )}
             {saving && (
               <div className="text-white opacity-50 text-sm">saving...</div>
             )}
