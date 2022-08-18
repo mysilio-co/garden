@@ -45,13 +45,6 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
     getNoteBody(item),
     getDepiction(item)
   ], toGarden, { fetch })
-  // set perms based on garden name for now. custom gardens with custom permissions
-  // will require more sophisticated access checking - the universal access
-  // api may be enough for this but doesn't seem to be working in the current version
-  //const publicRead = (getTitle(getThing(toGarden, toGardenUrl)) === 'Public') ? true : false
-  //await setPublicAccess(getNoteBody(item),
-  //  { read: publicRead, append: false, write: false, control: false },
-  //  { fetch })
 }
 
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
