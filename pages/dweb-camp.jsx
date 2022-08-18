@@ -33,7 +33,7 @@ export default function DWebCampStreamPage() {
       <div className="p-6">
         {stream ? (
           stream.map((props) => {
-            <Card {...props} />;
+            return <Card {...props} />;
           })
         ) : (
           <Loader />

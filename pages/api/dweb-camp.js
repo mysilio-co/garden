@@ -23,6 +23,8 @@ import {
   buildThing,
   getDatetime,
   getThingAll,
+  createSolidDataset,
+  asUrl,
 } from '@inrupt/solid-client';
 import { getTitle, getDescription, getDepiction, getCreator } from 'garden-kit';
 import { RDFS, DCTERMS } from '@inrupt/vocab-common-rdf';
@@ -75,23 +77,24 @@ async function addToDWCIndex(uuidUrn, resourceUrl, href) {
 }
 
 async function getDWCStream() {
-  const index = getDWCIndex();
+  const index = await getDWCIndex();
   const uuidThings = getThingAll(index);
-  const fullThings = async () => {
-    return Promise.all(
-      uuidThings.map(async (thing) => {
-        const uuidUrn = asUrl(thing);
-        const resourceUrl = getUrl(thing, RSFS.seeAlso);
-        const href = getUrl(thing, DCTERMS.source);
-        console.log(`Fetching ${uuidUrn} from ${resourceUrl}`);
-        const dataset = await getSolidDataset(resourceUrl);
-        let fullThing = getThing(dataset, uuidUrn);
-        fullThing = setUrl(fullThing, RDFS.seeAlso, resourceUrl);
-        fullThing = setUrl(fullThing, DCTERMS.source, href);
-        return fullThing;
-      })
-    );
-  };
+  const fullThings = await Promise.all(
+    uuidThings.map(async (thing) => {
+      const uuidUrn = asUrl(thing);
+      const resourceUrl = getUrl(thing, RDFS.seeAlso);
+      const href = getUrl(thing, DCTERMS.source);
+      console.log(`Fetching ${uuidUrn} from ${resourceUrl}`);
+      const dataset = await getSolidDataset(resourceUrl);
+      let fullThing = getThing(dataset, uuidUrn);
+      console.log(`Found ${uuidUrn} in ${resourceUrl}:`)
+      console.log(fullThing);
+      fullThing = setUrl(fullThing, RDFS.seeAlso, resourceUrl);
+      fullThing = setUrl(fullThing, DCTERMS.source, href);
+      return fullThing;
+    })
+  );
+  console.log(fullThings);
   const garden = fullThings.reduce(
     (dataset, thing) => setThing(dataset, thing),
     createSolidDataset()
@@ -116,11 +119,11 @@ export default async function handler(req, res) {
     // From Vercel docs: "[This] tells our CDN: serve from cache, but update it, if requested after 1 minute."
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
-    const stream = getDWCStream();
+    const stream = await getDWCStream();
     const streamJSON = getThingAll(stream).map((thing) => {
       return {
         uuid: asUrl(thing),
-        seeAlso: getUrl(thing, RDFJS.seeAlso),
+        seeAlso: getUrl(thing, RDFS.seeAlso),
         creator: getCreator(thing),
         title: getTitle(thing),
         description: getDescription(thing),
@@ -129,6 +132,8 @@ export default async function handler(req, res) {
         href: getUrl(thing, DCTERMS.source),
       };
     });
+    console.log(`Constructed DWC Stream JSON:`);
+    console.log(streamJSON);
     return res.json(streamJSON);
   } else {
     return res.status(405).json({ message: 'Only supports GET and POST' });

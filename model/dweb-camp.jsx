@@ -1,7 +1,15 @@
 import useSWR from "swr"
 
 export default function useDWCStream() {
-  const dwc = useSWR('/api/dweb-camp')
+  const dwc = useSWR('/api/dweb-camp', async (url) => {
+    const r = await fetch(url);
+    const json = await r.json();
+    const formatted = json.map((entry) => {
+      entry.lastEdit = new Date(entry.lastEdit);
+      return entry;
+    })
+    return formatted;
+  });
   const addToDWC = async function (resourceUrl, uuidUrn, href) {
     const response = await fetch('/api/dweb-camp', {
       method: 'POST',

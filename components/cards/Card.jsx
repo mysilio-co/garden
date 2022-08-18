@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { useProfile } from 'swrlit';
 import { getRelativeTime } from '../../utils/time.js';
+import { getStringNoLocale } from '@inrupt/solid-client';
+import { FOAF } from '@inrupt/vocab-common-rdf';
 
 export default function Card({
   title,
@@ -10,7 +12,7 @@ export default function Card({
   href,
   lastEdit,
 }) {
-  const profile = useProfile(creator);
+  const { profile } = useProfile(creator);
   const name = profile && getStringNoLocale(profile, FOAF.name);
 
   return (
