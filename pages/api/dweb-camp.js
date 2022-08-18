@@ -21,19 +21,23 @@ import {
   saveSolidDatasetAt,
   setThing,
   thingBuilder,
+  getDatetime,
 } from '@inrupt/solid-client';
-import { getTitle, getDescription, getDepiction } from 'garden-kit';
-import { RDFS } from '@inrupt/vocab-common-rdf';
+import { getTitle, getDescription, getDepiction, getCreator } from 'garden-kit';
+import { RDFS, DCTERMS } from '@inrupt/vocab-common-rdf';
 
 // Expected Permissions for this file:
 // Public: Append only
 const DWC_URL =
   process.env.DWEB_CAMP_RESOURCE_URL ||
-  'https://ian.mysilio.me/public/test/dweb-camp.ttl';
+  'https://mysilio.me/ian/public/dweb-camp.ttl';
 
-function createPointer(uuidUrn, resourceUrl) {
+const pinned = ['urn:uuid:508ca751-0e8f-4b25-a4a2-a15d63166ebe'];
+
+function createPointer(uuidUrn, resourceUrl, href) {
   return thingBuilder(createThing({ url: uuidUrn }))
     .addUrl(RDFS.seeAlso, resourceUrl)
+    .addUrl(DCTERMS.source, href)
     .build();
 }
 
@@ -47,7 +51,7 @@ async function saveDWCIndex(newIndex) {
   return await saveSolidDatasetAt(newIndex, DWC_URL);
 }
 
-async function addToDWCGarden(uuid, resourceUrl) {
+async function addToDWCGarden(uuidUrn, resourceUrl, href) {
   console.log(`Checking DWeb Camp Garden for ${uuidUrn}: ${resourceUrl}`);
   const index = getDWCIndex();
   let gardenPointer = getThing(index, uuidUrn);
@@ -100,7 +104,7 @@ export default async function handler(req, res) {
       const gardenIndexJSON = getThingAll(gardenIndex).map((thing) => {
         return {
           uuid: asUrl(thing),
-          seeAlso: getUrl(thing, RDFJS.seeAlso),
+          seeAlso: getUrl(thing, RDFS.seeAlso),
         };
       });
       return res.json(gardenIndexJSON);
@@ -118,13 +122,16 @@ export default async function handler(req, res) {
       return {
         uuid: asUrl(thing),
         seeAlso: getUrl(thing, RDFJS.seeAlso),
+        creator: getCreator(thing),
         title: getTitle(thing),
         description: getDescription(thing),
         depiction: getDepiction(thing),
+        lastEdit: getDatetime(thing, DCTERMS.modified),
+        href: getUrl(thing, DCTERMS.source),
       };
     });
     return res.json(gardenJSON);
   } else {
     return res.status(405).json({ message: 'Only supports GET and POST' });
   }
-};
+}
