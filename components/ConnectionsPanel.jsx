@@ -80,11 +80,11 @@ function LinksSection({ item, webId, spaceSlug }) {
   const { index, dataset } = data || {}
   const { space } = useSpace(webId, spaceSlug)
   const defaultGardenUrl = getNurseryFile(space)
-  const linkNames = getReferences(item)
+  const linkNames = item && getReferences(item)
 
-  const referencedBy = dataset ? referencesItemInDataset(item, dataset) : []
+  const referencedBy = (item && dataset) ? referencesItemInDataset(item, dataset) : []
 
-  const itemName = getTitle(item)
+  const itemName = item && getTitle(item)
   return (
     <div className="p-6">
       <h4 className="text-lg mb-2">links from {itemName}</h4>
@@ -127,7 +127,7 @@ function ConnectionsSection({ subSection, webId, item, spaceSlug, itemIndex }) {
 }
 
 const ConnectionsPanel = forwardRef(({ onClose, item, itemName, className, webId, spaceSlug, itemIndex }, ref) => {
-  const [activeTab, setActiveTab] = useState('tags')
+  const [activeTab, setActiveTab] = useState('links')
   return (
     <div className={`flex flex-col ${className}`} ref={ref}>
       <div className="flex flex-row gap-4 justify-between items-center p-4 bg-gray-100">
