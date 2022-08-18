@@ -104,7 +104,7 @@ export default function NoteHeader({
           </div>
           <div className="flex mt-3 h-3 text-sm text-white items-center">
             {authorProfilePath && (
-              <div className="flex flex-col sm:flex-row sm:gap-2">
+              <div className="flex flex-col sm:flex-row sm:gap-2 items-center">
                 <Link href={authorProfilePath}>
                   <a>
                     <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
@@ -117,10 +117,10 @@ export default function NoteHeader({
                 </Link>
               </div>
             )}
-            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
               <b>Created</b><span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
             </div>
-            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
               {saving ? (
                 <b>Saving...</b>
               ) : (
