@@ -6,34 +6,38 @@ import { Transition } from '@headlessui/react'
 
 import { setThing, removeThing } from "@inrupt/solid-client/thing/thing";
 import { useProfile, useMyProfile } from "swrlit";
-import { useWebId } from 'swrlit/contexts/authentication'
-import { useThing } from 'swrlit/hooks/things'
+import { useWebId, useAuthentication } from 'swrlit/contexts/authentication'
+import { useThing, useFile } from 'swrlit/hooks/things'
 
 import { useTitledGardenItem } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
 import { getAbout, updateItemBeforeSave, setTags, setReferences } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
+import { getDepiction, setDepiction } from 'garden-kit/utils'
+import { setPublicAccess, setPublicAccessBasedOnGarden } from 'garden-kit/acl'
 
 import { urlSafeIdToConceptName } from "../utils/uris";
 import { getTagsInNote, getReferencesInNote } from '../utils/slate'
 
 import { useAutosave } from '../hooks/editor'
+import { useImageUploadUri } from '../hooks/uris';
 
+import ImageUploadModal from './modals/ImageUpload'
 import LeftNavLayout from './LeftNavLayout'
 import NoteHeader from './NoteHeader';
 import Editor from './Plate/Editor'
 import WebMonetization from './WebMonetization';
 import { deleteResource } from '../utils/fetch';
 import ConnectionsPanel from './ConnectionsPanel'
-import { Share as ShareIcon, ArrowSquareLeft as ArrowSquareLeftIcon } from './icons'
+import { Share as ShareIcon, UploadImage as UploadImageIcon } from './icons'
 import { NoteProvider } from '../contexts/NoteContext'
-
+import PodImage from './PodImage'
 
 export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }) {
   const myWebId = useWebId()
   const router = useRouter()
   const itemName = slug && urlSafeIdToConceptName(slug);
-  const { item, save: saveItem, resource: itemResource, saveResource: saveItemResource } = useTitledGardenItem(gardenUrl, itemName)
+  const { item, save: saveItem, resource: garden, saveResource: saveGarden } = useTitledGardenItem(gardenUrl, itemName)
 
   // these two should be in the same resource as of 8/2022 - TV
   const noteBodyResourceUrl = item && getAbout(item)
@@ -66,11 +70,13 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
     }
   }
 
+  const { fetch } = useAuthentication()
+
   async function deleteItem() {
     if (noteBody) {
-      await deleteResource(noteBodyResourceUrl)
+      await deleteResource(noteBodyResourceUrl, { fetch })
     }
-    await saveItemResource(removeThing(itemResource, item))
+    await saveGarden(removeThing(garden, item))
     router.push("/")
   }
 
@@ -91,6 +97,14 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
   const { onChange } = useAutosave(item, maybeSaveNoteBody)
 
   const [panelOpen, setPanelOpen] = useState(false)
+  const imageUploadUri = useImageUploadUri(webId)
+  const [coverImageUploaderOpen, setCoverImageUploaderOpen] = useState(false)
+  async function setCoverImage(url) {
+    await setPublicAccessBasedOnGarden([url], garden, { fetch })
+    await saveItem(setDepiction(item, url))
+    setCoverImageUploaderOpen(false)
+  }
+  const coverImageUrl = item && getDepiction(item)
   return (
     <LeftNavLayout pageName={itemName} HeaderComponent={NoteHeader} headerProps={headerProps} >
       <Head>
@@ -106,15 +120,28 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
         leaveFrom="translate-x-0"
         leaveTo="translate-x-full"
       >
-        <button onClick={() => setPanelOpen(true)}
-          className="absolute top-0 right-0 w-18 h-18 text-gray-500 hover:text-gray-400 bg-gray-100 rounded-bl-lg flex flex-row py-6 pl-2 pr-4 z-40"
-        >
-          <ArrowSquareLeftIcon className="w-6 h-6 pointer-events-none" />
-          <ShareIcon className="w-6 h-6 pointer-events-none" />
-        </button>
+        <div className="absolute top-0 right-0 text-gray-500 bg-gray-100 rounded-bl-lg z-40 flex flex-col">
+          <button onClick={() => setCoverImageUploaderOpen(true)}
+            className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
+          >
+            <UploadImageIcon className="w-6 h-6 pointer-events-none" />
+            <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
+              onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
+          </button>
+          <button onClick={() => setPanelOpen(true)}
+            className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
+          >
+            <ShareIcon className="w-6 h-6 pointer-events-none" />
+          </button>
+        </div>
       </Transition>
+      <div>
+        {coverImageUrl && (
+          <PodImage className="h-36 w-full overflow-hidden object-cover" src={coverImageUrl} alt={itemName} />
+        )}
+      </div>
       <div className="flex flex-row w-full">
-        <div className="mx-8 flex-grow">
+        <div className="mx-10 grow">
           <NoteProvider webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} name={itemName}>
             {value && <Editor
               editorId={editorId}
@@ -135,7 +162,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
           leaveFrom="translate-x-0"
           leaveTo="translate-x-full"
         >
-          <ConnectionsPanel className="w-full md:w-auto"
+          <ConnectionsPanel className="w-full md:w-auto shrink-0"
             item={item} itemName={itemName}
             webId={webId} spaceSlug={spaceSlug}
             onClose={() => setPanelOpen(false)} />
