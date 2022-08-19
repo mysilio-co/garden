@@ -8,6 +8,8 @@ import { getSolidDataset, saveSolidDatasetAt } from '@inrupt/solid-client/resour
 import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { setThing, removeThing, getThing } from '@inrupt/solid-client/thing/thing'
 import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl'
+import Dropdown from './Dropdown';
+import { classNames } from '../utils/html'
 
 import { mutate } from 'swr'
 import { getNoteBody } from 'garden-kit/items'
@@ -18,17 +20,16 @@ import {
   MenuIcon,
 } from '@heroicons/react/outline'
 
-import { getTitle } from 'garden-kit/utils'
-import { useSpaces } from 'garden-kit/hooks'
+import { getTitle, getUUID } from 'garden-kit/utils';
+import { useSpaces, useGarden} from 'garden-kit/hooks'
 import { gardenMetadataInSpacePrefs, getSpace } from 'garden-kit/spaces'
-
 
 import Avatar from './Avatar';
 import { getRelativeTime } from '../utils/time';
 import { profilePath, itemPath } from '../utils/uris';
 import { Trashcan } from './icons'
+import useDWCStream from "../model/dweb-camp";
 import GardenPicker from "./GardenPicker";
-
 async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   const [fromGarden, toGarden] = await Promise.all([
     getSolidDataset(fromGardenUrl, { fetch }),
@@ -45,6 +46,44 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
     getNoteBody(item),
     getDepiction(item)
   ], toGarden, { fetch })
+}
+
+function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
+  const { settings } = useGarden(currentGardenUrl);
+  const isPublic = settings && getTitle(settings) === 'Public';
+  console.log(settings && getTitle(settings));
+  const { addToStream } = useDWCStream();
+  const uuidUrn = getUUID(item);
+
+  return (
+    <Dropdown label="Publish">
+      <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
+        <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
+          Publish to a Stream
+        </div>
+        <Dropdown.Item>
+          {({ active }) => (
+            <a
+              href="#"
+              className={classNames(
+                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                'menu-item'
+              )}
+              onClick={() => {
+                if (isPublic) {
+                  addToStream(currentGardenUrl, uuidUrn, window.location.href);
+                } else {
+                  alert("You can only publish Notes from your Public Garden")
+                }
+              }}
+            >
+              DWeb Camp
+            </a>
+          )}
+        </Dropdown.Item>
+      </Dropdown.Items>
+    </Dropdown>
+  );
 }
 
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
@@ -87,12 +126,12 @@ export default function NoteHeader({
   }
   return (
     <div className="flex flex-col">
-      <nav className={`${bg} b-2xl flex flex-col gap-4 md:flex-row justify-between min-h-32 p-4`}>
+      <nav
+        className={`${bg} b-2xl flex flex-col gap-4 md:flex-row justify-between min-h-32 p-4`}
+      >
         <div className="flex flex-col items-left">
           <div className="flex justify-between">
-            <div className="text-white text-4xl font-black">
-              {itemName}
-            </div>
+            <div className="text-white text-4xl font-black">{itemName}</div>
             <button
               type="button"
               className="inline-flex md:hidden flex-shrink-0 h-12 w-12 items-center justify-center rounded-md text-gray-200 hover:text-white"
@@ -107,7 +146,11 @@ export default function NoteHeader({
               <div className="flex flex-col sm:flex-row sm:gap-2 items-center">
                 <Link href={authorProfilePath}>
                   <a>
-                    <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
+                    <Avatar
+                      src={avatarImgSrc}
+                      border={false}
+                      className="h-6 w-6"
+                    />
                   </a>
                 </Link>
                 <Link href={authorProfilePath}>
@@ -118,14 +161,16 @@ export default function NoteHeader({
               </div>
             )}
             <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
-              <b>Created</b><span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
+              <b>Created</b>
+              <span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
             </div>
             <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
               {saving ? (
                 <b>Saving...</b>
               ) : (
                 <>
-                  <b>Last Edit</b><span> {noteLastEdit && getRelativeTime(noteLastEdit)}</span>
+                  <b>Last Edit</b>
+                  <span> {noteLastEdit && getRelativeTime(noteLastEdit)}</span>
                 </>
               )}
             </div>
@@ -140,7 +185,20 @@ export default function NoteHeader({
                 </button>
               </>
             )}
-            {item && myNote && (<NoteHeaderGardenPicker webId={authorWebId} spaceSlug={spaceSlug} currentGardenUrl={gardenUrl} item={item} />)}
+            {item && myNote && (
+              <NoteHeaderGardenPicker
+                webId={authorWebId}
+                spaceSlug={spaceSlug}
+                currentGardenUrl={gardenUrl}
+                item={item}
+              />
+            )}
+            {item && myNote && (
+              <NoteHeaderPublishDropdown
+                item={item}
+                currentGardenUrl={gardenUrl}
+              />
+            )}
             {/*
           <button type="button" className="ml-7 inline-flex items-center p-2.5 bg-white/10 border border-white shadow-sm text-sm font-medium rounded-3xl text-white">
             <span>
@@ -161,5 +219,5 @@ export default function NoteHeader({
         </div>
       </nav>
     </div>
-  )
+  );
 }
