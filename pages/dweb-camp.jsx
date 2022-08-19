@@ -31,13 +31,15 @@ export default function DWebCampStreamPage() {
     >
       <WebMonetization webId={monetizeFor} />
       <div className="p-6">
-        {stream ? (
-          stream.map((props) => {
-            return <Card {...props} />;
-          })
-        ) : (
-          <Loader />
-        )}
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+          {stream ? (
+            stream.map((props) => {
+              return <Card {...props} />;
+            })
+          ) : (
+            <Loader />
+          )}
+        </ul>
       </div>
     </LeftNavLayout>
   );
