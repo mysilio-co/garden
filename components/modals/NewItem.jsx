@@ -1,5 +1,6 @@
 import { useState, useContext, useCallback, useEffect } from 'react'
 import { getPlateActions } from "@udecode/plate-core";
+import { useRouter } from 'next/router'
 
 import { useTitledGardenItem, useSpace } from 'garden-kit/hooks'
 import { getNurseryFile } from 'garden-kit/spaces'
@@ -21,6 +22,7 @@ import SpaceContext from '../../contexts/SpaceContext'
 import { Close as CloseIcon, TickCircle } from '../icons'
 import Editor from "../Plate/Editor"
 import { useItemIndex } from "../../hooks/items"
+import { itemPath } from '../../utils/uris'
 import { useOGTags, useImageUploadUri, useFileUploadUri } from '../../hooks/uris';
 import ImageUploadModal from './ImageUpload'
 import { UploadImage as UploadImageIcon } from '../icons'
@@ -32,7 +34,7 @@ import { getTagsInNote, getReferencesInNote } from '../../utils/slate'
 const editorId = 'create-modal';
 
 export default function NewItem({ onClose }) {
-
+  const router = useRouter()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [coverImage, setCoverImage] = useState('')
@@ -101,8 +103,6 @@ export default function NewItem({ onClose }) {
     setSaving(true);
     let newItem = createItem(webId, { title: name, description })
     newItem = updateItemBeforeSave(newItem)
-    newItem = setTags(newItem, getTagsInNote(noteValue))
-    newItem = setReferences(newItem, getReferencesInNote(noteValue))
     if (coverImage) {
       newItem = setDepiction(newItem, coverImage)
       newItem = setImage(newItem, coverImage)
@@ -113,10 +113,15 @@ export default function NewItem({ onClose }) {
     if (itemFile) {
       newItem = setFile(newItem, itemFile)
     }
-    newItem = setNote(newItem, await createNoteInSpace(space, noteValue, { fetch }))
+    if (noteValue) {
+      newItem = setTags(newItem, getTagsInNote(noteValue))
+      newItem = setReferences(newItem, getReferencesInNote(noteValue))
+    }
+    newItem = setNote(newItem, await createNoteInSpace(space, noteValue || EmptySlateJSON, { fetch }))
     await saveItem(newItem)
     setSaving(false)
-  }, [name, description, coverImage, itemFile, url, space, noteValue, saveItem, webId])
+    router.push(itemPath(webId, spaceSlug, gardenUrl, name))
+  }, [webId, spaceSlug, gardenUrl, router, name, description, coverImage, itemFile, url, space, noteValue, saveItem, webId])
 
   const onSubmit = useCallback(async function onSubmit() {
     await save();
@@ -218,7 +223,7 @@ export default function NewItem({ onClose }) {
             editorId={editorId}
             initialValue={EmptySlateJSON}
             conceptNames={conceptNames}
-            editableProps={{ className: 'overflow-auto h-5/6' }}
+            editableProps={{ className: 'overflow-auto h-24' }}
             onChange={(newValue) => setNoteValue(newValue)}
           />
         </div>

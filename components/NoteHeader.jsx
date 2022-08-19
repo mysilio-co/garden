@@ -12,7 +12,7 @@ import Dropdown from './Dropdown';
 import { classNames } from '../utils/html'
 
 import { mutate } from 'swr'
-import { getNoteBody } from 'garden-kit/items'
+import { getNote, getFile } from 'garden-kit/items'
 import { setPublicAccessBasedOnGarden } from 'garden-kit/acl'
 import { getDepiction } from 'garden-kit/utils'
 
@@ -43,9 +43,10 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   await mutate(fromGardenUrl, saveSolidDatasetAt(fromGardenUrl, newFromGarden, { fetch }))
 
   await setPublicAccessBasedOnGarden([
-    getNoteBody(item),
-    getDepiction(item)
-  ], toGarden, { fetch })
+    getNote(item),
+    getDepiction(item),
+    getFile(item)
+  ].filter(x => x), toGarden, { fetch })
 }
 
 function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
