@@ -11,7 +11,7 @@ import { useThing, useFile } from 'swrlit/hooks/things'
 
 import { useTitledGardenItem } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
-import { getAbout, updateItemBeforeSave, setTags, setReferences } from 'garden-kit/items'
+import { getNote, updateItemBeforeSave, setTags, setReferences } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
 import { getDepiction, setDepiction } from 'garden-kit/utils'
 import { setPublicAccess, setPublicAccessBasedOnGarden } from 'garden-kit/acl'
@@ -40,7 +40,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
   const { item, save: saveItem, resource: garden, saveResource: saveGarden } = useTitledGardenItem(gardenUrl, itemName)
 
   // these two should be in the same resource as of 8/2022 - TV
-  const noteBodyResourceUrl = item && getAbout(item)
+  const noteBodyResourceUrl = item && getNote(item)
   const { thing: noteBody } = useThing(noteBodyResourceUrl)
   const { thing: valueThing, resource: noteResource, saveResource: saveNoteResource } =
     useThing(noteBody && getNoteValue(noteBody))
@@ -97,7 +97,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
   const { onChange } = useAutosave(item, maybeSaveNoteBody)
 
   const [panelOpen, setPanelOpen] = useState(false)
-  const imageUploadUri = useImageUploadUri(webId)
+  const imageUploadUri = useImageUploadUri(webId, spaceSlug)
   const [coverImageUploaderOpen, setCoverImageUploaderOpen] = useState(false)
   async function setCoverImage(url) {
     await setPublicAccessBasedOnGarden([url], garden, { fetch })
