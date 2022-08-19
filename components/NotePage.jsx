@@ -11,7 +11,7 @@ import { useThing, useFile } from 'swrlit/hooks/things'
 
 import { useTitledGardenItem } from 'garden-kit/hooks';
 import { getNoteValue, noteThingToSlateObject, createThingFromSlateJSOElement } from 'garden-kit/note'
-import { getNote, updateItemBeforeSave, setTags, setReferences } from 'garden-kit/items'
+import { getNote, updateItemBeforeSave, setTags, setReferences, getBookmark, getFile } from 'garden-kit/items'
 import { thingsToArray, arrayToThings } from 'garden-kit/collections'
 import { getDepiction, setDepiction } from 'garden-kit/utils'
 import { setPublicAccess, setPublicAccessBasedOnGarden } from 'garden-kit/acl'
@@ -105,56 +105,31 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
     setCoverImageUploaderOpen(false)
   }
   const coverImageUrl = item && getDepiction(item)
+  const bookmarkUrl = item && getBookmark(item)
+  const fileUrl = item && getFile(item)
+  const bg = myNote ? "bg-header-gradient" : "bg-my-green"
+
   return (
     <LeftNavLayout pageName={itemName} HeaderComponent={NoteHeader} headerProps={headerProps} >
       <Head>
         <title>{itemName}</title>
       </Head>
       <WebMonetization webId={webId} />
-      <Transition
-        show={!panelOpen} as={Fragment}
-        enter="transform transition ease-in-out duration-500 sm:duration-700"
-        enterFrom="translate-x-full"
-        enterTo="translate-x-0"
-        leave="transform transition ease-in-out duration-500 sm:duration-700"
-        leaveFrom="translate-x-0"
-        leaveTo="translate-x-full"
-      >
-        <div className="absolute top-0 right-0 text-gray-500 bg-gray-100 rounded-bl-lg z-40 flex flex-col">
-          <button onClick={() => setCoverImageUploaderOpen(true)}
-            className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
-          >
-            <UploadImageIcon className="w-6 h-6 pointer-events-none" />
-            <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
-              onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
-          </button>
-          <button onClick={() => setPanelOpen(true)}
-            className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
-          >
-            <ShareIcon className="w-6 h-6 pointer-events-none" />
-          </button>
+      {bookmarkUrl && (
+        <div className={`px-4 flex flex-row ${bg} text-white`}>
+          <span className="w-28 font-bold">Bookmark:</span>
+          <a target="_blank" rel="noreferrer noopener" href={bookmarkUrl}>{bookmarkUrl}</a>
         </div>
-      </Transition>
-      <div>
-        {coverImageUrl && (
-          <PodImage className="h-36 w-full overflow-hidden object-cover" src={coverImageUrl} alt={itemName} />
-        )}
-      </div>
-      <div className="flex flex-row w-full">
-        <div className="mx-10 grow">
-          <NoteProvider webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} name={itemName}>
-            {value && <Editor
-              editorId={editorId}
-              initialValue={value}
-              conceptNames={conceptNames}
-              editableProps={{ className: 'overflow-auto h-5/6' }}
-              onChange={onChange}
-              readOnly={myNote === false}
-            />}
-          </NoteProvider>
+      )}
+      {fileUrl && (
+        <div className={`px-4 pb-4 flex flex-row ${bg} text-white`}>
+          <span className="w-28 font-bold">File:</span>
+          <a target="_blank" rel="noreferrer noopener" href={fileUrl}>{fileUrl}</a>
         </div>
+      )}
+      <div className="relative">
         <Transition
-          show={panelOpen} as={Fragment}
+          show={!panelOpen} as={Fragment}
           enter="transform transition ease-in-out duration-500 sm:duration-700"
           enterFrom="translate-x-full"
           enterTo="translate-x-0"
@@ -162,13 +137,55 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
           leaveFrom="translate-x-0"
           leaveTo="translate-x-full"
         >
-          <ConnectionsPanel className="w-full md:w-auto shrink-0"
-            item={item} itemName={itemName}
-            webId={webId} spaceSlug={spaceSlug}
-            onClose={() => setPanelOpen(false)} />
+          <div className="absolute top-0 right-0 text-gray-500 bg-gray-100 rounded-bl-lg z-40 flex flex-col">
+            <button onClick={() => setCoverImageUploaderOpen(true)}
+              className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
+            >
+              <UploadImageIcon className="w-6 h-6 pointer-events-none" />
+              <ImageUploadModal open={coverImageUploaderOpen} setOpen={setCoverImageUploaderOpen}
+                onSave={(url) => setCoverImage(url)} uploadContainerUri={imageUploadUri} />
+            </button>
+            <button onClick={() => setPanelOpen(true)}
+              className="w-10 h-10 flex flex-row items-center justify-center hover:text-gray-400"
+            >
+              <ShareIcon className="w-6 h-6 pointer-events-none" />
+            </button>
+          </div>
         </Transition>
+        {coverImageUrl && (
+          <div>
+            <PodImage className="h-36 w-full overflow-hidden object-cover" src={coverImageUrl} alt={itemName} />
+          </div>
+        )}
+        <div className="flex flex-row w-full">
+          <div className="mx-10 grow">
+            <NoteProvider webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} name={itemName}>
+              {value && <Editor
+                editorId={editorId}
+                initialValue={value}
+                conceptNames={conceptNames}
+                editableProps={{ className: 'overflow-auto h-5/6' }}
+                onChange={onChange}
+                readOnly={myNote === false}
+              />}
+            </NoteProvider>
+          </div>
+          <Transition
+            show={panelOpen} as={Fragment}
+            enter="transform transition ease-in-out duration-500 sm:duration-700"
+            enterFrom="translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in-out duration-500 sm:duration-700"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-full"
+          >
+            <ConnectionsPanel className="w-full md:w-auto shrink-0"
+              item={item} itemName={itemName}
+              webId={webId} spaceSlug={spaceSlug}
+              onClose={() => setPanelOpen(false)} />
+          </Transition>
+        </div>
       </div>
-
     </LeftNavLayout>
   )
 }
