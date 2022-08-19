@@ -5,6 +5,7 @@ import { getStringNoLocale, getUrl } from '@inrupt/solid-client';
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import Avatar from '../Avatar';
 import Link from 'next/link.js';
+import { useWebId } from 'swrlit/contexts/authentication';
 
 export default function Card({
   title,
