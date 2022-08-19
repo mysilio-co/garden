@@ -3,7 +3,16 @@ import { getPlateActions } from "@udecode/plate-core";
 
 import { useTitledGardenItem, useSpace } from 'garden-kit/hooks'
 import { getNurseryFile } from 'garden-kit/spaces'
-import { createItem, setNote, setImage, setBookmark, setFile } from 'garden-kit/items'
+import {
+  createItem,
+  setNote,
+  setImage,
+  setBookmark,
+  setFile,
+  updateItemBeforeSave,
+  setTags,
+  setReferences
+} from 'garden-kit/items'
 import { setDepiction } from 'garden-kit/utils';
 import { EmptySlateJSON, createNoteInSpace } from 'garden-kit/note'
 import { useWebId, useAuthentication } from 'swrlit/contexts/authentication'
@@ -17,6 +26,8 @@ import ImageUploadModal from './ImageUpload'
 import { UploadImage as UploadImageIcon } from '../icons'
 import PodImage from '../PodImage'
 import { uploadFromFile } from '../../components/ImageUploader';
+import { getTagsInNote, getReferencesInNote } from '../../utils/slate'
+
 
 const editorId = 'create-modal';
 
@@ -89,7 +100,9 @@ export default function NewItem({ onClose }) {
   const save = useCallback(async function save() {
     setSaving(true);
     let newItem = createItem(webId, { title: name, description })
-    newItem = setNote(newItem, await createNoteInSpace(space, noteValue, { fetch }))
+    newItem = updateItemBeforeSave(newItem)
+    newItem = setTags(newItem, getTagsInNote(noteValue))
+    newItem = setReferences(newItem, getReferencesInNote(noteValue))
     if (coverImage) {
       newItem = setDepiction(newItem, coverImage)
       newItem = setImage(newItem, coverImage)
@@ -100,6 +113,7 @@ export default function NewItem({ onClose }) {
     if (itemFile) {
       newItem = setFile(newItem, itemFile)
     }
+    newItem = setNote(newItem, await createNoteInSpace(space, noteValue, { fetch }))
     await saveItem(newItem)
     setSaving(false)
   }, [name, description, coverImage, itemFile, url, space, noteValue, saveItem, webId])
