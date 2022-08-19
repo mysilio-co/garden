@@ -16,7 +16,7 @@ export default function Modal({ children, open, onClose }) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-20 hams transition-opacity backdrop-filter backdrop-blur-lg" />
+            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-20 transition-opacity backdrop-filter backdrop-blur-lg" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}

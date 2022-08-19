@@ -5,13 +5,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuthentication } from 'swrlit'
 import { getSolidDataset, saveSolidDatasetAt } from '@inrupt/solid-client/resource/solidDataset'
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { setThing, removeThing, getThing } from '@inrupt/solid-client/thing/thing'
-import { getSolidDatasetWithAcl, getResourceAcl, getFallbackAcl } from '@inrupt/solid-client/acl/acl'
-import { getPublicAccess } from '@inrupt/solid-client/universal'
+import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl'
 
 import { mutate } from 'swr'
 import { getNoteBody } from 'garden-kit/items'
-import { setPublicAccess } from 'garden-kit/acl'
+import { setPublicAccessBasedOnGarden } from 'garden-kit/acl'
+import { getDepiction } from 'garden-kit/utils'
 
 import {
   MenuIcon,
@@ -28,7 +29,6 @@ import { profilePath, itemPath } from '../utils/uris';
 import { Trashcan } from './icons'
 import GardenPicker from "./GardenPicker";
 
-
 async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   const [fromGarden, toGarden] = await Promise.all([
     getSolidDataset(fromGardenUrl, { fetch }),
@@ -41,15 +41,10 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   await mutate(toGardenUrl, saveSolidDatasetAt(toGardenUrl, newToGarden, { fetch }))
   await mutate(fromGardenUrl, saveSolidDatasetAt(fromGardenUrl, newFromGarden, { fetch }))
 
-  // set perms based on garden name for now. custom gardens with custom permissions
-  // will require more sophisticated access checking - the universal access
-  // api may be enough for this but doesn't seem to be working in the current version
-  const publicRead = (getTitle(getThing(toGarden, toGardenUrl)) === 'Public') ? true : false
-  await setPublicAccess(getNoteBody(item),
-    { read: publicRead, append: false, write: false, control: false },
-    { fetch })
-
-  // TODO: set permissions on note body here
+  await setPublicAccessBasedOnGarden([
+    getNoteBody(item),
+    getDepiction(item)
+  ], toGarden, { fetch })
 }
 
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
@@ -109,7 +104,7 @@ export default function NoteHeader({
           </div>
           <div className="flex mt-3 h-3 text-sm text-white items-center">
             {authorProfilePath && (
-              <div className="flex flex-col sm:flex-row sm:gap-2">
+              <div className="flex flex-col sm:flex-row sm:gap-2 items-center">
                 <Link href={authorProfilePath}>
                   <a>
                     <Avatar src={avatarImgSrc} border={false} className="h-6 w-6" />
@@ -122,10 +117,10 @@ export default function NoteHeader({
                 </Link>
               </div>
             )}
-            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
               <b>Created</b><span>{noteCreatedAt && getRelativeTime(noteCreatedAt)}</span>
             </div>
-            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2">
+            <div className="ml-2 opacity-50 flex flex-col sm:flex-row sm:gap-2 items-center">
               {saving ? (
                 <b>Saving...</b>
               ) : (
