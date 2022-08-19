@@ -101,8 +101,6 @@ export default function NewItem({ onClose }) {
     setSaving(true);
     let newItem = createItem(webId, { title: name, description })
     newItem = updateItemBeforeSave(newItem)
-    newItem = setTags(newItem, getTagsInNote(noteValue))
-    newItem = setReferences(newItem, getReferencesInNote(noteValue))
     if (coverImage) {
       newItem = setDepiction(newItem, coverImage)
       newItem = setImage(newItem, coverImage)
@@ -113,7 +111,11 @@ export default function NewItem({ onClose }) {
     if (itemFile) {
       newItem = setFile(newItem, itemFile)
     }
-    newItem = setNote(newItem, await createNoteInSpace(space, noteValue, { fetch }))
+    if (noteValue) {
+      newItem = setTags(newItem, getTagsInNote(noteValue))
+      newItem = setReferences(newItem, getReferencesInNote(noteValue))
+    }
+    newItem = setNote(newItem, await createNoteInSpace(space, noteValue || EmptySlateJSON, { fetch }))
     await saveItem(newItem)
     setSaving(false)
   }, [name, description, coverImage, itemFile, url, space, noteValue, saveItem, webId])
@@ -218,7 +220,7 @@ export default function NewItem({ onClose }) {
             editorId={editorId}
             initialValue={EmptySlateJSON}
             conceptNames={conceptNames}
-            editableProps={{ className: 'overflow-auto h-5/6' }}
+            editableProps={{ className: 'overflow-auto h-24' }}
             onChange={(newValue) => setNoteValue(newValue)}
           />
         </div>

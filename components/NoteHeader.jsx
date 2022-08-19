@@ -10,7 +10,7 @@ import { setThing, removeThing, getThing } from '@inrupt/solid-client/thing/thin
 import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl'
 
 import { mutate } from 'swr'
-import { getNoteBody } from 'garden-kit/items'
+import { getNote, getFile } from 'garden-kit/items'
 import { setPublicAccessBasedOnGarden } from 'garden-kit/acl'
 import { getDepiction } from 'garden-kit/utils'
 
@@ -42,9 +42,10 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   await mutate(fromGardenUrl, saveSolidDatasetAt(fromGardenUrl, newFromGarden, { fetch }))
 
   await setPublicAccessBasedOnGarden([
-    getNoteBody(item),
-    getDepiction(item)
-  ], toGarden, { fetch })
+    getNote(item),
+    getDepiction(item),
+    getFile(item)
+  ].filter(x => x), toGarden, { fetch })
 }
 
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
