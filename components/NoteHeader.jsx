@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuthentication } from 'swrlit'
 import { getSolidDataset, saveSolidDatasetAt } from '@inrupt/solid-client/resource/solidDataset'
-import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { setThing, removeThing, getThing } from '@inrupt/solid-client/thing/thing'
 import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl'
 import Dropdown from './Dropdown';
@@ -52,10 +51,18 @@ async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
 function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
   const { settings } = useGarden(currentGardenUrl);
   const isPublic = settings && getTitle(settings) === 'Public';
-  console.log(settings && getTitle(settings));
   const { addToStream } = useDWCStream();
   const uuidUrn = getUUID(item);
+  const router = useRouter();
 
+  async function publish() {
+    if (isPublic) {
+      await addToStream(currentGardenUrl, uuidUrn, window.location.href);
+      router.push('/dweb-camp');
+    } else {
+      alert('You can only publish Notes from your Public Garden');
+    }
+  }
   return (
     <Dropdown label="Publish">
       <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
@@ -70,13 +77,7 @@ function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                 'menu-item'
               )}
-              onClick={() => {
-                if (isPublic) {
-                  addToStream(currentGardenUrl, uuidUrn, window.location.href);
-                } else {
-                  alert("You can only publish Notes from your Public Garden")
-                }
-              }}
+              onClick={publish}
             >
               DWeb Camp
             </a>

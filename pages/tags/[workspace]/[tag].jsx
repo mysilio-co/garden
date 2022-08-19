@@ -7,7 +7,7 @@ import dataFactory from "@rdfjs/data-model";
 
 import { useItemIndex } from '../../../hooks/items'
 import LeftNavLayout from '../../../components/LeftNavLayout'
-import NoteCard from "../../../components/cards/NoteCard"
+import ItemCard from '../../../components/cards/ItemCard';
 
 export default function TagPage() {
   const router = useRouter()
@@ -23,14 +23,16 @@ export default function TagPage() {
     <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
       <div className="p-6">
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-
-          {itemsAndGardens && itemsAndGardens.map(([item, garden]) => (
-            <NoteCard key={asUrl(item)}
-              gardenUrl={getSourceUrl(garden)}
-              item={item}
-              webId={webId}
-              workspaceSlug={spaceSlug} />
-          ))}
+          {itemsAndGardens &&
+            itemsAndGardens.map(([item, garden]) => (
+              <ItemCard
+                key={asUrl(item)}
+                gardenUrl={getSourceUrl(garden)}
+                item={item}
+                webId={webId}
+                workspaceSlug={spaceSlug}
+              />
+            ))}
         </ul>
       </div>
     </LeftNavLayout>

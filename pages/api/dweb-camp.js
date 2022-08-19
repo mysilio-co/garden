@@ -63,9 +63,10 @@ async function addToDWCIndex(uuidUrn, resourceUrl, href) {
   let gardenPointer = getThing(index, uuidUrn);
   if (gardenPointer) {
     const existingUrl = getUrl(gardenPointer, RDFS.seeAlso);
-    throw new Error(
+    console.log(
       `${uuidUrn}: ${existingUrl} already exists in DWeb Camp Garden`
     );
+    return index;
   }
 
   console.log(`Try adding pointer for ${uuidUrn}: ${resourceUrl}`);
