@@ -99,7 +99,15 @@ function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
     await moveItem(item, currentGardenUrl, newGardenUrl, { fetch })
     router.replace(itemPath(webId, spaceSlug, newGardenUrl, getTitle(item)))
   }
-  return (<GardenPicker gardens={gardens} currentGarden={currentGarden} onChange={onChange} />)
+  return gardens && currentGarden ? (
+    <GardenPicker
+      gardens={gardens}
+      currentGarden={currentGarden}
+      onChange={onChange}
+    />
+  ) : (
+    <></>
+  );
 }
 
 export default function NoteHeader({
