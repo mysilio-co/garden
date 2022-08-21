@@ -52,11 +52,11 @@ function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
   const { settings } = useGarden(currentGardenUrl);
   const isPublic = settings && getTitle(settings) === 'Public';
   const { addToStream } = useDWCStream();
-  const uuidUrn = getUUID(item);
+  const uuidUrn = item && getUUID(item);
   const router = useRouter();
 
   async function publish() {
-    if (isPublic) {
+    if (isPublic && uuidUrn) {
       await addToStream(currentGardenUrl, uuidUrn, window.location.href);
       router.push('/dweb-camp');
     } else {
@@ -91,7 +91,7 @@ function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
   const router = useRouter()
   const { spaces } = useSpaces(webId)
-  const space = getSpace(spaces, spaceSlug)
+  const space = spaces && getSpace(spaces, spaceSlug)
   const gardens = space && gardenMetadataInSpacePrefs(space, spaces)
   const currentGarden = gardens && gardens.find(g => (asUrl(g) === currentGardenUrl))
   const { fetch } = useAuthentication()
