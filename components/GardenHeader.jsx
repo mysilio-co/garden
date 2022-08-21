@@ -10,51 +10,15 @@ import Link from 'next/link'
 import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
 import { useMyProfile } from 'swrlit/hooks/things'
 
-import { classNames } from '../utils/html';
 import { profilePath } from '../utils/uris';
-import { Search as SearchIcon } from './icons';
+import { Search as SearchIcon, AddCircle as AddCircleIcon } from './icons';
 import { IconInput } from './inputs';
 import Avatar from './Avatar';
-import Dropdown from './Dropdown';
-import NewNoteModal from './modals/NewNote';
-import NewBookmarkModal from './modals/NewBookmark';
-import NewImageModal from './modals/NewImage';
-import NewFileModal from './modals/NewFile';
-import NewNewsletterModal from './modals/NewNewsletter';
-import { IsPreviewEnv } from '../model/flags';
+
+import NewItem from './modals/NewItem';
 import { useFollows } from '../hooks/people'
-
-
-const ActiveModalTitles = IsPreviewEnv
-  ? ['Note', 'Bookmark', 'Image', 'File', 'Newsletter']
-  : ['Note', 'Bookmark', 'Image', 'File'];
-
-function ActiveModal({ title, open, onClose }) {
-  const [name, setName] = useState('');
-  switch (title) {
-    case 'Note':
-      return (
-        <NewNoteModal
-          open={open}
-          onClose={onClose}
-          name={name}
-          setName={setName}
-        />
-      );
-    case 'Bookmark':
-      return <NewBookmarkModal open={open} onClose={onClose} />;
-    case 'File':
-      return <NewFileModal open={open} onClose={onClose} />;
-    case 'Image':
-      return <NewImageModal open={open} onClose={onClose} />;
-    case 'Newsletter':
-      return <NewNewsletterModal open={open} onClose={onClose} />;
-    case undefined:
-      return <></>;
-    default:
-      throw new Error(`Unknown ActiveModal: ${title}`);
-  }
-}
+import { getTitle } from 'garden-kit/utils';
+import Modal from './Modal';
 
 function FollowUnfollowButton({ webId }) {
   const { profile: myProfile, save: saveProfile } = useMyProfile()
@@ -116,23 +80,36 @@ export default function GardenHeader({
   type,
   onSearch,
   openSidebar,
-  authorProfile
+  authorProfile,
+  gardenSettings,
 }) {
   const loggedIn = useLoggedIn()
-  const [activeModal, setActiveModal] = useState(undefined);
-  const bg = (type == 'dashboard') ? 'bg-header-gradient' : 'bg-my-green';
-  const authorName = authorProfile && getStringNoLocale(authorProfile, FOAF.name);
-  const gardenName = (type == 'dashboard') ? 'Dashboard' : authorName ? `${authorName}'s garden` : '';
+  const bg =
+    type === 'dashboard' || type === 'dweb'
+      ? 'bg-header-gradient'
+      : 'bg-my-green';
+  const authorName =
+    authorProfile && getStringNoLocale(authorProfile, FOAF.name);
+  const gardenTitle = gardenSettings && getTitle(gardenSettings);
+  const headerTitle =
+    type === 'dashboard'
+      ? 'Dashboard'
+      : type === 'dweb'
+      ? 'DWeb Camp Stream'
+      : authorName
+      ? `${authorName}'s profile`
+      : gardenTitle
+      ? gardenTitle
+      : '';
 
-
-
+  const [newItemModalOpen, setNewItemModalOpen] = useState(false)
   return (
-    <nav className={`${bg} flex flex-col sm:flex-row justify-between relative z-30 p-4 gap-4`}>
+    <nav
+      className={`${bg} flex flex-col sm:flex-row justify-between relative z-30 p-4 gap-4`}
+    >
       <div className="flex flex-col items-left gap-2">
         <div className="flex justify-between">
-          <div className="text-white text-4xl font-black">
-            {gardenName}
-          </div>
+          <div className="text-white text-4xl font-black">{headerTitle}</div>
           <button
             type="button"
             className="inline-flex sm:hidden flex-shrink-0 h-12 w-12 items-center justify-center rounded-md text-gray-200 hover:text-white"
@@ -164,37 +141,14 @@ export default function GardenHeader({
         </Formik>
         {loggedIn && (
           <>
-            <Dropdown label="New">
-              <Dropdown.Items className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
-                <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
-                  Create New
-                </div>
-                {ActiveModalTitles.map((title) => {
-                  return (
-                    <Dropdown.Item key={title}>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          key={title}
-                          className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'menu-item'
-                          )}
-                          onClick={() => setActiveModal(title)}
-                        >
-                          {title}
-                        </a>
-                      )}
-                    </Dropdown.Item>
-                  );
-                })}
-              </Dropdown.Items>
-            </Dropdown>
-            <ActiveModal
-              title={activeModal}
-              open={!!activeModal}
-              onClose={() => setActiveModal(undefined)}
-            />
+            <button className="inline-flex justify-center items-center w-full rounded-full h-10 px-4 py-2 bg-white bg-opacity-10 text-sm font-medium text-white hover:bg-opacity-20 hover:shadow-btn focus:outline-none"
+              onClick={() => setNewItemModalOpen(true)}>
+              <span>New</span>
+              <AddCircleIcon className="-mr-1 ml-2 h-4 w-4" aria-hidden="true" />
+            </button>
+            <Modal open={newItemModalOpen} onClose={() => setNewItemModalOpen(false)}>
+              <NewItem onClose={() => setNewItemModalOpen(false)} />
+            </Modal>
           </>
         )}
         <button

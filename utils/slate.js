@@ -1,7 +1,8 @@
 import { Node } from "slate";
 import * as P from "@udecode/plate-headless";
+import { EmptySlateJSON } from 'garden-kit/note'
 
-export const EmptySlateJSON = [{ children: [{ text: "" }] }];
+export { EmptySlateJSON }
 export const ELEMENT_CONCEPT = "concept";
 export const ELEMENT_TAG = "tag";
 
@@ -25,8 +26,8 @@ export function getReferenceNameFromNode(node) {
   return node.name;
 }
 
-export function getReferencesInNote(noteValue){
-  return getReferenceNodes({children: noteValue}).map(([ref]) => getReferenceNameFromNode(ref));
+export function getReferencesInNote(noteValue) {
+  return getReferenceNodes({ children: noteValue }).map(([ref]) => getReferenceNameFromNode(ref));
 }
 
 export function getTagNodes(node) {
@@ -39,7 +40,7 @@ export function getTagNameFromNode(node) {
   return node.name;
 }
 export function getTagsInNote(noteValue) {
-  return getTagNodes({children: noteValue}).map(([tag]) => getTagNameFromNode(tag));
+  return getTagNodes({ children: noteValue }).map(([tag]) => getTagNameFromNode(tag));
 }
 
 const newElementType = {

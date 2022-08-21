@@ -1,6 +1,5 @@
 import { useState, useMemo, useContext } from 'react'
-import { useWebId } from 'swrlit/contexts/authentication'
-import { useFilteredGarden, useGardenWithSetup } from 'garden-kit/hooks';
+import { useFilteredGarden, useGardenWithSetup, useGarden} from 'garden-kit/hooks';
 import { useRouter } from 'next/router'
 
 import WebMonetization from '../../../../components/WebMonetization'
@@ -47,10 +46,15 @@ export default function GardenPage() {
   const webId = handle && handleToWebId(handle)
   const spaceSlug = space
   const gardenUrl = garden && urlSafeIdToGardenUrl(garden)
+  const { settings } = useGarden(gardenUrl);
   const [search, setSearch] = useState('');
-  const headerProps = useMemo(() => ({
-    onSearch: setSearch,
-  }), [setSearch])
+  const headerProps = useMemo(
+    () => ({
+      onSearch: setSearch,
+      gardenSettings: settings,
+    }),
+    [setSearch, settings]
+  );
   return (
     <LeftNavLayout pageName="Garden" HeaderComponent={GardenHeader} headerProps={headerProps} spaceSlug={spaceSlug} gardenUrl={gardenUrl}>
       <WebMonetization webId={webId} />

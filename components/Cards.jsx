@@ -2,41 +2,24 @@ import { asUrl } from "@inrupt/solid-client/thing/thing";
 import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { useWebId } from "swrlit";
 import { Loader } from './elements'
-import NoteCard from "./cards/NoteCard"
-import ImageCard from "./cards/ImageCard"
-import FileCard from "./cards/FileCard"
-import BookmarkCard from './cards/BookmarkCard';
-
-import {
-  isNote,
-  isImage,
-  isFile,
-  isBookmark,
-} from 'garden-kit/items';
+import ItemCard from './cards/ItemCard'
 import { getItemAll } from "garden-kit/garden";
 
 export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
-  const items = filteredItems || (garden && getItemAll(garden))
+  const items = filteredItems || (garden && getItemAll(garden));
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
       {items &&
-        items.map((thing) => {
-          if (isNote(thing)) {
-            return (
-              <NoteCard
-                key={asUrl(thing)}
-                gardenUrl={garden && getSourceUrl(garden)}
-                item={thing}
-                webId={webId}
-                workspaceSlug={spaceSlug}
-              />
-            );
-          } else if (isImage(thing)) {
-            return <ImageCard key={asUrl(thing)} image={thing} />;
-          } else if (isFile(thing)) {
-            return <FileCard key={asUrl(thing)} file={thing} />;
-          } else if (isBookmark(thing))
-            return <BookmarkCard key={asUrl(thing)} link={thing} />;
+        items.map((item) => {
+          return (
+            <ItemCard
+              key={asUrl(item)}
+              gardenUrl={garden && getSourceUrl(garden)}
+              item={item}
+              webId={webId}
+              workspaceSlug={spaceSlug}
+            />
+          );
         })}
     </ul>
   );

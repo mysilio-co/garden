@@ -36,11 +36,13 @@ import {
 import { getTitle } from 'garden-kit/utils'
 
 
-const defaultLoggedInNavItems = [{ name: 'Dashboard', href: '/', icon: HomeIcon }]
+const defaultLoggedInNavItems = [
+  { name: 'DWeb Camp', href: '/dweb-camp', icon: HomeIcon },
+];
 const defaultLoggedOutNavItems = [
-  { name: 'Home', href: '/', icon: HomeIcon },
-  { name: 'Log In', href: '/login', icon: LoginIcon },
-  { name: 'Sign Up', href: '/register', icon: BookOpenIcon }
+  { name: 'Dweb Camp', href: '/dweb-camp', icon: HomeIcon },
+  { name: 'Log In', href: '/', icon: LoginIcon },
+  { name: 'Sign Up', href: '/', icon: BookOpenIcon }
 
 ]
 
