@@ -60,7 +60,7 @@ function EllipsesMenu({ loggedIn, logout, className = "" }) {
       </Popover.Button>
 
       <Popover.Panel className="absolute w-36 bottom-8 z-40 rounded-md overflow-hidden shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-        {loggedIn && (
+        {loggedIn && false && (
           <Link href="/settings">
             <a className="menu-item">settings</a>
           </Link>

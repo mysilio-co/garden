@@ -171,7 +171,7 @@ export default function WebMonetizationPointer({ profile, saveProfile, ...props 
         <div className="relative flex flex-row">
           <h3 className="text-base text-center mb-3">
             {paymentPointer || (
-              <span className="text-gray-500" onClick={onEdit}>
+              <span className="text-white" onClick={onEdit}>
                 click to set payment pointer
               </span>
             )}
