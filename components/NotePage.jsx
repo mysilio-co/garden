@@ -154,7 +154,7 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
         </Transition>
         {coverImageUrl && (
           <div>
-            <PodImage className="h-36 w-full overflow-hidden object-cover" src={coverImageUrl} alt={itemName} />
+            <PodImage className="w-full" src={coverImageUrl} alt={itemName} />
           </div>
         )}
         <div className="flex flex-col-reverse sm:flex-row w-full">
