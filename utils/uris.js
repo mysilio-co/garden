@@ -2,7 +2,7 @@ import * as base58 from "micro-base58";
 import { v1 as uuid } from 'uuid';
 
 export const appPrefix =
-  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/understory/garden"
+  process.env.NEXT_PUBLIC_APP_PREFIX || "apps/mysilio/garden"
 
 export const handleToWebId = (handle) =>
   new TextDecoder().decode(base58.decode(handle));
@@ -16,14 +16,6 @@ export function profilePath(webId) {
 
 export function gardenPath(webId, spaceSlug, gardenUrl){
   return `/g/${webIdToHandle(webId)}/${spaceSlug}/${base58.encode(gardenUrl)}`
-}
-
-export function understoryGardenConceptPrefix(webId, workspaceSlug) {
-  return (
-    webId &&
-    workspaceSlug &&
-    `https://${window.location.hostname}${profilePath(webId)}/${workspaceSlug}/`
-  );
 }
 
 export function notePath(webId, workspaceSlug, name) {

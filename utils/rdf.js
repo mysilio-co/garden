@@ -1,4 +1,4 @@
-import { US, MY } from "../vocab";
+import { MY } from "garden-kit/vocab";
 import {
   getUrl,
   getUrlAll,

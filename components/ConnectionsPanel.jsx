@@ -1,13 +1,9 @@
 import { useState, forwardRef, Suspense } from 'react'
-import { asUrl } from '@inrupt/solid-client/thing/thing'
 import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import Link from 'next/link'
 import { XIcon } from '@heroicons/react/outline'
 import dataFactory from "@rdfjs/data-model";
 
-import {
-  conceptUrisThatReference,
-} from '../model/concept'
 import { getTags, getReferences } from 'garden-kit/items'
 import { getTitle } from 'garden-kit/utils'
 import { useSpace } from 'garden-kit/hooks'
