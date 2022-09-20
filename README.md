@@ -6,7 +6,9 @@ of your ideas and grow them into bi-directionally linked web portals. It's a soc
 Monetization](https://webmonetization.org/) to get paid when people
 spend time with their content.
 
-If you think this sounds neat, check out our hosted instance at [mysilio.garden](https://mysilio.garden)
+Mysilio Garden is built on [Solid](https://solidproject.org/), a new open standard for decentralized identity and data storage. Mysilio runs a Solid POD host where you can store your data, but you can use our hosted version of Mysilio Garden with and Community Solid Server-based POD host. Support for Inrupt's Pod Spaces (https://docs.inrupt.com/pod-spaces/) is planned - if you'd like to contribute to the effort to add this support please let us know!
+
+If you'd like to take Mysilio Garden for a spin, check out our hosted instance at [mysilio.garden](https://mysilio.garden)
 
 # Running locally
 
