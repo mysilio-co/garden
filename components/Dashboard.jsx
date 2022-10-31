@@ -10,7 +10,6 @@ import Cards from '../components/Cards'
 
 import GardenContext from '../contexts/GardenContext';
 import SpaceContext from '../contexts/SpaceContext';
-import { useRouter } from 'next/router';
 
 function GardenCreator({ url }) {
   const { setupGarden } = useGardenWithSetup(url);
@@ -42,10 +41,6 @@ function Garden({ search }) {
 export default function Dashboard() {
   const webId = useWebId();
   const [search, setSearch] = useState('');
-  const router = useRouter()
-  useEffect(() => {
-    router.push('/dweb-camp');
-  }, []);
 
   const headerProps = useMemo(() => ({
     onSearch: setSearch,
