@@ -31,7 +31,7 @@ import {
   createImagePlugin,
   createLinkPlugin,
   createKbdPlugin,
-  createNodeIdPlugin,
+//  createNodeIdPlugin,
   createAutoformatPlugin,
   createResetNodePlugin,
   createComboboxPlugin,
@@ -348,7 +348,7 @@ const defaultPlugins = [
     renderAfterEditable: PlateFloatingLink
   }),
   createKbdPlugin(),
-  createNodeIdPlugin(),
+//  createNodeIdPlugin(),
   createAutoformatPlugin({ options: optionsAutoformat }),
   createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
   //createComboboxPlugin(),
