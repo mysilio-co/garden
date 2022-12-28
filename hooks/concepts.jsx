@@ -200,7 +200,6 @@ export function useGarden(webId, workspaceSlug = "default") {
     'private',
     workspaceSlug
   );
-
   const garden =
     (publicGarden || privateGarden) &&
     [...(publicGarden || []), ...(privateGarden || [])].sort(
