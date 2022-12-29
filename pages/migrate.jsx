@@ -11,6 +11,15 @@ import {
   setTags,
   useGarden,
   useSpace,
+  setDepiction,
+  setFile,
+  setImage,
+  setDescription,
+  EmptySlateJSON,
+  setBookmark,
+  getTitle,
+  setTitle,
+  getUUID,
 } from 'garden-kit';
 import { useGarden as useV0Garden } from '../hooks/concepts';
 import {
@@ -22,6 +31,7 @@ import {
   getStringNoLocale,
   getThing,
   getUrl,
+  getFile,
   overwriteFile,
   setDatetime,
   setThing,
@@ -50,18 +60,19 @@ export default function MigrateV0Data() {
   const slug = HomeSpaceSlug;
   const { space } = useSpace(webId, slug);
   const nurseryUrl = space && getNurseryFile(space);
-  const { setGarden } = useGarden(nurseryUrl, webId);
-  const imageUploadUri = useImageUploadUri(webId, spaceSlug);
-  const fileUploadUri = useFileUploadUri(webId, spaceSlug);
+  const { garden, saveGarden } = useGarden(nurseryUrl, webId);
+  const imageUploadUri = useImageUploadUri(webId, HomeSpaceSlug);
+  const fileUploadUri = useFileUploadUri(webId, HomeSpaceSlug);
 
   const { garden: v0Garden } = useV0Garden(webId);
 
   const [migrating, setMigrating] = useState(false);
   const [complete, setComplete] = useState(false);
   const [logLines, setLogLines] = useState([]);
-  function log(s) {
-    console.log(s);
-    setLogLines([...logLines, s]);
+  function log(lines, s) {
+    const newLines = [...lines, s];
+    setLogLines(newLines);
+    return newLines;
   }
 
   async function createNewItem({
@@ -74,6 +85,11 @@ export default function MigrateV0Data() {
     lastEdit,
   }) {
     let newItem = createItem(webId, { title, description });
+    if (!getTitle(newItem)) {
+      // ID: For some reason, some of my old garden items didn't have titles
+      // so just used the UUID genearted if it's untitled
+      newItem = setTitle(newItem, getUUID(newItem));
+    }
     setDatetime(newItem, DCTERMS.modified, lastEdit);
     if (coverImage) {
       newItem = setDepiction(newItem, coverImage);
@@ -89,6 +105,9 @@ export default function MigrateV0Data() {
       newItem = setTags(newItem, getTagsInNote(noteValue));
       newItem = setReferences(newItem, getReferencesInNote(noteValue));
     }
+    if (description) {
+      newItem = setDescription(newItem, description);
+    }
     newItem = setNote(
       newItem,
       await createNoteInSpace(space, noteValue || EmptySlateJSON, { fetch })
@@ -98,11 +117,12 @@ export default function MigrateV0Data() {
 
   async function migrate() {
     setMigrating(true);
-    log('Starting Migration');
-    let newGarden = createSolidDataset();
-    log('Creating New Garden');
+    let ll = logLines;
+    ll = log(ll, 'Starting Migration');
+    let newGarden = garden;
+    ll = log(ll, 'Creating New Garden');
     for (const old of v0Garden) {
-      console.log(old);
+      console.log(`Old item: ${old}`);
       if (isConcept(old)) {
         const oldUri = asUrl(old);
         const id = conceptIdFromUri(oldUri);
@@ -110,12 +130,12 @@ export default function MigrateV0Data() {
         const noteStorageUri = getUrl(old, US.storedAt);
         const lastEdit = getDatetime(old, DCTERMS.modified);
         const coverImage = getUrl(old, FOAF.img);
-        log(`Migrating Note ${name}`);
-        log(`Loading Note at ${noteStorageUri}`);
-        const noteDataset = await getSolidDataset(noteStorageUri);
+        ll = log(ll, `Migrating Note ${name}`);
+        ll = log(ll, `Loading Note at ${noteStorageUri}`);
+        const noteDataset = await getSolidDataset(noteStorageUri, { fetch });
         const note = getThing(noteDataset, noteStorageUri);
         const noteValue = getAndParseNoteBody(note);
-        log(`Adding Note to Garden ${name}`);
+        ll = log(ll, `Adding Note to Garden ${name}`);
         const newItem = await createNewItem({
           title: name,
           lastEdit,
@@ -127,12 +147,12 @@ export default function MigrateV0Data() {
         const title = getStringNoLocale(old, DCTERMS.title);
         const lastEdit = getDatetime(old, DCTERMS.modified);
         const url = asUrl(old);
-        log(`Migrating Image ${title}`);
-        log(`Loading Image at ${url}`);
+        ll = log(ll, `Migrating Image ${title}`);
+        ll = log(ll, `Loading Image at ${url}`);
         const image = await getFile(url, { fetch });
         const imagename = url.substring(url.lastIndexOf('/') + 1);
         const newImageUrl = `${imageUploadUri}${imagename}`;
-        log(`Saving New Image at ${newUrl}`);
+        ll = log(ll, `Saving New Image at ${newImageUrl}`);
         await overwriteFile(newImageUrl, image, {
           contentType: getContentType(image),
           fetch,
@@ -143,17 +163,17 @@ export default function MigrateV0Data() {
           coverImage: newImageUrl,
         });
         newGarden = setThing(newGarden, newItem);
-        log(`Added Image to Garden ${title}`);
+        ll = log(ll, `Added Image to Garden ${title}`);
       } else if (isBookmarkedFile(old)) {
         const url = asUrl(old);
         const title = getStringNoLocale(old, DCTERMS.title);
         const lastEdit = getDatetime(old, DCTERMS.modified);
         const description = getStringNoLocale(old, DCTERMS.description);
-        log(`Loading File at ${url}`);
+        ll = log(ll, `Loading File at ${url}`);
         const file = await getFile(url, { fetch });
         const filename = url.substring(url.lastIndexOf('/') + 1);
         const newFileUrl = `${fileUploadUri}${filename}`;
-        log(`Saving New File at ${newFileUrl}`);
+        ll = log(ll, `Saving New File at ${newFileUrl}`);
         await overwriteFile(newFileUrl, file, {
           contentType: getContentType(file),
           fetch,
@@ -165,14 +185,14 @@ export default function MigrateV0Data() {
           file: newFileUrl,
         });
         newGarden = setThing(newGarden, newItem);
-        log(`Added File to Garden ${title}`);
+        ll = log(ll, `Added File to Garden ${title}`);
       } else if (isBookmarkedLink(old)) {
         const url = asUrl(old);
         const title = getStringNoLocale(old, DCTERMS.title);
         const lastEdit = getDatetime(old, DCTERMS.modified);
         const description = getStringNoLocale(old, DCTERMS.description);
         const coverImage = getUrl(old, FOAF.depiction);
-        log(`Migrating Bookmark ${title}`);
+        ll = log(ll, `Migrating Bookmark ${title}`);
         const newItem = await createNewItem({
           title,
           lastEdit,
@@ -181,12 +201,13 @@ export default function MigrateV0Data() {
           url,
         });
         newGarden = setThing(newGarden, newItem);
-        log(`Adding Bookmark to Garden ${title}`);
+        ll = log(ll, `Adding Bookmark to Garden ${title}`);
       }
+      ll = log(ll, 'Saving new Item');
+      // Must save incrementally, or else the PATCH is too lage.
+      saveGarden(newGarden);
     }
-    log('Saving New Garden to Pod');
-    setGarden(newGarden);
-    log('Migration Complete!');
+    ll = log(ll, 'Migration Complete!');
     setComplete(true);
     setMigrating(false);
   }
@@ -202,9 +223,11 @@ export default function MigrateV0Data() {
             ) : migrating ? (
               <>
                 <h3 className="text-xl pb-6">Migrating...</h3>
-                {logLines.map((line) => {
-                  <p className="text-l pb-6">{line}</p>;
-                })}
+                {logLines.map((line, i) => (
+                  <p key={i} className="text-l pb-6">
+                    {line}
+                  </p>
+                ))}
               </>
             ) : (
               <>
