@@ -16,11 +16,13 @@ import { useGarden as useV0Garden } from '../hooks/concepts';
 import {
   asUrl,
   createSolidDataset,
+  getContentType,
   getDatetime,
   getSolidDataset,
   getStringNoLocale,
   getThing,
   getUrl,
+  overwriteFile,
   setDatetime,
   setThing,
 } from '@inrupt/solid-client';
@@ -38,28 +40,24 @@ import { US } from '../vocab';
 import { getAndParseNoteBody } from '../model/note';
 import { getReferencesInNote, getTagsInNote } from '../utils/slate';
 import { useAuthentication } from 'swrlit';
-import { nextItem } from 'rdf-namespaces/dist/schema';
-import Cards from '../components/Cards';
+import { useFileUploadUri, useImageUploadUri } from '../hooks/uris';
 
 export default function MigrateV0Data() {
   const loggedIn = useLoggedIn();
   const webId = useWebId();
-
   const { fetch } = useAuthentication();
+
   const slug = HomeSpaceSlug;
   const { space } = useSpace(webId, slug);
   const nurseryUrl = space && getNurseryFile(space);
   const { setGarden } = useGarden(nurseryUrl, webId);
+  const imageUploadUri = useImageUploadUri(webId, spaceSlug);
+  const fileUploadUri = useFileUploadUri(webId, spaceSlug);
 
   const { garden: v0Garden } = useV0Garden(webId);
 
-  // Currently running the migration
   const [migrating, setMigrating] = useState(false);
-  // Migration has completed, but may not be saved yet
   const [complete, setComplete] = useState(false);
-  // Migrated data has been saved to Nursery
-  const [saved, setSaved] = useState(false);
-  const [migratedData, setMigratedData] = useState(undefined);
   const [logLines, setLogLines] = useState([]);
   function log(s) {
     console.log(s);
@@ -98,101 +96,98 @@ export default function MigrateV0Data() {
     return newItem;
   }
 
-  async function saveMigration() {
-    if (!complete && !saved) {
-      log('Saving Garden...');
-      setGarden(migratedData);
-      log('Garden Saved.');
-      setSaved(true);
-    }
-  }
-
   async function migrate() {
     setMigrating(true);
-    if (v0Garden) {
-      log('Starting Migration');
-      let newGarden = createSolidDataset();
-      log('Creating New Garden');
-      for (const old of v0Garden) {
-        console.log(old);
-        if (isConcept(old)) {
-          const oldUri = asUrl(old);
-          const id = conceptIdFromUri(oldUri);
-          const name = urlSafeIdToConceptName(id);
-          const noteStorageUri = getUrl(old, US.storedAt);
-          const lastEdit = getDatetime(old, DCTERMS.modified);
-          const coverImage = getUrl(old, FOAF.img);
-          log(`Migrating Note ${name}`);
-          log(`Loading Note at ${noteStorageUri}`);
-          const noteDataset = await getSolidDataset(noteStorageUri);
-          const note = getThing(noteDataset, noteStorageUri);
-          const noteValue = getAndParseNoteBody(note);
-          log(`Adding Note to Garden ${name}`);
-          const newItem = await createNewItem({
-            title: name,
-            lastEdit,
-            coverImage,
-            noteValue,
-          });
-          newGarden = setThing(newGarden, newItem);
-        } else if (isBookmarkedImage(old)) {
-          const title = getStringNoLocale(old, DCTERMS.title);
-          const lastEdit = getDatetime(old, DCTERMS.modified);
-          const url = asUrl(old);
-          log(`Migrating Image ${title}`);
-          log(`Loading Image at ${url}`);
-          // TODO
-          log(`Saving New Image at ${newUrl}`);
-          const newItem = await createNewItem({
-            title,
-            lastEdit,
-            coverImage: newUrl,
-          });
-          newGarden = setThing(newGarden, newItem);
-          log(`Added Image to Garden ${title}`);
-        } else if (isBookmarkedFile(old)) {
-          const url = asUrl(old);
-          const title = getStringNoLocale(old, DCTERMS.title);
-          const lastEdit = getDatetime(old, DCTERMS.modified);
-          const description = getStringNoLocale(old, DCTERMS.description);
-          log(`Loading File at ${url}`);
-          // TODO
-          log(`Saving New File at ${newUrl}`);
-          const newItem = await createNewItem({
-            title,
-            lastEdit,
-            description,
-            file: newUrl,
-          });
-          newGarden = setThing(newGarden, newItem);
-          log(`Added File to Garden ${title}`);
-        } else if (isBookmarkedLink(old)) {
-          const url = asUrl(old);
-          const title = getStringNoLocale(old, DCTERMS.title);
-          const lastEdit = getDatetime(old, DCTERMS.modified);
-          const description = getStringNoLocale(old, DCTERMS.description);
-          const coverImage = getUrl(old, FOAF.depiction);
-          log(`Migrating Bookmark ${title}`);
-          const newItem = await createNewItem({
-            title,
-            lastEdit,
-            description,
-            coverImage,
-            url,
-          });
-          newGarden = setThing(newGarden, newItem);
-          log(`Adding Bookmark to Garden ${title}`);
-        }
+    log('Starting Migration');
+    let newGarden = createSolidDataset();
+    log('Creating New Garden');
+    for (const old of v0Garden) {
+      console.log(old);
+      if (isConcept(old)) {
+        const oldUri = asUrl(old);
+        const id = conceptIdFromUri(oldUri);
+        const name = urlSafeIdToConceptName(id);
+        const noteStorageUri = getUrl(old, US.storedAt);
+        const lastEdit = getDatetime(old, DCTERMS.modified);
+        const coverImage = getUrl(old, FOAF.img);
+        log(`Migrating Note ${name}`);
+        log(`Loading Note at ${noteStorageUri}`);
+        const noteDataset = await getSolidDataset(noteStorageUri);
+        const note = getThing(noteDataset, noteStorageUri);
+        const noteValue = getAndParseNoteBody(note);
+        log(`Adding Note to Garden ${name}`);
+        const newItem = await createNewItem({
+          title: name,
+          lastEdit,
+          coverImage,
+          noteValue,
+        });
+        newGarden = setThing(newGarden, newItem);
+      } else if (isBookmarkedImage(old)) {
+        const title = getStringNoLocale(old, DCTERMS.title);
+        const lastEdit = getDatetime(old, DCTERMS.modified);
+        const url = asUrl(old);
+        log(`Migrating Image ${title}`);
+        log(`Loading Image at ${url}`);
+        const image = await getFile(url, { fetch });
+        const imagename = url.substring(url.lastIndexOf('/') + 1);
+        const newImageUrl = `${imageUploadUri}${imagename}`;
+        log(`Saving New Image at ${newUrl}`);
+        await overwriteFile(newImageUrl, image, {
+          contentType: getContentType(image),
+          fetch,
+        });
+        const newItem = await createNewItem({
+          title,
+          lastEdit,
+          coverImage: newImageUrl,
+        });
+        newGarden = setThing(newGarden, newItem);
+        log(`Added Image to Garden ${title}`);
+      } else if (isBookmarkedFile(old)) {
+        const url = asUrl(old);
+        const title = getStringNoLocale(old, DCTERMS.title);
+        const lastEdit = getDatetime(old, DCTERMS.modified);
+        const description = getStringNoLocale(old, DCTERMS.description);
+        log(`Loading File at ${url}`);
+        const file = await getFile(url, { fetch });
+        const filename = url.substring(url.lastIndexOf('/') + 1);
+        const newFileUrl = `${fileUploadUri}${filename}`;
+        log(`Saving New File at ${newFileUrl}`);
+        await overwriteFile(newFileUrl, file, {
+          contentType: getContentType(file),
+          fetch,
+        });
+        const newItem = await createNewItem({
+          title,
+          lastEdit,
+          description,
+          file: newFileUrl,
+        });
+        newGarden = setThing(newGarden, newItem);
+        log(`Added File to Garden ${title}`);
+      } else if (isBookmarkedLink(old)) {
+        const url = asUrl(old);
+        const title = getStringNoLocale(old, DCTERMS.title);
+        const lastEdit = getDatetime(old, DCTERMS.modified);
+        const description = getStringNoLocale(old, DCTERMS.description);
+        const coverImage = getUrl(old, FOAF.depiction);
+        log(`Migrating Bookmark ${title}`);
+        const newItem = await createNewItem({
+          title,
+          lastEdit,
+          description,
+          coverImage,
+          url,
+        });
+        newGarden = setThing(newGarden, newItem);
+        log(`Adding Bookmark to Garden ${title}`);
       }
-      log('Saving New Garden to Pod');
-      setMigratedData(newGarden);
-      log('Migration Complete!');
-      setComplete(true);
-    } else {
-      log('Old Garden not yet loaded, please wait.');
-      const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-      await delay(1000);
     }
+    log('Saving New Garden to Pod');
+    setGarden(newGarden);
+    log('Migration Complete!');
+    setComplete(true);
     setMigrating(false);
   }
 
@@ -202,39 +197,11 @@ export default function MigrateV0Data() {
         <>
           <Header />
           <div className="text-center pt-12 flex flex-col items-center">
-            {saved ? (
-              <h3 className="text-xl pb-6">
-                Your migrated data has been saved.
-              </h3>
-            ) : complete ? (
-              <>
-                <h3 className="text-xl pb-6">
-                  Your v0 data has been migrated! If the data below looks
-                  correct, press the button to save these items to your Nursery.
-                </h3>
-                <button
-                  className="btn-filled btn-md btn-square font-bold"
-                  onClick={saveMigration}
-                >
-                  Save to Nursery
-                </button>
-                <Cards
-                  webId={webId}
-                  garden={migratedData}
-                  spaceSlug={HomeSpaceSlug}
-                />
-                <button
-                  className="btn-filled btn-md btn-square font-bold"
-                  onClick={saveMigration}
-                >
-                  Save to Nursery
-                </button>
-              </>
+            {complete ? (
+              <h3 className="text-xl pb-6">Your v0 data has been migrated!</h3>
             ) : migrating ? (
               <>
-                <h3 className="text-xl pb-6">
-                  Your migrated data has been saved.
-                </h3>
+                <h3 className="text-xl pb-6">Migrating...</h3>
                 {logLines.map((line) => {
                   <p className="text-l pb-6">{line}</p>;
                 })}
