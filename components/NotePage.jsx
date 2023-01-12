@@ -154,17 +154,17 @@ export default function NotePage({ editorId, webId, spaceSlug, slug, gardenUrl }
         </Transition>
         {coverImageUrl && (
           <div>
-            <PodImage className="h-36 w-full overflow-hidden object-cover" src={coverImageUrl} alt={itemName} />
+            <PodImage className="w-full" src={coverImageUrl} alt={itemName} />
           </div>
         )}
-        <div className="flex flex-row w-full">
+        <div className="flex flex-col-reverse sm:flex-row w-full">
           <div className="mx-10 grow">
             <NoteProvider webId={webId} spaceSlug={spaceSlug} gardenUrl={gardenUrl} name={itemName}>
               {value && <Editor
                 editorId={editorId}
                 initialValue={value}
                 conceptNames={conceptNames}
-                editableProps={{ className: 'overflow-auto h-5/6' }}
+                editableProps={{ className: 'mb-16 h-5/6' }}
                 onChange={onChange}
                 readOnly={myNote === false}
               />}

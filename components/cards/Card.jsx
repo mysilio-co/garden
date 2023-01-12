@@ -25,7 +25,7 @@ export default function Card({
           <div>
             <div className="h-40 border-b-4 border-gray-300 overflow-hidden">
               {depiction ? (
-                <img src={depiction} className="object-cover h-full" />
+                <img src={depiction} className="object-cover w-full" />
               ) : (
                 <div className="bg-gradient-to-b from-my-green to-my-dark-green">
                   <Image

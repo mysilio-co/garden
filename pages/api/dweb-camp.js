@@ -81,19 +81,25 @@ async function getDWCStream() {
   const index = await getDWCIndex();
   const uuidThings = getThingAll(index);
   const fullThings = await Promise.all(
-    uuidThings.map(async (thing) => {
-      const uuidUrn = asUrl(thing);
-      const resourceUrl = getUrl(thing, RDFS.seeAlso);
-      const href = getUrl(thing, DCTERMS.source);
-      console.log(`Fetching ${uuidUrn} from ${resourceUrl}`);
-      const dataset = await getSolidDataset(resourceUrl);
-      let fullThing = getThing(dataset, uuidUrn);
-      console.log(`Found ${uuidUrn} in ${resourceUrl}:`)
-      console.log(fullThing);
-      fullThing = setUrl(fullThing, RDFS.seeAlso, resourceUrl);
-      fullThing = setUrl(fullThing, DCTERMS.source, href);
-      return fullThing;
-    })
+    uuidThings
+      .map(async (thing) => {
+        const uuidUrn = asUrl(thing);
+        const resourceUrl = getUrl(thing, RDFS.seeAlso);
+        const href = getUrl(thing, DCTERMS.source);
+        console.log(`Fetching ${uuidUrn} from ${resourceUrl}`);
+        const dataset = await getSolidDataset(resourceUrl);
+        let fullThing = getThing(dataset, uuidUrn);
+        if (fullThing) {
+          console.log(`Found ${uuidUrn} in ${resourceUrl}:`);
+          console.log(fullThing);
+          fullThing = setUrl(fullThing, RDFS.seeAlso, resourceUrl);
+          fullThing = setUrl(fullThing, DCTERMS.source, href);
+          return fullThing;
+        } else {
+          return null;
+        }
+      })
+      .filter((x) => !!x)
   );
   console.log(fullThings);
   const garden = fullThings.reduce(

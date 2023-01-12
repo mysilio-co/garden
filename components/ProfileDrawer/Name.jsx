@@ -25,7 +25,7 @@ export default function Name({ profile, saveProfile, ...props }) {
     <div {...props}>
       {editingName ? (
         <div className="flex flex-row">
-          <input className="ipt-with-btn"
+          <input className="ipt-with-btn text-gray-600"
             value={newName}
             autoFocus
             onChange={e => setNewName(e.target.value)} type="text"
