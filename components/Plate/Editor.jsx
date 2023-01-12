@@ -350,7 +350,7 @@ const defaultPlugins = [
     renderAfterEditable: PlateFloatingLink
   }),
   createKbdPlugin(),
-  createNodeIdPlugin(),
+//  createNodeIdPlugin(),
   createDeserializeMdPlugin(),
   createDeserializeCsvPlugin(),
   createDeserializeDocxPlugin(),
