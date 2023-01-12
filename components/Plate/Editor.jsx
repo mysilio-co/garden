@@ -40,6 +40,9 @@ import {
   createInsertDataPlugin,
   createSelectOnBackspacePlugin,
   createPlugins,
+  createDeserializeMdPlugin,
+  createDeserializeCsvPlugin,
+  createDeserializeDocxPlugin,
 
   isBlockAboveEmpty,
   isSelectionAtBlockStart,
@@ -61,11 +64,10 @@ import {
 } from '@udecode/plate-code-block'
 import { createHeadingPlugin } from '@udecode/plate-heading'
 import { createParagraphPlugin } from '@udecode/plate-paragraph'
-import { LinkToolbarButton, PlateFloatingLink}  from '@udecode/plate-ui-link'
+import { LinkToolbarButton, PlateFloatingLink } from '@udecode/plate-ui-link'
 
-import { ImageElement } from '@udecode/plate-ui-image'
 import { Combobox } from '@udecode/plate-ui-combobox'
-import { MediaEmbedElement } from '@udecode/plate-ui-media-embed';
+import { MediaEmbedElement, ImageElement } from '@udecode/plate-ui-media';
 
 
 import { useWebId } from 'swrlit/contexts/authentication'
@@ -348,7 +350,10 @@ const defaultPlugins = [
     renderAfterEditable: PlateFloatingLink
   }),
   createKbdPlugin(),
-//  createNodeIdPlugin(),
+  createNodeIdPlugin(),
+  createDeserializeMdPlugin(),
+  createDeserializeCsvPlugin(),
+  createDeserializeDocxPlugin(),
   createAutoformatPlugin({ options: optionsAutoformat }),
   createResetNodePlugin({ options: optionsResetBlockTypePlugin }),
   //createComboboxPlugin(),
@@ -473,13 +478,21 @@ export default function Editor({
 
   const conceptItems = useMemo(() => conceptNames.map(toMentionable), [conceptNames])
   return (
-    <PlateProvider id={editorId}>
+    <PlateProvider id={editorId}
+      initialValue={initialValue}
+      onChange={onChange}
+      normalizeInitialValue={true}
+      plugins={plugins}
+    >
       <div className="flex flex-col sm:flex-row border-b pt-4 pb-1 mb-1 border-grey-700 bg-white sticky top-0 z-10">
         <div className="flex">
           <ToolbarButtonsBasicElements />
           <ToolbarButtonsList />
           <LinkToolbarButton icon={<LinkIcon />} />
-          <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId} />
+          {/*
+          // TODO: set permissions on uploaded images the same way we do with cover images, then bring this back
+           <ToolbarImageButton getImageUrl={imageUrlGetter} editorId={editorId}/>
+            */}
         </div>
         <div className="flex">
           <ToolbarButtonsBasicMarks />
@@ -488,31 +501,29 @@ export default function Editor({
 
       <Plate
         id={editorId}
-        plugins={plugins}
         editableProps={editableProps}
-        initialValue={initialValue}
-        onChange={onChange}
-        normalizeInitialValue={true}
         {...props}
       >
-        {false && !readOnly && (
-          <>
+        {
+          // TODO: set permissions on uploaded images the same way we do with cover images, then bring this back
+          false && !readOnly && (
+            <>
 
-            <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
-              <div>
-                <ImageUploadAndEditor
-                  onSave={imageUploaderOnSave}
-                  onClose={() => { setImageUploaderOpen(false) }}
-                  imageUploadContainerUri={imageUploadUri}
-                />
-              </div>
-            </Modal>
+              <Modal open={imageUploaderOpen} onClose={() => { setImageUploaderOpen(false) }}>
+                <div>
+                  <ImageUploadAndEditor
+                    onSave={imageUploaderOnSave}
+                    onClose={() => { setImageUploaderOpen(false) }}
+                    imageUploadContainerUri={imageUploadUri}
+                  />
+                </div>
+              </Modal>
 
-            <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
-            <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
-            <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
-          </>
-        )}
+              <Combobox id="mentionCombobox" items={mentionItems} trigger="@" onSelectItem={onMentionSelect} />
+              <Combobox id="tagCombobox" items={tagItems} trigger="#" onSelectItem={onTagSelect} />
+              <Combobox id="conceptCombobox" items={conceptItems} trigger="[[" onSelectItem={onConceptSelect} />
+            </>
+          )}
       </Plate>
     </PlateProvider>
   );

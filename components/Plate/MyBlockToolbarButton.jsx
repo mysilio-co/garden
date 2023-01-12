@@ -5,14 +5,14 @@ import {
   toggleNodeType,
   useEventPlateId,
   usePlateEditorState,
-  withPlateEventProvider,
+  withPlateProvider,
 } from '@udecode/plate-core';
 import { ToolbarButton } from '@udecode/plate-ui-toolbar';
 
 /**
  * Toolbar button to toggle the type of elements in selection.
  */
-const BlockToolbarButton = withPlateEventProvider(
+const BlockToolbarButton = withPlateProvider(
   ({ id, type, inactiveType, active, ...props }) => {
     id = useEventPlateId(id);
     const editor = usePlateEditorState(id);
