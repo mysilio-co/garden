@@ -31,7 +31,7 @@ import {
   createImagePlugin,
   createLinkPlugin,
   createKbdPlugin,
-  createNodeIdPlugin,
+//  createNodeIdPlugin,
   createAutoformatPlugin,
   createResetNodePlugin,
   createComboboxPlugin,
