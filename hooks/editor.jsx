@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
+import { useEffect, useCallback, useState, useMemo } from 'react'
 import { Editor, Transforms, Range } from 'slate'
 import { useDebouncedCallback } from "use-debounce";
 
@@ -9,7 +9,7 @@ export function useAutosave(item, save) {
 
   const debounced = useDebouncedCallback(save, 1500)
 
-  // cancel debounce whenever item changes to avoid overwriting 
+  // cancel debounce whenever item changes to avoid overwriting
   useEffect(function () {
     debounced.cancel()
   }, [item])

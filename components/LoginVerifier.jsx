@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
-import { useWorkspace } from '../hooks/app'
+import { useSpace, useGarden } from 'garden-kit/hooks'
+import { HomeSpaceSlug, getPrivateFile } from 'garden-kit/spaces'
 import { useAuthentication, useWebId, useLoggedIn } from 'swrlit/contexts/authentication'
 
-
-function LoggedInStateVerifier(){
+function LoggedInStateVerifier() {
   const { logout } = useAuthentication()
   const webId = useWebId()
-  const { error } = useWorkspace(webId, "default", "private")
+  const { space } = useSpace(webId, HomeSpaceSlug)
+  const privateGardenUrl = space && getPrivateFile(space)
+  const { error } = useGarden(privateGardenUrl, webId)
   useEffect(function () {
     if (error && (error.statusCode == 401)) {
       logout()
@@ -20,7 +22,7 @@ function LoggedInStateVerifier(){
 export default function LoginVerifier() {
   const loggedIn = useLoggedIn()
   if (loggedIn) {
-    return <LoggedInStateVerifier/>
+    return <LoggedInStateVerifier />
   } else {
     return <></>
   }
