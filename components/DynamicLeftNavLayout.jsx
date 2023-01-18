@@ -124,7 +124,7 @@ function AvatarSection({
                 {name}
               </p>
               <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
-                {profileDrawerOpen ? 'Hide' : 'View'} profile
+                {profileDrawerOpen ? 'Hide' : 'View'} settings
               </p>
             </div>
           </div>
@@ -186,7 +186,7 @@ function navigationItems({
   const basicNavItems = loggedIn
     ? defaultLoggedInNavItems
     : defaultLoggedOutNavItems;
-  return [...basicNavItems, ...spaceItems, ...profileItems].map((i) => {
+  return [...basicNavItems, ...profileItems, ...spaceItems].map((i) => {
     if (
       selectedSpaceSlug &&
       selectedSpaceSlug === i.spaceSlug &&

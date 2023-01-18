@@ -104,9 +104,9 @@ export default function GardenHeader({
     type === 'dashboard'
       ? 'Community Garden'
       : authorName
-      ? `${authorName}'s profile`
+      ? `${authorName}'s Profile`
       : gardenTitle
-      ? gardenTitle
+      ? `${gardenTitle} Garden`
       : '';
 
   const [newItemModalOpen, setNewItemModalOpen] = useState(false);
