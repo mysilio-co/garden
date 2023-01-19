@@ -1,39 +1,38 @@
-
-import { useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+import { useState } from 'react';
+import { Combobox } from '@headlessui/react';
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 
 import { EditIcon } from '../icons';
 import { getPaymentPointer, setPaymentPointer } from '../../model/profile';
 
-export const MysilioPointer = "$ilp.uphold.com/DYPhbXPmDa2P";
+export const MysilioPointer = '$ilp.uphold.com/DYPhbXPmDa2P';
 
 export const MonetizationPointers = [
-  { name: "Mysilio", pointer: MysilioPointer },
-  { name: "Defold Foundation", pointer: "$ilp.uphold.com/QkG86UgXzKq8" },
-  { name: "freeCodeCamp", pointer: "$ilp.uphold.com/LJmbPn7WD4JB" },
-  { name: "Internet Archive", pointer: "$ilp.uphold.com/D7BwPKMQzBiD" },
-  { name: "STOP", pointer: "$ilp.uphold.com/RHZ6KZx4mWQi" },
-  { name: "Ushandi", pointer: "$ilp.uphold.com/kN2KHpqhNFiM" },
-  { name: "ITADI", pointer: "$ilp.uphold.com/kjMJqg7gH7JA" },
-  { name: "Ballet Rising", pointer: "$ilp.uphold.com/4hyPF8hgjKMw" },
+  { name: 'Mysilio', pointer: MysilioPointer },
+  { name: 'Defold Foundation', pointer: '$ilp.uphold.com/QkG86UgXzKq8' },
+  { name: 'freeCodeCamp', pointer: '$ilp.uphold.com/LJmbPn7WD4JB' },
+  { name: 'Internet Archive', pointer: '$ilp.uphold.com/D7BwPKMQzBiD' },
+  { name: 'STOP', pointer: '$ilp.uphold.com/RHZ6KZx4mWQi' },
+  { name: 'Ushandi', pointer: '$ilp.uphold.com/kN2KHpqhNFiM' },
+  { name: 'ITADI', pointer: '$ilp.uphold.com/kjMJqg7gH7JA' },
+  { name: 'Ballet Rising', pointer: '$ilp.uphold.com/4hyPF8hgjKMw' },
   {
-    name: "Creative Living for Dancers",
-    pointer: "$ilp.uphold.com/FR7UfwWWfib3",
+    name: 'Creative Living for Dancers',
+    pointer: '$ilp.uphold.com/FR7UfwWWfib3',
   },
   {
-    name: "Wellness Through Mindfullness Course",
-    pointer: "$ilp.gatehub.net/735653594",
+    name: 'Wellness Through Mindfullness Course',
+    pointer: '$ilp.gatehub.net/735653594',
   },
 ];
 
 const OrgsByPointer = MonetizationPointers.reduce((m, mp) => {
-  m[mp.pointer] = mp.name
-  return m
-}, {})
+  m[mp.pointer] = mp.name;
+  return m;
+}, {});
 
 export function orgForPointer(pointer) {
-  return OrgsByPointer[pointer]
+  return OrgsByPointer[pointer];
 }
 
 function randomPP() {
@@ -43,22 +42,24 @@ function randomPP() {
 }
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 export function MonetizationPicker({ setMonetization, currentValue }) {
-  const [query, setQuery] = useState("");
-  const [selectedPP, setSelectedPP] = useState(currentValue && { pointer: currentValue, name: currentValue });
+  const [query, setQuery] = useState('');
+  const [selectedPP, setSelectedPP] = useState(
+    currentValue && { pointer: currentValue, name: currentValue }
+  );
   const setPP = (pp) => {
     setSelectedPP(pp);
     setMonetization(pp.pointer);
   };
 
   const inputOnChange = (value) => {
-    setQuery(value)
+    setQuery(value);
     setSelectedPP({ pointer: value, name: value });
-    setMonetization(value)
-  }
+    setMonetization(value);
+  };
 
   // don't use this for now, but may bring it back. clean if still here in a few weeks
   //useEffect(() => {
@@ -66,11 +67,11 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
   //}, []);
 
   const filteredPointers =
-    query === ""
+    query === ''
       ? MonetizationPointers
       : MonetizationPointers.filter((pp) => {
-        return pp.name.toLowerCase().includes(query.toLowerCase());
-      });
+          return pp.name.toLowerCase().includes(query.toLowerCase());
+        });
 
   return (
     <Combobox as="div" value={selectedPP || currentValue} onChange={setPP}>
@@ -95,8 +96,8 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
                 value={pp}
                 className={({ active }) =>
                   classNames(
-                    "relative cursor-default select-none py-2 pl-3 pr-9",
-                    active ? "bg-indigo-600 text-white" : "text-gray-900"
+                    'relative cursor-default select-none py-2 pl-3 pr-9',
+                    active ? 'bg-indigo-600 text-white' : 'text-gray-900'
                   )
                 }
               >
@@ -105,16 +106,16 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
                     <div className="flex">
                       <span
                         className={classNames(
-                          "truncate",
-                          selected && "font-semibold"
+                          'truncate',
+                          selected && 'font-semibold'
                         )}
                       >
                         {pp.name}
                       </span>
                       <span
                         className={classNames(
-                          "ml-2 truncate text-gray-500",
-                          active ? "text-indigo-200" : "text-gray-500"
+                          'ml-2 truncate text-gray-500',
+                          active ? 'text-indigo-200' : 'text-gray-500'
                         )}
                       >
                         {pp.pointer}
@@ -124,8 +125,8 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
                     {selected && (
                       <span
                         className={classNames(
-                          "absolute inset-y-0 right-0 flex items-center pr-4",
-                          active ? "text-white" : "text-indigo-600"
+                          'absolute inset-y-0 right-0 flex items-center pr-4',
+                          active ? 'text-white' : 'text-indigo-600'
                         )}
                       >
                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -142,12 +143,16 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
   );
 }
 
-export default function WebMonetizationPointer({ profile, saveProfile, ...props }) {
+export default function WebMonetizationPointer({
+  profile,
+  saveProfile,
+  ...props
+}) {
   const paymentPointer = getPaymentPointer(profile);
   const [newPaymentPointer, setNewPaymentPointer] = useState();
 
   async function save(newPaymentPointer) {
-    return await saveProfile(setPaymentPointer(profile, newPaymentPointer))
+    return await saveProfile(setPaymentPointer(profile, newPaymentPointer));
   }
   const [editingPaymentPointer, setEditingPaymentPointer] = useState(false);
   function savePaymentPointer() {
@@ -162,23 +167,33 @@ export default function WebMonetizationPointer({ profile, saveProfile, ...props 
     <div {...props}>
       {editingPaymentPointer ? (
         <div className="flex flex-row items-end gap-2">
-          <MonetizationPicker setMonetization={setNewPaymentPointer} currentValue={paymentPointer} />
+          <MonetizationPicker
+            setMonetization={setNewPaymentPointer}
+            currentValue={paymentPointer}
+          />
           <button className="btn-md btn-filled" onClick={savePaymentPointer}>
             Save
           </button>
         </div>
       ) : (
         <div className="relative flex flex-row">
-          <h3 className="text-base text-center mb-3">
-            {paymentPointer || (
-              <span className="text-white" onClick={onEdit}>
-                click to set payment pointer
-              </span>
-            )}
-          </h3>
+          <div className="flex flex-col">
+            <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
+              Payment Pointer
+            </p>
+            <h3 className="text-base mb-3">
+              {paymentPointer || (
+                <span className="text-white" onClick={onEdit}>
+                  click to set payment pointer
+                </span>
+              )}
+            </h3>
+          </div>
           {paymentPointer && (
-            <EditIcon className="relative -right-1 -top-2 text-purple-300 cursor-pointer w-4 h-4"
-              onClick={onEdit} />
+            <EditIcon
+              className="relative -right-1 -top-2 text-purple-300 cursor-pointer w-4 h-4"
+              onClick={onEdit}
+            />
           )}
         </div>
       )}

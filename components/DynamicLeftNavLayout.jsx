@@ -124,7 +124,7 @@ function AvatarSection({
                 {name}
               </p>
               <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
-                {profileDrawerOpen ? 'Hide' : 'View'} settings
+                {profileDrawerOpen ? 'Hide' : 'Edit'} profile settings
               </p>
             </div>
           </div>
