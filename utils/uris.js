@@ -1,4 +1,4 @@
-import * as base58 from "micro-base58";
+import * as base58 from 'micro-base58';
 import { v1 as uuid } from 'uuid';
 
 export const appPrefix = 'apps/understory/garden';
@@ -6,15 +6,14 @@ export const appPrefix = 'apps/understory/garden';
 export const handleToWebId = (handle) =>
   new TextDecoder().decode(base58.decode(handle));
 
-export const webIdToHandle = (webId) =>
-  webId && base58.encode(webId);
+export const webIdToHandle = (webId) => webId && base58.encode(webId);
 
 export function profilePath(webId) {
   return `/u/${webIdToHandle(webId)}`;
 }
 
-export function gardenPath(webId, spaceSlug, gardenUrl){
-  return `/g/${webIdToHandle(webId)}/${spaceSlug}/${base58.encode(gardenUrl)}`
+export function gardenPath(webId, spaceSlug, gardenUrl) {
+  return `/g/${webIdToHandle(webId)}/${spaceSlug}/${base58.encode(gardenUrl)}`;
 }
 
 export function understoryGardenConceptPrefix(webId, workspaceSlug) {
@@ -69,7 +68,7 @@ export const urlSafeIdToGardenUrl = (id) =>
   new TextDecoder().decode(base58.decode(id));
 
 export const conceptUriToId = (conceptUri) =>
-  conceptUri.split("#").slice(-1)[0];
+  conceptUri.split('#').slice(-1)[0];
 
 export const conceptUriToName = (conceptUri) =>
   urlSafeIdToConceptName(conceptUriToId(conceptUri));
@@ -82,9 +81,9 @@ export function urlFromHost(hostOrUrl) {
   try {
     new URL(hostOrUrl);
     // if this doesn't throw, it's a valid URL
-    return hostOrUrl
+    return hostOrUrl;
   } catch (_) {
-    return `https://${hostOrUrl}`
+    return `https://${hostOrUrl}`;
   }
 }
 
