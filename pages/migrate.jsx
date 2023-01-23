@@ -122,7 +122,8 @@ export default function MigrateV0Data() {
     let newGarden = garden;
     ll = log(ll, 'Creating New Garden');
     for (const old of v0Garden) {
-      console.log(`Old item: ${old}`);
+      console.log('Old item:');
+      console.log(old);
       if (isConcept(old)) {
         const oldUri = asUrl(old);
         const id = conceptIdFromUri(oldUri);
