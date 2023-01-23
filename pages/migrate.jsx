@@ -122,91 +122,96 @@ export default function MigrateV0Data() {
     let newGarden = garden;
     ll = log(ll, 'Creating New Garden');
     for (const old of v0Garden) {
-      console.log('Old item:');
-      console.log(old);
-      if (isConcept(old)) {
-        const oldUri = asUrl(old);
-        const id = conceptIdFromUri(oldUri);
-        const name = urlSafeIdToConceptName(id);
-        const noteStorageUri = getUrl(old, US.storedAt);
-        const lastEdit = getDatetime(old, DCTERMS.modified);
-        const coverImage = getUrl(old, FOAF.img);
-        ll = log(ll, `Migrating Note ${name}`);
-        ll = log(ll, `Loading Note at ${noteStorageUri}`);
-        const noteDataset = await getSolidDataset(noteStorageUri, { fetch });
-        const note = getThing(noteDataset, noteStorageUri);
-        const noteValue = getAndParseNoteBody(note);
-        ll = log(ll, `Adding Note to Garden ${name}`);
-        const newItem = await createNewItem({
-          title: name,
-          lastEdit,
-          coverImage,
-          noteValue,
-        });
-        newGarden = setThing(newGarden, newItem);
-      } else if (isBookmarkedImage(old)) {
-        const title = getStringNoLocale(old, DCTERMS.title);
-        const lastEdit = getDatetime(old, DCTERMS.modified);
-        const url = asUrl(old);
-        ll = log(ll, `Migrating Image ${title}`);
-        ll = log(ll, `Loading Image at ${url}`);
-        const image = await getFile(url, { fetch });
-        const imagename = url.substring(url.lastIndexOf('/') + 1);
-        const newImageUrl = `${imageUploadUri}${imagename}`;
-        ll = log(ll, `Saving New Image at ${newImageUrl}`);
-        await overwriteFile(newImageUrl, image, {
-          contentType: getContentType(image),
-          fetch,
-        });
-        const newItem = await createNewItem({
-          title,
-          lastEdit,
-          coverImage: newImageUrl,
-        });
-        newGarden = setThing(newGarden, newItem);
-        ll = log(ll, `Added Image to Garden ${title}`);
-      } else if (isBookmarkedFile(old)) {
-        const url = asUrl(old);
-        const title = getStringNoLocale(old, DCTERMS.title);
-        const lastEdit = getDatetime(old, DCTERMS.modified);
-        const description = getStringNoLocale(old, DCTERMS.description);
-        ll = log(ll, `Loading File at ${url}`);
-        const file = await getFile(url, { fetch });
-        const filename = url.substring(url.lastIndexOf('/') + 1);
-        const newFileUrl = `${fileUploadUri}${filename}`;
-        ll = log(ll, `Saving New File at ${newFileUrl}`);
-        await overwriteFile(newFileUrl, file, {
-          contentType: getContentType(file),
-          fetch,
-        });
-        const newItem = await createNewItem({
-          title,
-          lastEdit,
-          description,
-          file: newFileUrl,
-        });
-        newGarden = setThing(newGarden, newItem);
-        ll = log(ll, `Added File to Garden ${title}`);
-      } else if (isBookmarkedLink(old)) {
-        const url = asUrl(old);
-        const title = getStringNoLocale(old, DCTERMS.title);
-        const lastEdit = getDatetime(old, DCTERMS.modified);
-        const description = getStringNoLocale(old, DCTERMS.description);
-        const coverImage = getUrl(old, FOAF.depiction);
-        ll = log(ll, `Migrating Bookmark ${title}`);
-        const newItem = await createNewItem({
-          title,
-          lastEdit,
-          description,
-          coverImage,
-          url,
-        });
-        newGarden = setThing(newGarden, newItem);
-        ll = log(ll, `Adding Bookmark to Garden ${title}`);
+      try {
+        console.log('Old item:');
+        console.log(old);
+        if (isConcept(old)) {
+          const oldUri = asUrl(old);
+          const id = conceptIdFromUri(oldUri);
+          const name = urlSafeIdToConceptName(id);
+          const noteStorageUri = getUrl(old, US.storedAt);
+          const lastEdit = getDatetime(old, DCTERMS.modified);
+          const coverImage = getUrl(old, FOAF.img);
+          ll = log(ll, `Migrating Note ${name}`);
+          ll = log(ll, `Loading Note at ${noteStorageUri}`);
+          const noteDataset = await getSolidDataset(noteStorageUri, { fetch });
+          const note = getThing(noteDataset, noteStorageUri);
+          const noteValue = getAndParseNoteBody(note);
+          ll = log(ll, `Adding Note to Garden ${name}`);
+          const newItem = await createNewItem({
+            title: name,
+            lastEdit,
+            coverImage,
+            noteValue,
+          });
+          newGarden = setThing(newGarden, newItem);
+        } else if (isBookmarkedImage(old)) {
+          const title = getStringNoLocale(old, DCTERMS.title);
+          const lastEdit = getDatetime(old, DCTERMS.modified);
+          const url = asUrl(old);
+          ll = log(ll, `Migrating Image ${title}`);
+          ll = log(ll, `Loading Image at ${url}`);
+          const image = await getFile(url, { fetch });
+          const imagename = url.substring(url.lastIndexOf('/') + 1);
+          const newImageUrl = `${imageUploadUri}${imagename}`;
+          ll = log(ll, `Saving New Image at ${newImageUrl}`);
+          await overwriteFile(newImageUrl, image, {
+            contentType: getContentType(image),
+            fetch,
+          });
+          const newItem = await createNewItem({
+            title,
+            lastEdit,
+            coverImage: newImageUrl,
+          });
+          newGarden = setThing(newGarden, newItem);
+          ll = log(ll, `Added Image to Garden ${title}`);
+        } else if (isBookmarkedFile(old)) {
+          const url = asUrl(old);
+          const title = getStringNoLocale(old, DCTERMS.title);
+          const lastEdit = getDatetime(old, DCTERMS.modified);
+          const description = getStringNoLocale(old, DCTERMS.description);
+          ll = log(ll, `Loading File at ${url}`);
+          const file = await getFile(url, { fetch });
+          const filename = url.substring(url.lastIndexOf('/') + 1);
+          const newFileUrl = `${fileUploadUri}${filename}`;
+          ll = log(ll, `Saving New File at ${newFileUrl}`);
+          await overwriteFile(newFileUrl, file, {
+            contentType: getContentType(file),
+            fetch,
+          });
+          const newItem = await createNewItem({
+            title,
+            lastEdit,
+            description,
+            file: newFileUrl,
+          });
+          newGarden = setThing(newGarden, newItem);
+          ll = log(ll, `Added File to Garden ${title}`);
+        } else if (isBookmarkedLink(old)) {
+          const url = asUrl(old);
+          const title = getStringNoLocale(old, DCTERMS.title);
+          const lastEdit = getDatetime(old, DCTERMS.modified);
+          const description = getStringNoLocale(old, DCTERMS.description);
+          const coverImage = getUrl(old, FOAF.depiction);
+          ll = log(ll, `Migrating Bookmark ${title}`);
+          const newItem = await createNewItem({
+            title,
+            lastEdit,
+            description,
+            coverImage,
+            url,
+          });
+          newGarden = setThing(newGarden, newItem);
+          ll = log(ll, `Adding Bookmark to Garden ${title}`);
+        }
+        ll = log(ll, 'Saving new Item');
+        // Must save incrementally, or else the PATCH is too lage.
+        saveGarden(newGarden);
+      } catch (e) {
+        console.error(e);
+        continue;
       }
-      ll = log(ll, 'Saving new Item');
-      // Must save incrementally, or else the PATCH is too lage.
-      saveGarden(newGarden);
     }
     ll = log(ll, 'Migration Complete!');
     setComplete(true);
