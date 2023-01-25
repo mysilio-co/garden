@@ -85,12 +85,12 @@ export default function MigrateV0Data() {
     lastEdit,
   }) {
     let newItem = createItem(webId, { title, description });
+    newItem = setDatetime(newItem, DCTERMS.modified, lastEdit);
     if (!getTitle(newItem)) {
       // ID: For some reason, some of my old garden items didn't have titles
       // so just used the UUID genearted if it's untitled
       newItem = setTitle(newItem, getUUID(newItem));
     }
-    setDatetime(newItem, DCTERMS.modified, lastEdit);
     if (coverImage) {
       newItem = setDepiction(newItem, coverImage);
       newItem = setImage(newItem, coverImage);
