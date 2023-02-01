@@ -4,6 +4,7 @@ import ProfileImage from './ProfileDrawer/Image';
 import Name from './ProfileDrawer/Name';
 import Username from './ProfileDrawer/Username';
 import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer';
+import Webhooks from './ProfileDrawer/Webhooks';
 import { profilePath } from '../utils/uris';
 import { Close, ExternalLinkIcon } from './icons';
 
@@ -39,6 +40,7 @@ export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
         saveProfile={saveProfile}
         className="my-2"
       />
+      <Webhooks profile={profile} saveProfile={saveProfile} className="my-2" />
     </div>
   );
 }
