@@ -1,12 +1,10 @@
-import { useState } from 'react';
-import { EditIcon } from '../icons';
-import { asUrl } from '@inrupt/solid-client';
+import { useEffect, useState } from 'react';
+import { getUrl } from '@inrupt/solid-client';
 import {
   getContainer,
   getSpace,
-  getSpaceAll,
-  getTitle,
   HomeSpaceSlug,
+  MY,
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
@@ -16,8 +14,6 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   const { webhooks, addWebhookSubscription, unsubscribeFromWebhook } =
     useWebhooks();
 
-  const [enabled, setEnabled] = useState(false);
-
   const webId = useWebId();
   const { spaces } = useSpaces(webId);
   // for simplicity, only Gnomes for the Home space can be setup here.
@@ -25,17 +21,36 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   const home = spaces && getSpace(spaces, HomeSpaceSlug);
   const homeContainer = getContainer(home);
 
-  const onChange = () => {
-    if (enabled) {
-      // unsubscribe
-      console.log('unsubscribe');
-      setEnabled(false);
-    } else {
-      // subscribe
-      console.log('subscribe');
+  const homeSpaceWebhooks = webhooks.filter(
+    (webhook) => getUrl(webhook, MY.Garden.subscribedTo) == homeContainer
+  );
+  console.log(webhooks);
+
+  useEffect(() => {
+    if (homeSpaceWebhooks.length > 0) {
       setEnabled(true);
+    } else {
+      setEnabled(false);
     }
-  };
+  }, [homeSpaceWebhooks]);
+
+  const [enabled, setEnabled] = useState(false);
+
+  async function onChange() {
+    if (!enabled) {
+      await addWebhookSubscription(
+        homeContainer,
+        `https://${window.location.host}/api/webhooks`
+      );
+    } else {
+      const homeSpaceWebhooks = webhooks.filter(
+        (webhook) => getUrl(webhook, MY.Garden.subscribedTo) == homeContainer
+      );
+      for (const webhook of homeSpaceWebhooks) {
+        await unsubscribeFromWebhook(webhook);
+      }
+    }
+  }
 
   return (
     <div {...props}>
