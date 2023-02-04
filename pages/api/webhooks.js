@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     const updatedResource = req.body.object.id;
     const verifiedIssuer = await verifyAuthIssuer(req.headers.authorization);
     console.log(
-      `${verifiedIssuer} === ${reg.headers.host} === ${
+      `${verifiedIssuer} === ${req.headers.host} === ${
         new URL(updatedResource).origin
       }`
     );
