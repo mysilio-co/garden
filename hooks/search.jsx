@@ -1,5 +1,4 @@
 import { getThingAll } from '@inrupt/solid-client';
-import { getTitle } from 'garden-kit';
 import { FOAF } from '@inrupt/vocab-common-rdf';
 import { useCommunityContacts, useCommunityGarden } from './community';
 
