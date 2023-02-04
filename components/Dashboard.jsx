@@ -1,6 +1,6 @@
-import { useState, useMemo, useContext, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useWebId } from 'swrlit/contexts/authentication';
-import { useFilteredGarden, useGardenWithSetup } from 'garden-kit/hooks';
+import { useGardenWithSetup } from 'garden-kit/hooks';
 
 import WebMonetization from '../components/WebMonetization';
 import GardenHeader from './GardenHeader';
@@ -8,8 +8,6 @@ import { Loader } from './elements';
 import LeftNavLayout from '../components/LeftNavLayout';
 import Cards from '../components/Cards';
 
-import GardenContext from '../contexts/GardenContext';
-import SpaceContext from '../contexts/SpaceContext';
 import { useCommunityGarden } from '../hooks/community';
 
 function GardenCreator({ url }) {
