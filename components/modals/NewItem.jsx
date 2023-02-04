@@ -1,5 +1,5 @@
 import { useState, useContext, useCallback, useEffect } from 'react';
-import { getPlateActions } from '@udecode/plate-core';
+import { usePlateActions } from '@udecode/plate-core';
 import { useRouter } from 'next/router';
 
 import { useTitledGardenItem, useSpace } from 'garden-kit/hooks';
@@ -98,8 +98,8 @@ export default function NewItem({ onClose }) {
   );
 
   // control functions
+  const { value: setEditorValue, resetEditor } = usePlateActions(editorId);
   const reset = useCallback(function reset() {
-    const { value: setEditorValue, resetEditor } = getPlateActions(editorId);
     resetEditor();
     setEditorValue(EmptySlateJSON);
     setNoteValue(null);
