@@ -3,9 +3,15 @@ import { verifyAuthIssuer } from 'solid-webhook-client';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('Webhook POST received');
-    if (
-      (await verifyAuthIssuer(req.headers.authorization)) === req.body.origin
-    ) {
+    console.log(req.body);
+    const updatedResource = req.body.object.id;
+    const verifiedIssuer = await verifyAuthIssuer(req.headers.authorization);
+    console.log(
+      `${verifiedIssuer} === ${reg.headers.host} === ${
+        new URL(updatedResource).origin
+      }`
+    );
+    if (verifiedIssuer === req.headers.host) {
       console.log('Webhook valid');
       console.log(req.body);
       return res.status(200);
