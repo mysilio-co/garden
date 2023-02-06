@@ -1,4 +1,3 @@
-import { resources } from 'rdf-namespaces/dist/cal';
 import { verifyAuthIssuer } from 'solid-webhook-client';
 
 export default async function handler(req, res) {
@@ -11,7 +10,7 @@ export default async function handler(req, res) {
     if (verifiedIssuer === resourceOrigin) {
       console.log('Webhook valid');
       console.log(req.body);
-      return res.status(200);
+      return res.status(200).json({ message: 'OK' });
     } else {
       const m = `This authorization header of this webhook is invalid. Header ${verifiedIssuer} does not match orign ${resourceOrigin}`;
       console.log(m);
