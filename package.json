@@ -32,7 +32,7 @@
     "fast-deep-equal": "^3.1.3",
     "formik": "^2.2.6",
     "fuse.js": "^6.6.2",
-    "garden-kit": "1.0.0-beta.20",
+    "garden-kit": "1.0.0-beta.22",
     "greg": "^0.0.2",
     "image-blob-reduce": "^2.2.2",
     "is-url": "^1.2.4",
@@ -56,7 +56,7 @@
     "slate-react": "^0.83.2",
     "styled-components": "^5.3.6",
     "swr": "^1.3.0",
-    "swrlit": "^1.0.0-beta.15",
+    "swrlit": "^1.0.0-beta.17",
     "use-debounce": "^8.0.3",
     "uuid": "^8.3.2",
     "yup": "^0.32.8"
