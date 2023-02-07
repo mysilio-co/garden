@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { asUrl, getUrl } from '@inrupt/solid-client';
 import {
   gardenMetadataInSpacePrefs,
@@ -9,8 +8,55 @@ import {
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
-import { useWebId } from 'swrlit';
+import {
+  useWebId,
+  useAgentAccess,
+  usePublicAccess,
+  ensureAcl,
+  useAuthentication,
+} from 'swrlit';
 import { useMemo } from 'react';
+import { useEffect } from 'react';
+
+export const MysilioKnowledgeGnome =
+  process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me';
+
+export function GardenWebhook({ garden, enabled, toggle }) {
+  const { ensureAccess, revokeAccess } = useAgentAccess(
+    asUrl(garden),
+    MysilioKnowledgeGnome
+  );
+  async function updateAccess() {
+    if (enabled) {
+      await ensureAccess({ read: true, write: true });
+    } else {
+      await revokeAccess();
+    }
+  }
+  useEffect(() => {
+    updateAccess();
+  }, [garden, enabled]);
+  return (
+    <div className="ml-6">
+      <div className="relative flex items-start">
+        <div className="flex h-5 items-center">
+          <input
+            name={getTitle(garden)}
+            type="checkbox"
+            checked={enabled}
+            onChange={toggle}
+            className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-400"
+          />
+        </div>
+        <div className="ml-3 text-sm">
+          <label className="font-small text-purple-300">
+            {getTitle(garden)}
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Webhooks({ profile, saveProfile, ...props }) {
   const { webhooks, addWebhookSubscription, unsubscribeFromWebhook } =
@@ -98,26 +144,14 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
         gardens &&
         gardens.map((garden) => {
           return (
-            <div key={asUrl(garden)} className="ml-6">
-              <div className="relative flex items-start">
-                <div className="flex h-5 items-center">
-                  <input
-                    name={getTitle(garden)}
-                    type="checkbox"
-                    checked={enabled.has(asUrl(garden))}
-                    onChange={() => {
-                      toggle(asUrl(garden));
-                    }}
-                    className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-400"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label className="font-small text-purple-300">
-                    {getTitle(garden)}
-                  </label>
-                </div>
-              </div>
-            </div>
+            <GardenWebhook
+              key={asUrl(garden)}
+              garden={garden}
+              enabled={enabled.has(asUrl(garden))}
+              toggle={() => {
+                toggle(asUrl(garden));
+              }}
+            />
           );
         })}
     </div>
