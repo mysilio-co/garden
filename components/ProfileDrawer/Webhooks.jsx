@@ -5,16 +5,11 @@ import {
   getTitle,
   HomeSpaceSlug,
   MY,
+  useGarden,
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
-import {
-  useWebId,
-  useAgentAccess,
-  usePublicAccess,
-  ensureAcl,
-  useAuthentication,
-} from 'swrlit';
+import { useWebId, useAgentAccess } from 'swrlit';
 import { useMemo } from 'react';
 import { useEffect } from 'react';
 
@@ -26,6 +21,7 @@ export function GardenWebhook({ garden, enabled, toggle }) {
     asUrl(garden),
     MysilioKnowledgeGnome
   );
+  const { saveSettings } = useGarden(asUrl(garden));
   async function updateAccess() {
     if (enabled) {
       await ensureAccess({ read: true, write: true });
