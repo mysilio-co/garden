@@ -15,14 +15,14 @@ import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication';
 import { useMyProfile } from 'swrlit/hooks/things';
 
 import { profilePath } from '../utils/uris';
-import { Search as SearchIcon, AddCircle as AddCircleIcon } from './icons';
-import { IconInput } from './inputs';
+import { AddCircle as AddCircleIcon } from './icons';
 import Avatar from './Avatar';
 
 import NewItem from './modals/NewItem';
 import { useFollows } from '../hooks/people';
 import { getTitle } from 'garden-kit/utils';
 import Modal from './Modal';
+import Search from './Search';
 
 function FollowUnfollowButton({ webId }) {
   const { profile: myProfile, save: saveProfile } = useMyProfile();
@@ -133,19 +133,7 @@ export default function GardenHeader({
         )}
       </div>
       <div className="flex flex-row items-center gap-2 self-start">
-        <Formik>
-          <IconInput
-            type="search"
-            name="search"
-            placeholder="Search"
-            icon={<SearchIcon className="ipt-header-search-icon" />}
-            inputClassName="ipt-header-search"
-            onChange={(e) => {
-              e.preventDefault();
-              onSearch(e.target.value);
-            }}
-          />
-        </Formik>
+        <Search />
         {loggedIn && (
           <>
             <button

@@ -32,3 +32,7 @@ export function useFuse(search, entries, keys, fuseIndexFile) {
 
   return fuse.search(search);
 }
+
+export function useSearch(search) {
+
+}
