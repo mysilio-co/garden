@@ -1,5 +1,9 @@
 import { getThing } from '@inrupt/solid-client';
-import { getDescription, getItemAll, getTitle, getUUID } from 'garden-kit';
+import { getDescription, getTitle, getUUID } from 'garden-kit';
+
+export function defaultFuseIndexUrl(gardenUrl) {
+  return gardenUrl.replace(/(\.ttl$)/, '-fuse.json');
+}
 
 export function defaultOptions(keys) {
   return {

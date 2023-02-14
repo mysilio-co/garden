@@ -1,4 +1,11 @@
-import { asUrl, getUrl } from '@inrupt/solid-client';
+import {
+  asUrl,
+  buildThing,
+  createThing,
+  getUrl,
+  setThing,
+  setUrl,
+} from '@inrupt/solid-client';
 import {
   gardenMetadataInSpacePrefs,
   getSpace,
@@ -12,21 +19,40 @@ import {
 import { useWebId, useAgentAccess } from 'swrlit';
 import { useMemo } from 'react';
 import { useEffect } from 'react';
+import { defaultFuseIndexUrl } from '../../model/search';
+import { DCTERMS } from '@inrupt/vocab-common-rdf';
 
 export const MysilioKnowledgeGnome =
   process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me';
 
 export function GardenWebhook({ garden, enabled, toggle }) {
-  const { ensureAccess, revokeAccess } = useAgentAccess(
-    asUrl(garden),
-    MysilioKnowledgeGnome
-  );
-  const { saveSettings } = useGarden(asUrl(garden));
+  const gardenUrl = asUrl(garden);
+  const { ensureAccess: ensureGardenAccess, revokeAccess: revokeGardenAccess } =
+    useAgentAccess(gardenUrl, MysilioKnowledgeGnome);
+  const { garden, saveGarden, settings, saveSettings } = useGarden(gardenUrl);
+  const maybeFuseIndexUrl = getUrl(settings, MY.Garden.hasFuseIndex);
+  const fuseIndexUrl = maybeFuseIndexUrl || defaultFuseIndexUrl(gardenUrl);
+  const { ensureAccess: ensureFuseAccess, revokeAccess: revokeFuseAccess } =
+    useAgentAccess(fuseIndexUrl, MysilioKnowledgeGnome);
   async function updateAccess() {
     if (enabled) {
-      await ensureAccess({ read: true, write: true });
+      await ensureGardenAccess({ read: true, write: true });
+      if (!maybeFuseIndexUrl) {
+        const newSettings = setUrl(
+          settings,
+          MY.Garden.hasFuseIndex,
+          fuseIndexUrl
+        );
+        const fuseIndexInfo = buildThing(
+          createThing({ url: fuseIndexUrl })
+        ).addDatetime(DCTERMS.modified, Date.now());
+        await saveSettings(newSettings);
+        await saveGarden(setThing(garden, fuseIndexInfo));
+        await ensureFuseAccess({ read: true, write: true });
+      }
     } else {
-      await revokeAccess();
+      await revokeGardenAccess();
+      await revokeFuseAccess();
     }
   }
   useEffect(() => {

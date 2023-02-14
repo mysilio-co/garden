@@ -16,7 +16,6 @@ import {
   fullTextFuseEntriesFromGardenItems,
   fuseEntriesFromGardenItems,
 } from '../../model/search';
-import { items } from 'rdf-namespaces/dist/as';
 
 const ClientID = process.env.MKG_CLIENT_ID;
 const ClientSecret = process.env.MKG_CLIENT_SECRET;
