@@ -1,10 +1,16 @@
 import {
   asUrl,
-  buildThing,
-  createThing,
+  createAcl,
+  createAclFromFallbackAcl,
+  createSolidDataset,
+  getResourceInfoWithAcl,
   getUrl,
-  setThing,
-  setUrl,
+  hasAccessibleAcl,
+  hasFallbackAcl,
+  hasResourceAcl,
+  overwriteFile,
+  saveAclFor,
+  saveSolidDatasetAt,
 } from '@inrupt/solid-client';
 import {
   gardenMetadataInSpacePrefs,
@@ -12,75 +18,57 @@ import {
   getTitle,
   HomeSpaceSlug,
   MY,
-  useGarden,
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
-import { useWebId, useAgentAccess } from 'swrlit';
+import { useWebId, useAuthentication, RevokedAccess } from 'swrlit';
 import { useMemo } from 'react';
-import { useEffect } from 'react';
-import { defaultFuseIndexUrl } from '../../model/search';
-import { DCTERMS } from '@inrupt/vocab-common-rdf';
+import {
+  defaultFuseIndexUrl,
+  fuseWebhookUrl,
+  setupGardenSearchIndex,
+  setupGardenSearchIndexAPI,
+} from '../../model/search';
+import { setAgentAccess } from '@inrupt/solid-client/universal';
 
 export const MysilioKnowledgeGnome =
   process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me';
 
-export function GardenWebhook({ garden, enabled, toggle }) {
-  const gardenUrl = asUrl(garden);
-  const { ensureAccess: ensureGardenAccess, revokeAccess: revokeGardenAccess } =
-    useAgentAccess(gardenUrl, MysilioKnowledgeGnome);
-  const { garden, saveGarden, settings, saveSettings } = useGarden(gardenUrl);
-  const maybeFuseIndexUrl = getUrl(settings, MY.Garden.hasFuseIndex);
-  const fuseIndexUrl = maybeFuseIndexUrl || defaultFuseIndexUrl(gardenUrl);
-  const { ensureAccess: ensureFuseAccess, revokeAccess: revokeFuseAccess } =
-    useAgentAccess(fuseIndexUrl, MysilioKnowledgeGnome);
-  async function updateAccess() {
-    if (enabled) {
-      await ensureGardenAccess({ read: true, write: true });
-      if (!maybeFuseIndexUrl) {
-        const newSettings = setUrl(
-          settings,
-          MY.Garden.hasFuseIndex,
-          fuseIndexUrl
-        );
-        const fuseIndexInfo = buildThing(
-          createThing({ url: fuseIndexUrl })
-        ).addDatetime(DCTERMS.modified, Date.now());
-        await saveSettings(newSettings);
-        await saveGarden(setThing(garden, fuseIndexInfo));
-        await ensureFuseAccess({ read: true, write: true });
+async function ensureAcl(resourceUrl, options) {
+  if (resourceUrl) {
+    let resourceWithAcl;
+    try {
+      resourceWithAcl = await getResourceInfoWithAcl(resourceUrl, options);
+    } catch (e) {
+      if (e.statusCode === 404) {
+        // create empty file
+        await overwriteFile(resourceUrl, new Blob([]), options);
+        resourceWithAcl = await getResourceInfoWithAcl(resourceUrl, options);
+      } else {
+        throw e;
       }
-    } else {
-      await revokeGardenAccess();
-      await revokeFuseAccess();
     }
+    if (!hasAccessibleAcl(resourceWithAcl)) {
+      throw new Error(
+        'The current user does not have permission to change access rights to this Resource.'
+      );
+    }
+    if (!hasResourceAcl(resourceWithAcl)) {
+      let acl;
+      if (hasFallbackAcl(resourceWithAcl)) {
+        acl = createAclFromFallbackAcl(resourceWithAcl);
+      } else {
+        acl = createAcl(resourceWithAcl);
+      }
+      await saveAclFor(resourceWithAcl, acl, options);
+    }
+  } else {
+    throw new Error('Cannot ensureAcl for undefined resource');
   }
-  useEffect(() => {
-    updateAccess();
-  }, [garden, enabled]);
-  return (
-    <div className="ml-6">
-      <div className="relative flex items-start">
-        <div className="flex h-5 items-center">
-          <input
-            name={getTitle(garden)}
-            type="checkbox"
-            checked={enabled}
-            onChange={toggle}
-            className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-400"
-          />
-        </div>
-        <div className="ml-3 text-sm">
-          <label className="font-small text-purple-300">
-            {getTitle(garden)}
-          </label>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function Webhooks({ profile, saveProfile, ...props }) {
+  const { fetch } = useAuthentication();
   const { webhooks, addWebhookSubscription, unsubscribeFromWebhook } =
     useWebhooks();
 
@@ -91,6 +79,16 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   // Community Gnomes should be configured by logging in as the Community Pod.
   const home = spaces && getSpace(spaces, HomeSpaceSlug);
   const gardens = gardenMetadataInSpacePrefs(home, spaces);
+
+  function getFuseIndexUrl(gardenUrl) {
+    const gardenMetadata = gardens.find((garden) => {
+      return asUrl(garden) === gardenUrl;
+    });
+    return (
+      (gardenMetadata && getUrl(gardenMetadata, MY.Garden.hasFuseIndex)) ||
+      defaultFuseIndexUrl(gardenUrl)
+    );
+  }
 
   async function enableAll() {
     for (const garden of gardens) {
@@ -105,20 +103,46 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   }
 
   async function enable(gardenUrl) {
-    await addWebhookSubscription(
+    await ensureAcl(gardenUrl, { fetch });
+    await setAgentAccess(
       gardenUrl,
-      `https://${window.location.host}/api/webhooks`
+      MysilioKnowledgeGnome,
+      { read: true, write: true },
+      { fetch }
     );
+
+    await ensureAcl(getFuseIndexUrl(gardenUrl), { fetch });
+    await setAgentAccess(
+      getFuseIndexUrl(gardenUrl),
+      MysilioKnowledgeGnome,
+      { read: true, write: true },
+      { fetch }
+    );
+
+    await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), {
+      fetch,
+    });
+    await addWebhookSubscription(gardenUrl, fuseWebhookUrl(gardenUrl));
   }
   async function disable(gardenUrl) {
     await unsubscribeFromWebhook(getWebhook(gardenUrl));
+    await setAgentAccess(gardenUrl, MysilioKnowledgeGnome, RevokedAccess, {
+      fetch,
+    });
+
+    await setAgentAccess(
+      getFuseIndexUrl(gardenUrl),
+      MysilioKnowledgeGnome,
+      RevokedAccess,
+      { fetch }
+    );
   }
   async function toggle(gardenUrl) {
     if (getWebhook(gardenUrl)) disable(gardenUrl);
     else enable(gardenUrl);
   }
   async function toggleAll() {
-    if (enabled.size > 0) disableAll();
+    if (enabled.length > 0) disableAll();
     else enableAll();
   }
 
@@ -129,11 +153,11 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   }
 
   const enabled = useMemo(() => {
-    const enabled = new Set();
+    let enabled = [];
     for (const garden of gardens) {
       const gardenUrl = asUrl(garden);
       if (getWebhook(gardenUrl)) {
-        enabled.add(gardenUrl);
+        enabled = [...enabled, gardenUrl];
       }
     }
     console.log(enabled);
@@ -147,7 +171,7 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
           <input
             name="gnomes"
             type="checkbox"
-            checked={enabled.size > 0}
+            checked={enabled.length > 0}
             onChange={toggleAll}
             className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-400"
           />
@@ -162,18 +186,30 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
           </p>
         </div>
       </div>
-      {enabled.size > 0 &&
+      {enabled.length > 0 &&
         gardens &&
         gardens.map((garden) => {
           return (
-            <GardenWebhook
-              key={asUrl(garden)}
-              garden={garden}
-              enabled={enabled.has(asUrl(garden))}
-              toggle={() => {
-                toggle(asUrl(garden));
-              }}
-            />
+            <div key={asUrl(garden)} className="ml-6">
+              <div className="relative flex items-start">
+                <div className="flex h-5 items-center">
+                  <input
+                    name={getTitle(garden)}
+                    type="checkbox"
+                    checked={enabled.includes(asUrl(garden))}
+                    onChange={() => {
+                      toggle(asUrl(garden));
+                    }}
+                    className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-400"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label className="font-small text-purple-300">
+                    {getTitle(garden)}
+                  </label>
+                </div>
+              </div>
+            </div>
           );
         })}
     </div>
