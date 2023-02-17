@@ -1,56 +1,59 @@
-import { Fragment, useMemo, useState, useCallback, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import {useRouter} from 'next/router'
-import { Dialog, Popover, Transition } from '@headlessui/react'
+import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Dialog, Popover, Transition } from '@headlessui/react';
 import {
   HomeIcon,
   LoginIcon,
   BookOpenIcon,
   UserGroupIcon,
   XIcon,
-} from '@heroicons/react/outline'
+} from '@heroicons/react/outline';
 
-import { asUrl } from '@inrupt/solid-client/thing/thing'
+import { asUrl } from '@inrupt/solid-client/thing/thing';
 import { FOAF } from '@inrupt/vocab-common-rdf';
-import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get'
+import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get';
 
-import { useLoggedIn, useAuthentication, useWebId } from 'swrlit/contexts/authentication'
-import { useMyProfile } from 'swrlit/hooks/things'
+import {
+  useLoggedIn,
+  useAuthentication,
+  useWebId,
+} from 'swrlit/contexts/authentication';
+import { useMyProfile } from 'swrlit/hooks/things';
 
-import ProfileDrawer from './ProfileDrawer'
+import ProfileDrawer from './ProfileDrawer';
 import Avatar from './Avatar';
-import DefaultHeader from './DefaultHeader'
-import logoAndName from '../public/img/logo-and-text.png'
+import DefaultHeader from './DefaultHeader';
+import logoAndName from '../public/img/logo-and-text.png';
 
-import { profilePath, gardenPath } from '../utils/uris'
-import { SpaceProvider } from '../contexts/SpaceContext'
-import { GardenProvider } from '../contexts/GardenContext'
+import { profilePath, gardenPath } from '../utils/uris';
+import { SpaceProvider } from '../contexts/SpaceContext';
+import { GardenProvider } from '../contexts/GardenContext';
 
-import { useSpaces } from 'garden-kit/hooks'
+import { useSpaces } from 'garden-kit/hooks';
 import {
   HomeSpaceSlug,
-  getSpaceAll, getSpaceSlug,
-  gardenMetadataInSpacePrefs
-} from 'garden-kit/spaces'
-import { getTitle } from 'garden-kit/utils'
-
+  getSpaceAll,
+  getSpaceSlug,
+  gardenMetadataInSpacePrefs,
+} from 'garden-kit/spaces';
+import { getTitle } from 'garden-kit/utils';
 
 const defaultLoggedInNavItems = [
-  { name: 'DWeb Camp', href: '/dweb-camp', icon: HomeIcon },
+  { name: 'Community Garden', href: '/', icon: HomeIcon },
 ];
 const defaultLoggedOutNavItems = [
-  { name: 'Dweb Camp', href: '/dweb-camp', icon: HomeIcon },
+  { name: 'Community Garden', href: '/', icon: HomeIcon },
   { name: 'Log In', href: '/', icon: LoginIcon },
-  { name: 'Sign Up', href: '/', icon: BookOpenIcon }
-
-]
+  { name: 'Sign Up', href: '/', icon: BookOpenIcon },
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
-function EllipsesMenu({ loggedIn, logout, className = "" }) {
+function EllipsesMenu({ loggedIn, logout, className = '' }) {
   return (
     <Popover className={`relative ${className}`}>
       <Popover.Button className="outline-none focus:outline-none">
@@ -87,16 +90,28 @@ function EllipsesMenu({ loggedIn, logout, className = "" }) {
         )}
       </Popover.Panel>
     </Popover>
-  )
+  );
 }
 
-function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, setProfileDrawerOpen, loggedIn, logout }) {
+function AvatarSection({
+  className = '',
+  avatarImgSrc,
+  name,
+  profileDrawerOpen,
+  setProfileDrawerOpen,
+  loggedIn,
+  logout,
+}) {
   return (
-    <div className={`flex-shrink-0 flex border-t bg-gray-500 border-gray-200 p-4 ${className}`}>
+    <div
+      className={`flex-shrink-0 flex border-t bg-gray-500 border-gray-200 p-4 ${className}`}
+    >
       {loggedIn && (
-        <button type="button"
+        <button
+          type="button"
           className="flex-1 group block"
-          onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}>
+          onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}
+        >
           <div className="flex items-center">
             <div>
               <Avatar
@@ -105,60 +120,85 @@ function AvatarSection({ className = "", avatarImgSrc, name, profileDrawerOpen, 
               />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-300 group-hover:text-gray-100 ">{name}</p>
+              <p className="text-sm font-medium text-gray-300 group-hover:text-gray-100 ">
+                {name}
+              </p>
               <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
-                {profileDrawerOpen ? 'Hide' : 'View'} profile
+                {profileDrawerOpen ? 'Hide' : 'View'} settings
               </p>
             </div>
           </div>
         </button>
       )}
-      <EllipsesMenu loggedIn={loggedIn} logout={logout} className="self-center" />
+      <EllipsesMenu
+        loggedIn={loggedIn}
+        logout={logout}
+        className="self-center"
+      />
     </div>
-  )
+  );
 }
 
-const defaultHeaderProps = {}
+const defaultHeaderProps = {};
 
-function navigationItems({ router, loggedIn, pageName, profile, spaces, webId, selectedSpaceSlug, selectedGardenUrl }) {
-  const allSpaces = spaces && getSpaceAll(spaces)
-  const spaceItems = allSpaces ? allSpaces.map((space, i) => {
-    const spaceSlug = getSpaceSlug(space)
-    const gardens = gardenMetadataInSpacePrefs(space, spaces)
-    return {
-      name: getTitle(space) || `Space ${i}`,
-      subItems: gardens && gardens.map(garden => {
-        const gardenUrl = asUrl(garden)
-        return ({
-          name: getTitle(garden),
-          spaceSlug,
-          gardenUrl,
-          onClick: function () {
-            router.push(gardenPath(webId, spaceSlug, gardenUrl))
-          }
-        })
+function navigationItems({
+  router,
+  loggedIn,
+  pageName,
+  profile,
+  spaces,
+  webId,
+  selectedSpaceSlug,
+  selectedGardenUrl,
+}) {
+  const allSpaces = spaces && getSpaceAll(spaces);
+  const spaceItems = allSpaces
+    ? allSpaces.map((space, i) => {
+        const spaceSlug = getSpaceSlug(space);
+        const gardens = gardenMetadataInSpacePrefs(space, spaces);
+        return {
+          name: getTitle(space) || `Space ${i}`,
+          subItems:
+            gardens &&
+            gardens.map((garden) => {
+              const gardenUrl = asUrl(garden);
+              return {
+                name: getTitle(garden),
+                spaceSlug,
+                gardenUrl,
+                onClick: function () {
+                  router.push(gardenPath(webId, spaceSlug, gardenUrl));
+                },
+              };
+            }),
+        };
       })
-    }
-  }) : []
-  const profileItems = profile ? [
-    { name: `My Profile`, href: profile ? profilePath(asUrl(profile)) : "/", icon: UserGroupIcon }
-  ] : []
-  const basicNavItems = loggedIn ? defaultLoggedInNavItems : defaultLoggedOutNavItems
-  return [
-    ...basicNavItems,
-    ...spaceItems,
-    ...profileItems
-  ].map((i) => {
+    : [];
+  const profileItems = profile
+    ? [
+        {
+          name: `My Profile`,
+          href: profile ? profilePath(asUrl(profile)) : '/',
+          icon: UserGroupIcon,
+        },
+      ]
+    : [];
+  const basicNavItems = loggedIn
+    ? defaultLoggedInNavItems
+    : defaultLoggedOutNavItems;
+  return [...basicNavItems, ...profileItems, ...spaceItems].map((i) => {
     if (
-      selectedSpaceSlug && (selectedSpaceSlug === i.spaceSlug) &&
-      selectedGardenUrl && (selectedGardenUrl === i.gardenUrl)
+      selectedSpaceSlug &&
+      selectedSpaceSlug === i.spaceSlug &&
+      selectedGardenUrl &&
+      selectedGardenUrl === i.gardenUrl
     ) {
-      i.current = true
+      i.current = true;
     } else {
-      i.current = (pageName == i.name)
+      i.current = pageName == i.name;
     }
-    return i
-  })
+    return i;
+  });
 }
 
 function navItemClasses(item, { hover = false, subItem = false } = {}) {
@@ -166,71 +206,113 @@ function navItemClasses(item, { hover = false, subItem = false } = {}) {
     item.current
       ? 'bg-gray-400 text-gray-200'
       : `text-gray-200 ${hover ? 'hover:bg-gray-50 hover:text-gray-900' : ''}`,
-    `group flex items-center ${subItem ? 'ml-4 px-2 text-sm' : 'px-2 py-2 text-base'} font-medium rounded-md`
-  )
+    `group flex items-center ${
+      subItem ? 'ml-4 px-2 text-sm' : 'px-2 py-2 text-base'
+    } font-medium rounded-md`
+  );
 }
 
 function navItemIconClasses(item, { hover = false, subItem = false } = {}) {
   return classNames(
-    item.current ? 'text-gray-500' : `text-gray-400 ${hover ? 'group-hover:text-gray-500' : ''}`,
+    item.current
+      ? 'text-gray-500'
+      : `text-gray-400 ${hover ? 'group-hover:text-gray-500' : ''}`,
     'mr-4 h-6 w-6'
-  )
+  );
 }
 
 function NavigationItem({ item, subItem = false }) {
-  return <>
-    {
-      item.href ? (
-        <Link href={item.href} key={item.name} >
-          <a className={navItemClasses(item, { hover: true, subItem })} >
-            {item.icon && <item.icon className={navItemIconClasses(item, { hover: true, subItem })} aria-hidden="true" />}
+  return (
+    <>
+      {item.href ? (
+        <Link href={item.href} key={item.name}>
+          <a className={navItemClasses(item, { hover: true, subItem })}>
+            {item.icon && (
+              <item.icon
+                className={navItemIconClasses(item, { hover: true, subItem })}
+                aria-hidden="true"
+              />
+            )}
             {item.name}
           </a>
-        </Link >
+        </Link>
+      ) : item.onClick ? (
+        <button
+          className={navItemClasses(item, { hover: true, subItem })}
+          onClick={item.onClick}
+        >
+          {item.icon && (
+            <item.icon
+              className={navItemIconClasses(item, { hover: true, subItem })}
+              aria-hidden="true"
+            />
+          )}
+          {item.name}
+        </button>
       ) : (
-        item.onClick ? (
-          <button className={navItemClasses(item, { hover: true, subItem })} onClick={item.onClick}>
-            {item.icon && <item.icon className={navItemIconClasses(item, { hover: true, subItem })} aria-hidden="true" />}
-            {item.name}
-          </button>
-        ) : (
-          <div className={navItemClasses(item, { subItem })} >
-            {item.icon && <item.icon className={navItemIconClasses(item, { subItem })} aria-hidden="true" />}
-            {item.name}
-          </div>
-        ))
-    }
-    {item.subItems && item.subItems.map((item, i) => <NavigationItem key={i} item={item} subItem={true} />)}
-  </>
+        <div className={navItemClasses(item, { subItem })}>
+          {item.icon && (
+            <item.icon
+              className={navItemIconClasses(item, { subItem })}
+              aria-hidden="true"
+            />
+          )}
+          {item.name}
+        </div>
+      )}
+      {item.subItems &&
+        item.subItems.map((item, i) => (
+          <NavigationItem key={i} item={item} subItem={true} />
+        ))}
+    </>
+  );
 }
 
 export default function LeftNavLayout({
-  pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps,
-  spaceSlug, gardenUrl
+  pageName,
+  pageTitle,
+  children,
+  HeaderComponent = DefaultHeader,
+  headerProps = defaultHeaderProps,
+  spaceSlug,
+  gardenUrl,
 }) {
-  const router = useRouter()
-  const webId = useWebId()
-  const { profile, save: saveProfile } = useMyProfile()
+  const router = useRouter();
+  const webId = useWebId();
+  const { profile, save: saveProfile } = useMyProfile();
   const avatarImgSrc = profile && getUrl(profile, FOAF.img);
-  const name = profile && getStringNoLocale(profile, FOAF.name)
+  const name = profile && getStringNoLocale(profile, FOAF.name);
 
-  const loggedIn = useLoggedIn()
-  const { logout } = useAuthentication()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const loggedIn = useLoggedIn();
+  const { logout } = useAuthentication();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const { spaces } = useSpaces(webId)
+  const { spaces } = useSpaces(webId);
 
-  const navigation = useMemo(() => navigationItems({
-    router, loggedIn, pageName, profile, spaces, webId,
-    selectedSpaceSlug: spaceSlug, selectedGardenUrl: gardenUrl
-  }),
-    [pageName, profile])
+  const navigation = useMemo(
+    () =>
+      navigationItems({
+        router,
+        loggedIn,
+        pageName,
+        profile,
+        spaces,
+        webId,
+        selectedSpaceSlug: spaceSlug,
+        selectedGardenUrl: gardenUrl,
+      }),
+    [pageName, profile]
+  );
 
   return (
     <>
       <div className="h-screen flex relative">
         <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog as="div" className="fixed inset-0 flex z-40 lg:hidden" onClose={setSidebarOpen}>
+          <Dialog
+            as="div"
+            className="fixed inset-0 flex z-40 lg:hidden"
+            onClose={setSidebarOpen}
+          >
             <Transition.Child
               as={Fragment}
               enter="transition-opacity ease-linear duration-300"
@@ -268,32 +350,41 @@ export default function LeftNavLayout({
                       onClick={() => setSidebarOpen(false)}
                     >
                       <span className="sr-only">Close sidebar</span>
-                      <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                      <XIcon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
                 </Transition.Child>
 
-                <Transition show={profileDrawerOpen}
+                <Transition
+                  show={profileDrawerOpen}
                   as={Fragment}
                   enter="transition ease-in-out duration-300 transform"
                   enterFrom="translate-y-full"
                   enterTo="translate-y-0"
-                //                  leave="transition ease-in-out duration-300 transform"
-                //                  leaveFrom="translate-y-0"
-                //                  leaveTo="-translate-y-full"
+                  //                  leave="transition ease-in-out duration-300 transform"
+                  //                  leaveFrom="translate-y-0"
+                  //                  leaveTo="-translate-y-full"
                 >
                   <div className="flex-1 p-4">
-                    <ProfileDrawer profile={profile} saveProfile={saveProfile} setIsOpen={setProfileDrawerOpen} />
+                    <ProfileDrawer
+                      profile={profile}
+                      saveProfile={saveProfile}
+                      setIsOpen={setProfileDrawerOpen}
+                    />
                   </div>
                 </Transition>
-                <Transition show={!profileDrawerOpen}
+                <Transition
+                  show={!profileDrawerOpen}
                   as={Fragment}
                   enter="transition ease-in-out duration-300 transform"
                   enterFrom="translate-y-full"
                   enterTo="translate-y-0"
-                //                  leave="transition ease-in-out duration-300 transform"
-                //                  leaveFrom="translate-y-0"
-                //                  leaveTo="-translate-y-full"
+                  //                  leave="transition ease-in-out duration-300 transform"
+                  //                  leaveFrom="translate-y-0"
+                  //                  leaveTo="-translate-y-full"
                 >
                   <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                     <div className="flex-shrink-0 px-4 relative w-52">
@@ -312,7 +403,15 @@ export default function LeftNavLayout({
                     </nav>
                   </div>
                 </Transition>
-                <AvatarSection className="z-20" loggedIn={loggedIn} logout={logout} name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
+                <AvatarSection
+                  className="z-20"
+                  loggedIn={loggedIn}
+                  logout={logout}
+                  name={name}
+                  avatarImgSrc={avatarImgSrc}
+                  profileDrawerOpen={profileDrawerOpen}
+                  setProfileDrawerOpen={setProfileDrawerOpen}
+                />
               </div>
             </Transition.Child>
             <div className="flex-shrink-0 w-14" aria-hidden="true">
@@ -346,11 +445,20 @@ export default function LeftNavLayout({
                   </div>
                 </nav>
               </div>
-              <AvatarSection loggedIn={loggedIn} logout={logout} name={name} avatarImgSrc={avatarImgSrc} profileDrawerOpen={profileDrawerOpen} setProfileDrawerOpen={setProfileDrawerOpen} />
+              <AvatarSection
+                loggedIn={loggedIn}
+                logout={logout}
+                name={name}
+                avatarImgSrc={avatarImgSrc}
+                profileDrawerOpen={profileDrawerOpen}
+                setProfileDrawerOpen={setProfileDrawerOpen}
+              />
             </div>
           </div>
         </div>
-        <Transition show={profileDrawerOpen} as={Fragment}
+        <Transition
+          show={profileDrawerOpen}
+          as={Fragment}
           enter="transition ease-in-out duration-300 transform"
           enterFrom="-translate-x-full"
           enterTo="translate-x-0"
@@ -359,13 +467,23 @@ export default function LeftNavLayout({
           leaveTo="-translate-x-full"
         >
           <aside className="hidden relative h-screen xl:flex xl:flex-col flex-shrink-0 p-4 w-96 border-r border-gray-200 bg-gray-500 overflow-y-auto z-20 lg:z-0">
-            <ProfileDrawer profile={profile} saveProfile={saveProfile} loggedIn={loggedIn} logout={logout} setIsOpen={setProfileDrawerOpen} />
+            <ProfileDrawer
+              profile={profile}
+              saveProfile={saveProfile}
+              loggedIn={loggedIn}
+              logout={logout}
+              setIsOpen={setProfileDrawerOpen}
+            />
           </aside>
         </Transition>
         <SpaceProvider slug={spaceSlug || HomeSpaceSlug}>
           <GardenProvider url={gardenUrl}>
             <div className="h-full flex flex-col min-w-0 flex-1 overflow-y-scroll">
-              <HeaderComponent openSidebar={useCallback(() => setSidebarOpen(true))} pageTitle={pageTitle} {...headerProps} />
+              <HeaderComponent
+                openSidebar={useCallback(() => setSidebarOpen(true))}
+                pageTitle={pageTitle}
+                {...headerProps}
+              />
               <div className="h-full flex-1 relative z-0 flex">
                 <main className="h-full flex-1 relative z-0 focus:outline-none xl:order-last">
                   {children}
@@ -376,5 +494,5 @@ export default function LeftNavLayout({
         </SpaceProvider>
       </div>
     </>
-  )
+  );
 }
