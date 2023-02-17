@@ -3,6 +3,7 @@ import {
   createAcl,
   createAclFromFallbackAcl,
   createSolidDataset,
+  getContainedResourceUrlAll,
   getResourceInfoWithAcl,
   getUrl,
   hasAccessibleAcl,
@@ -14,6 +15,7 @@ import {
 } from '@inrupt/solid-client';
 import {
   gardenMetadataInSpacePrefs,
+  getContainer,
   getSpace,
   getTitle,
   HomeSpaceSlug,
@@ -21,7 +23,12 @@ import {
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
-import { useWebId, useAuthentication, RevokedAccess } from 'swrlit';
+import {
+  useWebId,
+  useAuthentication,
+  RevokedAccess,
+  useAgentAccess,
+} from 'swrlit';
 import { useMemo } from 'react';
 import {
   defaultFuseIndexUrl,
@@ -80,6 +87,10 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   const home = spaces && getSpace(spaces, HomeSpaceSlug);
   const gardens = gardenMetadataInSpacePrefs(home, spaces);
 
+  const containerUrl = getContainer(home);
+  const { ensureAccess: ensureMKGAccess, revokeAccess: revokeMKGAccess } =
+    useAgentAccess(containerUrl, MysilioKnowledgeGnome);
+
   function getFuseIndexUrl(gardenUrl) {
     const gardenMetadata = gardens.find((garden) => {
       return asUrl(garden) === gardenUrl;
@@ -103,39 +114,15 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   }
 
   async function enable(gardenUrl) {
-    await ensureAcl(gardenUrl, { fetch });
-    await setAgentAccess(
-      gardenUrl,
-      MysilioKnowledgeGnome,
-      { read: true, write: true },
-      { fetch }
-    );
-
-    await ensureAcl(getFuseIndexUrl(gardenUrl), { fetch });
-    await setAgentAccess(
-      getFuseIndexUrl(gardenUrl),
-      MysilioKnowledgeGnome,
-      { read: true, write: true },
-      { fetch }
-    );
-
+    await ensureMKGAccess({ read: true, write: true });
     await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), {
       fetch,
     });
     await addWebhookSubscription(gardenUrl, fuseWebhookUrl(gardenUrl));
   }
   async function disable(gardenUrl) {
+    await revokeMKGAccess();
     await unsubscribeFromWebhook(getWebhook(gardenUrl));
-    await setAgentAccess(gardenUrl, MysilioKnowledgeGnome, RevokedAccess, {
-      fetch,
-    });
-
-    await setAgentAccess(
-      getFuseIndexUrl(gardenUrl),
-      MysilioKnowledgeGnome,
-      RevokedAccess,
-      { fetch }
-    );
   }
   async function toggle(gardenUrl) {
     if (getWebhook(gardenUrl)) disable(gardenUrl);
