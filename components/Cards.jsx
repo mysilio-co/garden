@@ -6,7 +6,7 @@ import ItemCard from './cards/ItemCard';
 import { getItemAll } from 'garden-kit/garden';
 import { getUrl } from '@inrupt/solid-client';
 import { RDFS } from '@inrupt/vocab-common-rdf';
-import { getTitle } from 'garden-kit';
+import { getCreator, getTitle } from 'garden-kit';
 
 export default function Cards({
   spaceSlug,
@@ -24,12 +24,6 @@ export default function Cards({
           <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
             {items &&
               items.map((item) => {
-                console.log(
-                  `name: ${getTitle(item)} Garden: ${getUrl(
-                    item,
-                    RDFS.seeAlso
-                  )}`
-                );
                 return (
                   <ItemCard
                     key={asUrl(item)}
@@ -39,7 +33,7 @@ export default function Cards({
                         : garden && getSourceUrl(garden)
                     }
                     item={item}
-                    webId={webId}
+                    webId={getCreator(item) || webId}
                     workspaceSlug={spaceSlug}
                   />
                 );
