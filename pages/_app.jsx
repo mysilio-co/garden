@@ -6,7 +6,6 @@ import Head from 'next/head'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { SWRConfig } from 'swr'
-import { useFathom } from '../hooks/fathom'
 
 const LoginVerifier = dynamic(
   () => import('../components/LoginVerifier'),
@@ -16,8 +15,6 @@ const AuthenticatedSolidApp = dynamic(
   () => import('../components/AuthenticatedSolidApp'))
 
 function MyApp({ Component, pageProps }) {
-  // disable to debug issues in staging
-  useFathom()
 
   return (
     <>

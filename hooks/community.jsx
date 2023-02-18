@@ -1,16 +1,7 @@
 import { setThing, setUrl } from '@inrupt/solid-client';
-import {
-  getNurseryFile,
-  getPublicFile,
-  HomeSpaceSlug,
-  useGarden,
-  useSpace,
-  useSpaces,
-  useSpaceWithSetup,
-} from 'garden-kit';
+import { useGarden } from 'garden-kit';
 import { RDFS } from '@inrupt/vocab-common-rdf';
 import { useCallback } from 'react';
-import { useResource } from 'swrlit';
 
 export const CommunityNurseryUrl =
   process.env.COMMUNITY_NURSERY_URL ||
