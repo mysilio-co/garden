@@ -44,6 +44,7 @@ export default function Dashboard() {
   const headerProps = useMemo(
     () => ({
       onSearch: setSearch,
+      type: 'dashboard',
     }),
     [setSearch]
   );
