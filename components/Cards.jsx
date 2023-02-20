@@ -1,42 +1,44 @@
-import { asUrl } from "@inrupt/solid-client/thing/thing";
-import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
-import { useWebId } from "swrlit";
-import { Loader } from './elements'
-import ItemCard from './cards/ItemCard'
-import { getItemAll } from "garden-kit/garden";
+import { asUrl } from '@inrupt/solid-client/thing/thing';
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource';
+import { useWebId } from 'swrlit';
+import { Loader } from './elements';
+import ItemCard from './cards/ItemCard';
+import { getItemAll } from 'garden-kit/garden';
+import { getUrl } from '@inrupt/solid-client';
+import { RDFS } from '@inrupt/vocab-common-rdf';
+import { getCreator, getTitle } from 'garden-kit';
 
-export function CardsFromGarden({ garden, webId, filteredItems, spaceSlug }) {
-  const items = filteredItems || (garden && getItemAll(garden));
-  return (
-    <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-      {items &&
-        items.map((item) => {
-          return (
-            <ItemCard
-              key={asUrl(item)}
-              gardenUrl={garden && getSourceUrl(garden)}
-              item={item}
-              webId={webId}
-              workspaceSlug={spaceSlug}
-            />
-          );
-        })}
-    </ul>
-  );
-}
-
-export default function Cards({ spaceSlug, webId, garden }) {
+export default function Cards({
+  spaceSlug,
+  webId,
+  garden,
+  isCommunityGarden = false,
+}) {
   const myWebId = useWebId();
-  const hasItems = garden && (getItemAll(garden).length > 0)
+  const items = garden && getItemAll(garden);
+  const hasItems = items && items.length > 0;
   return (
     <>
       {garden ? (
         hasItems ? (
-          <CardsFromGarden
-            webId={webId}
-            garden={garden}
-            spaceSlug={spaceSlug}
-          />
+          <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+            {items &&
+              items.map((item) => {
+                return (
+                  <ItemCard
+                    key={asUrl(item)}
+                    gardenUrl={
+                      isCommunityGarden
+                        ? getUrl(item, RDFS.seeAlso)
+                        : garden && getSourceUrl(garden)
+                    }
+                    item={item}
+                    webId={getCreator(item) || webId}
+                    workspaceSlug={spaceSlug}
+                  />
+                );
+              })}
+          </ul>
         ) : (
           <div>
             <h2 className="text-2xl mb-2">

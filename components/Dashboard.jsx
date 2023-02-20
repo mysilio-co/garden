@@ -9,6 +9,7 @@ import LeftNavLayout from '../components/LeftNavLayout';
 import Cards from '../components/Cards';
 
 import { useCommunityGarden } from '../hooks/community';
+import { HomeSpaceSlug } from 'garden-kit';
 
 function GardenCreator({ url }) {
   const { setupGarden } = useGardenWithSetup(url);
@@ -21,7 +22,12 @@ function Garden({ search }) {
   return (
     <div>
       {garden ? (
-        <Cards webId={webId} garden={garden} />
+        <Cards
+          webId={webId}
+          garden={garden}
+          spaceSlug={HomeSpaceSlug}
+          isCommunityGarden={true}
+        />
       ) : error && error.statusCode === 404 ? (
         <GardenCreator url={url} />
       ) : (
@@ -38,6 +44,7 @@ export default function Dashboard() {
   const headerProps = useMemo(
     () => ({
       onSearch: setSearch,
+      type: 'dashboard',
     }),
     [setSearch]
   );
