@@ -5,18 +5,19 @@ import {
   getItemAll,
   MY,
   getNote,
+  getNoteValue,
+  thingsToArray,
+  noteThingToSlateObject,
 } from 'garden-kit';
 import { setDatetime, setThing } from '@inrupt/solid-client/thing/set';
-import { createThing } from '@inrupt/solid-client/thing/thing';
-import {
-  getSourceUrl,
-  overwriteFile,
-} from '@inrupt/solid-client/resource/resource';
+import { createThing, getThing } from '@inrupt/solid-client/thing/thing';
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource';
+import { overwriteFile } from '@inrupt/solid-client/resource/file';
 import {
   saveSolidDatasetAt,
   getSolidDataset,
 } from '@inrupt/solid-client/resource/solidDataset';
-import { getDatetime, getThing, getUrl } from '@inrupt/solid-client/thing/get';
+import { getDatetime, getUrl } from '@inrupt/solid-client/thing/get';
 import { DCTERMS } from '@inrupt/vocab-common-rdf';
 import Fuse from 'fuse.js';
 
@@ -111,8 +112,10 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
 
     const { entries: entriesToUpdate } =
       await fullTextFuseEntriesFromGardenItems(itemsToUpdate, { fetch });
+    console.log(`Entries to update: ${entriesToUpdate.length}`);
     const { entries: allEntries, options } =
       fuseEntriesFromGardenItems(allItems);
+    console.log(`Total entries: ${allEntries.length}`);
 
     let fuse;
     if (fuseIndex) {
@@ -132,21 +135,21 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
     }
 
     const updatedIndex = fuse.getIndex();
-    console.log(
-      `Updating garden search index ${JSON.stringify(updatedIndex.toJSON)}`
-    );
-    const buf = Buffer.from(JSON.stringify(updatedIndex.toJSON));
-    await overwriteFile(fuseIndexUrl, buf, {
-      fetch,
-      contentType: 'application/json',
-    });
+    if (updatedIndex) {
+      const buf = Buffer.from(JSON.stringify(updatedIndex.toJSON()));
+      await overwriteFile(fuseIndexUrl, buf, {
+        fetch,
+        contentType: 'application/json',
+      });
+    } else {
+      console.log('No items in garden, saving empty json index');
+      const buf = Buffer.from(JSON.stringify({}));
+      await overwriteFile(fuseIndexUrl, buf, {
+        fetch,
+        contentType: 'application/json',
+      });
+    }
   } else {
-    console.log('No items in garden, saving empty json index');
-    const buf = Buffer.from(JSON.stringify({}));
-    await overwriteFile(fuseIndexUrl, buf, {
-      fetch,
-      contentType: 'application/json',
-    });
   }
 
   const updatedFuseIndexInfo = setDatetime(
@@ -195,7 +198,8 @@ export async function setupGardenSearchIndexAPI(gardenUrl, fuseIndexUrl) {
   const apiUrl =
     `/api/garden/${encodeURIComponent(gardenUrl)}` +
     `/fuse/setup/${encodeURIComponent(fuseIndexUrl)}`;
+  console.log(apiUrl);
   return await fetch(apiUrl, {
-    method: 'POST',
+    method: 'GET',
   });
 }

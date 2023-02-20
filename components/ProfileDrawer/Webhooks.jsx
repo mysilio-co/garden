@@ -126,10 +126,13 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
         access: {
           read: true,
           write: true,
+          apend: true,
         },
       },
     });
-    // await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), { fetch, });
+    await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), {
+      fetch,
+    });
     await addWebhookSubscription(gardenUrl, fuseWebhookUrl(gardenUrl));
   }
   async function disable(gardenUrl) {
@@ -140,6 +143,7 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
         access: {
           read: false,
           write: false,
+          append: false,
         },
       },
     });

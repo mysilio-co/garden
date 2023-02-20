@@ -6,11 +6,12 @@ const ClientSecret = process.env.MKG_CLIENT_SECRET;
 const IDP = process.env.MKG_IDP;
 
 export default async function handler(req, res) {
+  console.log('Deconstructing query params');
   const { gardenUrl, fuseIndexUrl } = req.query;
-  const decodedGardenUrl = decodeURIComponent(gardenUrl);
-  const decodedFuseIndexUrl = decodeURIComponent(fuseIndexUrl);
+  const decodedGardenUrl = decodeURI(gardenUrl);
+  const decodedFuseIndexUrl = decodeURI(fuseIndexUrl);
 
-  if (req.method === 'POST') {
+  if (req.method === 'GET') {
     console.log(
       `Setting up fuse index for garden ${decodedGardenUrl} at ${decodedFuseIndexUrl}`
     );
@@ -20,7 +21,8 @@ export default async function handler(req, res) {
       clientSecret: ClientSecret,
       oidcIssuer: IDP,
     });
-    const { fetch } = session;
+    const { fetch, info } = session;
+    console.log(`Authenticated as ${info.webId}`);
     await setupGardenSearchIndex(decodedGardenUrl, decodedFuseIndexUrl, {
       fetch,
     });
@@ -28,6 +30,6 @@ export default async function handler(req, res) {
   } else {
     return res
       .status(405)
-      .json({ message: 'The fuse setup handler only accepts POST requests' });
+      .json({ message: 'The fuse setup handler only accepts GET requests' });
   }
 }
