@@ -10,10 +10,10 @@ import {
   toRdfJsDataset,
   buildThing,
 } from '@inrupt/solid-client';
-import { useGarden } from 'garden-kit';
 import { RDFS, DCTERMS, OWL } from '@inrupt/vocab-common-rdf';
 import { useCallback } from 'react';
 import { useResource, useThing } from 'swrlit';
+import { addRDFType, isPerson, useGarden } from 'garden-kit';
 
 export const CommunityNurseryUrl =
   process.env.NEXT_PUBLIC_COMMUNITY_NURSERY_URL ||
@@ -65,12 +65,15 @@ export function usernameFromUrl(contactUrl) {
 export function usernameFromContact(contact) {
   return usernameFromUrl(asUrl(contact));
 }
+
 export function createContact(username, webId) {
-  return buildThing(createThing({ name: username }))
+  const contact = buildThing(createThing({ name: username }))
     .addUrl(OWL.sameAs, webId)
     .addDatetime(DCTERMS.modified, new Date())
     .addDatetime(DCTERMS.created, new Date())
     .build();
+
+  return addRDFType(contact, MY.Garden.Person);
 }
 
 export function addContact(contacts, username, webId) {
@@ -85,6 +88,10 @@ export function addContact(contacts, username, webId) {
 
 export function getContact(contacts, username) {
   return getThing(contacts, urlForUsername(username));
+}
+
+export function getContactAll(contacts) {
+  return getThingAll(contacts).filter(isPerson);
 }
 
 export function getContactByWebId(contacts, webId) {

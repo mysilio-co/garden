@@ -139,10 +139,8 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
       }
 
       const updatedIndex = fuse.getIndex();
-      const json = JSON.stringify(updatedIndex.toJSON());
-      console.log('Saving json index');
-      console.log(json);
-      const buf = Buffer.from(json);
+      console.log('Updating saved json index');
+      const buf = Buffer.from(JSON.stringify(updatedIndex.toJSON()));
       await overwriteFile(fuseIndexUrl, buf, {
         fetch,
         contentType: 'application/json',

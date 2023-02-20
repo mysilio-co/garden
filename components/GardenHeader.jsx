@@ -90,7 +90,6 @@ function GardenAuthor({ profile }) {
 
 export default function GardenHeader({
   type,
-  onSearch,
   openSidebar,
   authorProfile,
   gardenSettings,

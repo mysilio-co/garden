@@ -56,13 +56,10 @@ async function ensureAcl(resourceUrl, options) {
     let acl;
     if (hasResourceAcl(resourceWithAcl)) {
       acl = getResourceAcl(resourceWithAcl);
-      console.log(`getResourceAcl:${acl}`);
     } else if (hasFallbackAcl(resourceWithAcl)) {
       acl = createAclFromFallbackAcl(resourceWithAcl);
-      console.log(`createAclFromFallbackAcl:${acl}`);
     } else {
       acl = createAcl(resourceWithAcl);
-      console.log(`createAcl:${acl}`);
     }
     if (options.default) {
       if (options.default.public) {
@@ -77,7 +74,7 @@ async function ensureAcl(resourceUrl, options) {
     }
     await saveAclFor(resourceWithAcl, acl, options);
   } else {
-    throw new Error('Cannot ensureAcl for undefined resource');
+    throw new Error('Cannot ensureAcl for unknown resource');
   }
 }
 
