@@ -2,8 +2,7 @@ import {
   asUrl,
   createAcl,
   createAclFromFallbackAcl,
-  createSolidDataset,
-  getContainedResourceUrlAll,
+  getResourceAcl,
   getResourceInfoWithAcl,
   getUrl,
   hasAccessibleAcl,
@@ -11,7 +10,8 @@ import {
   hasResourceAcl,
   overwriteFile,
   saveAclFor,
-  saveSolidDatasetAt,
+  setAgentDefaultAccess,
+  setPublicDefaultAccess,
 } from '@inrupt/solid-client';
 import {
   gardenMetadataInSpacePrefs,
@@ -23,20 +23,13 @@ import {
   useSpaces,
   useWebhooks,
 } from 'garden-kit';
-import {
-  useWebId,
-  useAuthentication,
-  RevokedAccess,
-  useAgentAccess,
-} from 'swrlit';
+import { useWebId, useAuthentication } from 'swrlit';
 import { useMemo } from 'react';
 import {
   defaultFuseIndexUrl,
   fuseWebhookUrl,
-  setupGardenSearchIndex,
   setupGardenSearchIndexAPI,
 } from '../../model/search';
-import { setAgentAccess } from '@inrupt/solid-client/universal';
 
 export const MysilioKnowledgeGnome =
   process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me';
@@ -60,15 +53,29 @@ async function ensureAcl(resourceUrl, options) {
         'The current user does not have permission to change access rights to this Resource.'
       );
     }
-    if (!hasResourceAcl(resourceWithAcl)) {
-      let acl;
-      if (hasFallbackAcl(resourceWithAcl)) {
-        acl = createAclFromFallbackAcl(resourceWithAcl);
-      } else {
-        acl = createAcl(resourceWithAcl);
-      }
-      await saveAclFor(resourceWithAcl, acl, options);
+    let acl;
+    if (hasResourceAcl(resourceWithAcl)) {
+      acl = getResourceAcl(resourceWithAcl);
+      console.log(`getResourceAcl:${acl}`);
+    } else if (hasFallbackAcl(resourceWithAcl)) {
+      acl = createAclFromFallbackAcl(resourceWithAcl);
+      console.log(`createAclFromFallbackAcl:${acl}`);
+    } else {
+      acl = createAcl(resourceWithAcl);
+      console.log(`createAcl:${acl}`);
     }
+    if (options.default) {
+      if (options.default.public) {
+        acl = setPublicDefaultAccess(acl, options.default.access);
+      } else {
+        acl = setAgentDefaultAccess(
+          acl,
+          options.default.agent,
+          options.default.access
+        );
+      }
+    }
+    await saveAclFor(resourceWithAcl, acl, options);
   } else {
     throw new Error('Cannot ensureAcl for undefined resource');
   }
@@ -88,8 +95,6 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   const gardens = gardenMetadataInSpacePrefs(home, spaces);
 
   const containerUrl = getContainer(home);
-  const { ensureAccess: ensureMKGAccess, revokeAccess: revokeMKGAccess } =
-    useAgentAccess(containerUrl, MysilioKnowledgeGnome);
 
   function getFuseIndexUrl(gardenUrl) {
     const gardenMetadata = gardens.find((garden) => {
@@ -114,14 +119,30 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
   }
 
   async function enable(gardenUrl) {
-    await ensureMKGAccess({ read: true, write: true });
-    await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), {
+    await ensureAcl(containerUrl, {
       fetch,
+      default: {
+        agent: MysilioKnowledgeGnome,
+        access: {
+          read: true,
+          write: true,
+        },
+      },
     });
+    // await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), { fetch, });
     await addWebhookSubscription(gardenUrl, fuseWebhookUrl(gardenUrl));
   }
   async function disable(gardenUrl) {
-    await revokeMKGAccess();
+    await ensureAcl(containerUrl, {
+      fetch,
+      default: {
+        agent: MysilioKnowledgeGnome,
+        access: {
+          read: false,
+          write: false,
+        },
+      },
+    });
     await unsubscribeFromWebhook(getWebhook(gardenUrl));
   }
   async function toggle(gardenUrl) {

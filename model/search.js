@@ -6,18 +6,17 @@ import {
   MY,
   getNote,
 } from 'garden-kit';
+import { setDatetime, setThing } from '@inrupt/solid-client/thing/set';
+import { createThing } from '@inrupt/solid-client/thing/thing';
 import {
-  createThing,
-  getDatetime,
-  getSolidDataset,
   getSourceUrl,
-  getThing,
-  getUrl,
   overwriteFile,
+} from '@inrupt/solid-client/resource/resource';
+import {
   saveSolidDatasetAt,
-  setDatetime,
-  setThing,
-} from '@inrupt/solid-client';
+  getSolidDataset,
+} from '@inrupt/solid-client/resource/solidDataset';
+import { getDatetime, getThing, getUrl } from '@inrupt/solid-client/thing/get';
 import { DCTERMS } from '@inrupt/vocab-common-rdf';
 import Fuse from 'fuse.js';
 

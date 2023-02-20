@@ -10,18 +10,17 @@ export default async function handler(req, res) {
   const decodedGardenUrl = decodeURIComponent(gardenUrl);
   const decodedFuseIndexUrl = decodeURIComponent(fuseIndexUrl);
 
-  const session = new Session();
-  await session.login({
-    clientId: ClientID,
-    clientSecret: ClientSecret,
-    oidcIssuer: IDP,
-  });
-  const { fetch } = session;
-
   if (req.method === 'POST') {
     console.log(
       `Setting up fuse index for garden ${decodedGardenUrl} at ${decodedFuseIndexUrl}`
     );
+    const session = new Session();
+    await session.login({
+      clientId: ClientID,
+      clientSecret: ClientSecret,
+      oidcIssuer: IDP,
+    });
+    const { fetch } = session;
     await setupGardenSearchIndex(decodedGardenUrl, decodedFuseIndexUrl, {
       fetch,
     });
