@@ -9,8 +9,12 @@ import {
   thingsToArray,
   noteThingToSlateObject,
 } from 'garden-kit';
-import { setDatetime, setThing } from '@inrupt/solid-client/thing/set';
-import { createThing, getThing } from '@inrupt/solid-client/thing/thing';
+import { setDatetime } from '@inrupt/solid-client/thing/set';
+import {
+  createThing,
+  setThing,
+  getThing,
+} from '@inrupt/solid-client/thing/thing';
 import { getSourceUrl } from '@inrupt/solid-client/resource/resource';
 import { overwriteFile } from '@inrupt/solid-client/resource/file';
 import {
@@ -98,68 +102,70 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
 
   const allItems = getItemAll(garden);
   if (allItems.length > 0) {
-    let itemsToUpdate;
+    let itemsToUpdate = [];
     if (fuseLastModified) {
       for (const item of allItems) {
-        if (getDatetime(item, DCTERMS.modified) > fuseLastModifed) {
+        if (getDatetime(item, DCTERMS.modified) > fuseLastModified) {
           itemsToUpdate = [...itemsToUpdate, item];
         }
       }
     } else {
       itemsToUpdate = allItems;
-      1;
     }
 
-    const { entries: entriesToUpdate } =
-      await fullTextFuseEntriesFromGardenItems(itemsToUpdate, { fetch });
-    console.log(`Entries to update: ${entriesToUpdate.length}`);
-    const { entries: allEntries, options } =
-      fuseEntriesFromGardenItems(allItems);
-    console.log(`Total entries: ${allEntries.length}`);
+    if (itemsToUpdate.length > 0) {
+      const { entries: entriesToUpdate } =
+        await fullTextFuseEntriesFromGardenItems(itemsToUpdate, { fetch });
+      console.log(`Entries to update: ${entriesToUpdate.length}`);
+      const { entries: allEntries, options } =
+        fuseEntriesFromGardenItems(allItems);
+      console.log(`Total entries: ${allEntries.length}`);
 
-    let fuse;
-    if (fuseIndex) {
-      fuse = new Fuse(allEntries, options, fuseIndex);
-      const toRemove = new Set();
-      for (const item of itemsToUpdate) {
-        toRemove.add(getUUID(item));
+      let fuse;
+      if (fuseIndex) {
+        fuse = new Fuse(allEntries, options, fuseIndex);
+        const toRemove = new Set();
+        for (const item of itemsToUpdate) {
+          toRemove.add(getUUID(item));
+        }
+        fuse.remove((doc) => {
+          return toRemove.has(doc.uuid);
+        });
+        for (const entry of entriesToUpdate) {
+          fuse.add(entry);
+        }
+      } else {
+        fuse = new Fuse(entriesToUpdate, options);
       }
-      fuse.remove((doc) => {
-        return toRemove.has(doc.uuid);
-      });
-      for (const entry of entriesToUpdate) {
-        fuse.add(entry);
-      }
-    } else {
-      fuse = new Fuse(entriesToUpdate, options);
-    }
 
-    const updatedIndex = fuse.getIndex();
-    if (updatedIndex) {
-      const buf = Buffer.from(JSON.stringify(updatedIndex.toJSON()));
+      const updatedIndex = fuse.getIndex();
+      const json = JSON.stringify(updatedIndex.toJSON());
+      console.log('Saving json index');
+      console.log(json);
+      const buf = Buffer.from(json);
       await overwriteFile(fuseIndexUrl, buf, {
         fetch,
         contentType: 'application/json',
       });
+
+      const updatedFuseIndexInfo = setDatetime(
+        fuseIndexInfo || createThing({ url: fuseIndexUrl }),
+        DCTERMS.modified,
+        new Date()
+      );
+      await saveSolidDatasetAt(
+        gardenUrl,
+        setThing(garden, updatedFuseIndexInfo),
+        {
+          fetch,
+        }
+      );
     } else {
-      console.log('No items in garden, saving empty json index');
-      const buf = Buffer.from(JSON.stringify({}));
-      await overwriteFile(fuseIndexUrl, buf, {
-        fetch,
-        contentType: 'application/json',
-      });
+      console.log(
+        `Index last modified at ${fuseLastModified}.  Nothing to update.`
+      );
     }
-  } else {
   }
-
-  const updatedFuseIndexInfo = setDatetime(
-    fuseIndexInfo || createThing({ url: fuseIndexUrl }),
-    DCTERMS.modified,
-    new Date()
-  );
-  await saveSolidDatasetAt(gardenUrl, setThing(garden, updatedFuseIndexInfo), {
-    fetch,
-  });
 }
 
 export async function setupGardenSearchIndex(

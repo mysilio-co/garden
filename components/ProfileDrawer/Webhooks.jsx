@@ -130,6 +130,12 @@ export default function Webhooks({ profile, saveProfile, ...props }) {
         },
       },
     });
+
+    const b = new Blob([JSON.stringify({})]);
+    await overwriteFile(getFuseIndexUrl(gardenUrl), b, {
+      fetch,
+      contentType: 'application/json',
+    });
     await setupGardenSearchIndexAPI(gardenUrl, getFuseIndexUrl(gardenUrl), {
       fetch,
     });
