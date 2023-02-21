@@ -1,6 +1,15 @@
 @tailwind base;
 /* Write your own custom base styles here */
 
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  margin-left: 0.4em;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+  cursor: pointer;
+}
+
 .link {
   @apply text-gray-300;
 }
@@ -110,7 +119,7 @@ strong {
   @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
 }
 
- /* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
+/* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
 .tab-btn {
   @apply text-xl rounded-lg p-3;
@@ -138,7 +147,7 @@ strong {
 /* Stop purging. */
 
 .file-ipt {
-  @apply cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100
+  @apply cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100;
 }
 
 /* slate editor -- classes assigned automatically by Plate */
@@ -188,7 +197,7 @@ strong {
 }
 
 .grid.hex > *::after {
-  content: "";
+  content: '';
   display: block;
   padding-bottom: 86.602%;
   /* =  100 / tan(60) * 1.5 */

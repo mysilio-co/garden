@@ -24,9 +24,9 @@ export function SearchResults({ title, results }) {
   return (
     <>
       {results && results.length > 0 && (
-        <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
+        <Combobox.Label className="uppercase text-gray-300 text-xs mt-2.5 px-4">
           {title}
-        </div>
+        </Combobox.Label>
       )}
       {results &&
         results.map((result) => (
@@ -89,7 +89,7 @@ export default function Search({}) {
   };
 
   return (
-    <div className="flex flex-row max-h-9 self-center">
+    <div className="flex flex-row self-center">
       <div className="relative overflow-y-visible">
         <Combobox value={selectedResult} onChange={selectSearchResult}>
           <div className="relative">
@@ -100,7 +100,7 @@ export default function Search({}) {
               type="search"
               name="search"
               placeholder="Search"
-              className="pl-12 ipt-header-search"
+              className="pl-12 ipt ipt-header-search"
               displayValue={(result) => (result ? result.item.title : search)}
               onChange={(event) => setSearch(event.target.value)}
             />
