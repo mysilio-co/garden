@@ -24,9 +24,9 @@ export function SearchResults({ title, results }) {
   return (
     <>
       {results && results.length > 0 && (
-        <Combobox.Label className="uppercase text-gray-300 text-xs mt-2.5 px-4">
+        <div className="uppercase text-gray-300 text-xs mt-2.5 px-4">
           {title}
-        </Combobox.Label>
+        </div>
       )}
       {results &&
         results.map((result) => (
@@ -114,7 +114,7 @@ export default function Search({}) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Combobox.Options className="origin-top-left absolute right-0 mt-2 w-52 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
+            <Combobox.Options className="origin-top-left absolute right-0 mt-2 w-64 rounded-lg overflow-hidden shadow-menu text-xs bg-white focus:outline-none z-40">
               {gardens &&
                 gardens.map((garden) => {
                   return (
