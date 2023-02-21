@@ -30,6 +30,7 @@ export function useCommunityContactsSearchResults(search) {
         name: getStringNoLocale(contact, FOAF.name),
         webId: getStringNoLocale(contact, OWL.sameAs),
         usename: usernameFromContact(contact),
+        href: webId,
       };
     });
 
@@ -47,10 +48,11 @@ export function useCommunityGardenSearchResults(search) {
 }
 
 export function useGardenSearchResults(search, garden) {
+  const gardenUrl = getSourceUrl(garden);
   const { entries, options } = garden
-    ? fuseEntriesFromGardenItems(getItemAll(garden))
+    ? fuseEntriesFromGardenItems(getItemAll(garden), gardenUrl)
     : { entries: undefined, options: undefined };
-  const gardenSettings = garden && getThing(garden, getSourceUrl(garden));
+  const gardenSettings = garden && getThing(garden, gardenUrl);
   const fuseIndexUrl =
     gardenSettings && getUrl(gardenSettings, MY.Garden.hasFuseIndex);
 

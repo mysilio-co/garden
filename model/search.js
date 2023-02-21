@@ -8,6 +8,8 @@ import {
   getNoteValue,
   thingsToArray,
   noteThingToSlateObject,
+  getCreator,
+  HomeSpaceSlug,
 } from 'garden-kit';
 import { setDatetime } from '@inrupt/solid-client/thing/set';
 import {
@@ -24,6 +26,7 @@ import {
 import { getDatetime, getUrl } from '@inrupt/solid-client/thing/get';
 import { DCTERMS } from '@inrupt/vocab-common-rdf';
 import Fuse from 'fuse.js';
+import { itemPath } from '../utils/uris';
 
 export function defaultFuseIndexUrl(gardenUrl) {
   return gardenUrl.replace(/(\.ttl$)/, '-fuse.json');
@@ -37,18 +40,21 @@ export function defaultOptions(keys) {
   };
 }
 
-function fuseEntryFromGardenItem(item) {
+function fuseEntryFromGardenItem(item, gardenUrl) {
   return {
     title: getTitle(item),
     description: getDescription(item),
     uuid: getUUID(item),
+    href:
+      gardenUrl &&
+      itemPath(getCreator(item), HomeSpaceSlug, gardenUrl, getTitle(item)),
   };
 }
 
-export function fuseEntriesFromGardenItems(items) {
+export function fuseEntriesFromGardenItems(items, gardenUrl) {
   const keys = ['title', 'description'];
   return {
-    entries: items.map(fuseEntryFromGardenItem),
+    entries: items.map((item) => fuseEntryFromGardenItem(item, gardenUrl)),
     keys: keys,
     options: defaultOptions(keys),
   };

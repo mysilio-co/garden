@@ -17,7 +17,8 @@ import { Search as SearchIcon } from './icons';
 import { Combobox, Transition } from '@headlessui/react';
 import { asUrl, getSourceUrl, getThing } from '@inrupt/solid-client';
 import { classNames } from '../utils/html';
-import { result } from 'rdf-namespaces/dist/as';
+import Link from 'next/link';
+import { Router, useRouter } from 'next/router';
 
 export function SearchResults({ title, results }) {
   return (
@@ -29,19 +30,25 @@ export function SearchResults({ title, results }) {
       )}
       {results &&
         results.map((result) => (
-          <Combobox.Option key={result.item.uuid} value={result} as={Fragment}>
-            {({ active }) => (
-              <a
-                href="#"
-                className={classNames(
-                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                  'menu-item'
-                )}
-              >
-                {result.item.title}
-              </a>
-            )}
-          </Combobox.Option>
+          <Link
+            href={result.item.href}
+            key={result.item.href}
+            passHref
+            legacyBehavior
+          >
+            <Combobox.Option value={result} as={Fragment}>
+              {({ active }) => (
+                <a
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'menu-item'
+                  )}
+                >
+                  {result.item.title}
+                </a>
+              )}
+            </Combobox.Option>
+          </Link>
         ))}
     </>
   );
@@ -73,12 +80,12 @@ export default function Search({}) {
   const { spaces } = useSpaces(webId);
   const home = spaces && getSpace(spaces, HomeSpaceSlug);
   const gardens = gardenMetadataInSpacePrefs(home, spaces);
-
+  const router = useRouter();
   const [selectedResult, setSelectedResult] = useState(undefined);
 
   const selectSearchResult = (result) => {
-    console.log(result);
     setSelectedResult(result);
+    router.push(result.item.href);
   };
 
   return (
@@ -94,7 +101,7 @@ export default function Search({}) {
               name="search"
               placeholder="Search"
               className="pl-12 ipt-header-search"
-              displayValue={(result) => result.item.title}
+              displayValue={(result) => (result ? result.item.title : search)}
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
@@ -112,6 +119,7 @@ export default function Search({}) {
                 gardens.map((garden) => {
                   return (
                     <GardenSearchResults
+                      key={asUrl(garden)}
                       search={search}
                       gardenUrl={asUrl(garden)}
                     />
