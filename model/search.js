@@ -36,6 +36,9 @@ export function defaultOptions(keys) {
   };
 }
 
+export const FullTextFuseKeys = ['title', 'description', 'text'];
+export const FuseKeys = ['title', 'description'];
+
 function fuseEntryFromGardenItem(item, gardenUrl) {
   return {
     title: getTitle(item),
@@ -48,12 +51,7 @@ function fuseEntryFromGardenItem(item, gardenUrl) {
 }
 
 export function fuseEntriesFromGardenItems(items, gardenUrl) {
-  const keys = ['title', 'description'];
-  return {
-    entries: items.map((item) => fuseEntryFromGardenItem(item, gardenUrl)),
-    keys: keys,
-    options: defaultOptions(keys),
-  };
+  return items.map((item) => fuseEntryFromGardenItem(item, gardenUrl));
 }
 
 async function fullTextFuseEntryFromGardenItem(item, gardenUrl, options) {
@@ -80,17 +78,11 @@ export async function fullTextFuseEntriesFromGardenItems(
   gardenUrl,
   options
 ) {
-  const entries = await Promise.all(
+  return await Promise.all(
     items.map((item) =>
       fullTextFuseEntryFromGardenItem(item, gardenUrl, options)
     )
   );
-  const keys = ['title', 'description', 'fullText'];
-  return {
-    entries: entries,
-    keys: keys,
-    options: defaultOptions(keys),
-  };
 }
 
 async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
@@ -122,17 +114,17 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
     }
 
     if (itemsToUpdate.length > 0) {
-      const { entries: entriesToUpdate } =
-        await fullTextFuseEntriesFromGardenItems(itemsToUpdate, gardenUrl, {
+      const entriesToUpdate = await fullTextFuseEntriesFromGardenItems(
+        itemsToUpdate,
+        gardenUrl,
+        {
           fetch,
-        });
-      console.log(`Entries to update: ${entriesToUpdate.length}`);
-      const { entries: allEntries, options } = fuseEntriesFromGardenItems(
-        allItems,
-        gardenUrl
+        }
       );
+      console.log(`Entries to update: ${entriesToUpdate.length}`);
+      const allEntries = fuseEntriesFromGardenItems(allItems, gardenUrl);
       console.log(`Total entries: ${allEntries.length}`);
-
+      const options = defaultOptions(FullTextFuseKeys);
       let fuse;
       if (fuseIndex) {
         fuse = new Fuse(allEntries, options, fuseIndex);

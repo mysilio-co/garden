@@ -79,7 +79,7 @@ export default function Search({}) {
   const webId = useWebId();
   const { spaces } = useSpaces(webId);
   const home = spaces && getSpace(spaces, HomeSpaceSlug);
-  const gardens = gardenMetadataInSpacePrefs(home, spaces);
+  const gardens = spaces && gardenMetadataInSpacePrefs(home, spaces);
   const router = useRouter();
   const [selectedResult, setSelectedResult] = useState(undefined);
 

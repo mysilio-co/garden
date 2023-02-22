@@ -75,11 +75,15 @@ export function useSearchResults(search, entries, options, fuseIndexFile) {
     console.log(`Fuse index at ${fuseIndexFile}:`);
     console.log(data);
     console.log(fuseIndex);
+    console.log(entries);
     console.log(options);
-    if (!entries) return undefined;
-    if (fuseIndex) {
+    if (!entries || entries.length === 0) {
+      return undefined;
+    } else if (fuseIndex) {
       return new Fuse(entries, options, fuseIndex);
-    } else return new Fuse(entries, options);
+    } else {
+      return new Fuse(entries, options);
+    }
   }, [entries, options, fuseIndex]);
 
   const results = useMemo(() => {
