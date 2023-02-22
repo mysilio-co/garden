@@ -31,6 +31,7 @@ import { itemPath } from '../utils/uris';
 export function defaultOptions(keys) {
   return {
     includeScore: true,
+    ignoreLocation: true,
     threshold: 0.3,
     keys: keys,
   };
