@@ -69,7 +69,7 @@ async function fullTextFuseEntryFromGardenItem(item, gardenUrl, options) {
   const itemEntry = fuseEntryFromGardenItem(item, gardenUrl);
   return {
     ...itemEntry,
-    fullText: valueStr,
+    text: valueStr,
   };
 }
 
