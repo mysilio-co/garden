@@ -28,10 +28,6 @@ import { DCTERMS } from '@inrupt/vocab-common-rdf';
 import Fuse from 'fuse.js';
 import { itemPath } from '../utils/uris';
 
-export function defaultFuseIndexUrl(gardenUrl) {
-  return gardenUrl.replace(/(\.ttl$)/, '-fuse.json');
-}
-
 export function defaultOptions(keys) {
   return {
     includeScore: true,
@@ -60,7 +56,7 @@ export function fuseEntriesFromGardenItems(items, gardenUrl) {
   };
 }
 
-async function fullTextFuseEntryFromGardenItem(item, options) {
+async function fullTextFuseEntryFromGardenItem(item, gardenUrl, options) {
   const noteBodyResourceUrl = item && getNote(item);
   const noteResource = await getSolidDataset(noteBodyResourceUrl, options);
   const noteBody = getThing(noteResource, noteBodyResourceUrl);
@@ -72,16 +68,22 @@ async function fullTextFuseEntryFromGardenItem(item, options) {
     thingsToArray(valueThing, noteResource, noteThingToSlateObject);
 
   const valueStr = JSON.stringify(value);
-  const itemEntry = fuseEntryFromGardenItem(item);
+  const itemEntry = fuseEntryFromGardenItem(item, gardenUrl);
   return {
     ...itemEntry,
     fullText: valueStr,
   };
 }
 
-export async function fullTextFuseEntriesFromGardenItems(items, options) {
+export async function fullTextFuseEntriesFromGardenItems(
+  items,
+  gardenUrl,
+  options
+) {
   const entries = await Promise.all(
-    items.map((item) => fullTextFuseEntryFromGardenItem(item, options))
+    items.map((item) =>
+      fullTextFuseEntryFromGardenItem(item, gardenUrl, options)
+    )
   );
   const keys = ['title', 'description', 'fullText'];
   return {
@@ -121,10 +123,14 @@ async function setupOrUpdateGardenSearchIndex(garden, fuseIndexUrl, { fetch }) {
 
     if (itemsToUpdate.length > 0) {
       const { entries: entriesToUpdate } =
-        await fullTextFuseEntriesFromGardenItems(itemsToUpdate, { fetch });
+        await fullTextFuseEntriesFromGardenItems(itemsToUpdate, gardenUrl, {
+          fetch,
+        });
       console.log(`Entries to update: ${entriesToUpdate.length}`);
-      const { entries: allEntries, options } =
-        fuseEntriesFromGardenItems(allItems);
+      const { entries: allEntries, options } = fuseEntriesFromGardenItems(
+        allItems,
+        gardenUrl
+      );
       console.log(`Total entries: ${allEntries.length}`);
 
       let fuse;

@@ -18,7 +18,7 @@ import { Combobox, Transition } from '@headlessui/react';
 import { asUrl, getSourceUrl, getThing } from '@inrupt/solid-client';
 import { classNames } from '../utils/html';
 import Link from 'next/link';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 export function SearchResults({ title, results }) {
   return (

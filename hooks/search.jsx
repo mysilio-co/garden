@@ -8,7 +8,11 @@ import { FOAF, OWL } from '@inrupt/vocab-common-rdf';
 import { getItemAll, MY } from 'garden-kit';
 import { useMemo } from 'react';
 import useSWR from 'swr';
-import { defaultOptions, fuseEntriesFromGardenItems } from '../model/search';
+import {
+  defaultOptions,
+  FullTextFuseKeys,
+  fuseEntriesFromGardenItems,
+} from '../model/search';
 import {
   getContactAll,
   useCommunityContacts,
@@ -16,6 +20,7 @@ import {
   usernameFromContact,
 } from './community';
 import Fuse from 'fuse.js';
+import { useAuthentication } from 'swrlit';
 
 export function useCommunityContactsSearchResults(search) {
   const { contacts } = useCommunityContacts();
@@ -49,10 +54,11 @@ export function useCommunityGardenSearchResults(search) {
 
 export function useGardenSearchResults(search, garden) {
   const gardenUrl = getSourceUrl(garden);
-  const { entries, options } = garden
-    ? fuseEntriesFromGardenItems(getItemAll(garden), gardenUrl)
-    : { entries: undefined, options: undefined };
+  const entries =
+    garden && fuseEntriesFromGardenItems(getItemAll(garden), gardenUrl);
+  const options = defaultOptions(FullTextFuseKeys);
   const gardenSettings = garden && getThing(garden, gardenUrl);
+  console.log(gardenSettings);
   const fuseIndexUrl =
     gardenSettings && getUrl(gardenSettings, MY.Garden.hasFuseIndex);
 
@@ -60,13 +66,20 @@ export function useGardenSearchResults(search, garden) {
 }
 
 export function useSearchResults(search, entries, options, fuseIndexFile) {
+  const { fetch } = useAuthentication();
   const fetcher = (url) => fetch(url).then((res) => res.json());
-  const { data: fuseIndex } = useSWR(fuseIndexFile, fetcher);
+  const { data } = useSWR(fuseIndexFile, fetcher);
+  const fuseIndex = data && Fuse.parseIndex(data);
 
   const fuse = useMemo(() => {
+    console.log(`Fuse index at ${fuseIndexFile}:`);
+    console.log(data);
+    console.log(fuseIndex);
+    console.log(options);
     if (!entries) return undefined;
-    if (fuseIndex) return new Fuse(entries, options, fuseIndex);
-    else return new Fuse(entries, options);
+    if (fuseIndex) {
+      return new Fuse(entries, options, fuseIndex);
+    } else return new Fuse(entries, options);
   }, [entries, options, fuseIndex]);
 
   const results = useMemo(() => {

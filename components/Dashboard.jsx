@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useWebId } from 'swrlit/contexts/authentication';
-import { useGardenWithSetup } from 'garden-kit/hooks';
 
 import WebMonetization from '../components/WebMonetization';
 import GardenHeader from './GardenHeader';
@@ -11,14 +10,9 @@ import Cards from '../components/Cards';
 import { useCommunityGarden } from '../hooks/community';
 import { HomeSpaceSlug } from 'garden-kit';
 
-function GardenCreator({ url }) {
-  const { setupGarden } = useGardenWithSetup(url);
-  return <button onClick={setupGarden}>Create Garden</button>;
-}
-
-function Garden({ search }) {
+function Garden() {
   const webId = useWebId();
-  const { garden, error } = useCommunityGarden();
+  const { garden } = useCommunityGarden();
   return (
     <div>
       {garden ? (
@@ -28,8 +22,6 @@ function Garden({ search }) {
           spaceSlug={HomeSpaceSlug}
           isCommunityGarden={true}
         />
-      ) : error && error.statusCode === 404 ? (
-        <GardenCreator url={url} />
       ) : (
         <Loader />
       )}
@@ -56,7 +48,7 @@ export default function Dashboard() {
     >
       <WebMonetization webId={webId} />
       <div className="p-6">
-        <Garden search={search} />
+        <Garden />
       </div>
     </LeftNavLayout>
   );
