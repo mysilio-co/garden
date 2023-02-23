@@ -24,8 +24,6 @@ function ProfileCards({ webId, search }) {
     <div>
       {garden ? (
         <Cards webId={webId} garden={garden} spaceSlug={slug} />
-      ) : error && error.statusCode === 404 ? (
-        <GardenCreator url={url} />
       ) : (
         <Loader />
       )}
