@@ -72,11 +72,6 @@ export function useSearchResults(search, entries, options, fuseIndexFile) {
   const fuseIndex = data && Fuse.parseIndex(data)
 
   const fuse = useMemo(() => {
-    console.log(`Fuse index at ${fuseIndexFile}:`)
-    console.log(data)
-    console.log(fuseIndex)
-    console.log(entries)
-    console.log(options)
     if (!entries || entries.length === 0) {
       return undefined
     } else if (fuseIndex) {
