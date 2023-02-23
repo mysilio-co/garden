@@ -1,8 +1,16 @@
-import { Editor, Transforms, Range, Point, Element, Text, Path, Node } from 'slate';
-import { ReactEditor} from 'slate-react';
+import {
+  Editor,
+  Transforms,
+  Range,
+  Point,
+  Element,
+  Text,
+  Path,
+  Node,
+} from 'slate'
+import { ReactEditor } from 'slate-react'
 
 import isUrl from 'is-url'
-
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 
@@ -20,29 +28,32 @@ export const toggleMark = (editor, format) => {
   }
 }
 
-
-export const isBlockActive = (editor, format, at=editor.selection) => {
+export const isBlockActive = (editor, format, at = editor.selection) => {
   const [match] = Editor.nodes(editor, {
     at,
-    match: n => n.type === format,
+    match: (n) => n.type === format,
   })
 
   return !!match
 }
 
-export const toggleBlock = (editor, format, at=editor.selection) => {
+export const toggleBlock = (editor, format, at = editor.selection) => {
   const isActive = isBlockActive(editor, format, at)
   const isList = LIST_TYPES.includes(format)
 
   Transforms.unwrapNodes(editor, {
     at,
-    match: n => LIST_TYPES.includes(n.type),
+    match: (n) => LIST_TYPES.includes(n.type),
     split: true,
   })
 
-  Transforms.setNodes(editor, {
-    type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-  }, { at })
+  Transforms.setNodes(
+    editor,
+    {
+      type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+    },
+    { at }
+  )
 
   if (!isActive && isList) {
     const block = { type: format, children: [] }
@@ -50,18 +61,22 @@ export const toggleBlock = (editor, format, at=editor.selection) => {
   }
 }
 
-export const makeBlock = (editor, format, at=editor.selection) => {
+export const makeBlock = (editor, format, at = editor.selection) => {
   const isList = LIST_TYPES.includes(format)
 
   Transforms.unwrapNodes(editor, {
     at,
-    match: n => LIST_TYPES.includes(n.type),
+    match: (n) => LIST_TYPES.includes(n.type),
     split: true,
   })
 
-  Transforms.setNodes(editor, {
-    type: isList ? 'list-item' : format,
-  }, { at })
+  Transforms.setNodes(
+    editor,
+    {
+      type: isList ? 'list-item' : format,
+    },
+    { at }
+  )
 
   if (isList) {
     const block = { type: format, children: [] }
@@ -69,41 +84,64 @@ export const makeBlock = (editor, format, at=editor.selection) => {
   }
 }
 
-export const insertBlock = (editor, format, at=editor.selection, attributes={}) => {
+export const insertBlock = (
+  editor,
+  format,
+  at = editor.selection,
+  attributes = {}
+) => {
   const isList = LIST_TYPES.includes(format)
-  if (format === "table") {
-    Transforms.insertNodes(editor, {
-      type: "table",
-      children: [{
-        type: "table-row",
-        children: [{
-          type: "table-cell",
-          children: [{text: ""}]
-        }]
-      }],
-      ...attributes
-    }, { at })
+  if (format === 'table') {
+    Transforms.insertNodes(
+      editor,
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              {
+                type: 'table-cell',
+                children: [{ text: '' }],
+              },
+            ],
+          },
+        ],
+        ...attributes,
+      },
+      { at }
+    )
   } else if (isList) {
-    Transforms.insertNodes(editor, {
-      type: format, children: [ { type: "list-item", children: []}],
-      ...attributes
-    }, { at })
+    Transforms.insertNodes(
+      editor,
+      {
+        type: format,
+        children: [{ type: 'list-item', children: [] }],
+        ...attributes,
+      },
+      { at }
+    )
   } else {
-    Transforms.insertNodes(editor,
-                           { type: format, children: [],
-                             ...attributes
-                           },
-                           { at })
+    Transforms.insertNodes(
+      editor,
+      { type: format, children: [], ...attributes },
+      { at }
+    )
   }
 }
 
 export const insertRow = (editor, table) => {
   const path = ReactEditor.findPath(editor, table)
-  Transforms.insertNodes(editor, {
-    type: "table-row", children: Array(table.children[0].children.length).fill().map(
-      () => ({ type: "table-cell", children: [{text: ""}]})
-    )
-  }, { at: [...path, table.children.length] })
+  Transforms.insertNodes(
+    editor,
+    {
+      type: 'table-row',
+      children: Array(table.children[0].children.length)
+        .fill()
+        .map(() => ({ type: 'table-cell', children: [{ text: '' }] })),
+    },
+    { at: [...path, table.children.length] }
+  )
 }
 
 export const removeRow = (editor, table) => {
@@ -114,30 +152,35 @@ export const removeRow = (editor, table) => {
 export const insertColumn = (editor, table) => {
   const firstRow = table.children[0]
   const firstRowPath = ReactEditor.findPath(editor, firstRow)
-  for (let i = 0; i < table.children.length; i++){
-    Transforms.insertNodes(editor, {
-      type: "table-cell", children: [{text: ""}]
-    }, { at: [...firstRowPath.slice(0, -1), i, firstRow.children.length] })
+  for (let i = 0; i < table.children.length; i++) {
+    Transforms.insertNodes(
+      editor,
+      {
+        type: 'table-cell',
+        children: [{ text: '' }],
+      },
+      { at: [...firstRowPath.slice(0, -1), i, firstRow.children.length] }
+    )
   }
 }
 
 export const removeColumn = (editor, table) => {
   const firstRow = table.children[0]
   const firstRowPath = ReactEditor.findPath(editor, firstRow)
-  for (let i = 0; i < table.children.length; i++){
+  for (let i = 0; i < table.children.length; i++) {
     Transforms.removeNodes(editor, {
-      at: [...firstRowPath.slice(0, -1), i, firstRow.children.length - 1]
+      at: [...firstRowPath.slice(0, -1), i, firstRow.children.length - 1],
     })
   }
 }
 
-export const withImages = editor => {
+export const withImages = (editor) => {
   const { insertData, isVoid } = editor
 
-  editor.isVoid = element => {
+  editor.isVoid = (element) => {
     return element.type === 'image' ? true : isVoid(element)
   }
-/*
+  /*
   // this currently inserts images inline in the page which is not at all ideal, disable for now
   editor.insertData = data => {
     const text = data.getData('text/plain')
@@ -167,29 +210,31 @@ export const withImages = editor => {
   return editor
 }
 
-export const insertImage = (editor, attributes, at=editor.selection) => {
+export const insertImage = (editor, attributes, at = editor.selection) => {
   const text = { text: '' }
   const image = { type: 'image', children: [text], ...attributes }
-  Transforms.insertNodes(editor, image, {at})
+  Transforms.insertNodes(editor, image, { at })
 }
 
-
-export const activeLink = (editor, at=editor.selection) => {
-  const [linkPath] = Editor.nodes(editor, {at,  match: n => n.type === 'link' })
-  if (linkPath){
-    const [node] =  linkPath
+export const activeLink = (editor, at = editor.selection) => {
+  const [linkPath] = Editor.nodes(editor, {
+    at,
+    match: (n) => n.type === 'link',
+  })
+  if (linkPath) {
+    const [node] = linkPath
     return node
   } else {
     return null
   }
 }
 
-export const isLinkActive = editor => {
+export const isLinkActive = (editor) => {
   return !!activeLink(editor)
 }
 
-const unwrapLink = editor => {
-  Transforms.unwrapNodes(editor, { match: n => n.type === 'link' })
+const unwrapLink = (editor) => {
+  Transforms.unwrapNodes(editor, { match: (n) => n.type === 'link' })
 }
 
 const wrapLink = (editor, url) => {
@@ -216,13 +261,20 @@ const wrapLink = (editor, url) => {
 const disallowEmpty = (type, editor) => {
   const { normalizeNode } = editor
 
-  editor.normalizeNode = entry => {
+  editor.normalizeNode = (entry) => {
     const [node, path] = entry
-    if (Element.isElement(node) && (node.type === type) &&
-        (node.children.length === 1) && Text.isText(node.children[0]) &&
-        (node.children[0].text === "")) {
-      const currentlySelected = Path.isCommon(path, editor.selection.anchor.path)
-      Transforms.removeNodes(editor, {at: path})
+    if (
+      Element.isElement(node) &&
+      node.type === type &&
+      node.children.length === 1 &&
+      Text.isText(node.children[0]) &&
+      node.children[0].text === ''
+    ) {
+      const currentlySelected = Path.isCommon(
+        path,
+        editor.selection.anchor.path
+      )
+      Transforms.removeNodes(editor, { at: path })
       if (currentlySelected) {
         Transforms.select(editor, path)
         Transforms.collapse(editor)
@@ -232,14 +284,14 @@ const disallowEmpty = (type, editor) => {
   }
 }
 
-export const withLinks = editor => {
+export const withLinks = (editor) => {
   const { insertData, insertText, isInline } = editor
 
-  editor.isInline = element => {
+  editor.isInline = (element) => {
     return element.type === 'link' ? true : isInline(element)
   }
 
-  editor.insertText = text => {
+  editor.insertText = (text) => {
     if (text && isUrl(text)) {
       wrapLink(editor, text)
     } else {
@@ -247,7 +299,7 @@ export const withLinks = editor => {
     }
   }
 
-  editor.insertData = data => {
+  editor.insertData = (data) => {
     const text = data.getData('text/plain')
 
     if (text && isUrl(text)) {
@@ -257,7 +309,7 @@ export const withLinks = editor => {
     }
   }
 
-  disallowEmpty("link", editor)
+  disallowEmpty('link', editor)
 
   return editor
 }
@@ -274,27 +326,36 @@ export const removeLink = (editor) => {
 
 export const setLinkUrl = (editor, link, url) => {
   const path = ReactEditor.findPath(editor, link)
-  Transforms.setNodes(editor, {url}, {at: path})
+  Transforms.setNodes(editor, { url }, { at: path })
 }
 
 export const setlonceptProps = (editor, concept, name) => {
   const path = ReactEditor.findPath(editor, concept)
-  Transforms.setNodes(editor, {name}, {at: path})
+  Transforms.setNodes(editor, { name }, { at: path })
 }
 
-const unwrapConcept = editor => {
+const unwrapConcept = (editor) => {
   const [_, path] = activeConceptEntry(editor)
   Editor.withoutNormalizing(editor, () => {
-    Transforms.delete(editor, {at: Editor.start(editor, path), unit: 'character', distance: 2})
-    Transforms.delete(editor, {at: Editor.end(editor, path), unit: 'character', distance: 2, reverse: true})
+    Transforms.delete(editor, {
+      at: Editor.start(editor, path),
+      unit: 'character',
+      distance: 2,
+    })
+    Transforms.delete(editor, {
+      at: Editor.end(editor, path),
+      unit: 'character',
+      distance: 2,
+      reverse: true,
+    })
   })
   // normalization will delete the concept now that it doesn't have the right text content
 }
 
-const wrapConcept = (editor, {at = editor.selection} = {}) => {
+const wrapConcept = (editor, { at = editor.selection } = {}) => {
   // MUST do end first or else cursor will be in the wrong spot
-  Transforms.insertText(editor, "]]", {at: Range.end(at)})
-  Transforms.insertText(editor, "[[", {at: Range.start(at)})
+  Transforms.insertText(editor, ']]', { at: Range.end(at) })
+  Transforms.insertText(editor, '[[', { at: Range.start(at) })
   // normalization will turn this into a concept
 }
 
@@ -302,12 +363,12 @@ export const removeConcept = (editor) => {
   unwrapConcept(editor)
 }
 
-export const activeConceptEntry = editor => {
-  const [concept] = Editor.nodes(editor, { match: n => n.type === 'concept' })
+export const activeConceptEntry = (editor) => {
+  const [concept] = Editor.nodes(editor, { match: (n) => n.type === 'concept' })
   return concept
 }
 
-export const isConceptActive = editor => {
+export const isConceptActive = (editor) => {
   return !!activeConceptEntry(editor)
 }
 
@@ -328,40 +389,48 @@ export const insertConcept = (editor, name) => {
 
 const conceptRegex = /\[\[(.+)\]\]/
 
-function hasConceptParent(editor, path){
+function hasConceptParent(editor, path) {
   const parent = Node.get(editor, path.slice(0, -1))
-  if (parent.type === "concept"){
+  if (parent.type === 'concept') {
     return true
   } else {
     return false
   }
 }
 
-export const withConcepts = editor => {
+export const withConcepts = (editor) => {
   const { isInline, insertText, deleteBackward, normalizeNode } = editor
 
-  editor.isInline = element => (element.type === 'concept') ? true : isInline(element)
+  editor.isInline = (element) =>
+    element.type === 'concept' ? true : isInline(element)
 
-  editor.normalizeNode = entry => {
+  editor.normalizeNode = (entry) => {
     const [node, path] = entry
-    if (Text.isText(node) && !hasConceptParent(editor, path)){
+    if (Text.isText(node) && !hasConceptParent(editor, path)) {
       const conceptMatch = node.text.match(conceptRegex)
-      if (conceptMatch){
-        const {index, 0: match, 1: name} = conceptMatch
-        const at = {anchor: {path, offset: index}, focus: {path, offset: index + match.length}}
-        Transforms.wrapNodes(editor, {type: "concept", children: []}, { at, split: true })
+      if (conceptMatch) {
+        const { index, 0: match, 1: name } = conceptMatch
+        const at = {
+          anchor: { path, offset: index },
+          focus: { path, offset: index + match.length },
+        }
+        Transforms.wrapNodes(
+          editor,
+          { type: 'concept', children: [] },
+          { at, split: true }
+        )
         return
       }
-    } else if (node.type === "concept"){
+    } else if (node.type === 'concept') {
       const conceptMatch = Node.string(node).match(conceptRegex)
-      if (conceptMatch){
+      if (conceptMatch) {
         const [_, name] = conceptMatch
-        if (node.name !== name){
-          Transforms.setNodes(editor, {name}, {at: path})
+        if (node.name !== name) {
+          Transforms.setNodes(editor, { name }, { at: path })
           return
         }
       } else {
-        Transforms.unwrapNodes(editor, { match: n => n.type === 'concept' })
+        Transforms.unwrapNodes(editor, { match: (n) => n.type === 'concept' })
         return
       }
     }
@@ -374,40 +443,48 @@ export const withConcepts = editor => {
 
 const tagRegex = /\B\#([\w-]+)\b/
 
-function hasTagParent(editor, path){
+function hasTagParent(editor, path) {
   const parent = Node.get(editor, path.slice(0, -1))
-  if (parent.type === "tag"){
+  if (parent.type === 'tag') {
     return true
   } else {
     return false
   }
 }
 
-export const withTags = editor => {
+export const withTags = (editor) => {
   const { isInline, insertText, deleteBackward, normalizeNode } = editor
 
-  editor.isInline = element => (element.type === 'tag') ? true : isInline(element)
+  editor.isInline = (element) =>
+    element.type === 'tag' ? true : isInline(element)
 
-  editor.normalizeNode = entry => {
+  editor.normalizeNode = (entry) => {
     const [node, path] = entry
-    if (Text.isText(node) && !hasTagParent(editor, path)){
+    if (Text.isText(node) && !hasTagParent(editor, path)) {
       const tagMatch = node.text.match(tagRegex)
-      if (tagMatch){
-        const {index, 0: match, 1: name} = tagMatch
-        const at = {anchor: {path, offset: index}, focus: {path, offset: index + match.length}}
-        Transforms.wrapNodes(editor, {type: "tag", children: []}, { at, split: true })
+      if (tagMatch) {
+        const { index, 0: match, 1: name } = tagMatch
+        const at = {
+          anchor: { path, offset: index },
+          focus: { path, offset: index + match.length },
+        }
+        Transforms.wrapNodes(
+          editor,
+          { type: 'tag', children: [] },
+          { at, split: true }
+        )
         return
       }
-    } else if (node.type === "tag"){
+    } else if (node.type === 'tag') {
       const tagMatch = Node.string(node).match(tagRegex)
-      if (tagMatch){
+      if (tagMatch) {
         const [_, name] = tagMatch
-        if (node.name !== name){
-          Transforms.setNodes(editor, {name}, {at: path})
+        if (node.name !== name) {
+          Transforms.setNodes(editor, { name }, { at: path })
           return
         }
       } else {
-        Transforms.unwrapNodes(editor, { match: n => n.type === 'tag' })
+        Transforms.unwrapNodes(editor, { match: (n) => n.type === 'tag' })
         return
       }
     }
@@ -418,7 +495,7 @@ export const withTags = editor => {
   return editor
 }
 
-export const withChecklists = editor => {
+export const withChecklists = (editor) => {
   const { deleteBackward } = editor
 
   editor.deleteBackward = (...args) => {
@@ -426,7 +503,7 @@ export const withChecklists = editor => {
 
     if (selection && Range.isCollapsed(selection)) {
       const [match] = Editor.nodes(editor, {
-        match: n => n.type === 'check-list-item',
+        match: (n) => n.type === 'check-list-item',
       })
 
       if (match) {
@@ -437,7 +514,7 @@ export const withChecklists = editor => {
           Transforms.setNodes(
             editor,
             { type: 'paragraph' },
-            { match: n => n.type === 'check-list-item' }
+            { match: (n) => n.type === 'check-list-item' }
           )
           return
         }
@@ -450,7 +527,7 @@ export const withChecklists = editor => {
   return editor
 }
 
-export const withLists = editor => {
+export const withLists = (editor) => {
   const { deleteBackward } = editor
 
   editor.deleteBackward = (...args) => {
@@ -458,21 +535,21 @@ export const withLists = editor => {
 
     if (selection && Range.isCollapsed(selection)) {
       const [match] = Editor.nodes(editor, {
-        match: n => n.type === 'list-item',
+        match: (n) => n.type === 'list-item',
       })
       if (match) {
         const [, path] = match
         const start = Editor.start(editor, path)
         if (Point.equals(selection.anchor, start)) {
           Transforms.unwrapNodes(editor, {
-            match: n => LIST_TYPES.includes(n.type),
+            match: (n) => LIST_TYPES.includes(n.type),
             split: true,
           })
 
           Transforms.setNodes(
             editor,
             { type: 'paragraph' },
-            { match: n => n.type === 'list-item' }
+            { match: (n) => n.type === 'list-item' }
           )
           return
         }
@@ -485,15 +562,15 @@ export const withLists = editor => {
   return editor
 }
 
-export const withTables = editor => {
+export const withTables = (editor) => {
   const { deleteBackward, deleteForward, insertBreak } = editor
 
-  editor.deleteBackward = unit => {
+  editor.deleteBackward = (unit) => {
     const { selection } = editor
 
     if (selection && Range.isCollapsed(selection)) {
       const [cell] = Editor.nodes(editor, {
-        match: n => n.type === 'table-cell',
+        match: (n) => n.type === 'table-cell',
       })
 
       if (cell) {
@@ -509,12 +586,12 @@ export const withTables = editor => {
     deleteBackward(unit)
   }
 
-  editor.deleteForward = unit => {
+  editor.deleteForward = (unit) => {
     const { selection } = editor
 
     if (selection && Range.isCollapsed(selection)) {
       const [cell] = Editor.nodes(editor, {
-        match: n => n.type === 'table-cell',
+        match: (n) => n.type === 'table-cell',
       })
 
       if (cell) {
@@ -534,7 +611,7 @@ export const withTables = editor => {
     const { selection } = editor
 
     if (selection) {
-      const [table] = Editor.nodes(editor, { match: n => n.type === 'table' })
+      const [table] = Editor.nodes(editor, { match: (n) => n.type === 'table' })
 
       if (table) {
         return
@@ -547,17 +624,16 @@ export const withTables = editor => {
   return editor
 }
 
-export const withEmbeds = editor => {
+export const withEmbeds = (editor) => {
   const { isVoid } = editor
-  editor.isVoid = element => (element.type === 'embed' ? true : isVoid(element))
+  editor.isVoid = (element) =>
+    element.type === 'embed' ? true : isVoid(element)
   return editor
 }
 
 export const insertionPoint = (editor, element) => {
   const path = ReactEditor.findPath(editor, element)
-  return (
-    [...path.slice(0, -1), path.slice(-1)[0] + 1]
-  )
+  return [...path.slice(0, -1), path.slice(-1)[0] + 1]
 }
 
 const SHORTCUTS = {
@@ -570,19 +646,19 @@ const SHORTCUTS = {
   '###': 'heading-three',
   '####': 'heading-four',
   '#####': 'heading-five',
-  '######': 'heading-six'
+  '######': 'heading-six',
 }
 
-export const withShortcuts = editor => {
+export const withShortcuts = (editor) => {
   const { deleteBackward, insertText } = editor
 
-  editor.insertText = text => {
+  editor.insertText = (text) => {
     const { selection } = editor
 
     if (text === ' ' && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection
       const block = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
+        match: (n) => Editor.isBlock(editor, n),
       })
       const path = block ? block[1] : []
       const start = Editor.start(editor, path)
@@ -597,13 +673,13 @@ export const withShortcuts = editor => {
           type,
         }
         Transforms.setNodes(editor, newProperties, {
-          match: n => Editor.isBlock(editor, n),
+          match: (n) => Editor.isBlock(editor, n),
         })
 
         if (type === 'list-item') {
           const list = { type: 'bulleted-list', children: [] }
           Transforms.wrapNodes(editor, list, {
-            match: n =>
+            match: (n) =>
               !Editor.isEditor(n) &&
               Element.isElement(n) &&
               n.type === 'list-item',
@@ -622,7 +698,7 @@ export const withShortcuts = editor => {
 
     if (selection && Range.isCollapsed(selection)) {
       const match = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
+        match: (n) => Editor.isBlock(editor, n),
       })
 
       if (match) {
@@ -642,7 +718,7 @@ export const withShortcuts = editor => {
 
           if (block.type === 'list-item') {
             Transforms.unwrapNodes(editor, {
-              match: n =>
+              match: (n) =>
                 !Editor.isEditor(n) &&
                 Element.isElement(n) &&
                 n.type === 'bulleted-list',

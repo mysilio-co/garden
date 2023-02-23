@@ -4,7 +4,7 @@ import BlockToolbarButton from './MyBlockToolbarButton'
 import { ListToolbarButton } from '@udecode/plate-ui-list'
 import { toggleMark } from '@udecode/plate-core'
 
-import { CodeIcon } from '@heroicons/react/outline';
+import { CodeIcon } from '@heroicons/react/outline'
 import {
   CodeBlock,
   Highlight,
@@ -16,11 +16,11 @@ import {
   FormatQuote,
   HeadingOne,
   HeadingTwo,
-  HeadingThree
-} from '../icons';
+  HeadingThree,
+} from '../icons'
 
 export const ToolbarButtonsBasicElements = () => {
-  const editor = P.usePlateEditorRef();
+  const editor = P.usePlateEditorRef()
 
   return (
     <>
@@ -45,14 +45,13 @@ export const ToolbarButtonsBasicElements = () => {
         icon={<CodeBlock />}
       />
     </>
-  );
-};
-
+  )
+}
 
 // TODO: list break / have weird behavior when switching between list types, probably due to poor logic in
 // https://github.com/udecode/plate/blob/ac3f7d9072c3dd12e971d52af68d07ee18496f57/packages/elements/list/src/transforms/toggleList.ts
 export const ToolbarButtonsList = () => {
-  const editor = P.usePlateEditorRef();
+  const editor = P.usePlateEditorRef()
 
   return (
     <>
@@ -65,11 +64,11 @@ export const ToolbarButtonsList = () => {
         icon={<FormatListNumbered />}
       />
     </>
-  );
-};
+  )
+}
 
-export const ToolbarButtonsBasicMarks = ({ }) => {
-  const editor = P.usePlateEditorRef();
+export const ToolbarButtonsBasicMarks = ({}) => {
+  const editor = P.usePlateEditorRef()
   const tooltip = {
     arrow: true,
     delay: 0,
@@ -77,7 +76,7 @@ export const ToolbarButtonsBasicMarks = ({ }) => {
     hideOnClick: false,
     offset: [0, 17],
     placement: 'top',
-  };
+  }
   return (
     <>
       <MarkToolbarButton
@@ -106,5 +105,5 @@ export const ToolbarButtonsBasicMarks = ({ }) => {
         tooltip={{ content: 'Highlight', ...tooltip }}
       />
     </>
-  );
-};
+  )
+}

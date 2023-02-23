@@ -1,12 +1,12 @@
-import { asUrl } from '@inrupt/solid-client/thing/thing';
-import { getSourceUrl } from '@inrupt/solid-client/resource/resource';
-import { useWebId } from 'swrlit';
-import { Loader } from './elements';
-import ItemCard from './cards/ItemCard';
-import { getItemAll } from 'garden-kit/garden';
-import { getUrl } from '@inrupt/solid-client';
-import { RDFS } from '@inrupt/vocab-common-rdf';
-import { getCreator, getTitle } from 'garden-kit';
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
+import { useWebId } from 'swrlit'
+import { Loader } from './elements'
+import ItemCard from './cards/ItemCard'
+import { getItemAll } from 'garden-kit/garden'
+import { getUrl } from '@inrupt/solid-client'
+import { RDFS } from '@inrupt/vocab-common-rdf'
+import { getCreator, getTitle } from 'garden-kit'
 
 export default function Cards({
   spaceSlug,
@@ -14,9 +14,9 @@ export default function Cards({
   garden,
   isCommunityGarden = false,
 }) {
-  const myWebId = useWebId();
-  const items = garden && getItemAll(garden);
-  const hasItems = items && items.length > 0;
+  const myWebId = useWebId()
+  const items = garden && getItemAll(garden)
+  const hasItems = items && items.length > 0
   return (
     <>
       {garden ? (
@@ -36,7 +36,7 @@ export default function Cards({
                     webId={getCreator(item) || webId}
                     workspaceSlug={spaceSlug}
                   />
-                );
+                )
               })}
           </ul>
         ) : (
@@ -52,5 +52,5 @@ export default function Cards({
         <Loader />
       )}
     </>
-  );
+  )
 }

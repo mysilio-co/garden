@@ -1,18 +1,11 @@
 //TSimport type { DatasetCore } from "@rdfjs/types";
 //TSimport type { SolidDataset } from "@inrupt/solid-client";
-import {
-  createThing,
-  setThing,
-} from "@inrupt/solid-client/thing/thing";
-import {
-  buildThing,
-} from "@inrupt/solid-client/thing/build";
-import {
-  createSolidDataset,
-} from "@inrupt/solid-client/resource/solidDataset";
-import { MY, MIME } from "../vocab";
-import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
-import * as base58 from "micro-base58";
+import { createThing, setThing } from '@inrupt/solid-client/thing/thing'
+import { buildThing } from '@inrupt/solid-client/thing/build'
+import { createSolidDataset } from '@inrupt/solid-client/resource/solidDataset'
+import { MY, MIME } from '../vocab'
+import { SKOS, RDF, FOAF, DCTERMS } from '@inrupt/vocab-common-rdf'
+import * as base58 from 'micro-base58'
 
 /*
 Design:
@@ -62,36 +55,26 @@ type OGTags = {
   ogUrl: string;
 };
 */
-export function addLinkToIndex(
-  index,
-  url,
-  title,
-  desc,
-  img,
-) {
+export function addLinkToIndex(index, url, title, desc, img) {
   const builder = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.Link)
     .addDatetime(DCTERMS.modified, new Date())
-    .addDatetime(DCTERMS.created, new Date());
+    .addDatetime(DCTERMS.created, new Date())
   if (img) {
-    builder.addUrl(FOAF.depiction, img);
+    builder.addUrl(FOAF.depiction, img)
   }
   if (title) {
-    builder.addStringNoLocale(DCTERMS.title, title);
+    builder.addStringNoLocale(DCTERMS.title, title)
   }
   if (desc) {
-    builder.addStringNoLocale(DCTERMS.description, desc);
+    builder.addStringNoLocale(DCTERMS.description, desc)
   }
-  const LinkThing = builder.build();
-  return setThing(index || createSolidDataset(), LinkThing);
+  const LinkThing = builder.build()
+  return setThing(index || createSolidDataset(), LinkThing)
 }
 
-export function addImageToIndex(
-  index,
-  url,
-  file,
-) {
+export function addImageToIndex(index, url, file) {
   const ImageThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, FOAF.Image)
@@ -99,16 +82,12 @@ export function addImageToIndex(
     .addDatetime(DCTERMS.created, new Date(file.lastModified))
     .addStringNoLocale(DCTERMS.title, file.name)
     .addStringNoLocale(DCTERMS.format, file.type)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), ImageThing);
+  return setThing(index || createSolidDataset(), ImageThing)
 }
 
-export function addFileToIndex(
-  index,
-  url,
-  file,
-) {
+export function addFileToIndex(index, url, file) {
   const FileThing = buildThing(createThing({ url }))
     .addUrl(RDF.type, MY.SKOS.Bookmark)
     .addUrl(RDF.type, MY.FOAF.File)
@@ -116,9 +95,9 @@ export function addFileToIndex(
     .addDatetime(DCTERMS.created, new Date(file.lastModified))
     .addStringNoLocale(DCTERMS.title, file.name)
     .addStringNoLocale(DCTERMS.format, file.type)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), FileThing);
+  return setThing(index || createSolidDataset(), FileThing)
 }
 
 export function _addTagToIndex(index, tag) {
@@ -129,32 +108,25 @@ export function _addTagToIndex(index, tag) {
     .addUrl(RDF.type, MY.SKOS.Tag)
     .addStringNoLocale(SKOS.prefLabel, tag)
     // TODO:     .addStringNoLocale(DCTERMS.format, ...)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), TagThing);
+  return setThing(index || createSolidDataset(), TagThing)
 }
 
-export function _addMentionToIndex(
-  index,
-  handle,
-) {
+export function _addMentionToIndex(index, handle) {
   const MentionThing = buildThing(
     createThing({ name: `MENTION:base58:${base58.encode(handle)}` })
   )
     //.addUrl(RDF.type, SKOS.Label)
     .addUrl(RDF.type, MY.SKOS.Mention)
     .addStringNoLocale(SKOS.prefLabel, handle)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), MentionThing);
+  return setThing(index || createSolidDataset(), MentionThing)
 }
 
 // DO NOT USE -- only a prototype for how we might store Contacts
-function _addPersonToIndex(
-  index,
-  handle,
-  name,
-) {
+function _addPersonToIndex(index, handle, name) {
   const PersonThing = buildThing(
     createThing({ name: `PERSON:base58:${base58.encode(handle)}` })
   )
@@ -162,9 +134,9 @@ function _addPersonToIndex(
     .addStringNoLocale(SKOS.prefLabel, handle)
     .addStringNoLocale(FOAF.nick, handle)
     .addStringNoLocale(FOAF.name, name)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), PersonThing);
+  return setThing(index || createSolidDataset(), PersonThing)
 }
 
 // DO NOT USE -- only a prototype for how we might use SKOS for collections
@@ -176,9 +148,9 @@ function _addConceptToIndex(index, name) {
     .addUrl(RDF.type, SKOS.Concept)
     .addStringNoLocale(SKOS.prefLabel, name)
     // .addUrl(SKOS.note, ...)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), ConceptThing);
+  return setThing(index || createSolidDataset(), ConceptThing)
 }
 
 // DO NOT USE -- only a prototype for how we might uaw SKOS for Collections
@@ -190,7 +162,7 @@ function _addCollectionToIndex(index, name) {
     .addUrl(RDF.type, SKOS.Collection)
     .addStringNoLocale(SKOS.prefLabel, name)
     // .addUrl(SKOS.note, ...)
-    .build();
+    .build()
 
-  return setThing(index || createSolidDataset(), ConceptThing);
+  return setThing(index || createSolidDataset(), ConceptThing)
 }

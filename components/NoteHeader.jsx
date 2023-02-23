@@ -1,83 +1,83 @@
-import { FOAF, DCTERMS } from '@inrupt/vocab-common-rdf';
+import { FOAF, DCTERMS } from '@inrupt/vocab-common-rdf'
 import {
   getStringNoLocale,
   getDatetime,
   getUrl,
-} from '@inrupt/solid-client/thing/get';
-import { asUrl } from '@inrupt/solid-client/thing/thing';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuthentication } from 'swrlit';
+} from '@inrupt/solid-client/thing/get'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useAuthentication } from 'swrlit'
 import {
   getSolidDataset,
   saveSolidDatasetAt,
-} from '@inrupt/solid-client/resource/solidDataset';
+} from '@inrupt/solid-client/resource/solidDataset'
 import {
   setThing,
   removeThing,
   getThing,
-} from '@inrupt/solid-client/thing/thing';
-import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl';
-import Dropdown from './Dropdown';
-import { classNames } from '../utils/html';
+} from '@inrupt/solid-client/thing/thing'
+import { getSolidDatasetWithAcl } from '@inrupt/solid-client/acl/acl'
+import Dropdown from './Dropdown'
+import { classNames } from '../utils/html'
 
-import { mutate } from 'swr';
-import { getNote, getFile } from 'garden-kit/items';
-import { setPublicAccessBasedOnGarden } from 'garden-kit/acl';
-import { getDepiction } from 'garden-kit/utils';
+import { mutate } from 'swr'
+import { getNote, getFile } from 'garden-kit/items'
+import { setPublicAccessBasedOnGarden } from 'garden-kit/acl'
+import { getDepiction } from 'garden-kit/utils'
 
-import { MenuIcon } from '@heroicons/react/outline';
+import { MenuIcon } from '@heroicons/react/outline'
 
-import { getTitle } from 'garden-kit/utils';
-import { useSpaces, useGarden } from 'garden-kit/hooks';
-import { gardenMetadataInSpacePrefs, getSpace } from 'garden-kit/spaces';
+import { getTitle } from 'garden-kit/utils'
+import { useSpaces, useGarden } from 'garden-kit/hooks'
+import { gardenMetadataInSpacePrefs, getSpace } from 'garden-kit/spaces'
 
-import Avatar from './Avatar';
-import { getRelativeTime } from '../utils/time';
-import { profilePath, itemPath } from '../utils/uris';
-import { Trashcan } from './icons';
-import GardenPicker from './GardenPicker';
-import { useCommunityNursery } from '../hooks/community';
-import { getUUID } from 'garden-kit';
+import Avatar from './Avatar'
+import { getRelativeTime } from '../utils/time'
+import { profilePath, itemPath } from '../utils/uris'
+import { Trashcan } from './icons'
+import GardenPicker from './GardenPicker'
+import { useCommunityNursery } from '../hooks/community'
+import { getUUID } from 'garden-kit'
 
 async function moveItem(item, fromGardenUrl, toGardenUrl, { fetch }) {
   const [fromGarden, toGarden] = await Promise.all([
     getSolidDataset(fromGardenUrl, { fetch }),
     getSolidDatasetWithAcl(toGardenUrl, { fetch }),
-  ]);
+  ])
 
-  const newFromGarden = removeThing(fromGarden, item);
-  const newToGarden = setThing(toGarden, item);
+  const newFromGarden = removeThing(fromGarden, item)
+  const newToGarden = setThing(toGarden, item)
 
   await mutate(
     toGardenUrl,
     saveSolidDatasetAt(toGardenUrl, newToGarden, { fetch })
-  );
+  )
   await mutate(
     fromGardenUrl,
     saveSolidDatasetAt(fromGardenUrl, newFromGarden, { fetch })
-  );
+  )
 
   await setPublicAccessBasedOnGarden(
     [getNote(item), getDepiction(item), getFile(item)].filter((x) => x),
     toGarden,
     { fetch }
-  );
+  )
 }
 
 function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
-  const { settings } = useGarden(currentGardenUrl);
-  const isPublic = settings && getTitle(settings) === 'Public';
-  const { publishItemReference } = useCommunityNursery();
+  const { settings } = useGarden(currentGardenUrl)
+  const isPublic = settings && getTitle(settings) === 'Public'
+  const { publishItemReference } = useCommunityNursery()
 
   async function publish() {
     if (isPublic && item) {
-      await publishItemReference(currentGardenUrl, item);
+      await publishItemReference(currentGardenUrl, item)
       alert(
         'Published successfully. Your Note will appear in the Community Garden once it is approved by moderators.'
-      );
+      )
     } else {
-      alert('You can only publish Notes from your Public Garden');
+      alert('You can only publish Notes from your Public Garden')
     }
   }
   return (
@@ -102,20 +102,20 @@ function NoteHeaderPublishDropdown({ currentGardenUrl, item }) {
         </Dropdown.Item>
       </Dropdown.Items>
     </Dropdown>
-  );
+  )
 }
 
 function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
-  const router = useRouter();
-  const { spaces } = useSpaces(webId);
-  const space = spaces && getSpace(spaces, spaceSlug);
-  const gardens = space && gardenMetadataInSpacePrefs(space, spaces);
+  const router = useRouter()
+  const { spaces } = useSpaces(webId)
+  const space = spaces && getSpace(spaces, spaceSlug)
+  const gardens = space && gardenMetadataInSpacePrefs(space, spaces)
   const currentGarden =
-    gardens && gardens.find((g) => asUrl(g) === currentGardenUrl);
-  const { fetch } = useAuthentication();
+    gardens && gardens.find((g) => asUrl(g) === currentGardenUrl)
+  const { fetch } = useAuthentication()
   async function onChange(newGardenUrl) {
-    await moveItem(item, currentGardenUrl, newGardenUrl, { fetch });
-    router.replace(itemPath(webId, spaceSlug, newGardenUrl, getTitle(item)));
+    await moveItem(item, currentGardenUrl, newGardenUrl, { fetch })
+    router.replace(itemPath(webId, spaceSlug, newGardenUrl, getTitle(item)))
   }
   return gardens && currentGarden ? (
     <GardenPicker
@@ -125,7 +125,7 @@ function NoteHeaderGardenPicker({ webId, spaceSlug, currentGardenUrl, item }) {
     />
   ) : (
     <></>
-  );
+  )
 }
 
 export default function NoteHeader({
@@ -138,25 +138,25 @@ export default function NoteHeader({
   spaceSlug,
   gardenUrl,
 }) {
-  const router = useRouter();
+  const router = useRouter()
   const authorName =
-    authorProfile && getStringNoLocale(authorProfile, FOAF.name);
-  const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img);
+    authorProfile && getStringNoLocale(authorProfile, FOAF.name)
+  const avatarImgSrc = authorProfile && getUrl(authorProfile, FOAF.img)
 
-  const noteCreatedAt = item && getDatetime(item, DCTERMS.created);
-  const noteLastEdit = item && getDatetime(item, DCTERMS.modified);
+  const noteCreatedAt = item && getDatetime(item, DCTERMS.created)
+  const noteLastEdit = item && getDatetime(item, DCTERMS.modified)
 
-  const authorWebId = authorProfile && asUrl(authorProfile);
-  const bg = myNote ? 'bg-header-gradient' : 'bg-my-green';
+  const authorWebId = authorProfile && asUrl(authorProfile)
+  const bg = myNote ? 'bg-header-gradient' : 'bg-my-green'
 
-  const itemName = item && getTitle(item);
+  const itemName = item && getTitle(item)
 
-  const authorProfilePath = authorWebId && profilePath(authorWebId);
+  const authorProfilePath = authorWebId && profilePath(authorWebId)
   async function deleteAndRedirect() {
-    const confirmed = confirm(`Are you sure you want to delete ${itemName}?`);
+    const confirmed = confirm(`Are you sure you want to delete ${itemName}?`)
     if (confirmed) {
-      await deleteItem();
-      router.push('/');
+      await deleteItem()
+      router.push('/')
     }
   }
   return (
@@ -254,5 +254,5 @@ export default function NoteHeader({
         </div>
       </nav>
     </div>
-  );
+  )
 }

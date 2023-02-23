@@ -1,5 +1,9 @@
 import { useCallback } from 'react'
-import { useProfile, useLoggedIn, useAuthentication } from 'swrlit/contexts/authentication'
+import {
+  useProfile,
+  useLoggedIn,
+  useAuthentication,
+} from 'swrlit/contexts/authentication'
 import { useProfile } from 'swrlit/hooks/things'
 
 import { useRouter } from 'next/router'
@@ -15,7 +19,7 @@ export default function ProfileDrawerWithData({ webId, ...props }) {
   const router = useRouter()
   const logoutAndRedirect = useCallback(() => {
     logout()
-    router.push("/")
+    router.push('/')
   }, [router, logout])
   return (
     <ProfileDrawer
@@ -26,5 +30,5 @@ export default function ProfileDrawerWithData({ webId, ...props }) {
       saveProfile={saveProfile}
       {...props}
     />
-  );
+  )
 }

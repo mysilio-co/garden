@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from 'next/link'
 import { asUrl } from '@inrupt/solid-client/thing/thing'
 import ProfileImage from './ProfileDrawer/Image'
 import Name from './ProfileDrawer/Name'
@@ -12,14 +12,14 @@ export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
       <div className="flex justify-between mb-12">
         {profile && (
           <div className="">
-            <ProfileImage
-              profile={profile}
-              saveProfile={saveProfile}
-            />
+            <ProfileImage profile={profile} saveProfile={saveProfile} />
           </div>
         )}
         <div className="flex justify-end">
-          <button className="rounded-full border h-8 w-8 ml-2" onClick={() => setIsOpen(false)}>
+          <button
+            className="rounded-full border h-8 w-8 ml-2"
+            onClick={() => setIsOpen(false)}
+          >
             <Close className="w-5 h-5 m-auto" />
           </button>
         </div>
@@ -32,7 +32,11 @@ export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
         </Link>
       )}
       <Name profile={profile} saveProfile={saveProfile} className="my-2" />
-      <WebMonetizationPointer profile={profile} saveProfile={saveProfile} className="my-2" />
+      <WebMonetizationPointer
+        profile={profile}
+        saveProfile={saveProfile}
+        className="my-2"
+      />
     </div>
   )
 }

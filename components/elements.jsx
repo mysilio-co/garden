@@ -1,6 +1,6 @@
 import ReactLoader from 'react-loader-spinner'
 import ReactDOM from 'react-dom'
-import Tippy from '@tippyjs/react';
+import Tippy from '@tippyjs/react'
 
 const PRIMARY = '#0e90a3' // Mysilio/Green TODO figure out if we can use tailwind
 const SECONDARY = '#579f89' // Mysilio/Blue
@@ -13,7 +13,8 @@ export const Loader = (props) => {
       secondaryColor={SECONDARY}
       height={120}
       width={120}
-      {...props} />
+      {...props}
+    />
   )
 }
 
@@ -26,7 +27,8 @@ export const PatientLoader = (props) => {
       secondaryColor={SECONDARY}
       height={120}
       width={120}
-      {...props} />
+      {...props}
+    />
   )
 }
 
@@ -36,7 +38,8 @@ export const InlineLoader = (props) => {
       type="ThreeDots"
       color={PRIMARY}
       secondaryColor={SECONDARY}
-      {...props} />
+      {...props}
+    />
   )
 }
 
@@ -45,7 +48,8 @@ export const Portal = ({ children }) => {
 }
 
 export const Tooltip = ({ content, children }) => (
-  <Tippy content={content}// visible={true}
+  <Tippy
+    content={content} // visible={true}
     /*render={attrs => (
       <div {...attrs} className="w-28 bg-black text-white text-center text-xs rounded-lg py-2 z-10 bottom-full -left-1/2 ml-14 px-3 pointer-events-none">
         {content}
@@ -55,4 +59,4 @@ export const Tooltip = ({ content, children }) => (
   >
     {children}
   </Tippy>
-);
+)

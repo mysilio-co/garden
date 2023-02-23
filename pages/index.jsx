@@ -10,7 +10,7 @@ import Dashboard from '../components/Dashboard'
 
 function InitPage({ initApp }) {
   const [saving, setSaving] = useState(false)
-  async function onClick(){
+  async function onClick() {
     setSaving(true)
     await initApp()
     setSaving(false)
@@ -19,11 +19,18 @@ function InitPage({ initApp }) {
     <>
       <Header />
       <div className="text-center pt-12 flex flex-col items-center">
-        <h3 className="text-xl pb-6">looks like this is your first time here!</h3>
+        <h3 className="text-xl pb-6">
+          looks like this is your first time here!
+        </h3>
         {saving ? (
           <Loader />
         ) : (
-          <button className="btn-filled btn-md btn-square font-bold" onClick={onClick}>get started</button>
+          <button
+            className="btn-filled btn-md btn-square font-bold"
+            onClick={onClick}
+          >
+            get started
+          </button>
         )}
       </div>
     </>
@@ -43,29 +50,31 @@ function LoadingPage() {
 export default function IndexPage() {
   const loggedIn = useLoggedIn()
   const webId = useWebId()
-  const { spaces, setupDefaultSpaces, error: spacesError } = useSpacesWithSetup(webId)
-  const spacesConfigDoesntExist = !!(spacesError && (spacesError.statusCode === 404))
+  const {
+    spaces,
+    setupDefaultSpaces,
+    error: spacesError,
+  } = useSpacesWithSetup(webId)
+  const spacesConfigDoesntExist = !!(
+    spacesError && spacesError.statusCode === 404
+  )
   const setupComplete = spaces && hasRequiredSpaces(spaces)
   return (
     <div className="page" id="page">
-      {(loggedIn === true) ? (
+      {loggedIn === true ? (
         setupComplete ? (
           <Dashboard />
+        ) : spacesConfigDoesntExist ? (
+          <InitPage initApp={setupDefaultSpaces} />
         ) : (
-          (spacesConfigDoesntExist) ? (
-            <InitPage initApp={setupDefaultSpaces} />
-          ) : (
-            <LoadingPage />
-          )
+          <LoadingPage />
         )
+      ) : loggedIn === false || loggedIn === null ? (
+        <div className="text-center">
+          <Login />
+        </div>
       ) : (
-        ((loggedIn === false) || (loggedIn === null)) ? (
-          <div className="text-center">
-            <Login />
-          </div>
-        ) : (
-          <Loader className="flex flex-row justify-center mt-36" />
-        )
+        <Loader className="flex flex-row justify-center mt-36" />
       )}
     </div>
   )

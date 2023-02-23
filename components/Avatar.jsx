@@ -1,7 +1,11 @@
 import { Avatar as AvatarIcon } from './icons'
 
 export default function Avatar({ src, className, border = true, ...rest }) {
-  const borderClasses = border ? (border === true ? 'border-2 border-white' : border) : ""
+  const borderClasses = border
+    ? border === true
+      ? 'border-2 border-white'
+      : border
+    : ''
   if (src) {
     return (
       <img
@@ -9,7 +13,7 @@ export default function Avatar({ src, className, border = true, ...rest }) {
         className={`rounded-full ${borderClasses} ${className}`}
         {...rest}
       />
-    );
+    )
   } else {
     return (
       <span
@@ -18,6 +22,6 @@ export default function Avatar({ src, className, border = true, ...rest }) {
       >
         <AvatarIcon className="h-full w-full text-gray-300" />
       </span>
-    );
+    )
   }
 }

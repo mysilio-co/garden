@@ -2,20 +2,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 
-import {
-  HomeIcon,
-  LoginIcon,
-  BookOpenIcon,
-} from '@heroicons/react/outline'
+import { HomeIcon, LoginIcon, BookOpenIcon } from '@heroicons/react/outline'
 
 import logoAndName from '../public/img/logo-and-text.png'
 
 import DefaultHeader from './DefaultHeader'
 
-
 const defaultHeaderProps = {}
 
-function DummyLeftNavLayout({ pageName, pageTitle, children, HeaderComponent = DefaultHeader, headerProps = defaultHeaderProps }) {
+function DummyLeftNavLayout({
+  pageName,
+  pageTitle,
+  children,
+  HeaderComponent = DefaultHeader,
+  headerProps = defaultHeaderProps,
+}) {
   return (
     <>
       <div className="h-screen flex relative">
@@ -37,8 +38,7 @@ function DummyLeftNavLayout({ pageName, pageTitle, children, HeaderComponent = D
                   </Link>
                 </div>
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
-                  <div className="px-2 space-y-1">
-                  </div>
+                  <div className="px-2 space-y-1"></div>
                 </nav>
               </div>
             </div>
@@ -57,16 +57,11 @@ function DummyLeftNavLayout({ pageName, pageTitle, children, HeaderComponent = D
   )
 }
 
-const DynamicLeftNavLayout = dynamic(
-  () => import('./DynamicLeftNavLayout'),
-  {
-    loading: (p) => {
-      return (<DummyLeftNavLayout />)
-    }
-  }
-)
+const DynamicLeftNavLayout = dynamic(() => import('./DynamicLeftNavLayout'), {
+  loading: (p) => {
+    return <DummyLeftNavLayout />
+  },
+})
 export default function LeftNavLayout(props) {
-  return (
-    <DynamicLeftNavLayout {...props} />
-  )
+  return <DynamicLeftNavLayout {...props} />
 }

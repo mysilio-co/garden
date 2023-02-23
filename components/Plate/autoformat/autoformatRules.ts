@@ -2,10 +2,10 @@ import {
   autoformatArrow,
   autoformatPunctuation,
   autoformatSmartQuotes,
-} from '@udecode/plate-headless';
-import { autoformatBlocks } from './autoformatBlocks';
-import { autoformatLists } from './autoformatLists';
-import { autoformatMarks } from './autoformatMarks';
+} from '@udecode/plate-headless'
+import { autoformatBlocks } from './autoformatBlocks'
+import { autoformatLists } from './autoformatLists'
+import { autoformatMarks } from './autoformatMarks'
 
 export const autoformatRules = [
   ...autoformatBlocks,
@@ -14,4 +14,4 @@ export const autoformatRules = [
   ...autoformatSmartQuotes,
   ...autoformatPunctuation,
   ...autoformatArrow,
-];
+]

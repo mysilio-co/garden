@@ -1,32 +1,33 @@
-import { useState, useEffect } from "react";
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import { Combobox } from "@headlessui/react";
-import { IsPreviewEnv } from '../model/flags';
+import { useState, useEffect } from 'react'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { Combobox } from '@headlessui/react'
+import { IsPreviewEnv } from '../model/flags'
 import { classNames } from '../utils/html'
 
-const IDPList = IsPreviewEnv ?
-  [
-    { name: 'Production', host: 'https://mysilio.me' },
-    { name: 'Staging', host: 'https://staging.mysilio.me' },
-    { name: 'Legacy NSS', host: 'https://v0.mysilio.me' }
-  ] : [
-    { name: 'Mysilio', host: 'https://mysilio.me' },
-    { name: 'Inrupt', host: 'https://inrupt.net' },
-    { name: 'Solid Community', host: 'https://solidcommunity.net' },
-    { name: 'Solid Web', host: 'https://solidweb.org' }
-  ];
+const IDPList = IsPreviewEnv
+  ? [
+      { name: 'Production', host: 'https://mysilio.me' },
+      { name: 'Staging', host: 'https://staging.mysilio.me' },
+      { name: 'Legacy NSS', host: 'https://v0.mysilio.me' },
+    ]
+  : [
+      { name: 'Mysilio', host: 'https://mysilio.me' },
+      { name: 'Inrupt', host: 'https://inrupt.net' },
+      { name: 'Solid Community', host: 'https://solidcommunity.net' },
+      { name: 'Solid Web', host: 'https://solidweb.org' },
+    ]
 
-export default function IDPPicker({ setHost, className}) {
-  const [query, setQuery] = useState('');
-  const [selectedIDP, setSelectedIDP] = useState();
+export default function IDPPicker({ setHost, className }) {
+  const [query, setQuery] = useState('')
+  const [selectedIDP, setSelectedIDP] = useState()
   const setIDP = (idp) => {
-    console.log(`setting IDP: ${idp && idp.name}`);
-    setSelectedIDP(idp);
-    setHost(idp.host);
+    console.log(`setting IDP: ${idp && idp.name}`)
+    setSelectedIDP(idp)
+    setHost(idp.host)
   }
   useEffect(() => {
-    setIDP(IDPList[0]);
-  }, []);
+    setIDP(IDPList[0])
+  }, [])
 
   const filtered =
     query === ''
@@ -35,13 +36,13 @@ export default function IDPPicker({ setHost, className}) {
           return (
             idp.name.toLowerCase().includes(query.toLowerCase()) ||
             idp.host.toLowerCase().includes(query.toLowerCase())
-          );
+          )
         }).concat([
           {
             name: query,
             host: query,
           },
-        ]);
+        ])
 
   return (
     <Combobox
@@ -114,5 +115,5 @@ export default function IDPPicker({ setHost, className}) {
         )}
       </div>
     </Combobox>
-  );
+  )
 }

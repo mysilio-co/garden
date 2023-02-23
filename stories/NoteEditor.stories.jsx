@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import NoteEditor from '../components/NoteEditor';
+import React, { useMemo } from 'react'
+import NoteEditor from '../components/NoteEditor'
 
 import { createOrUpdateSlateJSON } from '../model/note'
 
@@ -11,9 +11,7 @@ export default {
 
 const NoteEditorStory = ({ slateJSON, ...args }) => {
   const note = useMemo(() => createOrUpdateSlateJSON(slateJSON), [slateJSON])
-  return (
-    <NoteEditor note={note} {...args} />
-  )
+  return <NoteEditor note={note} {...args} />
 }
 
 /* !!!
@@ -26,16 +24,18 @@ the UI when changed.
 
 export const EmptyNoteEditor = NoteEditorStory.bind({})
 EmptyNoteEditor.args = {
-  slateJSON: [{ children: [{ text: '' }] }]
+  slateJSON: [{ children: [{ text: '' }] }],
 }
 
 export const SimpleNoteEditor = NoteEditorStory.bind({})
 SimpleNoteEditor.args = {
-  slateJSON: [{ children: [{ text: 'cheeseburgers in paradise' }] }]
+  slateJSON: [{ children: [{ text: 'cheeseburgers in paradise' }] }],
 }
 
 export const NoNoteNoteEditor = () => (
   <NoteEditor
     concept={concept}
-    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} />
+    tagPrefix={tagPrefix}
+    conceptPrefix={conceptPrefix}
+  />
 )

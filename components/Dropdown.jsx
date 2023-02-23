@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { AddCircle as AddCircleIcon } from './icons'
 
-export default function Dropdown({children, label, className}) {
+export default function Dropdown({ children, label, className }) {
   return (
     <Menu as="div" className={`relative inline-block text-left ${className}`}>
       <div>
