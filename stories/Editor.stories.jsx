@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import { schema } from 'rdf-namespaces';
+import { schema } from 'rdf-namespaces'
 /*
 import Editor from '../components/Editor';
 

@@ -4,8 +4,7 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export const deserialize = el => {
-
+export const deserialize = (el) => {
   if (el.nodeType === 3) {
     return el.textContent
   } else if (el.nodeType !== 1) {
@@ -37,7 +36,7 @@ export const deserialize = el => {
         children
       )
     default:
-      console.log("can't process ", el.nodeName, " returning text content")
+      console.log("can't process ", el.nodeName, ' returning text content')
       return el.textContent
   }
 }

@@ -110,7 +110,7 @@ strong {
   @apply block text-gray-700 text-sm hover:bg-gray-100 w-full pt-1.5 pb-1.5 text-left px-4;
 }
 
- /* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
+/* end components from Dylan - https://app.zeplin.io/project/61327f6d0e26559ad2dce006/styleguide */
 
 .tab-btn {
   @apply text-xl rounded-lg p-3;
@@ -138,7 +138,7 @@ strong {
 /* Stop purging. */
 
 .file-ipt {
-  @apply cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100
+  @apply cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100;
 }
 
 /* slate editor -- classes assigned automatically by Plate */
@@ -188,7 +188,7 @@ strong {
 }
 
 .grid.hex > *::after {
-  content: "";
+  content: '';
   display: block;
   padding-bottom: 86.602%;
   /* =  100 / tan(60) * 1.5 */

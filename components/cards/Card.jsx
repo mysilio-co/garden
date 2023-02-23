@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import { useProfile } from 'swrlit';
-import { getRelativeTime } from '../../utils/time.js';
-import { getStringNoLocale, getUrl } from '@inrupt/solid-client';
-import { FOAF } from '@inrupt/vocab-common-rdf';
-import Avatar from '../Avatar';
-import Link from 'next/link.js';
+import Image from 'next/image'
+import { useProfile } from 'swrlit'
+import { getRelativeTime } from '../../utils/time.js'
+import { getStringNoLocale, getUrl } from '@inrupt/solid-client'
+import { FOAF } from '@inrupt/vocab-common-rdf'
+import Avatar from '../Avatar'
+import Link from 'next/link.js'
 
 export default function Card({
   title,
@@ -14,9 +14,9 @@ export default function Card({
   lastEdit,
   href,
 }) {
-  const { profile } = useProfile(creator);
-  const name = profile && getStringNoLocale(profile, FOAF.name);
-  const avatarImgSrc = profile && getUrl(profile, FOAF.img);
+  const { profile } = useProfile(creator)
+  const name = profile && getStringNoLocale(profile, FOAF.name)
+  const avatarImgSrc = profile && getUrl(profile, FOAF.img)
 
   return (
     <li className="col-span-1 bg-white rounded-lg overflow-hidden shadow-label list-none">
@@ -65,5 +65,5 @@ export default function Card({
         </a>
       </Link>
     </li>
-  );
+  )
 }

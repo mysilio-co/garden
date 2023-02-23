@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   getPreventDefaultHandler,
   someNode,
@@ -6,16 +6,16 @@ import {
   useEventPlateId,
   usePlateEditorState,
   withPlateProvider,
-} from '@udecode/plate-core';
-import { ToolbarButton } from '@udecode/plate-ui-toolbar';
+} from '@udecode/plate-core'
+import { ToolbarButton } from '@udecode/plate-ui-toolbar'
 
 /**
  * Toolbar button to toggle the type of elements in selection.
  */
 const BlockToolbarButton = withPlateProvider(
   ({ id, type, inactiveType, active, ...props }) => {
-    id = useEventPlateId(id);
-    const editor = usePlateEditorState(id);
+    id = useEventPlateId(id)
+    const editor = usePlateEditorState(id)
 
     return (
       <ToolbarButton
@@ -32,8 +32,8 @@ const BlockToolbarButton = withPlateProvider(
         }
         {...props}
       />
-    );
+    )
   }
-);
+)
 
 export default BlockToolbarButton

@@ -6,15 +6,15 @@ export function getRelativeTime(d1, d2 = new Date()) {
     hour: 60 * 60 * 1000,
     minute: 60 * 1000,
     second: 1000,
-  };
+  }
 
-  const rtf = new Intl.RelativeTimeFormat("en", {
-    numeric: "auto",
-  });
-  var elapsed = d1 - d2;
+  const rtf = new Intl.RelativeTimeFormat('en', {
+    numeric: 'auto',
+  })
+  var elapsed = d1 - d2
 
   // "Math.abs" accounts for both "past" & "future" scenarios
   for (var u in units)
-    if (Math.abs(elapsed) > units[u] || u == "second")
-      return rtf.format(Math.round(elapsed / units[u]), u);
+    if (Math.abs(elapsed) > units[u] || u == 'second')
+      return rtf.format(Math.round(elapsed / units[u]), u)
 }

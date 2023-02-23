@@ -4,9 +4,9 @@ import {
   ELEMENT_TODO_LI,
   ELEMENT_UL,
   setNodes,
-} from '@udecode/plate-headless';
-import { Editor } from 'slate';
-import { clearBlockFormat, formatList } from './autoformatUtils';
+} from '@udecode/plate-headless'
+import { Editor } from 'slate'
+import { clearBlockFormat, formatList } from './autoformatUtils'
 
 export const autoformatLists = [
   {
@@ -41,4 +41,4 @@ export const autoformatLists = [
         }
       ),
   },
-];
+]

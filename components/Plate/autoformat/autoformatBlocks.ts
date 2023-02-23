@@ -15,8 +15,8 @@ import {
   insertNodes,
   PlateEditor,
   setNodes,
-} from '@udecode/plate-headless';
-import { clearBlockFormat } from './autoformatUtils';
+} from '@udecode/plate-headless'
+import { clearBlockFormat } from './autoformatUtils'
 
 export const autoformatBlocks: AutoformatRule[] = [
   {
@@ -67,11 +67,11 @@ export const autoformatBlocks: AutoformatRule[] = [
     match: ['---', '—-'],
     preFormat: clearBlockFormat,
     format: (editor) => {
-      setNodes(editor, { type: ELEMENT_HR });
+      setNodes(editor, { type: ELEMENT_HR })
       insertNodes(editor, {
         type: ELEMENT_DEFAULT,
         children: [{ text: '' }],
-      });
+      })
     },
   },
   {
@@ -84,7 +84,7 @@ export const autoformatBlocks: AutoformatRule[] = [
       insertEmptyCodeBlock(editor as PlateEditor, {
         defaultType: getPluginType(editor as PlateEditor, ELEMENT_DEFAULT),
         insertNodesOptions: { select: true },
-      });
+      })
     },
   },
-];
+]

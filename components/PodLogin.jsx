@@ -1,10 +1,10 @@
-import { Logo } from './logo';
+import { Logo } from './logo'
 import { Formik } from 'formik'
 import { ArrowRight as ArrowRightIcon } from './icons'
-import { Input } from './inputs';
+import { Input } from './inputs'
 import { ArrowCircleRight } from './icons'
-import Image from 'next/image';
-import forestImage from '../public/forest-landscape.png';
+import Image from 'next/image'
+import forestImage from '../public/forest-landscape.png'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -15,11 +15,9 @@ export default function PodLogin({ avatarImgSrc }) {
     <div className="flex flex-row items-stretch relative h-screen overflow-hidden">
       <div className="relative z-10 bg-gradient-to-br from-my-green via-ocean to-my-purple p-14 text-white text-sm h-full md:w-1/2 w-full">
         <div className="relative w-4/5">
-          <Logo className='z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5' />
+          <Logo className="z-0 absolute -ml-44 -mt-16 transform scale-105 opacity-5" />
         </div>
-        <div className="text-2xl md:mt-36">
-         Please login to your
-        </div>
+        <div className="text-2xl md:mt-36">Please login to your</div>
         <div class="md:text-8xl text-4xl font-black">solid pod</div>
       </div>
       <div className="flex flex-row z-10 w-full mt-36 md:mt-0 md:w-1/2 absolute md:relative">
@@ -27,15 +25,21 @@ export default function PodLogin({ avatarImgSrc }) {
           <Formik>
             <div className="text-white">
               Username
-              <Input type="text" name="username"
-                className="flex flex-row mt-2" />
+              <Input
+                type="text"
+                name="username"
+                className="flex flex-row mt-2"
+              />
             </div>
           </Formik>
           <Formik>
             <div className="text-white mt-2">
-            Password
-            <Input type="text" name="password"
-              className="flex flex-row mt-2" />
+              Password
+              <Input
+                type="text"
+                name="password"
+                className="flex flex-row mt-2"
+              />
             </div>
           </Formik>
           <div className="flex flex-col md:flex-row">
@@ -70,7 +74,12 @@ export default function PodLogin({ avatarImgSrc }) {
         </div>
       </div>
       <div className="flex flex-row z-0 items-stretch bg-gradient-to-br from-my-green via-ocean to-my-purple absolute w-full h-full left-48 lg:left-64 xl:left-96 md:block hidden">
-        <Image className="z-0 object-cover mix-blend-soft-light opacity-90 filter blur-md" src={forestImage} alt="forest" layout="fill" />
+        <Image
+          className="z-0 object-cover mix-blend-soft-light opacity-90 filter blur-md"
+          src={forestImage}
+          alt="forest"
+          layout="fill"
+        />
       </div>
     </div>
   )

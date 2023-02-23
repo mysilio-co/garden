@@ -6,11 +6,9 @@ const SpaceContext = createContext({ slug: HomeSpaceSlug, space: null })
 
 export function SpaceProvider({ webId, slug = HomeSpaceSlug, ...rest }) {
   const value = useMemo(() => ({ webId, slug }), [webId, slug])
-  return (
-    <SpaceContext.Provider value={value} {...rest} />
-  )
+  return <SpaceContext.Provider value={value} {...rest} />
 }
 
 export const useSpaceContext = () => useContext(SpaceContext)
 
-export default SpaceContext;
+export default SpaceContext

@@ -3,21 +3,26 @@ import { useWebId } from 'swrlit/contexts/authentication'
 import { asUrl } from '@inrupt/solid-client/thing/thing'
 import { getSourceUrl } from '@inrupt/solid-client/resource/resource'
 import { MY } from 'garden-kit/vocab'
-import dataFactory from "@rdfjs/data-model";
+import dataFactory from '@rdfjs/data-model'
 
 import { useItemIndex } from '../../../hooks/items'
 import LeftNavLayout from '../../../components/LeftNavLayout'
-import ItemCard from '../../../components/cards/ItemCard';
+import ItemCard from '../../../components/cards/ItemCard'
 
 export default function TagPage() {
   const router = useRouter()
-  const { query: { tag, workspace: spaceSlug } } = router
+  const {
+    query: { tag, workspace: spaceSlug },
+  } = router
   const webId = useWebId()
   const { data } = useItemIndex(webId, spaceSlug)
   const { index, dataset } = data || {}
-  const taggedQuads = dataset && Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
-  const itemUrns = taggedQuads && taggedQuads.map(q => q.subject.value)
-  const itemsAndGardens = itemUrns && itemUrns.map(u => [index.uri[u].item, index.uri[u].garden])
+  const taggedQuads =
+    dataset &&
+    Array.from(dataset.match(null, MY.Garden.tagged, dataFactory.literal(tag)))
+  const itemUrns = taggedQuads && taggedQuads.map((q) => q.subject.value)
+  const itemsAndGardens =
+    itemUrns && itemUrns.map((u) => [index.uri[u].item, index.uri[u].garden])
 
   return (
     <LeftNavLayout pageTitle={`Notes Tagged With "${tag}"`}>
@@ -36,5 +41,5 @@ export default function TagPage() {
         </ul>
       </div>
     </LeftNavLayout>
-  );
+  )
 }

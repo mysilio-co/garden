@@ -1,22 +1,21 @@
-import React from 'react';
+import React from 'react'
 
-import Login from '../components/PodLogin';
-import avatarImg from './assets/avatar.jpeg';
+import Login from '../components/PodLogin'
+import avatarImg from './assets/avatar.jpeg'
 
 export default {
   title: 'Components/PodLogin',
   component: Login,
   parameters: {
-    layout: 'fullscreen'
+    layout: 'fullscreen',
   },
-  argTypes: {
-  }
-};
+  argTypes: {},
+}
 
 const Template = (args) => <Login {...args} />
 
-export const LoginLanding = Template.bind({});
+export const LoginLanding = Template.bind({})
 LoginLanding.args = {
   label: 'Login/Landing',
-  username: "dylanfrazo",
-};
+  username: 'dylanfrazo',
+}

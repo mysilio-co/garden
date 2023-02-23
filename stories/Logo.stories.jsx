@@ -1,17 +1,16 @@
-import React from 'react';
-import { Formik } from 'formik';
-import { Logo } from '../components/logo';
+import React from 'react'
+import { Formik } from 'formik'
+import { Logo } from '../components/logo'
 
 export default {
   component: Logo,
   title: 'Components/Logo',
   parameters: {
-    background: {default: 'dark'}
-  }
+    background: { default: 'dark' },
+  },
 }
 
-
-export const HeaderLogo = () => <Logo/>
+export const HeaderLogo = () => <Logo />
 HeaderLogo.args = {
-  label: 'Logo/Header'
+  label: 'Logo/Header',
 }

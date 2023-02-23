@@ -1,24 +1,24 @@
-import { useState, useMemo, useContext, useEffect } from 'react';
-import { useWebId } from 'swrlit/contexts/authentication';
-import { useFilteredGarden, useGardenWithSetup } from 'garden-kit/hooks';
+import { useState, useMemo, useContext, useEffect } from 'react'
+import { useWebId } from 'swrlit/contexts/authentication'
+import { useFilteredGarden, useGardenWithSetup } from 'garden-kit/hooks'
 
-import WebMonetization from '../components/WebMonetization';
-import GardenHeader from './GardenHeader';
-import { Loader } from './elements';
-import LeftNavLayout from '../components/LeftNavLayout';
-import Cards from '../components/Cards';
+import WebMonetization from '../components/WebMonetization'
+import GardenHeader from './GardenHeader'
+import { Loader } from './elements'
+import LeftNavLayout from '../components/LeftNavLayout'
+import Cards from '../components/Cards'
 
-import { useCommunityGarden } from '../hooks/community';
-import { HomeSpaceSlug } from 'garden-kit';
+import { useCommunityGarden } from '../hooks/community'
+import { HomeSpaceSlug } from 'garden-kit'
 
 function GardenCreator({ url }) {
-  const { setupGarden } = useGardenWithSetup(url);
-  return <button onClick={setupGarden}>Create Garden</button>;
+  const { setupGarden } = useGardenWithSetup(url)
+  return <button onClick={setupGarden}>Create Garden</button>
 }
 
 function Garden({ search }) {
-  const webId = useWebId();
-  const { garden, error } = useCommunityGarden();
+  const webId = useWebId()
+  const { garden, error } = useCommunityGarden()
   return (
     <div>
       {garden ? (
@@ -34,12 +34,12 @@ function Garden({ search }) {
         <Loader />
       )}
     </div>
-  );
+  )
 }
 
 export default function Dashboard() {
-  const webId = useWebId();
-  const [search, setSearch] = useState('');
+  const webId = useWebId()
+  const [search, setSearch] = useState('')
 
   const headerProps = useMemo(
     () => ({
@@ -47,7 +47,7 @@ export default function Dashboard() {
       type: 'dashboard',
     }),
     [setSearch]
-  );
+  )
   return (
     <LeftNavLayout
       pageName="Dashboard"
@@ -59,5 +59,5 @@ export default function Dashboard() {
         <Garden search={search} />
       </div>
     </LeftNavLayout>
-  );
+  )
 }

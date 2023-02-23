@@ -8,7 +8,11 @@
     "start": "next start",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "chromatic": "npx chromatic --project-token=9ce71b1f5982"
+    "chromatic": "npx chromatic --project-token=9ce71b1f5982",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
@@ -66,6 +70,8 @@
     "@rdfjs/types": "^1.1.0",
     "@tailwindcss/forms": "^0.5.0",
     "@tailwindcss/typography": "^0.5.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.2",
     "postcss": "^8.4.18",
     "prettier": "2.3.2",
     "tailwindcss": "^3.0.0",
