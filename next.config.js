@@ -17,4 +17,4 @@ module.exports = {
     domains: ["ian.mysilio.me"],
   },
   */
-};
+}

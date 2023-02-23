@@ -1,18 +1,18 @@
-import { useState, useMemo } from 'react';
-import { useWebId } from 'swrlit/contexts/authentication';
+import { useState, useMemo } from 'react'
+import { useWebId } from 'swrlit/contexts/authentication'
 
-import WebMonetization from '../components/WebMonetization';
-import GardenHeader from './GardenHeader';
-import { Loader } from './elements';
-import LeftNavLayout from '../components/LeftNavLayout';
-import Cards from '../components/Cards';
+import WebMonetization from '../components/WebMonetization'
+import GardenHeader from './GardenHeader'
+import { Loader } from './elements'
+import LeftNavLayout from '../components/LeftNavLayout'
+import Cards from '../components/Cards'
 
-import { useCommunityGarden } from '../hooks/community';
-import { HomeSpaceSlug } from 'garden-kit';
+import { useCommunityGarden } from '../hooks/community'
+import { HomeSpaceSlug } from 'garden-kit'
 
 function Garden() {
-  const webId = useWebId();
-  const { garden } = useCommunityGarden();
+  const webId = useWebId()
+  const { garden } = useCommunityGarden()
   return (
     <div>
       {garden ? (
@@ -26,12 +26,12 @@ function Garden() {
         <Loader />
       )}
     </div>
-  );
+  )
 }
 
 export default function Dashboard() {
-  const webId = useWebId();
-  const [search, setSearch] = useState('');
+  const webId = useWebId()
+  const [search, setSearch] = useState('')
 
   const headerProps = useMemo(
     () => ({
@@ -39,7 +39,7 @@ export default function Dashboard() {
       type: 'dashboard',
     }),
     [setSearch]
-  );
+  )
   return (
     <LeftNavLayout
       pageName="Dashboard"
@@ -51,5 +51,5 @@ export default function Dashboard() {
         <Garden />
       </div>
     </LeftNavLayout>
-  );
+  )
 }

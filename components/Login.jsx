@@ -1,28 +1,28 @@
 import { useState } from 'react'
 import { useAuthentication } from 'swrlit/contexts/authentication'
-import Link from 'next/link';
+import Link from 'next/link'
 
-import { urlFromHost} from '../utils/uris';
+import { urlFromHost } from '../utils/uris'
 import { Logo } from './logo'
 import { Loader } from './elements'
 import { ArrowCircleRight } from './icons'
-import IDPPicker from './IDPPicker';
+import IDPPicker from './IDPPicker'
 
-export default function Login({ }) {
+export default function Login({}) {
   const [loggingIn, setLoggingIn] = useState(false)
-  const [host, setHost] = useState("")
+  const [host, setHost] = useState('')
   const { login } = useAuthentication()
   async function logIn() {
-    console.log(`logging in using ${host}`);
-    setLoggingIn(true);
+    console.log(`logging in using ${host}`)
+    setLoggingIn(true)
     try {
       await login({
         oidcIssuer: urlFromHost(host),
         redirectUrl: window.location.href,
         clientName: 'Mysilio Garden',
-      });
+      })
     } catch (e) {
-      setLoggingIn(false);
+      setLoggingIn(false)
     }
   }
   return (
@@ -65,5 +65,5 @@ export default function Login({ }) {
         <div className="h-full w-full bg-gradient-to-b from-my-green via-ocean to-my-purple opacity-100 mix-blend-color"></div>
       </div>
     </div>
-  );
+  )
 }

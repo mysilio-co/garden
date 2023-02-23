@@ -5,20 +5,20 @@ import {
   gardenMetadataInSpacePrefs,
   getSpace,
   HomeSpaceSlug,
-} from 'garden-kit';
-import { useState, Fragment } from 'react';
-import { useWebId } from 'swrlit';
+} from 'garden-kit'
+import { useState, Fragment } from 'react'
+import { useWebId } from 'swrlit'
 import {
   useCommunityContactsSearchResults,
   useCommunityGardenSearchResults,
   useGardenSearchResults,
-} from '../hooks/search';
-import { Search as SearchIcon } from './icons';
-import { Combobox, Transition } from '@headlessui/react';
-import { asUrl, getSourceUrl, getThing } from '@inrupt/solid-client';
-import { classNames } from '../utils/html';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+} from '../hooks/search'
+import { Search as SearchIcon } from './icons'
+import { Combobox, Transition } from '@headlessui/react'
+import { asUrl, getSourceUrl, getThing } from '@inrupt/solid-client'
+import { classNames } from '../utils/html'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export function SearchResults({ title, results }) {
   return (
@@ -51,42 +51,42 @@ export function SearchResults({ title, results }) {
           </Link>
         ))}
     </>
-  );
+  )
 }
 
 export function CommunityGardenSearchResults({ search }) {
-  const results = useCommunityGardenSearchResults(search);
-  return <SearchResults title="Community Garden" results={results} />;
+  const results = useCommunityGardenSearchResults(search)
+  return <SearchResults title="Community Garden" results={results} />
 }
 
 export function CommunityContactsSearchResults({ search }) {
-  const results = useCommunityContactsSearchResults(search);
-  return <SearchResults title="People" results={results} />;
+  const results = useCommunityContactsSearchResults(search)
+  return <SearchResults title="People" results={results} />
 }
 
 export function GardenSearchResults({ search, gardenUrl }) {
-  const { garden } = useGarden(gardenUrl);
-  const gardenSettings = garden && getThing(garden, getSourceUrl(garden));
-  const results = useGardenSearchResults(search, garden);
+  const { garden } = useGarden(gardenUrl)
+  const gardenSettings = garden && getThing(garden, getSourceUrl(garden))
+  const results = useGardenSearchResults(search, garden)
   if (gardenSettings)
-    return <SearchResults title={getTitle(gardenSettings)} results={results} />;
-  else return <></>;
+    return <SearchResults title={getTitle(gardenSettings)} results={results} />
+  else return <></>
 }
 
 export default function Search({}) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState('')
 
-  const webId = useWebId();
-  const { spaces } = useSpaces(webId);
-  const home = spaces && getSpace(spaces, HomeSpaceSlug);
-  const gardens = spaces && gardenMetadataInSpacePrefs(home, spaces);
-  const router = useRouter();
-  const [selectedResult, setSelectedResult] = useState(undefined);
+  const webId = useWebId()
+  const { spaces } = useSpaces(webId)
+  const home = spaces && getSpace(spaces, HomeSpaceSlug)
+  const gardens = spaces && gardenMetadataInSpacePrefs(home, spaces)
+  const router = useRouter()
+  const [selectedResult, setSelectedResult] = useState(undefined)
 
   const selectSearchResult = (result) => {
-    setSelectedResult(result);
-    router.push(result.item.href);
-  };
+    setSelectedResult(result)
+    router.push(result.item.href)
+  }
 
   return (
     <div className="flex flex-row self-center">
@@ -123,7 +123,7 @@ export default function Search({}) {
                       search={search}
                       gardenUrl={asUrl(garden)}
                     />
-                  );
+                  )
                 })}
               <CommunityGardenSearchResults search={search} />
               <CommunityContactsSearchResults search={search} />
@@ -132,5 +132,5 @@ export default function Search({}) {
         </Combobox>
       </div>
     </div>
-  );
+  )
 }

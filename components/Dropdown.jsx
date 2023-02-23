@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { AddCircle as AddCircleIcon } from './icons';
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
+import { AddCircle as AddCircleIcon } from './icons'
 
 export default function Dropdown({ children, label, className }) {
   return (
@@ -23,8 +23,8 @@ export default function Dropdown({ children, label, className }) {
         {children}
       </Transition>
     </Menu>
-  );
+  )
 }
 
-Dropdown.Items = Menu.Items;
-Dropdown.Item = Menu.Item;
+Dropdown.Items = Menu.Items
+Dropdown.Item = Menu.Item

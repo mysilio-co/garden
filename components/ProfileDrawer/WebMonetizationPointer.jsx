@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Combobox } from '@headlessui/react';
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
+import { useState } from 'react'
+import { Combobox } from '@headlessui/react'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
-import { EditIcon } from '../icons';
-import { getPaymentPointer, setPaymentPointer } from '../../model/profile';
+import { EditIcon } from '../icons'
+import { getPaymentPointer, setPaymentPointer } from '../../model/profile'
 
-export const MysilioPointer = '$ilp.uphold.com/DYPhbXPmDa2P';
+export const MysilioPointer = '$ilp.uphold.com/DYPhbXPmDa2P'
 
 export const MonetizationPointers = [
   { name: 'Mysilio', pointer: MysilioPointer },
@@ -24,42 +24,42 @@ export const MonetizationPointers = [
     name: 'Wellness Through Mindfullness Course',
     pointer: '$ilp.gatehub.net/735653594',
   },
-];
+]
 
 const OrgsByPointer = MonetizationPointers.reduce((m, mp) => {
-  m[mp.pointer] = mp.name;
-  return m;
-}, {});
+  m[mp.pointer] = mp.name
+  return m
+}, {})
 
 export function orgForPointer(pointer) {
-  return OrgsByPointer[pointer];
+  return OrgsByPointer[pointer]
 }
 
 function randomPP() {
   return MonetizationPointers[
     Math.floor(Math.random() * MonetizationPointers.length)
-  ];
+  ]
 }
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(' ')
 }
 
 export function MonetizationPicker({ setMonetization, currentValue }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState('')
   const [selectedPP, setSelectedPP] = useState(
     currentValue && { pointer: currentValue, name: currentValue }
-  );
+  )
   const setPP = (pp) => {
-    setSelectedPP(pp);
-    setMonetization(pp.pointer);
-  };
+    setSelectedPP(pp)
+    setMonetization(pp.pointer)
+  }
 
   const inputOnChange = (value) => {
-    setQuery(value);
-    setSelectedPP({ pointer: value, name: value });
-    setMonetization(value);
-  };
+    setQuery(value)
+    setSelectedPP({ pointer: value, name: value })
+    setMonetization(value)
+  }
 
   // don't use this for now, but may bring it back. clean if still here in a few weeks
   //useEffect(() => {
@@ -70,8 +70,8 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
     query === ''
       ? MonetizationPointers
       : MonetizationPointers.filter((pp) => {
-          return pp.name.toLowerCase().includes(query.toLowerCase());
-        });
+          return pp.name.toLowerCase().includes(query.toLowerCase())
+        })
 
   return (
     <Combobox as="div" value={selectedPP || currentValue} onChange={setPP}>
@@ -140,7 +140,7 @@ export function MonetizationPicker({ setMonetization, currentValue }) {
         )}
       </div>
     </Combobox>
-  );
+  )
 }
 
 export default function WebMonetizationPointer({
@@ -148,20 +148,20 @@ export default function WebMonetizationPointer({
   saveProfile,
   ...props
 }) {
-  const paymentPointer = getPaymentPointer(profile);
-  const [newPaymentPointer, setNewPaymentPointer] = useState();
+  const paymentPointer = getPaymentPointer(profile)
+  const [newPaymentPointer, setNewPaymentPointer] = useState()
 
   async function save(newPaymentPointer) {
-    return await saveProfile(setPaymentPointer(profile, newPaymentPointer));
+    return await saveProfile(setPaymentPointer(profile, newPaymentPointer))
   }
-  const [editingPaymentPointer, setEditingPaymentPointer] = useState(false);
+  const [editingPaymentPointer, setEditingPaymentPointer] = useState(false)
   function savePaymentPointer() {
-    save(newPaymentPointer);
-    setEditingPaymentPointer(false);
+    save(newPaymentPointer)
+    setEditingPaymentPointer(false)
   }
   function onEdit() {
-    setNewPaymentPointer(paymentPointer);
-    setEditingPaymentPointer(true);
+    setNewPaymentPointer(paymentPointer)
+    setEditingPaymentPointer(true)
   }
   return (
     <div {...props}>
@@ -198,5 +198,5 @@ export default function WebMonetizationPointer({
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,8 +1,8 @@
 export const PP = {
-  paymentPointer: "http://paymentpointers.org/ns#PaymentPointer",
-};
+  paymentPointer: 'http://paymentpointers.org/ns#PaymentPointer',
+}
 
-const understoryRoot = "https://understory.coop/vocab/garden#";
+const understoryRoot = 'https://understory.coop/vocab/garden#'
 export const US = {
   noteBody: `${understoryRoot}noteBody`,
   refersTo: `${understoryRoot}refersTo`,
@@ -28,14 +28,14 @@ export const US = {
   monetizedFor: `${understoryRoot}monetizedFor`,
   usesCSS: `${understoryRoot}usesCSS`,
   slateJSON: `${understoryRoot}slateJSON`, // https://docs.slatejs.org/concepts/02-nodes
-};
+}
 
-const MY_PREFIX = "https://vocab.mysilio.com/my/";
-const MY_INCUBATOR = `${MY_PREFIX}incubator/`;
-const MY_SKOS = `${MY_PREFIX}skos#`;
-const MY_FOAF = `${MY_PREFIX}foaf#`;
-const MY_NEWS = `${MY_INCUBATOR}newsletter#`;
-const MY_HTML = `${MY_INCUBATOR}html#`;
+const MY_PREFIX = 'https://vocab.mysilio.com/my/'
+const MY_INCUBATOR = `${MY_PREFIX}incubator/`
+const MY_SKOS = `${MY_PREFIX}skos#`
+const MY_FOAF = `${MY_PREFIX}foaf#`
+const MY_NEWS = `${MY_INCUBATOR}newsletter#`
+const MY_HTML = `${MY_INCUBATOR}html#`
 
 export const MY = {
   SKOS: {
@@ -64,9 +64,9 @@ export const MY = {
     deployedTo: `${MY_HTML}deployedAt`,
     deliveredTo: `${MY_HTML}deliveredTo`,
   },
-};
+}
 
-export const SIOC_PREFIX = 'http://rdfs.org/sioc/ns#';
+export const SIOC_PREFIX = 'http://rdfs.org/sioc/ns#'
 export const SIOC = {
   Community: `${SIOC_PREFIX}Community`,
   Site: `${SIOC_PREFIX}Site`,
@@ -89,8 +89,8 @@ export const SIOC = {
   moderator_of: `${SIOC_PREFIX}moderator_of`, // Container
   creator_of: `${SIOC_PREFIX}creatpr_of`, // Item
   email: `${SIOC_PREFIX}email`,
-};
+}
 
 export const MIME = {
-  html: "text/html",
-};
+  html: 'text/html',
+}

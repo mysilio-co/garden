@@ -1,11 +1,11 @@
-import Link from 'next/link';
-import { asUrl } from '@inrupt/solid-client/thing/thing';
-import ProfileImage from './ProfileDrawer/Image';
-import Name from './ProfileDrawer/Name';
-import Username from './ProfileDrawer/Username';
-import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer';
-import { profilePath } from '../utils/uris';
-import { Close, ExternalLinkIcon } from './icons';
+import Link from 'next/link'
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import ProfileImage from './ProfileDrawer/Image'
+import Name from './ProfileDrawer/Name'
+import Username from './ProfileDrawer/Username'
+import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer'
+import { profilePath } from '../utils/uris'
+import { Close, ExternalLinkIcon } from './icons'
 
 export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
   return (
@@ -40,5 +40,5 @@ export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
         className="my-2"
       />
     </div>
-  );
+  )
 }

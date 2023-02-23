@@ -1,56 +1,56 @@
-import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { Dialog, Popover, Transition } from '@headlessui/react';
+import { Fragment, useMemo, useState, useCallback, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { Dialog, Popover, Transition } from '@headlessui/react'
 import {
   HomeIcon,
   LoginIcon,
   BookOpenIcon,
   UserGroupIcon,
   XIcon,
-} from '@heroicons/react/outline';
+} from '@heroicons/react/outline'
 
-import { asUrl } from '@inrupt/solid-client/thing/thing';
-import { FOAF } from '@inrupt/vocab-common-rdf';
-import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get';
+import { asUrl } from '@inrupt/solid-client/thing/thing'
+import { FOAF } from '@inrupt/vocab-common-rdf'
+import { getUrl, getStringNoLocale } from '@inrupt/solid-client/thing/get'
 
 import {
   useLoggedIn,
   useAuthentication,
   useWebId,
-} from 'swrlit/contexts/authentication';
-import { useMyProfile } from 'swrlit/hooks/things';
+} from 'swrlit/contexts/authentication'
+import { useMyProfile } from 'swrlit/hooks/things'
 
-import ProfileDrawer from './ProfileDrawer';
-import Avatar from './Avatar';
-import DefaultHeader from './DefaultHeader';
-import logoAndName from '../public/img/logo-and-text.png';
+import ProfileDrawer from './ProfileDrawer'
+import Avatar from './Avatar'
+import DefaultHeader from './DefaultHeader'
+import logoAndName from '../public/img/logo-and-text.png'
 
-import { profilePath, gardenPath } from '../utils/uris';
-import { SpaceProvider } from '../contexts/SpaceContext';
-import { GardenProvider } from '../contexts/GardenContext';
+import { profilePath, gardenPath } from '../utils/uris'
+import { SpaceProvider } from '../contexts/SpaceContext'
+import { GardenProvider } from '../contexts/GardenContext'
 
-import { useSpaces } from 'garden-kit/hooks';
+import { useSpaces } from 'garden-kit/hooks'
 import {
   HomeSpaceSlug,
   getSpaceAll,
   getSpaceSlug,
   gardenMetadataInSpacePrefs,
-} from 'garden-kit/spaces';
-import { getTitle } from 'garden-kit/utils';
+} from 'garden-kit/spaces'
+import { getTitle } from 'garden-kit/utils'
 
 const defaultLoggedInNavItems = [
   { name: 'Community Garden', href: '/', icon: HomeIcon },
-];
+]
 const defaultLoggedOutNavItems = [
   { name: 'Community Garden', href: '/', icon: HomeIcon },
   { name: 'Log In', href: '/', icon: LoginIcon },
   { name: 'Sign Up', href: '/', icon: BookOpenIcon },
-];
+]
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(' ')
 }
 
 function EllipsesMenu({ loggedIn, logout, className = '' }) {
@@ -90,7 +90,7 @@ function EllipsesMenu({ loggedIn, logout, className = '' }) {
         )}
       </Popover.Panel>
     </Popover>
-  );
+  )
 }
 
 function AvatarSection({
@@ -136,10 +136,10 @@ function AvatarSection({
         className="self-center"
       />
     </div>
-  );
+  )
 }
 
-const defaultHeaderProps = {};
+const defaultHeaderProps = {}
 
 function navigationItems({
   router,
@@ -151,29 +151,29 @@ function navigationItems({
   selectedSpaceSlug,
   selectedGardenUrl,
 }) {
-  const allSpaces = spaces && getSpaceAll(spaces);
+  const allSpaces = spaces && getSpaceAll(spaces)
   const spaceItems = allSpaces
     ? allSpaces.map((space, i) => {
-        const spaceSlug = getSpaceSlug(space);
-        const gardens = gardenMetadataInSpacePrefs(space, spaces);
+        const spaceSlug = getSpaceSlug(space)
+        const gardens = gardenMetadataInSpacePrefs(space, spaces)
         return {
           name: getTitle(space) || `Space ${i}`,
           subItems:
             gardens &&
             gardens.map((garden) => {
-              const gardenUrl = asUrl(garden);
+              const gardenUrl = asUrl(garden)
               return {
                 name: getTitle(garden),
                 spaceSlug,
                 gardenUrl,
                 onClick: function () {
-                  router.push(gardenPath(webId, spaceSlug, gardenUrl));
+                  router.push(gardenPath(webId, spaceSlug, gardenUrl))
                 },
-              };
+              }
             }),
-        };
+        }
       })
-    : [];
+    : []
   const profileItems = profile
     ? [
         {
@@ -182,10 +182,10 @@ function navigationItems({
           icon: UserGroupIcon,
         },
       ]
-    : [];
+    : []
   const basicNavItems = loggedIn
     ? defaultLoggedInNavItems
-    : defaultLoggedOutNavItems;
+    : defaultLoggedOutNavItems
   return [...basicNavItems, ...profileItems, ...spaceItems].map((i) => {
     if (
       selectedSpaceSlug &&
@@ -193,12 +193,12 @@ function navigationItems({
       selectedGardenUrl &&
       selectedGardenUrl === i.gardenUrl
     ) {
-      i.current = true;
+      i.current = true
     } else {
-      i.current = pageName == i.name;
+      i.current = pageName == i.name
     }
-    return i;
-  });
+    return i
+  })
 }
 
 function navItemClasses(item, { hover = false, subItem = false } = {}) {
@@ -209,7 +209,7 @@ function navItemClasses(item, { hover = false, subItem = false } = {}) {
     `group flex items-center ${
       subItem ? 'ml-4 px-2 text-sm' : 'px-2 py-2 text-base'
     } font-medium rounded-md`
-  );
+  )
 }
 
 function navItemIconClasses(item, { hover = false, subItem = false } = {}) {
@@ -218,7 +218,7 @@ function navItemIconClasses(item, { hover = false, subItem = false } = {}) {
       ? 'text-gray-500'
       : `text-gray-400 ${hover ? 'group-hover:text-gray-500' : ''}`,
     'mr-4 h-6 w-6'
-  );
+  )
 }
 
 function NavigationItem({ item, subItem = false }) {
@@ -265,7 +265,7 @@ function NavigationItem({ item, subItem = false }) {
           <NavigationItem key={i} item={item} subItem={true} />
         ))}
     </>
-  );
+  )
 }
 
 export default function LeftNavLayout({
@@ -277,17 +277,17 @@ export default function LeftNavLayout({
   spaceSlug,
   gardenUrl,
 }) {
-  const router = useRouter();
-  const webId = useWebId();
-  const { profile, save: saveProfile } = useMyProfile();
-  const avatarImgSrc = profile && getUrl(profile, FOAF.img);
-  const name = profile && getStringNoLocale(profile, FOAF.name);
+  const router = useRouter()
+  const webId = useWebId()
+  const { profile, save: saveProfile } = useMyProfile()
+  const avatarImgSrc = profile && getUrl(profile, FOAF.img)
+  const name = profile && getStringNoLocale(profile, FOAF.name)
 
-  const loggedIn = useLoggedIn();
-  const { logout } = useAuthentication();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
-  const { spaces } = useSpaces(webId);
+  const loggedIn = useLoggedIn()
+  const { logout } = useAuthentication()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false)
+  const { spaces } = useSpaces(webId)
 
   const navigation = useMemo(
     () =>
@@ -302,7 +302,7 @@ export default function LeftNavLayout({
         selectedGardenUrl: gardenUrl,
       }),
     [pageName, profile]
-  );
+  )
 
   return (
     <>
@@ -494,5 +494,5 @@ export default function LeftNavLayout({
         </SpaceProvider>
       </div>
     </>
-  );
+  )
 }

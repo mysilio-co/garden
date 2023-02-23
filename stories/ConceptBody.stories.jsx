@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import ConceptBody from '../components/ConceptBody';
+import React, { useMemo } from 'react'
+import ConceptBody from '../components/ConceptBody'
 import { createConceptFor } from '../model/concept'
 import { createOrUpdateSlateJSON } from '../model/note'
 
@@ -9,22 +9,29 @@ export default {
   argTypes: { onNoteBodyChange: { action: 'clicked' } },
 }
 
-const tagPrefix = "https://example.com/tags/"
-const conceptPrefix = "https://example.com/concepts/"
+const tagPrefix = 'https://example.com/tags/'
+const conceptPrefix = 'https://example.com/concepts/'
 
 const concept = createConceptFor(
-  "ham", conceptPrefix, ["bacon", "pig", "cheese"],
-  tagPrefix, ["lunch", "breakfast", "sandwiches"]
+  'ham',
+  conceptPrefix,
+  ['bacon', 'pig', 'cheese'],
+  tagPrefix,
+  ['lunch', 'breakfast', 'sandwiches']
 )
 
-const conceptNames = ["foo", "bar"]
+const conceptNames = ['foo', 'bar']
 
 const ConceptBodyStory = ({ slateJSON, ...args }) => {
   const note = useMemo(() => createOrUpdateSlateJSON(slateJSON), [slateJSON])
   return (
     <ConceptBody
-      concept={concept} note={note}
-      tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} {...args} />
+      concept={concept}
+      note={note}
+      tagPrefix={tagPrefix}
+      conceptPrefix={conceptPrefix}
+      {...args}
+    />
   )
 }
 
@@ -40,27 +47,30 @@ export const EmptyConceptBody = ConceptBodyStory.bind({})
 EmptyConceptBody.args = {
   slateJSON: [{ children: [{ text: '' }] }],
   panelStartsOpen: false,
-  conceptNames
+  conceptNames,
 }
 
 export const SimpleConceptBody = ConceptBodyStory.bind({})
 SimpleConceptBody.args = {
   slateJSON: [{ children: [{ text: 'this is a simple note' }] }],
   panelStartsOpen: false,
-  conceptNames
+  conceptNames,
 }
-
 
 export const SimpleConceptBodyPanelOpen = ConceptBodyStory.bind({})
 SimpleConceptBodyPanelOpen.args = {
-  slateJSON: [{ children: [{ text: 'this is a simple note with the panel open' }] }],
+  slateJSON: [
+    { children: [{ text: 'this is a simple note with the panel open' }] },
+  ],
   panelStartsOpen: true,
-  conceptNames
+  conceptNames,
 }
 
 export const NoNoteConceptBody = () => (
   <ConceptBody
     concept={concept}
-    tagPrefix={tagPrefix} conceptPrefix={conceptPrefix} conceptNames={conceptNames
-    } />
+    tagPrefix={tagPrefix}
+    conceptPrefix={conceptPrefix}
+    conceptNames={conceptNames}
+  />
 )

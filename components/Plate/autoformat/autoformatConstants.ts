@@ -9,6 +9,6 @@ export const DIGITS: string[] = [
   '8',
   '9',
   '0',
-];
+]
 
-export const DIGITS_WITH_SPACE: string[] = DIGITS.map((digit) => ` ${digit}`);
+export const DIGITS_WITH_SPACE: string[] = DIGITS.map((digit) => ` ${digit}`)

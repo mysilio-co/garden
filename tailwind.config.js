@@ -1,24 +1,28 @@
 module.exports = {
-  content: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       height: {
-        '18': '4.5rem'
+        18: '4.5rem',
       },
       minHeight: {
-        '12': '3rem',
+        12: '3rem',
       },
       width: {
-        '18': '4.5rem'
+        18: '4.5rem',
       },
       padding: {
-        '18': '4.5rem'
+        18: '4.5rem',
       },
       boxShadow: {
-        btn: "8px 16px 24px -8px rgba(0, 0, 0, 0.12)",
-        'ipt-focus': "0 0 0 3px rgba(12, 122, 138, 0.5)",
-        menu: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
-        label: "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px -1px rgba(0, 0, 0, 0.1)"
+        btn: '8px 16px 24px -8px rgba(0, 0, 0, 0.12)',
+        'ipt-focus': '0 0 0 3px rgba(12, 122, 138, 0.5)',
+        menu: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+        label:
+          '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px -1px rgba(0, 0, 0, 0.1)',
       },
       colors: {
         echeveria: '#9fae6f',
@@ -33,7 +37,7 @@ module.exports = {
         'my-dark-green': '#0c7a8a',
         'my-orange': '#f27a22',
         'my-yellow': '#f2b822',
-        'my-purple': '#944c7d'
+        'my-purple': '#944c7d',
       },
       backgroundImage: {
         'forest-landscape': 'url("/img/forest-landscape.png")',
@@ -42,11 +46,8 @@ module.exports = {
     fontFamily: {
       wordmark: ['Catamaran', 'sans-serif'],
       sans: ['Inter', 'sans-serif'],
-      mono: ['fira-mono', 'monospace']
+      mono: ['fira-mono', 'monospace'],
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms')
-  ],
+  plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms')],
 }

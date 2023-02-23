@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Transforms } from 'slate';
+import { Transforms } from 'slate'
 
-import { useSlateStatic } from 'slate-react';
+import { useSlateStatic } from 'slate-react'
 
 import { fetch } from '@inrupt/solid-client-authn-browser'
-import { v1 as uuid } from 'uuid';
-import Cropper from 'react-cropper';
+import { v1 as uuid } from 'uuid'
+import Cropper from 'react-cropper'
 import newBlobReducer from 'image-blob-reduce'
 
-import { insertionPoint, insertImage } from '../utils/editor';
-import { Loader } from './elements';
+import { insertionPoint, insertImage } from '../utils/editor'
+import { Loader } from './elements'
 
 const ImageEditingModule = ({ src, onSave, onClose, ...props }) => {
   const [saving, setSaving] = useState()
@@ -31,16 +31,22 @@ const ImageEditingModule = ({ src, onSave, onClose, ...props }) => {
         className="h-96"
       />
       <div className="flex flex-row p-6 justify-center">
-        <button className="btn-filled btn-square btn-md mr-3" onClick={() => {
-          cropperRef.current.cropper.rotate(90)
-        }}>
+        <button
+          className="btn-filled btn-square btn-md mr-3"
+          onClick={() => {
+            cropperRef.current.cropper.rotate(90)
+          }}
+        >
           rotate
         </button>
         {saving ? (
           <Loader />
         ) : (
           <>
-            <button className="btn-filled btn-square btn-md mr-3" onClick={save}>
+            <button
+              className="btn-filled btn-square btn-md mr-3"
+              onClick={save}
+            >
               done editing
             </button>
             <button className="btn-filled btn-square btn-md" onClick={onClose}>
@@ -49,131 +55,150 @@ const ImageEditingModule = ({ src, onSave, onClose, ...props }) => {
           </>
         )}
       </div>
-    </div >
+    </div>
   )
 }
 
 const typesToExts = {
-  "image/gif": "gif",
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/svg+xml": "svg",
-  "image/webp": "webp"
+  'image/gif': 'gif',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/svg+xml': 'svg',
+  'image/webp': 'webp',
 }
 
-const nameForFile = file => `${uuid()}.${extForFile(file)}`
+const nameForFile = (file) => `${uuid()}.${extForFile(file)}`
 
-const extForFile = file => {
+const extForFile = (file) => {
   const extFromType = typesToExts[file.type]
   if (extFromType) {
     return extFromType
   } else {
-    return file.name.split(".").slice(-1)[0]
+    return file.name.split('.').slice(-1)[0]
   }
 }
 
-
-
-const uploadFromCanvas = (canvas, uri, type, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
-  const myFetch = passedFetch || fetch
-  canvas.toBlob(async (blob) => {
-    console.log("scaling blob")
-    const scaledBlob = await newBlobReducer().toBlob(blob, { max: 600 })
-    console.log("scaled blob")
-    const response = await myFetch(uri, {
-      method: 'PUT',
-      force: true,
-      headers: {
-        'content-type': type,
-        credentials: 'include'
+const uploadFromCanvas = (canvas, uri, type, { fetch: passedFetch } = {}) =>
+  new Promise((resolve, reject) => {
+    const myFetch = passedFetch || fetch
+    canvas.toBlob(
+      async (blob) => {
+        console.log('scaling blob')
+        const scaledBlob = await newBlobReducer().toBlob(blob, { max: 600 })
+        console.log('scaled blob')
+        const response = await myFetch(uri, {
+          method: 'PUT',
+          force: true,
+          headers: {
+            'content-type': type,
+            credentials: 'include',
+          },
+          body: scaledBlob,
+        })
+        if (response.ok) {
+          resolve(response)
+        } else {
+          reject(response)
+          console.log('image upload failed: ', response)
+        }
       },
-      body: scaledBlob
-    });
-    if (response.ok) {
-      resolve(response)
-    } else {
-      reject(response)
-      console.log("image upload failed: ", response)
-    }
-  }, type, 1)
+      type,
+      1
+    )
+  })
 
-})
-
-const uploadToContainerFromCanvas = (canvas, containerUri, type, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
-  const myFetch = passedFetch || fetch
-  canvas.toBlob(async (blob) => {
-    // uncomment if we find we need blob scaling
-    //    console.log("scaling blob")
-    //    const scaledBlob = await newBlobReducer().toBlob(blob, {max: 600})
-    //    console.log("scaled blob")
-    const response = await myFetch(containerUri, {
-      method: 'POST',
-      force: true,
-      headers: {
-        'content-type': type,
-        credentials: 'include'
+const uploadToContainerFromCanvas = (
+  canvas,
+  containerUri,
+  type,
+  { fetch: passedFetch } = {}
+) =>
+  new Promise((resolve, reject) => {
+    const myFetch = passedFetch || fetch
+    canvas.toBlob(
+      async (blob) => {
+        // uncomment if we find we need blob scaling
+        //    console.log("scaling blob")
+        //    const scaledBlob = await newBlobReducer().toBlob(blob, {max: 600})
+        //    console.log("scaled blob")
+        const response = await myFetch(containerUri, {
+          method: 'POST',
+          force: true,
+          headers: {
+            'content-type': type,
+            credentials: 'include',
+          },
+          body: blob,
+        })
+        if (response.ok) {
+          resolve(response)
+        } else {
+          reject(response)
+          console.log('image upload failed: ', response)
+        }
       },
-      body: blob
-    });
-    if (response.ok) {
-      resolve(response)
-    } else {
-      reject(response)
-      console.log("image upload failed: ", response)
-    }
-  }, type, 1)
+      type,
+      1
+    )
+  })
 
-})
-
-export const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) => new Promise((resolve, reject) => {
-  const reader = new FileReader()
-  const myFetch = passedFetch || fetch
-  reader.onload = async f => {
-    const response = await myFetch(uri, {
-      method: 'PUT',
-      force: true,
-      headers: {
-        'content-type': file.type,
-        credentials: 'include'
-      },
-      body: f.target.result
-    });
-    if (response.ok) {
-      resolve(response)
-    } else {
-      reject(response)
+export const uploadFromFile = (file, uri, { fetch: passedFetch } = {}) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    const myFetch = passedFetch || fetch
+    reader.onload = async (f) => {
+      const response = await myFetch(uri, {
+        method: 'PUT',
+        force: true,
+        headers: {
+          'content-type': file.type,
+          credentials: 'include',
+        },
+        body: f.target.result,
+      })
+      if (response.ok) {
+        resolve(response)
+      } else {
+        reject(response)
+      }
     }
-  }
-  reader.readAsArrayBuffer(file);
-})
+    reader.readAsArrayBuffer(file)
+  })
 
 export function ImageEditor({ element, onClose, onSave, ...props }) {
-
   const { url, originalUrl, mime } = element
   return (
-    <ImageEditingModule src={originalUrl || url}
+    <ImageEditingModule
+      src={originalUrl || url}
       onClose={onClose}
       onSave={async (canvas) => {
         await uploadFromCanvas(canvas, url, mime)
         onSave(url)
-      }} {...props} />
+      }}
+      {...props}
+    />
   )
 }
 
 const uriForOriginal = (editedUri) => {
-  const parts = editedUri.split(".")
-  return [...parts.slice(0, -1), "original", ...parts.slice(-1)].join(".")
+  const parts = editedUri.split('.')
+  return [...parts.slice(0, -1), 'original', ...parts.slice(-1)].join('.')
 }
 
-
-export default function ImageUploader({ element, onClose, onUpload, uploadDirectory, ...props }) {
+export default function ImageUploader({
+  element,
+  onClose,
+  onUpload,
+  uploadDirectory,
+  ...props
+}) {
   const [file, setFile] = useState()
   const editor = useSlateStatic()
   const [originalSrc, setOriginalSrc] = useState()
   const [previewSrc, setPreviewSrc] = useState()
   const [croppedCanvas, setCroppedCanvas] = useState()
   const [editing, setEditing] = useState(false)
-  const [altText, setAltText] = useState("")
+  const [altText, setAltText] = useState('')
 
   const insert = async () => {
     const editedUri = `${uploadDirectory}${nameForFile(file)}`
@@ -182,13 +207,22 @@ export default function ImageUploader({ element, onClose, onUpload, uploadDirect
     const response = await uploadFromCanvas(croppedCanvas, editedUri, file.type)
     onUpload && onUpload(response, file.type)
     const insertAt = insertionPoint(editor, element)
-    insertImage(editor, { url: editedUri, originalUrl: originalUri, alt: altText, mime: file.type }, insertAt);
+    insertImage(
+      editor,
+      {
+        url: editedUri,
+        originalUrl: originalUri,
+        alt: altText,
+        mime: file.type,
+      },
+      insertAt
+    )
     Transforms.select(editor, insertAt)
     onClose && onClose()
   }
 
   useEffect(() => {
-    let newSrc;
+    let newSrc
     if (file) {
       newSrc = URL.createObjectURL(file)
       setOriginalSrc(newSrc)
@@ -203,47 +237,52 @@ export default function ImageUploader({ element, onClose, onUpload, uploadDirect
   }, [file])
 
   const onFileChanged = (file) => {
-    setFile(file);
-  };
+    setFile(file)
+  }
 
   return (
     <>
-      {
-        editing ? (
-          <ImageEditingModule open={editing} src={originalSrc}
-            onClose={onClose}
-            onSave={async (canvas) => {
-              setPreviewSrc(canvas.toDataURL(file.type))
-              setCroppedCanvas(canvas)
-              setEditing(false)
-            }} />
-
-        ) : (
-          <div {...props}>
-            {previewSrc && (
-              <img src={previewSrc} className="h-32 object-contain" alt="your new profile" />
+      {editing ? (
+        <ImageEditingModule
+          open={editing}
+          src={originalSrc}
+          onClose={onClose}
+          onSave={async (canvas) => {
+            setPreviewSrc(canvas.toDataURL(file.type))
+            setCroppedCanvas(canvas)
+            setEditing(false)
+          }}
+        />
+      ) : (
+        <div {...props}>
+          {previewSrc && (
+            <img
+              src={previewSrc}
+              className="h-32 object-contain"
+              alt="your new profile"
+            />
+          )}
+          <div className="flex flex-row">
+            <UploadFileButton
+              className="btn mr-3"
+              onFileChanged={onFileChanged}
+            >
+              pick a file
+            </UploadFileButton>
+            {croppedCanvas && (
+              <>
+                <button className="btn mr-3" onClick={() => setEditing(true)}>
+                  edit
+                </button>
+                <button className="btn mr-3" onClick={insert}>
+                  insert
+                </button>
+              </>
             )}
-            <div className="flex flex-row">
-              <UploadFileButton className="btn mr-3" onFileChanged={onFileChanged}>
-                pick a file
-              </UploadFileButton>
-              {croppedCanvas &&
-                <>
-                  <button className="btn mr-3" onClick={() => setEditing(true)}>
-                    edit
-                  </button>
-                  <button className="btn mr-3" onClick={insert}>
-                    insert
-                  </button>
-                </>
-              }
-              <button onClick={onClose}>
-                cancel
-              </button>
-            </div>
+            <button onClick={onClose}>cancel</button>
           </div>
-        )
-      }
+        </div>
+      )}
     </>
   )
 }
@@ -261,15 +300,19 @@ function UploadFileButton({ onFileChanged, ...rest }) {
         style={{ display: 'none' }}
         type="file"
         onChange={(e) => {
-          const f = e.target.files && e.target.files[0];
-          onFileChanged(f);
+          const f = e.target.files && e.target.files[0]
+          onFileChanged(f)
         }}
       />
     </>
   )
 }
 
-export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri }) {
+export function ImageUploadAndEditor({
+  onSave,
+  onClose,
+  imageUploadContainerUri,
+}) {
   const [editing, setEditing] = useState(false)
   const [originalSrc, setOriginalSrc] = useState()
   const [previewSrc, setPreviewSrc] = useState()
@@ -277,11 +320,11 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
 
   const [file, setFile] = useState()
   const onFileChanged = (file) => {
-    setFile(file);
-  };
+    setFile(file)
+  }
 
   useEffect(() => {
-    let objectUrl;
+    let objectUrl
     if (file) {
       objectUrl = URL.createObjectURL(file)
       setOriginalSrc(objectUrl)
@@ -296,47 +339,68 @@ export function ImageUploadAndEditor({ onSave, onClose, imageUploadContainerUri 
   }, [file])
 
   async function save() {
-    const response = await uploadToContainerFromCanvas(croppedCanvas, imageUploadContainerUri, file.type)
-    const newImagePath = response.headers.get("location")
+    const response = await uploadToContainerFromCanvas(
+      croppedCanvas,
+      imageUploadContainerUri,
+      file.type
+    )
+    const newImagePath = response.headers.get('location')
 
     const newImageUrl = new URL(newImagePath, response.url)
-    onSave && onSave(newImageUrl.toString(), file);
+    onSave && onSave(newImageUrl.toString(), file)
   }
 
   return (
     <>
       {editing ? (
-        <ImageEditingModule open={editing} src={originalSrc}
+        <ImageEditingModule
+          open={editing}
+          src={originalSrc}
           onClose={onClose}
           onSave={async (canvas) => {
             setPreviewSrc(canvas.toDataURL(file.type))
             setCroppedCanvas(canvas)
             setEditing(false)
-          }} />
-
+          }}
+        />
       ) : (
         <div className="flex flex-col h-96">
           {previewSrc && (
             <div className="flex flex-row justify-center items-center flex-grow">
-              <img src={previewSrc} className="h-32 object-contain" alt="your new profile" />
+              <img
+                src={previewSrc}
+                className="h-32 object-contain"
+                alt="your new profile"
+              />
             </div>
           )}
           <div className="flex flex-row justify-center items-center flex-grow-0 p-6">
-            <UploadFileButton className="btn-md btn-filled btn-square mr-3" onFileChanged={onFileChanged}>
+            <UploadFileButton
+              className="btn-md btn-filled btn-square mr-3"
+              onFileChanged={onFileChanged}
+            >
               pick an image
             </UploadFileButton>
-            {croppedCanvas &&
+            {croppedCanvas && (
               <>
-                <button className="btn-md btn-filled btn-square mr-3" onClick={() => setEditing(true)}>
+                <button
+                  className="btn-md btn-filled btn-square mr-3"
+                  onClick={() => setEditing(true)}
+                >
                   edit
                 </button>
-                <button className="btn-md btn-filled btn-square mr-3" onClick={save}>
+                <button
+                  className="btn-md btn-filled btn-square mr-3"
+                  onClick={save}
+                >
                   save
                 </button>
               </>
-            }
-            <button className="btn-md btn-transparent btn-square mr-3 text-gray-700"
-              onClick={onClose}>
+            )}
+            <button
+              className="btn-md btn-transparent btn-square mr-3 text-gray-700"
+              onClick={onClose}
+            >
               cancel
             </button>
           </div>

@@ -2,7 +2,7 @@ import { classNames } from '../utils/html'
 
 const tabs = [
   { name: 'Links', slug: 'links', currentClassName: 'bg-my-green' },
-  { name: 'Tags', slug: 'tags', currentClassName: 'bg-my-orange' }
+  { name: 'Tags', slug: 'tags', currentClassName: 'bg-my-orange' },
 ]
 
 export default function ConnectionsTabs({ onChange, active }) {
@@ -17,7 +17,7 @@ export default function ConnectionsTabs({ onChange, active }) {
           id="tabs"
           name="tabs"
           className="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-          defaultValue={tabs.find((tab) => (tab.slug === active)).name}
+          defaultValue={tabs.find((tab) => tab.slug === active).name}
           onChange={(e) => onChange(e.target.value)}
         >
           {tabs.map((tab) => (
@@ -34,8 +34,10 @@ export default function ConnectionsTabs({ onChange, active }) {
               key={tab.name}
               href={tab.href}
               className={classNames(
-                (active === tab.slug) ? `text-white ${tab.currentClassName}` : 'text-gray-50',
-                'leading-4 px-3 py-2 font-medium text-sm rounded-md',
+                active === tab.slug
+                  ? `text-white ${tab.currentClassName}`
+                  : 'text-gray-50',
+                'leading-4 px-3 py-2 font-medium text-sm rounded-md'
               )}
               onClick={() => onChange(tab.slug)}
               aria-current={tab.current ? 'page' : undefined}

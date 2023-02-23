@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { useWebId } from 'swrlit/contexts/authentication';
+import { useState } from 'react'
+import { useWebId } from 'swrlit/contexts/authentication'
 import {
   getSpaceAll,
   getPrivateFile,
   getPublicFile,
   getCompostFile,
   getNurseryFile,
-} from 'garden-kit/spaces';
+} from 'garden-kit/spaces'
 
-import { getSourceUrl } from '@inrupt/solid-client';
-import { deleteResource } from '../utils/fetch';
-import { Loader } from '../components/elements';
-import { useSpaces } from 'garden-kit/hooks';
+import { getSourceUrl } from '@inrupt/solid-client'
+import { deleteResource } from '../utils/fetch'
+import { Loader } from '../components/elements'
+import { useSpaces } from 'garden-kit/hooks'
 
 export default function DevConsolePage() {
-  const [saving, setSaving] = useState(false);
-  const webId = useWebId();
-  const { spaces } = useSpaces(webId);
+  const [saving, setSaving] = useState(false)
+  const webId = useWebId()
+  const { spaces } = useSpaces(webId)
 
   async function deleteSpaces() {
-    setSaving(true);
+    setSaving(true)
     const saveResult = Promise.all([
       ...getSpaceAll(spaces).map(function deleteSpace(space) {
         return Promise.all([
@@ -28,14 +28,14 @@ export default function DevConsolePage() {
           deleteResource(getCompostFile(space)),
           deleteResource(getNurseryFile(space)),
           deleteResource(getSourceUrl(spaces)),
-        ]);
+        ])
       }),
-    ]);
-    await saveResult;
-    setSaving(false);
-    return saveResult;
+    ])
+    await saveResult
+    setSaving(false)
+    return saveResult
   }
-  global.deleteSpaces = deleteSpaces;
+  global.deleteSpaces = deleteSpaces
 
   return (
     <div>
@@ -50,5 +50,5 @@ export default function DevConsolePage() {
         </button>
       )}
     </div>
-  );
+  )
 }

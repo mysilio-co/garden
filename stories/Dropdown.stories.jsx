@@ -1,9 +1,9 @@
-import React from 'react';
-import Dropdown from '../components/Dropdown';
+import React from 'react'
+import Dropdown from '../components/Dropdown'
 
 export default {
   component: Dropdown,
-  title: 'Components/Dropdown'
+  title: 'Components/Dropdown',
 }
 
 function classNames(...classes) {
@@ -75,5 +75,5 @@ export const StandardDropdown = () => (
   </Dropdown>
 )
 StandardDropdown.parameters = {
-  backgrounds: { default: "dark" }
+  backgrounds: { default: 'dark' },
 }

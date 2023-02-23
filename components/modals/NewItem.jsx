@@ -1,9 +1,9 @@
-import { useState, useContext, useCallback, useEffect } from 'react';
-import { usePlateActions } from '@udecode/plate-core';
-import { useRouter } from 'next/router';
+import { useState, useContext, useCallback, useEffect } from 'react'
+import { usePlateActions } from '@udecode/plate-core'
+import { useRouter } from 'next/router'
 
-import { useTitledGardenItem, useSpace } from 'garden-kit/hooks';
-import { getNurseryFile } from 'garden-kit/spaces';
+import { useTitledGardenItem, useSpace } from 'garden-kit/hooks'
+import { getNurseryFile } from 'garden-kit/spaces'
 import {
   createItem,
   setNote,
@@ -13,127 +13,127 @@ import {
   updateItemBeforeSave,
   setTags,
   setReferences,
-} from 'garden-kit/items';
-import { setDepiction } from 'garden-kit/utils';
-import { EmptySlateJSON, createNoteInSpace } from 'garden-kit/note';
-import { useWebId, useAuthentication } from 'swrlit/contexts/authentication';
+} from 'garden-kit/items'
+import { setDepiction } from 'garden-kit/utils'
+import { EmptySlateJSON, createNoteInSpace } from 'garden-kit/note'
+import { useWebId, useAuthentication } from 'swrlit/contexts/authentication'
 
-import SpaceContext from '../../contexts/SpaceContext';
-import { Close as CloseIcon, TickCircle } from '../icons';
-import Editor from '../Plate/Editor';
-import { useItemIndex } from '../../hooks/items';
-import { itemPath } from '../../utils/uris';
+import SpaceContext from '../../contexts/SpaceContext'
+import { Close as CloseIcon, TickCircle } from '../icons'
+import Editor from '../Plate/Editor'
+import { useItemIndex } from '../../hooks/items'
+import { itemPath } from '../../utils/uris'
 import {
   useOGTags,
   useImageUploadUri,
   useFileUploadUri,
-} from '../../hooks/uris';
-import ImageUploadModal from './ImageUpload';
-import { UploadImage as UploadImageIcon } from '../icons';
-import PodImage from '../PodImage';
-import { uploadFromFile } from '../../components/ImageUploader';
-import { getTagsInNote, getReferencesInNote } from '../../utils/slate';
+} from '../../hooks/uris'
+import ImageUploadModal from './ImageUpload'
+import { UploadImage as UploadImageIcon } from '../icons'
+import PodImage from '../PodImage'
+import { uploadFromFile } from '../../components/ImageUploader'
+import { getTagsInNote, getReferencesInNote } from '../../utils/slate'
 
-const editorId = 'create-modal';
+const editorId = 'create-modal'
 
 export default function NewItem({ onClose }) {
-  const router = useRouter();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [coverImage, setCoverImage] = useState('');
-  const [itemFile, setItemFile] = useState('');
-  const [url, setUrl] = useState('');
-  const [noteValue, setNoteValue] = useState();
+  const router = useRouter()
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [coverImage, setCoverImage] = useState('')
+  const [itemFile, setItemFile] = useState('')
+  const [url, setUrl] = useState('')
+  const [noteValue, setNoteValue] = useState()
 
   // basic item loading - provides save function and ability to tell if item exists yet
-  const webId = useWebId();
-  const { slug: spaceSlug } = useContext(SpaceContext);
-  const { space } = useSpace(webId, spaceSlug);
-  const gardenUrl = getNurseryFile(space);
+  const webId = useWebId()
+  const { slug: spaceSlug } = useContext(SpaceContext)
+  const { space } = useSpace(webId, spaceSlug)
+  const gardenUrl = getNurseryFile(space)
   const { save: saveItem, resource: garden } = useTitledGardenItem(
     gardenUrl,
     name
-  );
-  const { data } = useItemIndex(webId, spaceSlug);
-  const { index } = data || {};
-  const itemExists = !!(index && index.name[name]);
+  )
+  const { data } = useItemIndex(webId, spaceSlug)
+  const { index } = data || {}
+  const itemExists = !!(index && index.name[name])
 
   // url auto-loading
-  const og = useOGTags(url);
+  const og = useOGTags(url)
   useEffect(() => {
     if (og) {
       // OG tags were update (i.e. new URL)
       // set title, name, description
       if (og && og.ogTitle && !name) {
-        setName(og.ogTitle);
+        setName(og.ogTitle)
       }
       if (og && og.ogDescription && !description) {
-        setDescription(og.ogDescription);
+        setDescription(og.ogDescription)
       }
       if (og && og.ogImage && og.ogImage.url && !coverImage) {
-        setCoverImage(og.ogImage.url);
+        setCoverImage(og.ogImage.url)
       }
     }
-  }, [og, name, description, coverImage]);
+  }, [og, name, description, coverImage])
 
   // cover image uploader
-  const imageUploadUri = useImageUploadUri(webId, spaceSlug);
-  const [coverImageUploaderOpen, setCoverImageUploaderOpen] = useState(false);
+  const imageUploadUri = useImageUploadUri(webId, spaceSlug)
+  const [coverImageUploaderOpen, setCoverImageUploaderOpen] = useState(false)
   const onSaveCoverImage = useCallback(function onSaveCoverImage(url) {
-    setCoverImage(url);
-    setCoverImageUploaderOpen(false);
-  });
+    setCoverImage(url)
+    setCoverImageUploaderOpen(false)
+  })
 
   // file uploader
-  const fileUploadUri = useFileUploadUri(webId, spaceSlug);
+  const fileUploadUri = useFileUploadUri(webId, spaceSlug)
   const onFileChanged = useCallback(
     async function (file) {
       if (fileUploadUri && file) {
-        const fileUrl = `${fileUploadUri}${encodeURIComponent(file.name)}`;
-        await uploadFromFile(file, fileUrl);
-        setItemFile(fileUrl);
+        const fileUrl = `${fileUploadUri}${encodeURIComponent(file.name)}`
+        await uploadFromFile(file, fileUrl)
+        setItemFile(fileUrl)
       }
     },
     [fileUploadUri]
-  );
+  )
 
   // control functions
-  const { value: setEditorValue, resetEditor } = usePlateActions(editorId);
+  const { value: setEditorValue, resetEditor } = usePlateActions(editorId)
   const reset = useCallback(function reset() {
-    resetEditor();
-    setEditorValue(EmptySlateJSON);
-    setNoteValue(null);
-    setName('');
-  }, []);
+    resetEditor()
+    setEditorValue(EmptySlateJSON)
+    setNoteValue(null)
+    setName('')
+  }, [])
 
-  const [saving, setSaving] = useState(false);
-  const { fetch } = useAuthentication();
+  const [saving, setSaving] = useState(false)
+  const { fetch } = useAuthentication()
   const save = useCallback(
     async function save() {
-      setSaving(true);
-      let newItem = createItem(webId, { title: name, description });
-      newItem = updateItemBeforeSave(newItem);
+      setSaving(true)
+      let newItem = createItem(webId, { title: name, description })
+      newItem = updateItemBeforeSave(newItem)
       if (coverImage) {
-        newItem = setDepiction(newItem, coverImage);
-        newItem = setImage(newItem, coverImage);
+        newItem = setDepiction(newItem, coverImage)
+        newItem = setImage(newItem, coverImage)
       }
       if (url) {
-        newItem = setBookmark(newItem, url);
+        newItem = setBookmark(newItem, url)
       }
       if (itemFile) {
-        newItem = setFile(newItem, itemFile);
+        newItem = setFile(newItem, itemFile)
       }
       if (noteValue) {
-        newItem = setTags(newItem, getTagsInNote(noteValue));
-        newItem = setReferences(newItem, getReferencesInNote(noteValue));
+        newItem = setTags(newItem, getTagsInNote(noteValue))
+        newItem = setReferences(newItem, getReferencesInNote(noteValue))
       }
       newItem = setNote(
         newItem,
         await createNoteInSpace(space, noteValue || EmptySlateJSON, { fetch })
-      );
-      await saveItem(newItem);
-      setSaving(false);
-      router.push(itemPath(webId, spaceSlug, gardenUrl, name));
+      )
+      await saveItem(newItem)
+      setSaving(false)
+      router.push(itemPath(webId, spaceSlug, gardenUrl, name))
     },
     [
       webId,
@@ -150,27 +150,27 @@ export default function NewItem({ onClose }) {
       saveItem,
       webId,
     ]
-  );
+  )
 
   const onSubmit = useCallback(
     async function onSubmit() {
-      await save();
-      reset();
-      onClose();
+      await save()
+      reset()
+      onClose()
     },
     [reset, save, onClose]
-  );
+  )
 
   const cancel = useCallback(
     function cancel() {
-      onClose();
+      onClose()
     },
     [onClose]
-  );
+  )
 
-  const conceptNames = index && Object.keys(index.name);
+  const conceptNames = index && Object.keys(index.name)
 
-  const createDisabled = !name || itemExists || saving;
+  const createDisabled = !name || itemExists || saving
   return (
     <div className="mx-auto rounded-lg overflow-hidden bg-white flex flex-col items-stretch">
       <div className="flex flex-row justify-between self-stretch h-18 p-6 bg-my-green">
@@ -251,8 +251,8 @@ export default function NewItem({ onClose }) {
             className="file-ipt sm:col-span-2"
             onChange={useCallback(
               (e) => {
-                const f = e.target.files && e.target.files[0];
-                onFileChanged(f);
+                const f = e.target.files && e.target.files[0]
+                onFileChanged(f)
               },
               [onFileChanged]
             )}
@@ -300,5 +300,5 @@ export default function NewItem({ onClose }) {
         </button>
       </div>
     </div>
-  );
+  )
 }

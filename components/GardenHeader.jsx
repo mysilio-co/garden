@@ -1,47 +1,47 @@
-import { useState, useCallback } from 'react';
-import { Formik } from 'formik';
-import { MenuIcon } from '@heroicons/react/outline';
-import { FOAF } from '@inrupt/vocab-common-rdf';
-import { sioc as SIOC } from 'rdf-namespaces';
+import { useState, useCallback } from 'react'
+import { Formik } from 'formik'
+import { MenuIcon } from '@heroicons/react/outline'
+import { FOAF } from '@inrupt/vocab-common-rdf'
+import { sioc as SIOC } from 'rdf-namespaces'
 import {
   asUrl,
   getUrl,
   getStringNoLocale,
   addUrl,
   removeUrl,
-} from '@inrupt/solid-client';
-import Link from 'next/link';
-import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication';
-import { useMyProfile } from 'swrlit/hooks/things';
+} from '@inrupt/solid-client'
+import Link from 'next/link'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useMyProfile } from 'swrlit/hooks/things'
 
-import { profilePath } from '../utils/uris';
-import { AddCircle as AddCircleIcon } from './icons';
-import Avatar from './Avatar';
+import { profilePath } from '../utils/uris'
+import { AddCircle as AddCircleIcon } from './icons'
+import Avatar from './Avatar'
 
-import NewItem from './modals/NewItem';
-import { useFollows } from '../hooks/people';
-import { getTitle } from 'garden-kit/utils';
-import Modal from './Modal';
-import Search from './Search';
+import NewItem from './modals/NewItem'
+import { useFollows } from '../hooks/people'
+import { getTitle } from 'garden-kit/utils'
+import Modal from './Modal'
+import Search from './Search'
 
 function FollowUnfollowButton({ webId }) {
-  const { profile: myProfile, save: saveProfile } = useMyProfile();
+  const { profile: myProfile, save: saveProfile } = useMyProfile()
 
   const follow = useCallback(
     async function follow() {
-      await saveProfile(addUrl(myProfile, SIOC.follows, webId));
+      await saveProfile(addUrl(myProfile, SIOC.follows, webId))
     },
     [saveProfile, myProfile, webId]
-  );
+  )
   const unfollow = useCallback(
     async function unfollow() {
-      await saveProfile(removeUrl(myProfile, SIOC.follows, webId));
+      await saveProfile(removeUrl(myProfile, SIOC.follows, webId))
     },
     [saveProfile, myProfile, webId]
-  );
+  )
 
-  const follows = useFollows();
-  const alreadyFollowing = follows && follows.includes(webId);
+  const follows = useFollows()
+  const alreadyFollowing = follows && follows.includes(webId)
   return alreadyFollowing ? (
     <button
       className="btn-sm btn-transparent btn-square font-medium"
@@ -56,16 +56,16 @@ function FollowUnfollowButton({ webId }) {
     >
       Follow
     </button>
-  );
+  )
 }
 
 function GardenAuthor({ profile }) {
-  const myWebId = useWebId();
-  const webId = profile && asUrl(profile);
-  const isMyProfile = myWebId === webId;
-  const authorProfilePath = webId && profilePath(webId);
-  const avatarImgSrc = profile && getUrl(profile, FOAF.img);
-  const name = profile && getStringNoLocale(profile, FOAF.name);
+  const myWebId = useWebId()
+  const webId = profile && asUrl(profile)
+  const isMyProfile = myWebId === webId
+  const authorProfilePath = webId && profilePath(webId)
+  const avatarImgSrc = profile && getUrl(profile, FOAF.img)
+  const name = profile && getStringNoLocale(profile, FOAF.name)
 
   return (
     <>
@@ -85,7 +85,7 @@ function GardenAuthor({ profile }) {
       </Link>
       {!isMyProfile && <FollowUnfollowButton webId={webId} />}
     </>
-  );
+  )
 }
 
 export default function GardenHeader({
@@ -94,11 +94,11 @@ export default function GardenHeader({
   authorProfile,
   gardenSettings,
 }) {
-  const loggedIn = useLoggedIn();
-  const bg = type === 'dashboard' ? 'bg-header-gradient' : 'bg-my-green';
+  const loggedIn = useLoggedIn()
+  const bg = type === 'dashboard' ? 'bg-header-gradient' : 'bg-my-green'
   const authorName =
-    authorProfile && getStringNoLocale(authorProfile, FOAF.name);
-  const gardenTitle = gardenSettings && getTitle(gardenSettings);
+    authorProfile && getStringNoLocale(authorProfile, FOAF.name)
+  const gardenTitle = gardenSettings && getTitle(gardenSettings)
   const headerTitle =
     type === 'dashboard'
       ? 'Community Garden'
@@ -106,9 +106,9 @@ export default function GardenHeader({
       ? `${authorName}'s Profile`
       : gardenTitle
       ? `${gardenTitle} Garden`
-      : '';
+      : ''
 
-  const [newItemModalOpen, setNewItemModalOpen] = useState(false);
+  const [newItemModalOpen, setNewItemModalOpen] = useState(false)
   return (
     <nav
       className={`${bg} flex flex-col sm:flex-row justify-between relative z-30 p-4 gap-4`}
@@ -163,5 +163,5 @@ export default function GardenHeader({
         </button>
       </div>
     </nav>
-  );
+  )
 }

@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { getStringNoLocale } from '@inrupt/solid-client/thing/get';
-import { setStringNoLocale } from '@inrupt/solid-client/thing/set';
-import { FOAF } from '@inrupt/vocab-common-rdf';
+import { useState } from 'react'
+import { getStringNoLocale } from '@inrupt/solid-client/thing/get'
+import { setStringNoLocale } from '@inrupt/solid-client/thing/set'
+import { FOAF } from '@inrupt/vocab-common-rdf'
 
-import { EditIcon } from '../icons';
+import { EditIcon } from '../icons'
 
 export default function Name({ profile, saveProfile, ...props }) {
-  const name = profile && getStringNoLocale(profile, FOAF.name);
-  const [newName, setNewName] = useState();
+  const name = profile && getStringNoLocale(profile, FOAF.name)
+  const [newName, setNewName] = useState()
 
   async function save(newName) {
-    return await saveProfile(setStringNoLocale(profile, FOAF.name, newName));
+    return await saveProfile(setStringNoLocale(profile, FOAF.name, newName))
   }
-  const [editingName, setEditingName] = useState(false);
+  const [editingName, setEditingName] = useState(false)
   function saveName() {
-    save(newName);
-    setEditingName(false);
+    save(newName)
+    setEditingName(false)
   }
   function onEdit() {
-    setNewName(name);
-    setEditingName(true);
+    setNewName(name)
+    setEditingName(true)
   }
   return (
     <div {...props}>
@@ -52,5 +52,5 @@ export default function Name({ profile, saveProfile, ...props }) {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,22 +1,22 @@
-import { usePlateEditorRef, insertImage  } from '@udecode/plate-headless';
+import { usePlateEditorRef, insertImage } from '@udecode/plate-headless'
 
 import { UploadImage as UploadImageIcon } from '../icons'
 
 export default function ToobarImageButton({ getImageUrl, editorId }) {
-  const editor = usePlateEditorRef(editorId);
+  const editor = usePlateEditorRef(editorId)
   async function onMouseDown(event) {
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault()
+    event.stopPropagation()
 
-    let url;
+    let url
     if (getImageUrl) {
-      url = await getImageUrl();
+      url = await getImageUrl()
     } else {
-      url = window.prompt('Enter the URL of the image:');
+      url = window.prompt('Enter the URL of the image:')
     }
-    if (!url) return;
+    if (!url) return
 
-    insertImage(editor, url);
+    insertImage(editor, url)
   }
   return (
     <button onMouseDown={onMouseDown} className="px-1">

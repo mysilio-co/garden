@@ -4,8 +4,11 @@ import { Transition, Dialog } from '@headlessui/react'
 export default function Modal({ children, open, onClose }) {
   return (
     <Transition.Root show={open} as={Fragment}>
-
-      <Dialog as="div" onClose={onClose} className="fixed z-50 inset-0 overflow-y-auto">
+      <Dialog
+        as="div"
+        onClose={onClose}
+        className="fixed z-50 inset-0 overflow-y-auto"
+      >
         <div className="flex flex-col items-center justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}

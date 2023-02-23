@@ -1,70 +1,70 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react'
 
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router'
 
-import { useConceptNamesMatching } from "../hooks/concepts";
-import { conceptNameToUrlSafeId } from "../utils/uris";
+import { useConceptNamesMatching } from '../hooks/concepts'
+import { conceptNameToUrlSafeId } from '../utils/uris'
 
-export default function NotePicker({ onSubmit, initialSelectedName = "" }) {
-  const router = useRouter();
-  const [displayedName, setDisplayedName] = useState(initialSelectedName);
+export default function NotePicker({ onSubmit, initialSelectedName = '' }) {
+  const router = useRouter()
+  const [displayedName, setDisplayedName] = useState(initialSelectedName)
   const gotoNote = useCallback(
     (noteName) => {
-      router.push(`/notes/default/${conceptNameToUrlSafeId(noteName)}`);
-      setDisplayedName("");
+      router.push(`/notes/default/${conceptNameToUrlSafeId(noteName)}`)
+      setDisplayedName('')
     },
     [router]
-  );
+  )
   const onSelectNote = (note) => {
     if (onSubmit) {
-      onSubmit(selectedNote);
+      onSubmit(selectedNote)
     } else {
-      gotoNote(selectedNote);
+      gotoNote(selectedNote)
     }
-  };
+  }
 
-  const [selectionIndex, setSelectionIndex] = useState(0);
-  const matchingConceptNames = useConceptNamesMatching(displayedName);
+  const [selectionIndex, setSelectionIndex] = useState(0)
+  const matchingConceptNames = useConceptNamesMatching(displayedName)
   const onKeyDown = useCallback(
     (event) => {
       switch (event.key) {
-        case "ArrowDown":
-          event.preventDefault();
+        case 'ArrowDown':
+          event.preventDefault()
           const prevIndex =
             selectionIndex >= matchingConceptNames.length
               ? 0
-              : selectionIndex + 1;
-          setSelectionIndex(prevIndex);
-          break;
-        case "ArrowUp":
-          event.preventDefault();
+              : selectionIndex + 1
+          setSelectionIndex(prevIndex)
+          break
+        case 'ArrowUp':
+          event.preventDefault()
           const nextIndex =
             selectionIndex <= 0
               ? matchingConceptNames.length
-              : selectionIndex - 1;
-          setSelectionIndex(nextIndex);
-          break;
-        case "Enter":
-          event.preventDefault();
+              : selectionIndex - 1
+          setSelectionIndex(nextIndex)
+          break
+        case 'Enter':
+          event.preventDefault()
           const targetNote =
             selectionIndex > 0
               ? matchingConceptNames[selectionIndex - 1]
-              : event.target.value;
-          onSelectNote(targetNote);
-          setDisplayedName("");
-          break;
+              : event.target.value
+          onSelectNote(targetNote)
+          setDisplayedName('')
+          break
       }
     },
     [matchingConceptNames, selectionIndex]
-  );
+  )
 
   const selectedNote =
     matchingConceptNames && selectionIndex > 0
       ? matchingConceptNames[selectionIndex - 1]
-      : displayedName;
+      : displayedName
   const onClick = useCallback(() => {
-    onSelectNote(selectedNote);
-  }, [selectedNote, onSubmit]);
+    onSelectNote(selectedNote)
+  }, [selectedNote, onSubmit])
   return (
     <div className="flex flex-row max-h-9 self-center">
       <div className="relative overflow-y-visible">
@@ -88,7 +88,7 @@ export default function NotePicker({ onSubmit, initialSelectedName = "" }) {
                 key={name}
                 onClick={() => setSelectionIndex(i + 1)}
                 className={`m-1 p-1 ${
-                  selectionIndex - 1 === i ? "bg-purple-500 text-white" : ""
+                  selectionIndex - 1 === i ? 'bg-purple-500 text-white' : ''
                 }`}
               >
                 {name}
@@ -97,5 +97,5 @@ export default function NotePicker({ onSubmit, initialSelectedName = "" }) {
         </ul>
       </div>
     </div>
-  );
+  )
 }

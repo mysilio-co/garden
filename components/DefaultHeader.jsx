@@ -1,13 +1,10 @@
-import { MenuIcon } from '@heroicons/react/outline';
+import { MenuIcon } from '@heroicons/react/outline'
 
-export default function DefaultHeader({ openSidebar, pageTitle = "" }) {
-
+export default function DefaultHeader({ openSidebar, pageTitle = '' }) {
   return (
     <div>
       <div className="min-h-12 flex justify-between bg-header-gradient px-6 py-1.5">
-        <div className="text-white text-2xl font-black">
-          {pageTitle}
-        </div>
+        <div className="text-white text-2xl font-black">{pageTitle}</div>
         <div>
           <button
             type="button"
@@ -20,5 +17,5 @@ export default function DefaultHeader({ openSidebar, pageTitle = "" }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

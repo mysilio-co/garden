@@ -1,36 +1,35 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-import { EditIcon } from '../icons';
+import { EditIcon } from '../icons'
 import {
   addContact,
   getContactByWebId,
   useCommunityContacts,
   usernameFromContact,
-} from '../../hooks/community';
-import { asUrl } from '@inrupt/solid-client';
+} from '../../hooks/community'
+import { asUrl } from '@inrupt/solid-client'
 
 export default function Username({ profile, saveProfile, ...props }) {
-  const { contacts, saveContacts } = useCommunityContacts();
-  const [username, setUsername] = useState();
+  const { contacts, saveContacts } = useCommunityContacts()
+  const [username, setUsername] = useState()
 
-  const currentContact =
-    contacts && getContactByWebId(contacts, asUrl(profile));
-  const currentUsername = currentContact && usernameFromContact(currentContact);
+  const currentContact = contacts && getContactByWebId(contacts, asUrl(profile))
+  const currentUsername = currentContact && usernameFromContact(currentContact)
 
   async function save(username) {
     if (contacts && username && username != currentUsername) {
-      const newContacts = addContact(contacts, username, asUrl(profile));
-      saveContacts(newContacts);
+      const newContacts = addContact(contacts, username, asUrl(profile))
+      saveContacts(newContacts)
     }
   }
-  const [editingUsername, setEditingUsername] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false)
   function saveUsername() {
-    save(username);
-    setEditingUsername(false);
+    save(username)
+    setEditingUsername(false)
   }
   function onEdit() {
-    setUsername(currentUsername);
-    setEditingUsername(true);
+    setUsername(currentUsername)
+    setEditingUsername(true)
   }
   return (
     <div {...props}>
@@ -63,5 +62,5 @@ export default function Username({ profile, saveProfile, ...props }) {
         </div>
       )}
     </div>
-  );
+  )
 }

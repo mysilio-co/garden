@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication';
-import { useSpacesWithSetup } from 'garden-kit/hooks';
-import { hasRequiredSpaces } from 'garden-kit/spaces';
-import Header from '../components/GardenHeader';
-import { Loader } from '../components/elements';
+import { useState } from 'react'
+import { useLoggedIn, useWebId } from 'swrlit/contexts/authentication'
+import { useSpacesWithSetup } from 'garden-kit/hooks'
+import { hasRequiredSpaces } from 'garden-kit/spaces'
+import Header from '../components/GardenHeader'
+import { Loader } from '../components/elements'
 
-import Login from '../components/Login';
-import Dashboard from '../components/Dashboard';
-import { fuseWebhookUrl } from '../model/search';
+import Login from '../components/Login'
+import Dashboard from '../components/Dashboard'
+import { fuseWebhookUrl } from '../model/search'
 
 export const MysilioKnowledgeGnome =
-  process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me';
+  process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me'
 
 function InitPage({ initApp }) {
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false)
   async function onClick() {
-    setSaving(true);
-    await initApp();
-    setSaving(false);
+    setSaving(true)
+    await initApp()
+    setSaving(false)
   }
   return (
     <>
@@ -38,7 +38,7 @@ function InitPage({ initApp }) {
         )}
       </div>
     </>
-  );
+  )
 }
 
 function LoadingPage() {
@@ -48,21 +48,21 @@ function LoadingPage() {
         <Loader className="absolute top-1/2 left-1/2" />
       </div>
     </>
-  );
+  )
 }
 
 export default function IndexPage() {
-  const loggedIn = useLoggedIn();
-  const webId = useWebId();
+  const loggedIn = useLoggedIn()
+  const webId = useWebId()
   const {
     spaces,
     setupDefaultSpaces,
     error: spacesError,
-  } = useSpacesWithSetup(webId);
+  } = useSpacesWithSetup(webId)
   const spacesConfigDoesntExist = !!(
     spacesError && spacesError.statusCode === 404
-  );
-  const setupComplete = spaces && hasRequiredSpaces(spaces);
+  )
+  const setupComplete = spaces && hasRequiredSpaces(spaces)
   return (
     <div className="page" id="page">
       {loggedIn === true ? (
@@ -84,7 +84,7 @@ export default function IndexPage() {
                   },
                 ],
                 (gardenUrl) => [fuseWebhookUrl(gardenUrl)]
-              );
+              )
             }}
           />
         ) : (
@@ -98,5 +98,5 @@ export default function IndexPage() {
         <Loader className="flex flex-row justify-center mt-36" />
       )}
     </div>
-  );
+  )
 }

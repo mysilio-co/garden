@@ -9,7 +9,6 @@ GET https://travis.itme.online/public/itme/concepts.ttl#Understory%20A%20Digital
 c:Understory%20A%20Digital%20Gardening%20Platform%20For%20The%20Future storageLocation https://travis.itme.online/public/itme/concepts/Understory.ttl
 c:understory sameAs c:Understory%20A%20Digital%20Gardening%20Platform%20For%20The%20Future
 
-
 # slugification
 
 GET https://itme.online/u/travis/understory-foo-bar
@@ -19,9 +18,7 @@ GET https://itme.online/u/travis/understory-foo-bar
 GET https://travis.itme.online/public/itme/concepts.ttl#understory-foo-bar
 
 c:Understory storageLocation https://travis.itme.online/public/itme/concepts/understory-foo-bar.ttl
-             title "Understory"
-
-
+title "Understory"
 
 # create concept index
 
