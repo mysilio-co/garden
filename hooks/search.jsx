@@ -23,6 +23,9 @@ import Fuse from 'fuse.js'
 import { useAuthentication } from 'swrlit'
 
 export function useCommunityContactsSearchResults(search) {
+  // TODO: The community contacts list is sparse right now, because no webhook is configured.
+  // A webhook needs to be set up to listen to all profile documents of folks registered,
+  // and update their inforamtion in the contact list when they update their profile.
   const { contacts } = useCommunityContacts()
   const contactsSettings =
     contacts && getThing(contacts, getSourceUrl(contacts))
