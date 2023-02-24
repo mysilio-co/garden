@@ -1,8 +1,8 @@
-import { useMemo, useContext, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useProfile } from 'swrlit/hooks/things'
 import { useWebId } from 'swrlit/contexts/authentication'
-import { useSpace, useFilteredGarden } from 'garden-kit/hooks'
+import { useSpace, useGarden } from 'garden-kit/hooks'
 import { HomeSpaceSlug, getGardenFileAll } from 'garden-kit/spaces'
 
 import { Loader } from '../../components/elements'
@@ -19,13 +19,11 @@ function ProfileCards({ webId, search }) {
   const urls = getGardenFileAll(space)
   const url = urls && urls[0]
 
-  const { garden, error } = useFilteredGarden(url, search)
+  const { garden, error } = useGarden(url)
   return (
     <div>
       {garden ? (
         <Cards webId={webId} garden={garden} spaceSlug={slug} />
-      ) : error && error.statusCode === 404 ? (
-        <GardenCreator url={url} />
       ) : (
         <Loader />
       )}

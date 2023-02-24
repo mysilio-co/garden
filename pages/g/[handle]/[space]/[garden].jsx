@@ -1,9 +1,5 @@
 import { useState, useMemo, useContext } from 'react'
-import {
-  useFilteredGarden,
-  useGardenWithSetup,
-  useGarden,
-} from 'garden-kit/hooks'
+import { useGarden } from 'garden-kit/hooks'
 import { useRouter } from 'next/router'
 
 import WebMonetization from '../../../../components/WebMonetization'
@@ -17,21 +13,14 @@ import SpaceContext from '../../../../contexts/SpaceContext'
 
 import { handleToWebId, urlSafeIdToGardenUrl } from '../../../../utils/uris'
 
-function GardenCreator({ url }) {
-  const { setupGarden } = useGardenWithSetup(url)
-  return <button onClick={setupGarden}>Create Garden</button>
-}
-
-function Garden({ webId, search }) {
+function Garden({ webId }) {
   const { slug } = useContext(SpaceContext)
   const { url } = useContext(GardenContext)
-  const { garden, error } = useFilteredGarden(url, search)
+  const { garden } = useGarden(url)
   return (
     <div>
       {garden ? (
         <Cards webId={webId} garden={garden} spaceSlug={slug} />
-      ) : error && error.statusCode === 404 ? (
-        <GardenCreator url={url} />
       ) : (
         <Loader />
       )}

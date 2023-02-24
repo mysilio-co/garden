@@ -177,13 +177,18 @@ export default function WebMonetizationPointer({
         </div>
       ) : (
         <div className="relative flex flex-row">
-          <h3 className="text-base text-center mb-3">
-            {paymentPointer || (
-              <span className="text-white" onClick={onEdit}>
-                click to set payment pointer
-              </span>
-            )}
-          </h3>
+          <div className="flex flex-col">
+            <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
+              Payment Pointer
+            </p>
+            <h3 className="text-base mb-3">
+              {paymentPointer || (
+                <span className="text-white" onClick={onEdit}>
+                  click to set payment pointer
+                </span>
+              )}
+            </h3>
+          </div>
           {paymentPointer && (
             <EditIcon
               className="relative -right-1 -top-2 text-purple-300 cursor-pointer w-4 h-4"

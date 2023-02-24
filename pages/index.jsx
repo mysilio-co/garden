@@ -7,6 +7,10 @@ import { Loader } from '../components/elements'
 
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
+import { fuseWebhookUrl } from '../model/search'
+
+export const MysilioKnowledgeGnome =
+  process.env.NEXT_PUBLIC_MKG_WEBID || 'https://mysilio.me/mkg/profile/card#me'
 
 function InitPage({ initApp }) {
   const [saving, setSaving] = useState(false)
@@ -65,7 +69,24 @@ export default function IndexPage() {
         setupComplete ? (
           <Dashboard />
         ) : spacesConfigDoesntExist ? (
-          <InitPage initApp={setupDefaultSpaces} />
+          <InitPage
+            initApp={() => {
+              setupDefaultSpaces(
+                [
+                  {
+                    agent: MysilioKnowledgeGnome,
+                    access: {
+                      read: true,
+                      write: true,
+                      append: true,
+                      control: false,
+                    },
+                  },
+                ],
+                (gardenUrl) => [fuseWebhookUrl(gardenUrl)]
+              )
+            }}
+          />
         ) : (
           <LoadingPage />
         )

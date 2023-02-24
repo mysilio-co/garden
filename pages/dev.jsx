@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useWebId } from 'swrlit/contexts/authentication'
-import { useSpacesWithSetup } from 'garden-kit/hooks'
 import {
   getSpaceAll,
   getPrivateFile,
@@ -12,11 +11,12 @@ import {
 import { getSourceUrl } from '@inrupt/solid-client'
 import { deleteResource } from '../utils/fetch'
 import { Loader } from '../components/elements'
+import { useSpaces } from 'garden-kit/hooks'
 
 export default function DevConsolePage() {
   const [saving, setSaving] = useState(false)
   const webId = useWebId()
-  const { spaces } = useSpacesWithSetup(webId)
+  const { spaces } = useSpaces(webId)
 
   async function deleteSpaces() {
     setSaving(true)

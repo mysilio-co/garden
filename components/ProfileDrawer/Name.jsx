@@ -39,7 +39,12 @@ export default function Name({ profile, saveProfile, ...props }) {
         </div>
       ) : (
         <div className="relative flex flex-row">
-          <h3 className="text-2xl text-center mb-3">{name}</h3>
+          <div className="flex flex-col">
+            <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
+              Name
+            </p>
+            <h3 className="text-2xl mb-3">{name}</h3>
+          </div>
           <EditIcon
             className="relative -right-1 text-purple-300 cursor-pointer w-4 h-4"
             onClick={onEdit}

@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { asUrl } from '@inrupt/solid-client/thing/thing'
 import ProfileImage from './ProfileDrawer/Image'
 import Name from './ProfileDrawer/Name'
+import Username from './ProfileDrawer/Username'
 import WebMonetizationPointer from './ProfileDrawer/WebMonetizationPointer'
+import Webhooks from './ProfileDrawer/Webhooks'
 import { profilePath } from '../utils/uris'
 import { Close, ExternalLinkIcon } from './icons'
 
@@ -27,16 +29,18 @@ export default function ProfileDrawer({ profile, saveProfile, setIsOpen }) {
       {profile && (
         <Link href={`${profilePath(asUrl(profile))}`}>
           <a className="text-purple-300">
-            public profile <ExternalLinkIcon className="w-4 h-4 inline" />
+            View Public Profile <ExternalLinkIcon className="w-4 h-4 inline" />
           </a>
         </Link>
       )}
       <Name profile={profile} saveProfile={saveProfile} className="my-2" />
+      <Username profile={profile} saveProfile={saveProfile} className="my-2" />
       <WebMonetizationPointer
         profile={profile}
         saveProfile={saveProfile}
         className="my-2"
       />
+      <Webhooks className="my-2" />
     </div>
   )
 }
