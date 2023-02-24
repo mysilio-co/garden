@@ -1,6 +1,7 @@
 import { asUrl, getUrl } from '@inrupt/solid-client'
 import {
   gardenMetadataInSpacePrefs,
+  getDeliveryHost,
   getSpace,
   getTitle,
   HomeSpaceSlug,
@@ -52,17 +53,19 @@ export default function Webhooks({ ...props }) {
   }
 
   function getWebhook(gardenUrl) {
-    return webhooks.find(
-      (webhook) => getUrl(webhook, MY.Garden.subscribedTo) == gardenUrl
-    )
+    return webhooks.find((webhook) => {
+      return (
+        getUrl(webhook, MY.Garden.subscribedTo) === gardenUrl &&
+        getDeliveryHost(webhook) === window.location.host
+      )
+    })
   }
 
   const enabled = useMemo(() => {
     let enabled = []
     for (const garden of gardens) {
       const gardenUrl = asUrl(garden)
-      const webhook = getWebhook(gardenUrl)
-      if (webhook && getDeliveryHost(webhook) === window.location.host) {
+      if (getWebhook(gardenUrl)) {
         enabled = [...enabled, gardenUrl]
       }
     }
