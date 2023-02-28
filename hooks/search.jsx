@@ -61,7 +61,6 @@ export function useGardenSearchResults(search, garden) {
     garden && fuseEntriesFromGardenItems(getItemAll(garden), gardenUrl)
   const options = defaultOptions(FullTextFuseKeys)
   const gardenSettings = garden && getThing(garden, gardenUrl)
-  console.log(gardenSettings)
   const fuseIndexUrl =
     gardenSettings && getUrl(gardenSettings, MY.Garden.hasFuseIndex)
 
