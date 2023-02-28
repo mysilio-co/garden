@@ -91,9 +91,7 @@ export default function IndexPage() {
           <LoadingPage />
         )
       ) : loggedIn === false || loggedIn === null ? (
-        <div className="text-center">
-          <Login />
-        </div>
+        <Dashboard />
       ) : (
         <Loader className="flex flex-row justify-center mt-36" />
       )}
