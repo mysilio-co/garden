@@ -45,8 +45,8 @@ const defaultLoggedInNavItems = [
 ]
 const defaultLoggedOutNavItems = [
   { name: 'Community Garden', href: '/', icon: HomeIcon },
-  { name: 'Log In', href: '/', icon: LoginIcon },
-  { name: 'Sign Up', href: '/', icon: BookOpenIcon },
+  { name: 'Log In', href: '/login', icon: LoginIcon },
+  { name: 'Sign Up', href: '/signup', icon: BookOpenIcon },
 ]
 
 function classNames(...classes) {
